@@ -1,0 +1,37 @@
+{
+  "configurations" : [
+    {
+      "id" : "E8177EE4-AE75-45C1-8FAB-67E4E410F147",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:Medora.xcodeproj",
+      "identifier" : "629C97992D651D9600992BF4",
+      "name" : "Medora"
+    }
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:Medora.xcodeproj",
+        "identifier" : "629C97AC2D651D9700992BF4",
+        "name" : "MedoraTests"
+      }
+    },
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:Medora.xcodeproj",
+        "identifier" : "629C97B62D651D9700992BF4",
+        "name" : "MedoraUITests"
+      }
+    }
+  ],
+  "version" : 1
+}
