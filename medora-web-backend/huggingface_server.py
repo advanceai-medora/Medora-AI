@@ -7,7 +7,7 @@ app = Flask(__name__)
 CORS(app, resources={r"/analyze": {"origins": "http://127.0.0.1:8080"}})
 
 # Hugging Face Inference API configuration
-HF_API_KEY = "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"  # Your provided API key
+HF_API_KEY = "hf_**********************************"  # Your provided API key
 HF_SCIBERT_URL = "https://api-inference.huggingface.co/models/allenai/scibert_scivocab_uncased"
 HF_DISTILBERT_URL = "https://api-inference.huggingface.co/models/distilbert-base-uncased"
 

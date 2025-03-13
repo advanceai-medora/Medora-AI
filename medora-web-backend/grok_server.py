@@ -7,7 +7,7 @@ app = Flask(__name__)
 CORS(app, resources={r"/analyze": {"origins": "http://127.0.0.1:8080", "methods": ["POST", "OPTIONS"]}})
 
 # API configurations
-GROK_API_KEY = "xai-JsuTwtlWoA40i9QsLoHlVuA8qRLd2gAo1qJmckB7a1CURT5iPmO6G5kHDRec6V1uJy637pg5icPKN7IR"  # Your Grok API key
+GROK_API_KEY = "xai-********************************************************************************"  # Your Grok API key
 GROK_API_URL = "https://api.x.ai/v1/chat/completions"
 DEEPL_API_KEY = "your-deepl-api-key-here"  # Replace with your DeepL API key
 DEEPL_API_URL = "https://api-free.deepl.com/v2/translate"
