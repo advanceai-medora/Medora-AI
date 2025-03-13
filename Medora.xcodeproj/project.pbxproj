@@ -7,10 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		629AA09E2D7A836900B32248 /* AudioManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 629AA09D2D7A836900B32248 /* AudioManager.swift */; };
+		629AA0A02D7B94F300B32248 /* MedoraApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 629AA09F2D7B94F300B32248 /* MedoraApp.swift */; };
+		629AA0A62D7B9DD900B32248 /* Medora.entitlements.xml in Resources */ = {isa = PBXBuildFile; fileRef = 629AA0A52D7B9DC200B32248 /* Medora.entitlements.xml */; };
 		629C97DF2D652BF400992BF4 /* Speech.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 629C97DE2D652BF400992BF4 /* Speech.framework */; };
-		629C97E32D657E5E00992BF4 /* SpeechRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 629C97E22D657E5B00992BF4 /* SpeechRecognizer.swift */; };
 		629C97E92D657F1800992BF4 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 629C97E82D657F1200992BF4 /* ContentView.swift */; };
-		62F327252D72072300D3BB6E /* MedoraApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62F327242D72070800D3BB6E /* MedoraApp.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -31,14 +32,15 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		629AA09D2D7A836900B32248 /* AudioManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioManager.swift; sourceTree = "<group>"; };
+		629AA09F2D7B94F300B32248 /* MedoraApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedoraApp.swift; sourceTree = "<group>"; };
+		629AA0A52D7B9DC200B32248 /* Medora.entitlements.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Medora.entitlements.xml; sourceTree = "<group>"; };
 		629C979A2D651D9600992BF4 /* Medora.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Medora.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		629C97AD2D651D9700992BF4 /* MedoraTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MedoraTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		629C97B72D651D9700992BF4 /* MedoraUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MedoraUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		629C97DC2D65295F00992BF4 /* Medora.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = Medora.xctestplan; sourceTree = "<group>"; };
 		629C97DE2D652BF400992BF4 /* Speech.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Speech.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.2.sdk/System/Library/Frameworks/Speech.framework; sourceTree = DEVELOPER_DIR; };
-		629C97E22D657E5B00992BF4 /* SpeechRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechRecognizer.swift; sourceTree = "<group>"; };
 		629C97E82D657F1200992BF4 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		62F327242D72070800D3BB6E /* MedoraApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedoraApp.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -88,9 +90,10 @@
 		629C97912D651D9600992BF4 = {
 			isa = PBXGroup;
 			children = (
-				62F327242D72070800D3BB6E /* MedoraApp.swift */,
+				629AA0A52D7B9DC200B32248 /* Medora.entitlements.xml */,
+				629AA09F2D7B94F300B32248 /* MedoraApp.swift */,
 				629C97E82D657F1200992BF4 /* ContentView.swift */,
-				629C97E22D657E5B00992BF4 /* SpeechRecognizer.swift */,
+				629AA09D2D7A836900B32248 /* AudioManager.swift */,
 				629C97DC2D65295F00992BF4 /* Medora.xctestplan */,
 				629C979C2D651D9600992BF4 /* Medora */,
 				629C97B02D651D9700992BF4 /* MedoraTests */,
@@ -238,6 +241,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				629AA0A62D7B9DD900B32248 /* Medora.entitlements.xml in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -262,9 +266,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				629AA09E2D7A836900B32248 /* AudioManager.swift in Sources */,
 				629C97E92D657F1800992BF4 /* ContentView.swift in Sources */,
-				629C97E32D657E5E00992BF4 /* SpeechRecognizer.swift in Sources */,
-				62F327252D72072300D3BB6E /* MedoraApp.swift in Sources */,
+				629AA0A02D7B94F300B32248 /* MedoraApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -447,6 +451,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.0;
+				NEW_SETTING = "";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.advanceai.Medora;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
@@ -491,6 +496,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.0;
+				NEW_SETTING = "";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.advanceai.Medora;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;

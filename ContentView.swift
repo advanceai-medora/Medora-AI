@@ -1,63 +1,60 @@
 import SwiftUI
-import AVFoundation
 
 struct ContentView: View {
-    @StateObject private var speechRecognizer = SpeechRecognizer()
-    
+    @StateObject private var audioManager = AudioManager()
+
     var body: some View {
         VStack(spacing: 20) {
-            Text("Medora Speech Recognizer")
+            Text("Medora Audio Test")
+                .font(.largeTitle)
+                .fontWeight(.bold)
+
+            // Display audio level
+            Text("Audio Level: \(audioManager.audioLevel, specifier: "%.4f")")
                 .font(.title2)
-                .padding(.top)
-            
-            TextEditor(text: .constant("No transcription available in minimal mode")) // Static text since no speech recognition
-                .frame(height: 200)
-                .border(Color.gray, width: 1)
-                .padding()
-            
-            ProgressView(value: speechRecognizer.audioLevel, total: 1.0)
-                .frame(width: 200)
+
+            // Visual representation of audio level
+            ProgressView(value: min(audioManager.audioLevel, 1.0))
+                .progressViewStyle(LinearProgressViewStyle())
+                .frame(height: 20)
                 .padding(.horizontal)
-            Text("Audio Level: \(String(format: "%.2f", speechRecognizer.audioLevel))")
-                .foregroundColor(.blue)
-            
-            if speechRecognizer.audioLevel == 0.0 && speechRecognizer.isListening {
-                Text("Warning: No audio detected. Ensure the microphone is unmuted, selected, and no other apps are using it.")
-                    .foregroundColor(.red)
-                    .padding(.top, 5)
-            }
-            
-            Text("Permission Status: Starting to listen...") // Simplified for minimal mode
-                .foregroundColor(.gray)
-            
+
+            // Start/Stop buttons
             HStack(spacing: 20) {
                 Button(action: {
-                    speechRecognizer.startListening()
+                    audioManager.startListening()
                 }) {
                     Text("Start Listening")
+                        .font(.title3)
                         .padding()
-                        .background(Color.blue)
+                        .frame(maxWidth: .infinity)
+                        .background(audioManager.isListening ? Color.gray : Color.green)
                         .foregroundColor(.white)
                         .cornerRadius(10)
                 }
-                .disabled(speechRecognizer.isListening)
-                
+                .disabled(audioManager.isListening)
+
                 Button(action: {
-                    speechRecognizer.stopListening()
+                    audioManager.stopListening()
                 }) {
                     Text("Stop Listening")
+                        .font(.title3)
                         .padding()
-                        .background(Color.red)
+                        .frame(maxWidth: .infinity)
+                        .background(audioManager.isListening ? Color.red : Color.gray)
                         .foregroundColor(.white)
                         .cornerRadius(10)
                 }
-                .disabled(!speechRecognizer.isListening)
+                .disabled(!audioManager.isListening)
             }
-            .padding(.bottom)
+            .padding(.horizontal)
         }
+        .padding()
     }
 }
 
-#Preview {
-    ContentView()
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
+    }
 }
