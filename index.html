@@ -8,7 +8,7 @@
         body {
             font-family: 'Montserrat', sans-serif;
             margin: 0;
-            background: #F5F7FA;
+            background: linear-gradient(135deg, #E6F0FA 0%, #FFFFFF 100%); /* Light blue gradient like DeepSeek */
             color: #333333;
             min-height: 100vh;
             display: flex;
@@ -28,7 +28,7 @@
         .header {
             width: 100%;
             padding: 15px 20px;
-            background: #4682B4;
+            background: #1E3A8A; /* Deeper blue to match DeepSeek header */
             color: #FFFFFF;
             display: flex;
             justify-content: space-between;
@@ -53,10 +53,11 @@
         }
         .header h1 {
             margin: 0;
-            font-size: 1.8em;
-            font-weight: 500;
+            font-size: 1.8em; /* Match DeepSeek text size */
+            font-weight: 700; /* Bold like DeepSeek */
             text-transform: uppercase;
             letter-spacing: 2px;
+            color: #FFFFFF; /* White like DeepSeek */
         }
         .header p.tagline {
             margin: 2px 0 0;
@@ -71,19 +72,19 @@
             right: 150px;
             width: 120px;
             background: #FFFFFF;
-            border: 1px solid #4682B4;
+            border: 1px solid #1E3A8A;
             border-radius: 8px;
             padding: 4px 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
             font-size: 0.9em;
             text-align: center;
-            color: #333333;
+            color: #1E3A8A;
         }
         button {
             padding: 12px 24px;
             font-size: 1.1em;
             cursor: pointer;
-            background: #5DADE2;
+            background: #5DADE2; /* Sky blue accent */
             color: #FFFFFF;
             border: none;
             border-radius: 12px;
@@ -113,7 +114,7 @@
             padding: 10px;
             font-size: 1em;
             font-family: 'Montserrat', sans-serif;
-            border: 2px solid #4682B4;
+            border: 2px solid #1E3A8A;
             border-radius: 8px;
             resize: none;
             margin-bottom: 10px;
@@ -124,7 +125,7 @@
             padding: 10px;
             font-size: 1em;
             font-family: 'Montserrat', sans-serif;
-            border: 2px solid #4682B4;
+            border: 2px solid #1E3A8A;
             border-radius: 8px;
             margin-bottom: 10px;
         }
@@ -138,7 +139,7 @@
         .section {
             padding: 25px;
             background: #FFFFFF;
-            border: 2px solid #4682B4;
+            border: 2px solid #1E3A8A;
             border-radius: 12px;
             transition: transform 0.2s, box-shadow 0.2s;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -149,7 +150,7 @@
             box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
         }
         h2 {
-            color: #4682B4;
+            color: #1E3A8A; /* Dark blue to match DeepSeek theme */
             margin: 0 0 12px;
             font-size: 1.4em;
             font-weight: 500;
@@ -165,7 +166,7 @@
             bottom: 0;
             width: 50px;
             height: 2px;
-            background-color: #4682B4;
+            background-color: #1E3A8A;
         }
         ul {
             list-style-type: none;
@@ -181,7 +182,7 @@
         }
         li:before {
             content: "•";
-            color: #4682B4;
+            color: #1E3A8A;
             position: absolute;
             left: 0;
         }
@@ -199,7 +200,7 @@
             width: 120px;
             padding: 8px;
             background: #FFFFFF;
-            border: 1px solid #4682B4;
+            border: 1px solid #1E3A8A;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
             font-size: 0.75em;
@@ -207,7 +208,7 @@
             z-index: 1001;
         }
         .pollen-widget h2 {
-            color: #4682B4;
+            color: #1E3A8A;
             font-size: 0.9em;
             margin-bottom: 3px;
         }
@@ -230,7 +231,7 @@
             stroke-width: 5;
         }
         .pollen-gauge .gauge-fill {
-            stroke: #FFD700;
+            stroke: #5DADE2; /* Adjusted to fit the theme */
             stroke-dasharray: 113;
             stroke-dashoffset: 113;
             transition: stroke-dashoffset 1s ease-in-out;
@@ -241,7 +242,7 @@
             width: 100%;
             padding: 8px;
             background: #FFFFFF;
-            border: 1px solid #4682B4;
+            border: 1px solid #1E3A8A;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
             font-size: 0.85em;
@@ -254,7 +255,7 @@
             transition: opacity 0.8s ease-in-out;
         }
         .insights-section h2 {
-            color: #4682B4;
+            color: #1E3A8A;
             font-size: 1em;
             margin-bottom: 3px;
         }
@@ -277,7 +278,7 @@
         .flower {
             width: 40px;
             height: 40px;
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4" fill="#FF69B4" stroke="#C71585"/><path d="M12 8c2-2 5-2 7 0s2 5 0 7-5 2-7 0-2-5 0-7z" fill="#FF69B4" stroke="#C71585" transform="rotate(45 12 12)"/><path d="M12 8c2-2 5-2 7 0s2 5 0 7-5 2-7 0-2-5 0-7z" fill="#FF69B4" stroke="#C71585" transform="rotate(-45 12 12)"/><path d="M12 16v6" stroke="#008000"/></svg>') no-repeat center;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4" fill="#FF69B4" stroke="#1E3A8A"/><path d="M12 8c2-2 5-2 7 0s2 5 0 7-5 2-7 0-2-5 0-7z" fill="#FF69B4" stroke="#1E3A8A" transform="rotate(45 12 12)"/><path d="M12 8c2-2 5-2 7 0s2 5 0 7-5 2-7 0-2-5 0-7z" fill="#FF69B4" stroke="#1E3A8A" transform="rotate(-45 12 12)"/><path d="M12 16v6" stroke="#008000"/></svg>') no-repeat center;
             background-size: contain;
             position: absolute;
             animation: bloom 5s infinite ease-in-out;
