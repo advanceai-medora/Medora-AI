@@ -2,18 +2,24 @@ from flask import Flask, request, jsonify, make_response
 from flask_cors import CORS
 import requests
 import json
+import os
+from dotenv import load_dotenv
+
+load_dotenv()  # Keep this for potential future environment variable use
 
 app = Flask(__name__)
-CORS(app, resources={r"/analyze": {"origins": "http://127.0.0.1:8080", "methods": ["POST", "OPTIONS"]}})
+CORS(app, resources={
+    r"/analyze": {"origins": ["http://127.0.0.1:8080", "http://localhost:8080"], "methods": ["POST", "OPTIONS"]},
+    r"/login": {"origins": ["http://127.0.0.1:8080", "http://localhost:8080"], "methods": ["POST", "OPTIONS"]}
+})
 
-# API configurations
-GROK_API_KEY = "xai-********************************************************************************"  # Your Grok API key
+# API configurations (using the provided key for testing)
+GROK_API_KEY = "xai-JsuTwtlWoA40i9QsLoHlVuA8qRLd2gAo1qJmckB7a1CURT5iPmO6G5kHDRec6V1uJy637pg5icPKN7IR"
 GROK_API_URL = "https://api.x.ai/v1/chat/completions"
-DEEPL_API_KEY = "your-deepl-api-key-here"  # Replace with your DeepL API key
+DEEPL_API_KEY = ""  # Empty for now; replace with your DeepL key if needed
 DEEPL_API_URL = "https://api-free.deepl.com/v2/translate"
 
 def analyze_transcript(text, target_language="EN"):
-    # Enhanced prompt for professional-grade medical summary with updated structure
     prompt = f"""
     You are an expert medical scribe AI assisting healthcare professionals. Analyze the following patient transcript and provide a detailed, professional-grade medical summary in JSON format with the following sections:
 
@@ -191,6 +197,26 @@ def analyze_endpoint():
         response = {'error': str(e)}
         print('Error response:', response)
         return jsonify(response), 500
+
+@app.route('/login', methods=['POST', 'OPTIONS'])
+def login():
+    if request.method == 'OPTIONS':
+        # Handle CORS preflight request
+        response = make_response()
+        response.headers.add("Access-Control-Allow-Origin", "http://127.0.0.1:8080")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+        response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
+        return response
+    try:
+        data = request.get_json()
+        email = data.get('email')
+        password = data.get('password')
+        if email == "doctor@allergyaffiliates" and password == "18June2011!":
+            return jsonify({"success": True}), 200
+        else:
+            return jsonify({"success": False, "message": "Invalid email or password"}), 401
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
