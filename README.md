@@ -23,6 +23,54 @@ Medora is an AI-powered scribe application developed by **AdvanceAI.AI**, based 
 - **Review Insights:** Utilize the "Allergy & Asthma Insights" sidebar to quickly assess allergen exposure, asthma status, immunology data, and tailored recommendations during or after consultations.
 - **Additional Tools:** Monitor pollen levels and review allergy tips to enhance patient education and treatment planning.
 
+## Local Development Setup
+
+Follow these steps to set up and run the Medora project locally on your system for development purposes, based on the initial setup done on a Mac. This setup is pre-AWS and focuses on running the Flask backend and HTML frontend locally.
+
+### Prerequisites
+
+Before setting up the project, ensure you have the following installed on your local machine (tested on macOS, adaptable for Linux/Windows with adjustments):
+
+- **Python 3.9+**: [Download and install Python](https://www.python.org/downloads/) if not already installed.
+- **pip**: Python package manager (usually comes with Python).
+- **Git**: For cloning the repository. [Install Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git).
+- **Text Editor/IDE**: Recommended: VS Code, PyCharm, or any editor of your choice.
+- **Web Browser**: For testing the frontend (e.g., Chrome, Firefox).
+
+### Project Structure
+Medora-AI/
+├── grok_server.py         # Flask backend API
+├── requirements.txt       # Python dependencies
+├── Procfile              # Local development run configuration
+├── index.html            # Dashboard frontend page
+├── login.html            # Login frontend page
+├── .ebextensions/        # Elastic Beanstalk configuration (optional for local setup)
+│   ├── https.config
+│   ├── options.config
+│   ├── stop_nginx.config
+│   └── 02_pip_install.config
+└── README.md             # This file
+
+
+### Setup Instructions
+
+1. **Clone the Repository**
+   Clone the repository to your local machine:
+   ```bash
+   git clone https://github.com/advanceai-medora/Medora-AI.git
+   cd Medora-AI
+2. pip install -r requirements.txt
+3. python3 grok_server.py
+   The server will run on http://0.0.0.0:5000 by default (note: port 80 is used for Elastic Beanstalk, but 5000 is suitable for local development).
+   Test the health endpoint by running "curl http://localhost:5000/"
+   Expected output: {"status": "healthy"}
+5. Serve the Frontend Locally The frontend consists of index.html (dashboard) and login.html. Serve these files locally using a simple Python HTTP server
+   _python3 -m http.server 8000__
+6. Open a browser and navigate to:
+http://localhost:8000/login.html to access the login page.
+After logging in, it should redirect to http://localhost:8000/index.html (ensure the form action in login.html points to http://localhost:5000/login).
+   
+
 ### Issues and Bugs
 - Report issues via the repository’s issue tracker with details like error messages and steps to reproduce.
 
