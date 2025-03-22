@@ -195,7 +195,7 @@
         /* Sections Grid */
         .sections-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: 1fr; /* Single column for vertical stacking */
             gap: 1.5rem;
             width: 100%;
             margin-top: 2rem;
@@ -208,6 +208,7 @@
             border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
             transition: transform 0.2s, box-shadow 0.3s;
+            width: 100%; /* Ensure each section takes full width */
         }
 
         .section:hover {
@@ -702,85 +703,45 @@
                     </div>
                     <div id="transcriptContent" class="content"></div>
                 </div>
-                <div class="section" id="summary">
+                <div class="section" id="subjective">
                     <div class="section-header">
-                        <h2>Summary</h2>
+                        <h2>Subjective</h2>
                         <div class="section-actions">
-                            <button class="edit-button" data-section="summary"><i class="fas fa-pen"></i><span class="tooltip">Edit</span></button>
-                            <button class="copy-button" data-section="summary"><i class="fas fa-copy"></i><span class="tooltip">Copy</span></button>
+                            <button class="edit-button" data-section="subjective"><i class="fas fa-pen"></i><span class="tooltip">Edit</span></button>
+                            <button class="copy-button" data-section="subjective"><i class="fas fa-copy"></i><span class="tooltip">Copy</span></button>
                         </div>
                     </div>
-                    <div id="summaryContent" class="content"></div>
+                    <div id="subjectiveContent" class="content"></div>
                 </div>
-                <div class="section" id="diagnosis">
+                <div class="section" id="objective">
                     <div class="section-header">
-                        <h2>Differential Diagnosis</h2>
+                        <h2>Objective</h2>
                         <div class="section-actions">
-                            <button class="edit-button" data-section="diagnosis"><i class="fas fa-pen"></i><span class="tooltip">Edit</span></button>
-                            <button class="copy-button" data-section="diagnosis"><i class="fas fa-copy"></i><span class="tooltip">Copy</span></button>
+                            <button class="edit-button" data-section="objective"><i class="fas fa-pen"></i><span class="tooltip">Edit</span></button>
+                            <button class="copy-button" data-section="objective"><i class="fas fa-copy"></i><span class="tooltip">Copy</span></button>
                         </div>
                     </div>
-                    <div id="diagnosisContent" class="content"></div>
+                    <div id="objectiveContent" class="content"></div>
                 </div>
-                <div class="section" id="history">
+                <div class="section" id="assessment">
                     <div class="section-header">
-                        <h2>Patient History</h2>
+                        <h2>Assessment</h2>
                         <div class="section-actions">
-                            <button class="edit-button" data-section="history"><i class="fas fa-pen"></i><span class="tooltip">Edit</span></button>
-                            <button class="copy-button" data-section="history"><i class="fas fa-copy"></i><span class="tooltip">Copy</span></button>
+                            <button class="edit-button" data-section="assessment"><i class="fas fa-pen"></i><span class="tooltip">Edit</span></button>
+                            <button class="copy-button" data-section="assessment"><i class="fas fa-copy"></i><span class="tooltip">Copy</span></button>
                         </div>
                     </div>
-                    <div id="historyContent" class="content"></div>
-                </div>
-                <div class="section" id="physical-examination">
-                    <div class="section-header">
-                        <h2>Physical Examination</h2>
-                        <div class="section-actions">
-                            <button class="edit-button" data-section="physical-examination"><i class="fas fa-pen"></i><span class="tooltip">Edit</span></button>
-                            <button class="copy-button" data-section="physical-examination"><i class="fas fa-copy"></i><span class="tooltip">Copy</span></button>
-                        </div>
-                    </div>
-                    <div id="physicalExaminationContent" class="content"></div>
-                </div>
-                <div class="section" id="diagnostic-workup">
-                    <div class="section-header">
-                        <h2>Diagnostic Workup</h2>
-                        <div class="section-actions">
-                            <button class="edit-button" data-section="diagnostic-workup"><i class="fas fa-pen"></i><span class="tooltip">Edit</span></button>
-                            <button class="copy-button" data-section="diagnostic-workup"><i class="fas fa-copy"></i><span class="tooltip">Copy</span></button>
-                        </div>
-                    </div>
-                    <div id="diagnosticWorkupContent" class="content"></div>
+                    <div id="assessmentContent" class="content"></div>
                 </div>
                 <div class="section" id="plan">
                     <div class="section-header">
-                        <h2>Plan of Care</h2>
+                        <h2>Plan</h2>
                         <div class="section-actions">
                             <button class="edit-button" data-section="plan"><i class="fas fa-pen"></i><span class="tooltip">Edit</span></button>
                             <button class="copy-button" data-section="plan"><i class="fas fa-copy"></i><span class="tooltip">Copy</span></button>
                         </div>
                     </div>
                     <div id="planContent" class="content"></div>
-                </div>
-                <div class="section" id="patient-education">
-                    <div class="section-header">
-                        <h2>Patient Education</h2>
-                        <div class="section-actions">
-                            <button class="edit-button" data-section="patient-education"><i class="fas fa-pen"></i><span class="tooltip">Edit</span></button>
-                            <button class="copy-button" data-section="patient-education"><i class="fas fa-copy"></i><span class="tooltip">Copy</span></button>
-                        </div>
-                    </div>
-                    <div id="patientEducationContent" class="content"></div>
-                </div>
-                <div class="section" id="follow-up-instructions">
-                    <div class="section-header">
-                        <h2>Follow-up Instructions</h2>
-                        <div class="section-actions">
-                            <button class="edit-button" data-section="follow-up-instructions"><i class="fas fa-pen"></i><span class="tooltip">Edit</span></button>
-                            <button class="copy-button" data-section="follow-up-instructions"><i class="fas fa-copy"></i><span class="tooltip">Copy</span></button>
-                        </div>
-                    </div>
-                    <div id="followUpInstructionsContent" class="content"></div>
                 </div>
             </div>
         </div>
@@ -805,14 +766,10 @@
             const startButton = document.getElementById('startButton');
             const stopButton = document.getElementById('stopButton');
             const transcriptContent = document.getElementById('transcriptContent');
-            const summaryContent = document.getElementById('summaryContent');
-            const diagnosisContent = document.getElementById('diagnosisContent');
-            const historyContent = document.getElementById('historyContent');
-            const physicalExaminationContent = document.getElementById('physicalExaminationContent');
-            const diagnosticWorkupContent = document.getElementById('diagnosticWorkupContent');
+            const subjectiveContent = document.getElementById('subjectiveContent');
+            const objectiveContent = document.getElementById('objectiveContent');
+            const assessmentContent = document.getElementById('assessmentContent');
             const planContent = document.getElementById('planContent');
-            const patientEducationContent = document.getElementById('patientEducationContent');
-            const followUpInstructionsContent = document.getElementById('followUpInstructionsContent');
             const transcriptInput = document.getElementById('transcriptInput');
             const submitTranscriptButton = document.getElementById('submitTranscriptButton');
             const languageSelect = document.getElementById('language');
@@ -836,14 +793,13 @@
 
             // Check for required elements
             const requiredElements = {
-                startButton, stopButton, transcriptContent, summaryContent, diagnosisContent,
-                historyContent, physicalExaminationContent, diagnosticWorkupContent, planContent,
-                patientEducationContent, followUpInstructionsContent, clock,
-                transcriptInput, submitTranscriptButton, languageSelect, allergensDetected,
-                asthmaFrequency, asthmaSeverity, asthmaTriggers, infectionFrequency, inflammationLevel,
-                recommendationsList, logoutButton, signInterpreterButton, signInterpreterSection,
-                signInterpreterOutput, signInterpreterAvatar, patientVideo, signInterpreterText,
-                signInterpreterInstructions, handOverlay
+                startButton, stopButton, transcriptContent, subjectiveContent, objectiveContent,
+                assessmentContent, planContent, clock, transcriptInput, submitTranscriptButton,
+                languageSelect, allergensDetected, asthmaFrequency, asthmaSeverity, asthmaTriggers,
+                infectionFrequency, inflammationLevel, recommendationsList, logoutButton,
+                signInterpreterButton, signInterpreterSection, signInterpreterOutput,
+                signInterpreterAvatar, patientVideo, signInterpreterText, signInterpreterInstructions,
+                handOverlay
             };
             const missingElements = Object.entries(requiredElements).filter(([key, value]) => value === null).map(([key]) => key);
             if (missingElements.length > 0) {
@@ -855,14 +811,10 @@
             // Object to store the original content of each section
             const sectionContents = {
                 transcript: '',
-                summary: '',
-                diagnosis: '',
-                history: '',
-                'physical-examination': '',
-                'diagnostic-workup': '',
-                plan: '',
-                'patient-education': '',
-                'follow-up-instructions': ''
+                subjective: '',
+                objective: '',
+                assessment: '',
+                plan: ''
             };
 
             // Sign Language Interpreter State
@@ -964,7 +916,11 @@
             // Handle Edit button clicks
             document.querySelectorAll('.edit-button').forEach(button => {
                 button.addEventListener('click', (e) => {
-                    const section = e.target.dataset.section || e.target.parentElement.dataset.section;
+                    // Ensure we get the button element, even if the click is on the <i> icon
+                    const targetButton = e.target.closest('.edit-button');
+                    if (!targetButton) return;
+
+                    const section = targetButton.dataset.section;
                     const contentDiv = document.getElementById(`${section}Content`);
                     const currentContent = sectionContents[section] || contentDiv.innerHTML;
 
@@ -999,7 +955,11 @@
             // Handle Copy button clicks
             document.querySelectorAll('.copy-button').forEach(button => {
                 button.addEventListener('click', (e) => {
-                    const section = e.target.dataset.section || e.target.parentElement.dataset.section;
+                    // Ensure we get the button element, even if the click is on the <i> icon
+                    const targetButton = e.target.closest('.copy-button');
+                    if (!targetButton) return;
+
+                    const section = targetButton.dataset.section;
                     const contentDiv = document.getElementById(`${section}Content`);
                     const textToCopy = contentDiv.textContent || contentDiv.innerText;
 
@@ -1442,31 +1402,13 @@
                         throw new Error(data.error);
                     }
 
-                    // Render structured output with professional formatting
+                    // Render the raw transcript
                     sectionContents.transcript = `<div class="content"><ul><li><strong>Transcript:</strong> ${transcript}</li></ul></div>`;
                     transcriptContent.innerHTML = sectionContents.transcript;
 
-                    sectionContents.summary = `
+                    // Render the Subjective Section
+                    sectionContents.subjective = `
                         <div class="content">
-                            <p><strong>Clinical Summary:</strong> ${data.summary || 'No summary available.'}</p>
-                            <p class="note">${data.summary ? 'Further evaluation recommended based on test outcomes.' : 'No data processed.'}</p>
-                        </div>
-                    `;
-                    summaryContent.innerHTML = sectionContents.summary;
-
-                    sectionContents.diagnosis = `
-                        <div class="content">
-                            <h3>Differential Diagnoses:</h3>
-                            <ol>
-                                ${data.differential_diagnosis ? data.differential_diagnosis.split('\n').map(item => `<li>${item.trim()}</li>`).join('') : '<li>No diagnosis available.</li>'}
-                            </ol>
-                        </div>
-                    `;
-                    diagnosisContent.innerHTML = sectionContents.diagnosis;
-
-                    sectionContents.history = `
-                        <div class="content">
-                            <h3>Patient History:</h3>
                             <ul>
                                 <li><strong>Chief Complaint:</strong> ${data.patient_history?.chief_complaint || 'N/A'}</li>
                                 <li><strong>History of Present Illness:</strong> ${data.patient_history?.history_of_present_illness || 'N/A'}</li>
@@ -1475,59 +1417,86 @@
                             </ul>
                         </div>
                     `;
-                    historyContent.innerHTML = sectionContents.history;
+                    subjectiveContent.innerHTML = sectionContents.subjective;
 
-                    sectionContents['physical-examination'] = `
+                    // Render the Objective Section
+                    sectionContents.objective = `
                         <div class="content">
-                            <h3>Physical Examination Findings:</h3>
                             <ul>
-                                <li>${data.physical_examination || 'N/A'}</li>
+                                <li><strong>Physical Examination Findings:</strong> ${data.physical_examination || 'N/A'}</li>
+                                <li><strong>Allergy & Asthma Insights:</strong>
+                                    <ul>
+                                        <li><strong>Allergen Exposure:</strong> <span id="allergensDetectedOutput">${allergensDetected.textContent || 'N/A'}</span></li>
+                                        <li><strong>Asthma Status:</strong>
+                                            <ul>
+                                                <li>Frequency: <span id="asthmaFrequencyOutput">${asthmaFrequency.textContent || 'N/A'}</span></li>
+                                                <li>Severity: <span id="asthmaSeverityOutput">${asthmaSeverity.textContent || 'N/A'}</span></li>
+                                                <li>Triggers: <span id="asthmaTriggersOutput">${asthmaTriggers.textContent || 'N/A'}</span></li>
+                                            </ul>
+                                        </li>
+                                        <li><strong>Immunology Profile:</strong>
+                                            <ul>
+                                                <li>Infections: <span id="infectionFrequencyOutput">${infectionFrequency.textContent || 'N/A'}</span></li>
+                                                <li>Inflammatory Response: <span id="inflammationLevelOutput">${inflammationLevel.textContent || 'N/A'}</span></li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </li>
                             </ul>
                         </div>
                     `;
-                    physicalExaminationContent.innerHTML = sectionContents['physical-examination'];
+                    objectiveContent.innerHTML = sectionContents.objective;
 
-                    sectionContents['diagnostic-workup'] = `
+                    // Render the Assessment Section
+                    sectionContents.assessment = `
                         <div class="content">
-                            <h3>Diagnostic Workup:</h3>
                             <ul>
-                                ${data.diagnostic_workup ? data.diagnostic_workup.split('\n').map(item => `<li>${item.trim()}</li>`).join('') : '<li>No workup recommended.</li>'}
+                                <li><strong>Clinical Summary:</strong> ${data.summary || 'No summary available.'}</li>
+                                <li><strong>Differential Diagnosis:</strong>
+                                    <ol>
+                                        ${data.differential_diagnosis ? data.differential_diagnosis.split('\n').map(item => `<li>${item.trim()}</li>`).join('') : '<li>No diagnosis available.</li>'}
+                                    </ol>
+                                </li>
                             </ul>
                         </div>
                     `;
-                    diagnosticWorkupContent.innerHTML = sectionContents['diagnostic-workup'];
+                    assessmentContent.innerHTML = sectionContents.assessment;
 
+                    // Render the Plan Section
                     sectionContents.plan = `
                         <div class="content">
-                            <h3>Plan of Care:</h3>
-                            <ol>
-                                ${data.plan_of_care ? data.plan_of_care.split('\n').map(item => `<li>${item.trim()}</li>`).join('') : '<li>No plan generated.</li>'}
-                            </ol>
+                            <ul>
+                                <li><strong>Plan of Care:</strong>
+                                    <ol>
+                                        ${data.plan_of_care ? data.plan_of_care.split('\n').map(item => `<li>${item.trim()}</li>`).join('') : '<li>No plan generated.</li>'}
+                                    </ol>
+                                </li>
+                                <li><strong>Diagnostic Workup:</strong>
+                                    <ul>
+                                        ${data.diagnostic_workup ? data.diagnostic_workup.split('\n').map(item => `<li>${item.trim()}</li>`).join('') : '<li>No workup recommended.</li>'}
+                                    </ul>
+                                </li>
+                                <li><strong>Patient Education:</strong>
+                                    <ul>
+                                        ${data.patient_education ? data.patient_education.split('\n').map(item => `<li>${item.trim()}</li>`).join('') : '<li>N/A</li>'}
+                                    </ul>
+                                </li>
+                                <li><strong>Follow-up Instructions:</strong>
+                                    <ul>
+                                        ${data.follow_up_instructions ? data.follow_up_instructions.split('\n').map(item => `<li>${item.trim()}</li>`).join('') : '<li>N/A</li>'}
+                                    </ul>
+                                </li>
+                                <li><strong>Recommendations:</strong>
+                                    <ul id="recommendationsListOutput">
+                                        ${recommendationsList.innerHTML || '<li>N/A</li>'}
+                                    </ul>
+                                </li>
+                            </ul>
                         </div>
                     `;
                     planContent.innerHTML = sectionContents.plan;
 
-                    sectionContents['patient-education'] = `
-                        <div class="content">
-                            <h3>Patient Education:</h3>
-                            <ul>
-                                ${data.patient_education ? data.patient_education.split('\n').map(item => `<li>${item.trim()}</li>`).join('') : '<li>N/A</li>'}
-                            </ul>
-                        </div>
-                    `;
-                    patientEducationContent.innerHTML = sectionContents['patient-education'];
-
-                    sectionContents['follow-up-instructions'] = `
-                        <div class="content">
-                            <h3>Follow-up Instructions:</h3>
-                            <ul>
-                                ${data.follow_up_instructions ? data.follow_up_instructions.split('\n').map(item => `<li>${item.trim()}</li>`).join('') : '<li>N/A</li>'}
-                            </ul>
-                        </div>
-                    `;
-                    followUpInstructionsContent.innerHTML = sectionContents['follow-up-instructions'];
-
-                    // Analyze transcript for specific insights
+                    // Analyze transcript for specific insights (for KPI Dashboard)
                     const transcriptLower = transcript.toLowerCase();
 
                     // Allergen Exposure (Combine all detected allergens into one line)
@@ -1720,29 +1689,17 @@
                     sectionContents.transcript = `<div class="content"><ul><li>Error processing transcript: ${error.message}</li></ul></div>`;
                     transcriptContent.innerHTML = sectionContents.transcript;
 
-                    sectionContents.summary = `<div class="content"><ul><li>Error summarizing transcript: ${error.message}</li></ul></div>`;
-                    summaryContent.innerHTML = sectionContents.summary;
+                    sectionContents.subjective = `<div class="content"><ul><li>Error generating Subjective: ${error.message}</li></ul></div>`;
+                    subjectiveContent.innerHTML = sectionContents.subjective;
 
-                    sectionContents.diagnosis = `<div class="content"><ul><li>Error analyzing transcript: ${error.message}</li></ul></div>`;
-                    diagnosisContent.innerHTML = sectionContents.diagnosis;
+                    sectionContents.objective = `<div class="content"><ul><li>Error generating Objective: ${error.message}</li></ul></div>`;
+                    objectiveContent.innerHTML = sectionContents.objective;
 
-                    sectionContents.history = `<div class="content"><ul><li>Error analyzing transcript: ${error.message}</li></ul></div>`;
-                    historyContent.innerHTML = sectionContents.history;
+                    sectionContents.assessment = `<div class="content"><ul><li>Error generating Assessment: ${error.message}</li></ul></div>`;
+                    assessmentContent.innerHTML = sectionContents.assessment;
 
-                    sectionContents['physical-examination'] = `<div class="content"><ul><li>Error analyzing transcript: ${error.message}</li></ul></div>`;
-                    physicalExaminationContent.innerHTML = sectionContents['physical-examination'];
-
-                    sectionContents['diagnostic-workup'] = `<div class="content"><ul><li>Error analyzing transcript: ${error.message}</li></ul></div>`;
-                    diagnosticWorkupContent.innerHTML = sectionContents['diagnostic-workup'];
-
-                    sectionContents.plan = `<div class="content"><ul><li>Error analyzing transcript: ${error.message}</li></ul></div>`;
+                    sectionContents.plan = `<div class="content"><ul><li>Error generating Plan: ${error.message}</li></ul></div>`;
                     planContent.innerHTML = sectionContents.plan;
-
-                    sectionContents['patient-education'] = `<div class="content"><ul><li>Error analyzing transcript: ${error.message}</li></ul></div>`;
-                    patientEducationContent.innerHTML = sectionContents['patient-education'];
-
-                    sectionContents['follow-up-instructions'] = `<div class="content"><ul><li>Error analyzing transcript: ${error.message}</li></ul></div>`;
-                    followUpInstructionsContent.innerHTML = sectionContents['follow-up-instructions'];
                 } finally {
                     isProcessing = false;
                     startButton.disabled = false;
