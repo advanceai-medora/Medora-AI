@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Medora - Login</title>
+    <title>Medora - Login/Register</title>
     <style>
         body {
             font-family: 'Montserrat', sans-serif;
@@ -62,23 +62,62 @@
             font-size: 0.9em;
             margin-top: 10px;
         }
+        .tab-switch {
+            margin-bottom: 10px;
+        }
+        .tab-switch a {
+            margin: 0 10px;
+        }
+        .register-form, .login-form {
+            display: none;
+        }
+        .register-form.active, .login-form.active {
+            display: block;
+        }
     </style>
 </head>
 <body>
     <div class="login-container">
         <h2>MEDORA</h2>
-        <p>Only login via email is supported in your region.</p>
-        <input type="email" id="email" placeholder="Email" value="doctor@allergyaffiliates">
-        <input type="password" id="password" placeholder="Password" value="18June2011!">
-        <button onclick="login()">LOG IN</button>
-        <p><a href="#">Forgot password?</a> OR <a href="#">SIGN UP</a></p>
-        <div id="error-message" class="error-message"></div>
+        <div class="tab-switch">
+            <a href="#" onclick="showLogin()">Login</a> | <a href="#" onclick="showRegister()">Register</a>
+        </div>
+        <div class="login-form active" id="login-form">
+            <p>Login to your account</p>
+            <input type="email" id="login-email" placeholder="Email" value="doctor@allergyaffiliates">
+            <input type="password" id="login-password" placeholder="Password" value="18June2011!">
+            <button onclick="login()">LOG IN</button>
+            <p><a href="#">Forgot password?</a></p>
+            <div id="error-message" class="error-message"></div>
+        </div>
+        <div class="register-form" id="register-form">
+            <p>Register for a 7-day free trial</p>
+            <input type="email" id="register-email" placeholder="Email">
+            <input type="password" id="register-password" placeholder="Password">
+            <input type="text" id="card-number" placeholder="Credit Card Number (mock)" value="1234567890123456">
+            <button onclick="register()">REGISTER</button>
+            <div id="register-error-message" class="error-message"></div>
+        </div>
     </div>
 
     <script>
+        function showLogin() {
+            document.getElementById('login-form').classList.add('active');
+            document.getElementById('register-form').classList.remove('active');
+            document.getElementById('error-message').textContent = '';
+            document.getElementById('register-error-message').textContent = '';
+        }
+
+        function showRegister() {
+            document.getElementById('register-form').classList.add('active');
+            document.getElementById('login-form').classList.remove('active');
+            document.getElementById('error-message').textContent = '';
+            document.getElementById('register-error-message').textContent = '';
+        }
+
         async function login() {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
             const errorMessage = document.getElementById('error-message');
 
             try {
@@ -97,9 +136,49 @@
                 const data = await response.json();
                 if (data.success) {
                     sessionStorage.setItem('isAuthenticated', 'true');
+                    sessionStorage.setItem('email', email);
+                    sessionStorage.setItem('subscription', data.subscription);
+                    sessionStorage.setItem('trial_end', data.trial_end || '');
+                    sessionStorage.setItem('card_last4', data.card_last4 || '');
                     window.location.href = '/index.html';
                 } else {
                     errorMessage.textContent = data.message || 'Invalid email or password';
+                }
+            } catch (error) {
+                errorMessage.textContent = 'Error: ' + error.message;
+            }
+        }
+
+        async function register() {
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+            const cardNumber = document.getElementById('card-number').value;
+            const errorMessage = document.getElementById('register-error-message');
+
+            try {
+                const response = await fetch('http://localhost:5000/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password, card_number: cardNumber }),
+                });
+
+                if (!response.ok) {
+                    throw new Error('Registration failed');
+                }
+
+                const data = await response.json();
+                if (data.success) {
+                    sessionStorage.setItem('isAuthenticated', 'true');
+                    sessionStorage.setItem('email', email);
+                    sessionStorage.setItem('subscription', data.subscription);
+                    sessionStorage.setItem('trial_end', data.trial_end || '');
+                    sessionStorage.setItem('card_last4', data.card_last4 || '');
+                    alert('Registration successful! Starting your 7-day free trial.');
+                    window.location.href = '/index.html';
+                } else {
+                    errorMessage.textContent = data.message || 'Registration failed';
                 }
             } catch (error) {
                 errorMessage.textContent = 'Error: ' + error.message;

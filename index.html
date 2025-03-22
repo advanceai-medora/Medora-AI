@@ -4,32 +4,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Medora - AI-Powered Scribe</title>
+    <!-- Add Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Add Three.js for Avatar Animation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <!-- Add MediaPipe for Hand Tracking -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4/hands.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils@0.3/camera_utils.js"></script>
     <style>
-        body {
-            font-family: 'Montserrat', sans-serif;
+        /* Reset and Base Styles */
+        * {
             margin: 0;
-            background: linear-gradient(135deg, #E6F0FA 0%, #FFFFFF 100%);
-            color: #333333;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f7fa;
+            color: #2d3748;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            overflow-y: auto;
-            position: relative;
+            line-height: 1.6;
         }
+
+        /* Container */
         .container {
             max-width: 1400px;
-            width: 95%;
-            display: flex;
-            flex-direction: row;
-            padding: 20px 0;
-            position: relative;
+            width: 90%;
+            margin: 0 auto;
+            padding: 2rem 0;
+            flex: 1;
         }
+
+        /* Header */
         .header {
             width: 100%;
-            padding: 15px 20px;
-            background: #1E3A8A;
-            color: #FFFFFF;
+            padding: 1.25rem 2rem;
+            background: linear-gradient(90deg, #1a3c87 0%, #2b5cb3 100%);
+            color: #ffffff;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -37,446 +51,526 @@
             position: sticky;
             top: 0;
             z-index: 1000;
-            border-radius: 0 0 12px 12px;
         }
+
         .header-left {
             display: flex;
             align-items: center;
+            gap: 1rem;
         }
+
         .logo {
-            width: 40px;
-            height: 40px;
-            margin-right: 15px;
+            width: 48px;
+            height: 48px;
         }
-        .header-text {
-            text-align: left;
-        }
-        .header h1 {
-            margin: 0;
-            font-size: 1.8em;
+
+        .header-text h1 {
+            font-size: 1.75rem;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            color: #FFFFFF;
+            letter-spacing: 1.5px;
         }
-        .header p.tagline {
-            margin: 2px 0 0;
-            font-size: 0.9em;
+
+        .header-text p.tagline {
+            font-size: 0.875rem;
             font-weight: 400;
-            color: #FFFFFF;
-            letter-spacing: 1px;
+            opacity: 0.9;
         }
+
         .header-right {
             display: flex;
             align-items: center;
-            position: absolute;
-            right: 20px;
-            top: 15px;
+            gap: 1.5rem;
         }
+
         .clock-container {
-            position: static;
-            width: auto;
-            background: none;
-            border: none;
-            padding: 0;
-            margin-right: 15px;
-            font-size: 1.2em;
-            color: #FFFFFF;
+            font-size: 1.125rem;
             font-family: 'Orbitron', sans-serif;
+            color: #e6f0fa;
             text-shadow: 0 0 5px rgba(93, 173, 226, 0.5);
             animation: glow 2s infinite alternate;
         }
+
         @keyframes glow {
             from { text-shadow: 0 0 5px rgba(93, 173, 226, 0.5); }
             to { text-shadow: 0 0 10px rgba(93, 173, 226, 1); }
         }
+
         .logout-button {
-            padding: 8px 16px;
-            font-size: 0.9em;
+            padding: 0.5rem 1.25rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            background: #5dade2;
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
             cursor: pointer;
-            background: #5DADE2;
-            color: #FFFFFF;
+            transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
+        }
+
+        .logout-button:hover {
+            background: #4a9cd6;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Buttons */
+        button {
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            background: #4a90e2;
+            color: #ffffff;
             border: none;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .logout-button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15), 0 0 10px rgba(93, 173, 226, 0.3);
-        }
-        button {
-            padding: 12px 24px;
-            font-size: 1.1em;
             cursor: pointer;
-            background: #5DADE2;
-            color: #FFFFFF;
-            border: none;
-            border-radius: 12px;
-            margin: 10px 5px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
         }
+
         button:disabled {
-            background: #A9CCE3;
+            background: #b0c4de;
             cursor: not-allowed;
         }
+
         button:hover:not(:disabled) {
-            transform: scale(1.05);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15), 0 0 10px rgba(93, 173, 226, 0.3);
+            background: #3a7bd5;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
+
+        /* Input Section */
         .input-section {
             width: 100%;
-            margin: 10px 0;
+            margin: 1.5rem 0;
             display: flex;
             flex-direction: column;
             align-items: center;
+            gap: 1rem;
         }
+
         .input-section textarea {
-            width: 90%;
-            max-width: 1000px;
-            height: 100px;
-            padding: 10px;
-            font-size: 1em;
-            font-family: 'Montserrat', sans-serif;
-            border: 2px solid #1E3A8A;
+            width: 100%;
+            max-width: 800px;
+            height: 120px;
+            padding: 1rem;
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            border: 1px solid #e2e8f0;
             border-radius: 8px;
             resize: none;
-            margin-bottom: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: border-color 0.3s, box-shadow 0.3s;
         }
+
+        .input-section textarea:focus {
+            border-color: #4a90e2;
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+            outline: none;
+        }
+
         .input-section select {
-            width: 90%;
-            max-width: 1000px;
-            padding: 10px;
-            font-size: 1em;
-            font-family: 'Montserrat', sans-serif;
-            border: 2px solid #1E3A8A;
+            width: 100%;
+            max-width: 200px;
+            padding: 0.75rem;
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            border: 1px solid #e2e8f0;
             border-radius: 8px;
-            margin-bottom: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: border-color 0.3s, box-shadow 0.3s;
         }
+
+        .input-section select:focus {
+            border-color: #4a90e2;
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+            outline: none;
+        }
+
+        /* Main Content */
         .main-content {
             flex: 1;
-            width: 70%;
+            width: 100%;
         }
+
+        /* Sections Grid */
         .sections-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
             width: 100%;
-            margin-top: 20px;
+            margin-top: 2rem;
         }
+
         .section {
-            padding: 20px;
-            background: #F9FAFB;
-            border: 2px solid #1E3A8A;
+            padding: 1.5rem;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
             border-radius: 12px;
-            transition: transform 0.2s, box-shadow 0.2s;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            color: #333333;
+            transition: transform 0.2s, box-shadow 0.3s;
         }
+
         .section:hover {
-            transform: scale(1.02);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
         }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
         h2 {
-            color: #1E3A8A;
-            margin: 0 0 15px;
-            font-size: 1.4em;
+            color: #2b6cb0;
+            font-size: 1.25rem;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            position: relative;
-            padding-bottom: 5px;
-            border-bottom: 2px solid #1E3A8A;
+            letter-spacing: 0.5px;
         }
+
+        .section-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .edit-button, .copy-button, .save-button, .cancel-button {
+            width: 32px;
+            height: 32px;
+            font-size: 0.875rem;
+            background: #edf2f7;
+            color: #718096;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s, color 0.3s, transform 0.2s;
+        }
+
+        .edit-button:hover, .copy-button:hover, .save-button:hover, .cancel-button:hover {
+            background: #4a90e2;
+            color: #ffffff;
+            transform: scale(1.1);
+        }
+
+        .cancel-button {
+            background: #f7fafc;
+        }
+
+        .edit-button:hover .tooltip, .copy-button:hover .tooltip {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .tooltip {
+            visibility: hidden;
+            opacity: 0;
+            background: #2d3748;
+            color: #fff;
+            text-align: center;
+            border-radius: 4px;
+            padding: 0.25rem 0.5rem;
+            position: absolute;
+            z-index: 1;
+            top: -2rem;
+            font-size: 0.75rem;
+            transition: opacity 0.3s;
+        }
+
         .content {
-            padding: 10px 0;
+            padding: 0.5rem 0;
         }
+
         .content h3 {
-            font-size: 1.1em;
+            font-size: 1.125rem;
             font-weight: 500;
-            color: #2B4BA1;
-            margin: 10px 0 5px;
+            color: #2b6cb0;
+            margin: 0.5rem 0;
         }
+
         .content ul {
             list-style-type: none;
-            padding-left: 20px;
+            padding-left: 1rem;
         }
+
         .content ul li {
-            margin: 5px 0;
-            padding-left: 10px;
+            margin: 0.25rem 0;
+            padding-left: 1rem;
             position: relative;
+            line-height: 1.6;
         }
+
         .content ul li:before {
             content: "•";
-            color: #5DADE2;
+            color: #4a90e2;
             position: absolute;
             left: 0;
         }
+
         .content ol {
-            padding-left: 20px;
-            margin: 5px 0;
+            padding-left: 1.5rem;
+            margin: 0.25rem 0;
         }
+
         .content ol li {
-            margin: 5px 0;
+            margin: 0.25rem 0;
             font-weight: 400;
+            line-height: 1.6;
         }
+
         .content p {
-            margin: 5px 0;
+            margin: 0.25rem 0;
             line-height: 1.5;
-            font-size: 0.95em;
+            font-size: 0.95rem;
         }
+
         .content .note {
             font-style: italic;
-            color: #666666;
-            font-size: 0.9em;
+            color: #718096;
+            font-size: 0.875rem;
+            font-weight: 500;
+            line-height: 1.6;
+            padding-left: 1rem;
+            position: relative;
         }
-        /* KPI Dashboard (Right Sidebar) */
+
+        .content .note:before {
+            content: "•";
+            color: #4a90e2;
+            position: absolute;
+            left: 0;
+        }
+
+        .content textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 0.75rem;
+            font-size: 0.95rem;
+            font-family: 'Inter', sans-serif;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            resize: vertical;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .edit-actions {
+            margin-top: 1rem;
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        /* KPI Dashboard */
         .kpi-dashboard {
-            width: 350px;
-            padding: 20px;
-            background: #FFFFFF;
-            border: 1px solid #E0E7FF;
+            width: 100%;
+            padding: 1.5rem;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
             border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            text-align: left;
-            position: fixed;
-            right: 20px;
-            top: 100px;
-            z-index: 1000;
-            overflow-y: auto;
-            max-height: 80vh;
+            margin: 1.5rem 0;
         }
+
         .kpi-dashboard h2 {
-            color: #1E3A8A;
-            margin: 0 0 15px;
-            font-size: 1.3em;
-            font-weight: 700;
+            color: #2b6cb0;
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+            font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            padding-bottom: 8px;
-            border-bottom: 2px solid #E0E7FF;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 0.5rem;
         }
+
         .kpi-summary {
-            font-size: 0.95em;
-            color: #444444;
+            font-size: 0.95rem;
+            color: #4a5568;
         }
+
         .kpi-summary ul {
             padding-left: 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
         }
+
         .kpi-summary > ul > li {
-            margin: 15px 0;
-            padding: 10px;
-            background: #F9FAFB;
-            border-radius: 8px;
-            border-left: 4px solid #5DADE2;
+            padding: 1rem;
+            border-right: 1px solid #e2e8f0;
         }
+
+        .kpi-summary > ul > li:last-child {
+            border-right: none;
+        }
+
         .kpi-summary > ul > li strong {
-            color: #2B4BA1;
-            font-size: 1.1em;
+            color: #2b6cb0;
+            font-size: 1rem;
             font-weight: 600;
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 0.75rem;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 0.5rem;
         }
+
         .kpi-summary > ul > li ul {
-            padding-left: 10px;
+            padding-left: 0;
         }
+
         .kpi-summary > ul > li ul li {
-            margin: 5px 0;
-            padding-left: 20px;
+            margin: 0.25rem 0;
+            padding-left: 0;
             position: relative;
-            line-height: 1.4;
-            color: #666666;
+            line-height: 1.5;
+            color: #718096;
+            font-size: 0.875rem;
+            display: none;
         }
+
         .kpi-summary > ul > li ul li span {
-            color: #333333;
+            color: #4a5568;
             font-weight: 500;
         }
-        /* Add Symbols for Each Type */
-        .kpi-summary > ul > li ul li.env:before {
-            content: "🌳";
-            position: absolute;
-            left: 0;
-            font-size: 1em;
-            color: #5DADE2;
+
+        .kpi-summary > ul > li ul li.show {
+            display: block;
         }
-        .kpi-summary > ul > li ul li.food:before {
-            content: "🍽️";
-            position: absolute;
-            left: 0;
-            font-size: 1em;
-            color: #5DADE2;
+
+        /* Responsive Design for KPI Dashboard */
+        @media (max-width: 768px) {
+            .kpi-summary ul {
+                grid-template-columns: 1fr;
+            }
+            .kpi-summary > ul > li {
+                border-right: none;
+                border-bottom: 1px solid #e2e8f0;
+                padding-bottom: 1rem;
+            }
+            .kpi-summary > ul > li:last-child {
+                border-bottom: none;
+            }
         }
-        .kpi-summary > ul > li ul li.venom:before {
-            content: "🐝";
-            position: absolute;
-            left: 0;
-            font-size: 1em;
-            color: #5DADE2;
+
+        /* Sign Language Interpreter Section */
+        .sign-interpreter-section {
+            width: 100%;
+            max-width: 1000px;
+            padding: 1.5rem;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            margin: 1.5rem auto;
         }
-        .kpi-summary > ul > li ul li.drug:before {
-            content: "💊";
-            position: absolute;
-            left: 0;
-            font-size: 1em;
-            color: #5DADE2;
+
+        .sign-interpreter-section h2 {
+            color: #2b6cb0;
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 0.5rem;
         }
-        .kpi-summary > ul > li ul li.contact:before {
-            content: "🧴";
-            position: absolute;
-            left: 0;
-            font-size: 1em;
-            color: #5DADE2;
+
+        .sign-interpreter-section p {
+            color: #4a5568;
+            font-size: 0.95rem;
+            margin: 0.5rem 0;
         }
-        .kpi-summary > ul > li ul li.frequency:before {
-            content: "⏰";
-            position: absolute;
-            left: 0;
-            font-size: 1em;
-            color: #5DADE2;
+
+        .sign-interpreter-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 1.5rem;
         }
-        .kpi-summary > ul > li ul li.severity:before {
-            content: "📈";
-            position: absolute;
-            left: 0;
-            font-size: 1em;
-            color: #5DADE2;
+
+        .sign-interpreter-column {
+            flex: 1;
+            padding: 1rem;
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
         }
-        .kpi-summary > ul > li ul li.triggers:before {
-            content: "🏃";
-            position: absolute;
-            left: 0;
-            font-size: 1em;
-            color: #5DADE2;
+
+        .sign-interpreter-column h3 {
+            color: #2b6cb0;
+            font-size: 1.125rem;
+            margin-bottom: 0.75rem;
         }
-        .kpi-summary > ul > li ul li.infections:before {
-            content: "🦠";
-            position: absolute;
-            left: 0;
-            font-size: 1em;
-            color: #5DADE2;
+
+        .sign-interpreter-avatar {
+            width: 100%;
+            height: 200px;
+            background: #edf2f7;
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+            position: relative;
+            overflow: hidden;
         }
-        .kpi-summary > ul > li ul li.inflammation:before {
-            content: "🔥";
-            position: absolute;
-            left: 0;
-            font-size: 1em;
-            color: #5DADE2;
-        }
-        .kpi-summary > ul > li ul li.recommendation:before {
-            content: "✔️";
-            position: absolute;
-            left: 0;
-            font-size: 1em;
-            color: #5DADE2;
-        }
-        ul {
-            list-style-type: none;
-            padding-left: 0;
-        }
-        ol {
-            padding-left: 20px;
-        }
-        li {
-            margin: 5px 0;
-            padding-left: 15px;
+
+        .sign-interpreter-video {
+            width: 100%;
+            height: 200px;
+            background: #edf2f7;
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
             position: relative;
         }
-        li:before {
-            content: "•";
-            color: #1E3A8A;
-            position: absolute;
-            left: 0;
-        }
-        ol li {
-            padding-left: 0;
-        }
-        ol li:before {
-            content: none;
-        }
-        /* Pollen Widget (Bottom-Right) */
-        .pollen-widget {
-            position: fixed;
-            bottom: 80px;
-            right: 20px;
-            width: 120px;
-            padding: 8px;
-            background: #F9FAFB;
-            border: 1px solid #1E3A8A;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            font-size: 0.75em;
-            text-align: center;
-            z-index: 1001;
-        }
-        .pollen-widget h2 {
-            color: #1E3A8A;
-            font-size: 0.9em;
-            margin-bottom: 3px;
-        }
-        .pollen-widget p {
-            color: #333333;
-            margin: 0;
-        }
-        .pollen-gauge {
-            width: 40px;
-            height: 40px;
-            margin: 0 auto 5px;
-        }
-        .pollen-gauge svg {
+
+        .sign-interpreter-video video {
             width: 100%;
             height: 100%;
-        }
-        .pollen-gauge circle {
-            fill: none;
-            stroke: #ddd;
-            stroke-width: 5;
-        }
-        .pollen-gauge .gauge-fill {
-            stroke: #5DADE2;
-            stroke-dasharray: 113;
-            stroke-dashoffset: 113;
-            transition: stroke-dashoffset 1s ease-in-out;
-        }
-        /* Allergy Insights (Bottom-Left) */
-        .insights-section {
-            margin-top: 10px;
-            width: 100%;
-            padding: 8px;
-            background: #F9FAFB;
-            border: 1px solid #1E3A8A;
+            object-fit: cover;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            font-size: 0.85em;
-            text-align: center;
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            max-width: 300px;
-            opacity: 1;
-            transition: opacity 0.8s ease-in-out;
+            transform: scaleX(-1); /* Flip the video horizontally */
         }
-        .insights-section h2 {
-            color: #1E3A8A;
-            font-size: 1em;
-            margin-bottom: 3px;
+
+        .sign-interpreter-video canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform: scaleX(-1); /* Flip the canvas to match the video */
         }
-        .insights-section p {
-            color: #555555;
+
+        .sign-interpreter-video .hand-bounding-box {
+            position: absolute;
+            border: 2px dashed #4a90e2;
+            width: 50%;
+            height: 50%;
+            top: 25%;
+            left: 25%;
+            z-index: 10;
+        }
+
+        .sign-interpreter-text {
+            color: #718096;
+            font-size: 0.875rem;
             font-style: italic;
-            margin: 0;
         }
-        .insights-section.fade-out {
-            opacity: 0;
+
+        .sign-interpreter-instructions {
+            color: #4a5568;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            font-style: italic;
         }
+
         /* Dynamic Flower Animation (Bottom-Right) */
         .flower-container {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
+            bottom: 1rem;
+            right: 1rem;
             z-index: 1;
             opacity: 0.7;
         }
+
         .flower {
             width: 40px;
             height: 40px;
@@ -485,33 +579,31 @@
             position: absolute;
             animation: bloom 5s infinite ease-in-out;
         }
+
         .flower:nth-child(2) { animation-delay: 1s; }
         .flower:nth-child(3) { animation-delay: 2s; }
+
         @keyframes bloom {
             0% { transform: scale(0.8) rotate(0deg); opacity: 0.7; }
             50% { transform: scale(1.2) rotate(10deg); opacity: 1; }
             100% { transform: scale(0.8) rotate(0deg); opacity: 0.7; }
         }
+
+        /* Footer */
+        footer {
+            width: 100%;
+            padding: 1rem;
+            background: #1a3c87;
+            color: #e6f0fa;
+            text-align: center;
+            font-size: 0.875rem;
+            margin-top: auto;
+        }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Check Authentication -->
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const isAuthenticated = sessionStorage.getItem('isAuthenticated');
-            if (!isAuthenticated) {
-                window.location.href = 'http://127.0.0.1:8080/login.html';
-            }
-        });
-
-        function logout() {
-            sessionStorage.removeItem('isAuthenticated');
-            window.location.href = 'http://127.0.0.1:8080/login.html';
-        }
-    </script>
-
+    <!-- Header -->
     <div class="header">
         <div class="header-content">
             <div class="header-left">
@@ -523,10 +615,12 @@
             </div>
             <div class="header-right">
                 <div class="clock-container" id="clock"></div>
-                <button class="logout-button" onclick="logout()">Logout</button>
+                <button class="logout-button" id="logout-button">Logout</button>
             </div>
         </div>
     </div>
+
+    <!-- Main Container -->
     <div class="container">
         <div class="main-content">
             <div class="input-section">
@@ -542,105 +636,171 @@
                 </select>
                 <textarea id="transcriptInput" placeholder="Paste your transcript here..."></textarea>
                 <button id="submitTranscriptButton">Submit Transcript</button>
+                <button id="signInterpreterButton" style="display: none;">Enable Sign Language Interpreter</button>
+                <!-- Sign Language Interpreter Section -->
+                <div class="sign-interpreter-section" id="signInterpreterSection" style="display: none;">
+                    <h2>Sign Language Interpreter</h2>
+                    <p>Interpreting communication between doctor and patient using American Sign Language (ASL).</p>
+                    <div class="sign-interpreter-container">
+                        <div class="sign-interpreter-column">
+                            <h3>Doctor to Patient (Speech to Sign)</h3>
+                            <div class="sign-interpreter-avatar" id="signInterpreterAvatar"></div>
+                            <p class="sign-interpreter-text" id="signInterpreterOutput">[Interpreted ASL gestures will appear here]</p>
+                        </div>
+                        <div class="sign-interpreter-column">
+                            <h3>Patient to Doctor (Sign to Speech)</h3>
+                            <div class="sign-interpreter-video" id="signInterpreterVideo">
+                                <video id="patientVideo" autoplay></video>
+                                <canvas id="handOverlay" style="position: absolute; top: 0; left: 0;"></canvas>
+                                <div class="hand-bounding-box"></div>
+                            </div>
+                            <p class="sign-interpreter-text" id="signInterpreterText">[Interpreted text from patient's sign language will appear here]</p>
+                            <p class="sign-interpreter-instructions" id="signInterpreterInstructions">Hold your hand palm-up, centered within the dashed box, about 1-2 feet from the camera. Wave to test gesture detection.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- KPI Dashboard -->
+                <div class="kpi-dashboard" id="kpi-dashboard">
+                    <h2>Allergy & Asthma Insights</h2>
+                    <div class="kpi-summary">
+                        <ul>
+                            <li><strong>Allergen Exposure</strong>
+                                <ul>
+                                    <li>Detected: <span id="allergensDetected"></span></li>
+                                </ul>
+                            </li>
+                            <li><strong>Asthma Status</strong>
+                                <ul>
+                                    <li>Frequency: <span id="asthmaFrequency"></span></li>
+                                    <li>Severity: <span id="asthmaSeverity"></span></li>
+                                    <li>Triggers: <span id="asthmaTriggers"></span></li>
+                                </ul>
+                            </li>
+                            <li><strong>Immunology Profile</strong>
+                                <ul>
+                                    <li>Infections: <span id="infectionFrequency"></span></li>
+                                    <li>Inflammatory Response: <span id="inflammationLevel"></span></li>
+                                </ul>
+                            </li>
+                            <li><strong>Recommendations</strong>
+                                <ul id="recommendationsList">
+                                    <!-- Recommendations will be dynamically added as separate <li> elements -->
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
             </div>
             <div class="sections-grid">
                 <div class="section" id="transcript">
-                    <h2>Transcript</h2>
+                    <div class="section-header">
+                        <h2>Transcript</h2>
+                        <div class="section-actions">
+                            <button class="edit-button" data-section="transcript"><i class="fas fa-pen"></i><span class="tooltip">Edit</span></button>
+                            <button class="copy-button" data-section="transcript"><i class="fas fa-copy"></i><span class="tooltip">Copy</span></button>
+                        </div>
+                    </div>
                     <div id="transcriptContent" class="content"></div>
                 </div>
                 <div class="section" id="summary">
-                    <h2>Summary</h2>
+                    <div class="section-header">
+                        <h2>Summary</h2>
+                        <div class="section-actions">
+                            <button class="edit-button" data-section="summary"><i class="fas fa-pen"></i><span class="tooltip">Edit</span></button>
+                            <button class="copy-button" data-section="summary"><i class="fas fa-copy"></i><span class="tooltip">Copy</span></button>
+                        </div>
+                    </div>
                     <div id="summaryContent" class="content"></div>
                 </div>
                 <div class="section" id="diagnosis">
-                    <h2>Differential Diagnosis</h2>
+                    <div class="section-header">
+                        <h2>Differential Diagnosis</h2>
+                        <div class="section-actions">
+                            <button class="edit-button" data-section="diagnosis"><i class="fas fa-pen"></i><span class="tooltip">Edit</span></button>
+                            <button class="copy-button" data-section="diagnosis"><i class="fas fa-copy"></i><span class="tooltip">Copy</span></button>
+                        </div>
+                    </div>
                     <div id="diagnosisContent" class="content"></div>
                 </div>
                 <div class="section" id="history">
-                    <h2>Patient History</h2>
+                    <div class="section-header">
+                        <h2>Patient History</h2>
+                        <div class="section-actions">
+                            <button class="edit-button" data-section="history"><i class="fas fa-pen"></i><span class="tooltip">Edit</span></button>
+                            <button class="copy-button" data-section="history"><i class="fas fa-copy"></i><span class="tooltip">Copy</span></button>
+                        </div>
+                    </div>
                     <div id="historyContent" class="content"></div>
                 </div>
                 <div class="section" id="physical-examination">
-                    <h2>Physical Examination</h2>
+                    <div class="section-header">
+                        <h2>Physical Examination</h2>
+                        <div class="section-actions">
+                            <button class="edit-button" data-section="physical-examination"><i class="fas fa-pen"></i><span class="tooltip">Edit</span></button>
+                            <button class="copy-button" data-section="physical-examination"><i class="fas fa-copy"></i><span class="tooltip">Copy</span></button>
+                        </div>
+                    </div>
                     <div id="physicalExaminationContent" class="content"></div>
                 </div>
                 <div class="section" id="diagnostic-workup">
-                    <h2>Diagnostic Workup</h2>
+                    <div class="section-header">
+                        <h2>Diagnostic Workup</h2>
+                        <div class="section-actions">
+                            <button class="edit-button" data-section="diagnostic-workup"><i class="fas fa-pen"></i><span class="tooltip">Edit</span></button>
+                            <button class="copy-button" data-section="diagnostic-workup"><i class="fas fa-copy"></i><span class="tooltip">Copy</span></button>
+                        </div>
+                    </div>
                     <div id="diagnosticWorkupContent" class="content"></div>
                 </div>
                 <div class="section" id="plan">
-                    <h2>Plan of Care</h2>
+                    <div class="section-header">
+                        <h2>Plan of Care</h2>
+                        <div class="section-actions">
+                            <button class="edit-button" data-section="plan"><i class="fas fa-pen"></i><span class="tooltip">Edit</span></button>
+                            <button class="copy-button" data-section="plan"><i class="fas fa-copy"></i><span class="tooltip">Copy</span></button>
+                        </div>
+                    </div>
                     <div id="planContent" class="content"></div>
                 </div>
                 <div class="section" id="patient-education">
-                    <h2>Patient Education</h2>
+                    <div class="section-header">
+                        <h2>Patient Education</h2>
+                        <div class="section-actions">
+                            <button class="edit-button" data-section="patient-education"><i class="fas fa-pen"></i><span class="tooltip">Edit</span></button>
+                            <button class="copy-button" data-section="patient-education"><i class="fas fa-copy"></i><span class="tooltip">Copy</span></button>
+                        </div>
+                    </div>
                     <div id="patientEducationContent" class="content"></div>
                 </div>
                 <div class="section" id="follow-up-instructions">
-                    <h2>Follow-up Instructions</h2>
+                    <div class="section-header">
+                        <h2>Follow-up Instructions</h2>
+                        <div class="section-actions">
+                            <button class="edit-button" data-section="follow-up-instructions"><i class="fas fa-pen"></i><span class="tooltip">Edit</span></button>
+                            <button class="copy-button" data-section="follow-up-instructions"><i class="fas fa-copy"></i><span class="tooltip">Copy</span></button>
+                        </div>
+                    </div>
                     <div id="followUpInstructionsContent" class="content"></div>
                 </div>
             </div>
         </div>
-        <div class="kpi-dashboard">
-            <h2>Allergy & Asthma Insights</h2>
-            <div class="kpi-summary">
-                <ul>
-                    <li><strong>Allergen Exposure</strong>
-                        <ul>
-                            <li class="env">Environmental: <span id="envAllergens">Not Detected</span></li>
-                            <li class="food">Food: <span id="foodAllergens">Not Detected</span></li>
-                            <li class="venom">Venom: <span id="venomAllergens">Not Detected</span></li>
-                            <li class="drug">Drug: <span id="drugAllergens">Not Detected</span></li>
-                            <li class="contact">Contact: <span id="contactAllergens">Not Detected</span></li>
-                        </ul>
-                    </li>
-                    <li><strong>Asthma Status</strong>
-                        <ul>
-                            <li class="frequency">Frequency: <span id="asthmaFrequency">Not Assessed</span></li>
-                            <li class="severity">Severity: <span id="asthmaSeverity">Not Assessed</span></li>
-                            <li class="triggers">Triggers: <span id="asthmaTriggers">Not Detected</span></li>
-                        </ul>
-                    </li>
-                    <li><strong>Immunology Profile</strong>
-                        <ul>
-                            <li class="infections">Infections: <span id="infectionFrequency">Not Assessed</span></li>
-                            <li class="inflammation">Inflammatory Response: <span id="inflammationLevel">Not Assessed</span></li>
-                        </ul>
-                    </li>
-                    <li><strong>Recommendations</strong>
-                        <ul>
-                            <li class="recommendation"><span id="recommendations">Conduct allergen testing and review treatment plan.</span></li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
-    <div class="insights-section" id="insightsSection">
-        <h2>Allergy Insights</h2>
-        <p id="insightText">Loading...</p>
     </div>
     <div class="flower-container">
         <div class="flower"></div>
         <div class="flower"></div>
         <div class="flower"></div>
     </div>
-    <div class="pollen-widget" id="pollenWidget">
-        <h2>Pollen Count</h2>
-        <div class="pollen-gauge">
-            <svg viewBox="0 0 40 40">
-                <circle cx="20" cy="20" r="18"></circle>
-                <circle class="gauge-fill" cx="20" cy="20" r="18"></circle>
-            </svg>
-        </div>
-        <p id="pollenText">Loading...</p>
-    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2025 Medora AI-Powered Scribe. All rights reserved.</p>
+    </footer>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             console.log('DOM fully loaded.');
 
+            // DOM Elements
             const clock = document.getElementById('clock');
             const startButton = document.getElementById('startButton');
             const stopButton = document.getElementById('stopButton');
@@ -653,27 +813,208 @@
             const planContent = document.getElementById('planContent');
             const patientEducationContent = document.getElementById('patientEducationContent');
             const followUpInstructionsContent = document.getElementById('followUpInstructionsContent');
-            const insightText = document.getElementById('insightText');
-            const pollenText = document.getElementById('pollenText');
             const transcriptInput = document.getElementById('transcriptInput');
             const submitTranscriptButton = document.getElementById('submitTranscriptButton');
             const languageSelect = document.getElementById('language');
-            const envAllergens = document.getElementById('envAllergens');
-            const foodAllergens = document.getElementById('foodAllergens');
-            const venomAllergens = document.getElementById('venomAllergens');
-            const drugAllergens = document.getElementById('drugAllergens');
-            const contactAllergens = document.getElementById('contactAllergens');
+            const allergensDetected = document.getElementById('allergensDetected');
             const asthmaFrequency = document.getElementById('asthmaFrequency');
             const asthmaSeverity = document.getElementById('asthmaSeverity');
             const asthmaTriggers = document.getElementById('asthmaTriggers');
             const infectionFrequency = document.getElementById('infectionFrequency');
             const inflammationLevel = document.getElementById('inflammationLevel');
-            const recommendations = document.getElementById('recommendations');
+            const recommendationsList = document.getElementById('recommendationsList');
+            const subscriptionInfo = document.createElement('div');
+            const logoutButton = document.getElementById('logout-button');
+            const signInterpreterButton = document.getElementById('signInterpreterButton');
+            const signInterpreterSection = document.getElementById('signInterpreterSection');
+            const signInterpreterOutput = document.getElementById('signInterpreterOutput');
+            const signInterpreterAvatar = document.getElementById('signInterpreterAvatar');
+            const patientVideo = document.getElementById('patientVideo');
+            const signInterpreterText = document.getElementById('signInterpreterText');
+            const signInterpreterInstructions = document.getElementById('signInterpreterInstructions');
+            const handOverlay = document.getElementById('handOverlay');
 
-            if (!startButton || !stopButton || !transcriptContent || !summaryContent || !diagnosisContent || !historyContent || !physicalExaminationContent || !diagnosticWorkupContent || !planContent || !patientEducationContent || !followUpInstructionsContent || !clock || !insightText || !pollenText || !transcriptInput || !submitTranscriptButton || !languageSelect || !envAllergens || !foodAllergens || !venomAllergens || !drugAllergens || !contactAllergens || !asthmaFrequency || !asthmaSeverity || !asthmaTriggers || !infectionFrequency || !inflammationLevel || !recommendations) {
-                console.error('One or more DOM elements not found:', { startButton, stopButton, transcriptContent, summaryContent, diagnosisContent, historyContent, physicalExaminationContent, diagnosticWorkupContent, planContent, patientEducationContent, followUpInstructionsContent, clock, insightText, pollenText, transcriptInput, submitTranscriptButton, languageSelect, envAllergens, foodAllergens, venomAllergens, drugAllergens, contactAllergens, asthmaFrequency, asthmaSeverity, asthmaTriggers, infectionFrequency, inflammationLevel, recommendations });
+            // Check for required elements
+            const requiredElements = {
+                startButton, stopButton, transcriptContent, summaryContent, diagnosisContent,
+                historyContent, physicalExaminationContent, diagnosticWorkupContent, planContent,
+                patientEducationContent, followUpInstructionsContent, clock,
+                transcriptInput, submitTranscriptButton, languageSelect, allergensDetected,
+                asthmaFrequency, asthmaSeverity, asthmaTriggers, infectionFrequency, inflammationLevel,
+                recommendationsList, logoutButton, signInterpreterButton, signInterpreterSection,
+                signInterpreterOutput, signInterpreterAvatar, patientVideo, signInterpreterText,
+                signInterpreterInstructions, handOverlay
+            };
+            const missingElements = Object.entries(requiredElements).filter(([key, value]) => value === null).map(([key]) => key);
+            if (missingElements.length > 0) {
+                console.error('One or more DOM elements not found:', missingElements.reduce((obj, key) => ({ ...obj, [key]: null }), {}));
+                document.body.innerHTML = '<div style="text-align: center; padding: 20px; color: red;"><h2>Error: Missing DOM Elements</h2><p>Please check the console for details.</p></div>';
                 return;
             }
+
+            // Object to store the original content of each section
+            const sectionContents = {
+                transcript: '',
+                summary: '',
+                diagnosis: '',
+                history: '',
+                'physical-examination': '',
+                'diagnostic-workup': '',
+                plan: '',
+                'patient-education': '',
+                'follow-up-instructions': ''
+            };
+
+            // Sign Language Interpreter State
+            let isSignInterpreterEnabled = false;
+            let stream = null;
+            let scene, camera, renderer, avatar;
+            let hands, cameraFeed;
+            let gestureQueue = []; // Queue to store gestures
+            let currentGesture = null; // Current gesture being animated
+            let gestureStartTime = 0; // Time when the current gesture started
+            const gestureDuration = 1000; // Duration to display each gesture (1 second)
+            let ctx = handOverlay.getContext('2d');
+            let lastFrameTime = 0; // For calculating frame rate
+            let detectionAttempts = 0; // Track detection attempts for feedback
+
+            // Initialize Three.js for Avatar Animation
+            function initAvatar() {
+                try {
+                    scene = new THREE.Scene();
+                    scene.background = new THREE.Color(0x000000); // Set a background color to confirm rendering
+
+                    camera = new THREE.PerspectiveCamera(75, signInterpreterAvatar.clientWidth / signInterpreterAvatar.clientHeight, 0.1, 1000);
+                    renderer = new THREE.WebGLRenderer({ antialias: true });
+                    renderer.setSize(signInterpreterAvatar.clientWidth, signInterpreterAvatar.clientHeight);
+                    signInterpreterAvatar.appendChild(renderer.domElement);
+
+                    // Create a simple avatar (a box with arms)
+                    const bodyGeometry = new THREE.BoxGeometry(1, 2, 0.5);
+                    const bodyMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 }); // Green body
+                    const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+                    scene.add(body);
+
+                    // Add arms
+                    const armGeometry = new THREE.BoxGeometry(0.2, 1, 0.2);
+                    const armMaterial = new THREE.MeshBasicMaterial({ color: 0x0000ff }); // Blue arms
+                    const leftArm = new THREE.Mesh(armGeometry, armMaterial);
+                    leftArm.position.set(-0.6, 0, 0);
+                    body.add(leftArm);
+                    const rightArm = new THREE.Mesh(armGeometry, armMaterial);
+                    rightArm.position.set(0.6, 0, 0);
+                    body.add(rightArm);
+
+                    avatar = { body, leftArm, rightArm };
+
+                    camera.position.z = 5;
+
+                    // Animation loop to continuously update arm positions
+                    function animate() {
+                        requestAnimationFrame(animate);
+                        console.log('Animate loop running');
+
+                        // Process the gesture queue
+                        const currentTime = performance.now(); // Use performance.now() for precise timing
+                        if (!currentGesture && gestureQueue.length > 0) {
+                            currentGesture = gestureQueue.shift();
+                            gestureStartTime = currentTime;
+                            console.log('Playing gesture:', currentGesture, 'at time:', currentTime);
+                        }
+
+                        // Check if the current gesture has finished
+                        if (currentGesture && (currentTime - gestureStartTime) >= gestureDuration) {
+                            console.log('Gesture', currentGesture, 'finished at time:', currentTime);
+                            currentGesture = null; // Move to the next gesture
+                        }
+
+                        // Update arm positions based on the current gesture
+                        if (avatar) {
+                            if (currentGesture === 'wave') {
+                                avatar.rightArm.rotation.x = Math.sin(currentTime * 0.005) * 0.5; // Wave motion
+                                avatar.leftArm.rotation.x = 0;
+                                console.log('Wave animation - rightArm rotation.x:', avatar.rightArm.rotation.x);
+                            } else if (currentGesture === 'point') {
+                                avatar.leftArm.rotation.x = -Math.PI / 4; // Point forward
+                                avatar.rightArm.rotation.x = 0;
+                                console.log('Point animation - leftArm rotation.x:', avatar.leftArm.rotation.x);
+                            } else if (currentGesture === 'breathe') {
+                                avatar.leftArm.rotation.x = Math.sin(currentTime * 0.003) * 0.3; // Breathing motion
+                                avatar.rightArm.rotation.x = Math.sin(currentTime * 0.003) * 0.3;
+                                console.log('Breathe animation - leftArm rotation.x:', avatar.leftArm.rotation.x, 'rightArm rotation.x:', avatar.rightArm.rotation.x);
+                            } else {
+                                avatar.leftArm.rotation.x = 0; // Default position
+                                avatar.rightArm.rotation.x = 0;
+                                console.log('Default animation - arms reset to 0');
+                            }
+                        } else {
+                            console.warn('Avatar not initialized in animate loop');
+                        }
+
+                        renderer.render(scene, camera);
+                    }
+                    animate();
+                    console.log('Three.js avatar initialized successfully.');
+                } catch (error) {
+                    console.error('Error initializing Three.js avatar:', error);
+                    signInterpreterOutput.textContent = '[Error initializing avatar]';
+                }
+            }
+
+            // Handle Edit button clicks
+            document.querySelectorAll('.edit-button').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const section = e.target.dataset.section || e.target.parentElement.dataset.section;
+                    const contentDiv = document.getElementById(`${section}Content`);
+                    const currentContent = sectionContents[section] || contentDiv.innerHTML;
+
+                    if (!sectionContents[section]) {
+                        sectionContents[section] = currentContent;
+                    }
+
+                    contentDiv.innerHTML = `
+                        <textarea class="edit-textarea">${currentContent}</textarea>
+                        <div class="edit-actions">
+                            <button class="save-button" data-section="${section}">Save</button>
+                            <button class="cancel-button" data-section="${section}">Cancel</button>
+                        </div>
+                    `;
+
+                    contentDiv.querySelector('.save-button').addEventListener('click', (e) => {
+                        const section = e.target.dataset.section;
+                        const textarea = contentDiv.querySelector('.edit-textarea');
+                        const newContent = textarea.value;
+
+                        sectionContents[section] = newContent;
+                        contentDiv.innerHTML = newContent;
+                    });
+
+                    contentDiv.querySelector('.cancel-button').addEventListener('click', (e) => {
+                        const section = e.target.dataset.section;
+                        contentDiv.innerHTML = sectionContents[section];
+                    });
+                });
+            });
+
+            // Handle Copy button clicks
+            document.querySelectorAll('.copy-button').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const section = e.target.dataset.section || e.target.parentElement.dataset.section;
+                    const contentDiv = document.getElementById(`${section}Content`);
+                    const textToCopy = contentDiv.textContent || contentDiv.innerText;
+
+                    navigator.clipboard.writeText(textToCopy).then(() => {
+                        alert(`Copied ${section.replace('-', ' ')} to clipboard!`);
+                    }).catch(err => {
+                        console.error('Failed to copy:', err);
+                        alert('Failed to copy content. Please try again.');
+                    });
+                });
+            });
+
+            // Add subscription info to header
+            subscriptionInfo.style.cssText = 'color: #e6f0fa; font-size: 0.875rem; font-weight: 500;';
+            document.querySelector('.header-right').insertBefore(subscriptionInfo, document.querySelector('.clock-container'));
 
             // Update digital clock every second
             function updateClock() {
@@ -688,113 +1029,6 @@
             }
             updateClock();
             setInterval(updateClock, 1000);
-
-            // Update location and pollen with dynamic gauge
-            function updateLocationAndPollen() {
-                if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(
-                        (position) => {
-                            const { latitude, longitude } = position.coords;
-                            fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`)
-                                .then(response => response.json())
-                                .then(data => {
-                                    const location = data.address.city || data.address.town || 'Unknown Location';
-                                    document.querySelector('.location')?.remove();
-                                    const locationDiv = document.createElement('div');
-                                    locationDiv.className = 'location';
-                                    locationDiv.textContent = location;
-                                    clock.parentNode.insertBefore(locationDiv, clock.nextSibling);
-
-                                    fetchPollenData(latitude, longitude, location);
-                                })
-                                .catch(error => {
-                                    console.error('Geolocation error:', error);
-                                    document.querySelector('.location')?.remove();
-                                    const locationDiv = document.createElement('div');
-                                    locationDiv.className = 'location';
-                                    locationDiv.textContent = 'Location unavailable';
-                                    clock.parentNode.insertBefore(locationDiv, clock.nextSibling);
-                                    pollenText.textContent = 'Pollen: N/A';
-                                    updatePollenGauge(0);
-                                });
-                        },
-                        (error) => {
-                            console.error('Geolocation error:', error);
-                            document.querySelector('.location')?.remove();
-                            const locationDiv = document.createElement('div');
-                            locationDiv.className = 'location';
-                            locationDiv.textContent = 'Location unavailable';
-                            clock.parentNode.insertBefore(locationDiv, clock.nextSibling);
-                            pollenText.textContent = 'Pollen: N/A';
-                            updatePollenGauge(0);
-                        }
-                    );
-                } else {
-                    document.querySelector('.location')?.remove();
-                    const locationDiv = document.createElement('div');
-                    locationDiv.className = 'location';
-                    locationDiv.textContent = 'Geolocation not supported';
-                    clock.parentNode.insertBefore(locationDiv, clock.nextSibling);
-                    pollenText.textContent = 'Pollen: N/A';
-                    updatePollenGauge(0);
-                }
-            }
-
-            function fetchPollenData(lat, lon, location) {
-                const pollenLevels = {
-                    'New York': { level: 'High', value: 75 },
-                    'Los Angeles': { level: 'Moderate', value: 50 },
-                    'Chicago': { level: 'Low', value: 25 },
-                    'Unknown Location': { level: 'N/A', value: 0 }
-                };
-                const pollenData = pollenLevels[location] || { level: 'Moderate', value: 50 };
-                pollenText.textContent = `Pollen: ${pollenData.level}`;
-                updatePollenGauge(pollenData.value);
-            }
-
-            function updatePollenGauge(value) {
-                const gaugeFill = document.querySelector('.gauge-fill');
-                const circumference = 113; // 2 * π * 18 (radius of the circle)
-                const offset = circumference - (value / 100) * circumference;
-                gaugeFill.style.strokeDashoffset = offset;
-            }
-
-            updateLocationAndPollen();
-            setInterval(updateLocationAndPollen, 300000);
-
-            // Fetch Allergy Insights (Mock Data for Now)
-            async function fetchAllergyInsights() {
-                try {
-                    const allergyTips = [
-                        "Tip: Stay indoors during peak pollen hours (early morning) to reduce exposure.",
-                        "Did You Know? Ragweed pollen can travel hundreds of miles on the wind.",
-                        "Reminder: Use a HEPA air filter to reduce indoor pollen levels.",
-                        "Pro Tip: Rinse your face and hands after being outside to remove pollen.",
-                        "Insight: Pollen counts are often higher on windy, dry days.",
-                        "Tip: Wear sunglasses to protect your eyes from pollen irritation.",
-                        "Did You Know? Grass pollen peaks in late spring and early summer."
-                    ];
-                    await new Promise(resolve => setTimeout(resolve, 1000));
-                    const randomIndex = Math.floor(Math.random() * allergyTips.length);
-                    return allergyTips[randomIndex];
-                } catch (error) {
-                    console.error('Error fetching allergy insights:', error);
-                    return 'Tip: Monitor pollen levels to manage allergy symptoms.';
-                }
-            }
-
-            async function updateInsight() {
-                const insightsSection = document.getElementById('insightsSection');
-                insightsSection.classList.add('fade-out');
-                const newInsight = await fetchAllergyInsights();
-                setTimeout(() => {
-                    insightText.textContent = newInsight;
-                    insightsSection.classList.remove('fade-out');
-                }, 800);
-            }
-
-            updateInsight();
-            setInterval(updateInsight, 10000);
 
             // Speech-to-Text Functionality
             let recognition;
@@ -842,6 +1076,11 @@
                             }
                             transcriptContent.innerHTML = `<div class="content"><ul><li>${fullTranscript + (interimTranscript ? ' ' + interimTranscript : '')}</li></ul></div>`;
                             transcriptInput.value = fullTranscript + (interimTranscript ? ' ' + interimTranscript : '');
+
+                            // Update Sign Language Interpreter in real-time if enabled
+                            if (isSignInterpreterEnabled) {
+                                interpretSignLanguage(fullTranscript + (interimTranscript ? ' ' + interimTranscript : ''));
+                            }
                         };
 
                         recognition.onerror = (event) => {
@@ -934,6 +1173,237 @@
                 }
             });
 
+            // Sign Language Interpreter Button
+            signInterpreterButton.addEventListener('click', () => {
+                isSignInterpreterEnabled = !isSignInterpreterEnabled;
+                signInterpreterButton.textContent = isSignInterpreterEnabled ? 'Disable Sign Language Interpreter' : 'Enable Sign Language Interpreter';
+                signInterpreterSection.style.display = isSignInterpreterEnabled ? 'block' : 'none';
+                if (isSignInterpreterEnabled) {
+                    // Initialize Three.js avatar
+                    initAvatar();
+                    // Start camera for sign-to-speech
+                    startCamera();
+                    if (fullTranscript) {
+                        interpretSignLanguage(fullTranscript);
+                    }
+                    // Start sign-to-speech interpretation
+                    startSignToSpeech();
+                } else {
+                    // Stop camera and reset
+                    stopCamera();
+                    stopSignToSpeech();
+                    signInterpreterOutput.textContent = '[Interpreted ASL gestures will appear here]';
+                    signInterpreterText.textContent = "[Interpreted text from patient's sign language will appear here]";
+                    signInterpreterInstructions.textContent = "Hold your hand palm-up, centered within the dashed box, about 1-2 feet from the camera. Wave to test gesture detection.";
+                    signInterpreterAvatar.innerHTML = '';
+                    gestureQueue = [];
+                    currentGesture = null;
+                    // Clear the hand overlay
+                    ctx.clearRect(0, 0, handOverlay.width, handOverlay.height);
+                    detectionAttempts = 0;
+                }
+            });
+
+            // Function to Start Camera for Sign-to-Speech
+            async function startCamera() {
+                try {
+                    stream = await navigator.mediaDevices.getUserMedia({
+                        video: {
+                            facingMode: 'user', // Use front-facing camera
+                            width: 1280, // Increased resolution
+                            height: 720
+                        }
+                    });
+                    patientVideo.srcObject = stream;
+                    console.log('Camera started successfully with resolution 1280x720.');
+                } catch (error) {
+                    console.error('Error accessing camera:', error);
+                    signInterpreterText.textContent = '[Error accessing camera: Please allow camera access]';
+                }
+            }
+
+            // Function to Stop Camera
+            function stopCamera() {
+                if (stream) {
+                    const tracks = stream.getTracks();
+                    tracks.forEach(track => track.stop());
+                    patientVideo.srcObject = null;
+                    stream = null;
+                    console.log('Camera stopped.');
+                }
+            }
+
+            // Function to Interpret Transcript into Sign Language (Speech to Sign)
+            function interpretSignLanguage(transcript) {
+                if (!transcript) {
+                    signInterpreterOutput.textContent = '[No transcript to interpret]';
+                    return;
+                }
+
+                // Placeholder logic: Simulate sign language interpretation
+                const words = transcript.toLowerCase().split(/\s+/);
+                let signOutput = 'Interpreting: ';
+                gestureQueue = []; // Reset the gesture queue
+
+                words.forEach(word => {
+                    // Simulate mapping words to ASL gestures
+                    if (word === 'hello') {
+                        signOutput += '[ASL: Wave hand] ';
+                        gestureQueue.push('wave');
+                        console.log('Added wave to gesture queue');
+                    } else if (word === 'patient') {
+                        signOutput += '[ASL: Point to person] ';
+                        gestureQueue.push('point');
+                        console.log('Added point to gesture queue');
+                    } else if (word === 'asthma') {
+                        signOutput += '[ASL: Hand on chest, breathing motion] ';
+                        gestureQueue.push('breathe');
+                        console.log('Added breathe to gesture queue');
+                    } else {
+                        signOutput += `[ASL: ${word.toUpperCase()}] `;
+                        gestureQueue.push('default');
+                        console.log('Added default to gesture queue');
+                    }
+                });
+
+                signInterpreterOutput.textContent = signOutput;
+            }
+
+            // Function to Draw Hand Landmarks on the Canvas Overlay
+            function drawHandLandmarks(landmarks, width, height) {
+                ctx.clearRect(0, 0, width, height);
+                ctx.strokeStyle = 'red';
+                ctx.lineWidth = 2;
+
+                // Draw hand landmarks as circles
+                landmarks.forEach((landmark, index) => {
+                    const x = landmark.x * width;
+                    const y = landmark.y * height;
+                    ctx.beginPath();
+                    ctx.arc(x, y, 5, 0, 2 * Math.PI);
+                    ctx.stroke();
+                });
+
+                // Draw connections between landmarks (simplified)
+                const connections = [
+                    [0, 1], [1, 2], [2, 3], [3, 4], // Thumb
+                    [0, 5], [5, 6], [6, 7], [7, 8], // Index finger
+                    [0, 9], [9, 10], [10, 11], [11, 12], // Middle finger
+                    [0, 13], [13, 14], [14, 15], [15, 16], // Ring finger
+                    [0, 17], [17, 18], [18, 19], [19, 20] // Pinky
+                ];
+
+                ctx.beginPath();
+                connections.forEach(([start, end]) => {
+                    const startPoint = landmarks[start];
+                    const endPoint = landmarks[end];
+                    ctx.moveTo(startPoint.x * width, startPoint.y * height);
+                    ctx.lineTo(endPoint.x * width, endPoint.y * height);
+                });
+                ctx.stroke();
+            }
+
+            // Function to Start Sign-to-Speech Interpretation
+            function startSignToSpeech() {
+                try {
+                    hands = new Hands({
+                        locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4/${file}`
+                    });
+                    hands.setOptions({
+                        maxNumHands: 2,
+                        modelComplexity: 0, // Lower complexity for better performance
+                        minDetectionConfidence: 0.05, // Lowered for sensitivity
+                        minTrackingConfidence: 0.05, // Lowered for sensitivity
+                        selfieMode: true // Handle mirrored video feed
+                    });
+
+                    hands.onResults((results) => {
+                        console.log('MediaPipe Hands results:', results);
+                        // Resize the canvas to match the video dimensions
+                        handOverlay.width = patientVideo.videoWidth;
+                        handOverlay.height = patientVideo.videoHeight;
+
+                        // Calculate frame rate
+                        const currentTime = performance.now();
+                        if (lastFrameTime > 0) {
+                            const frameRate = 1000 / (currentTime - lastFrameTime);
+                            console.log('Frame rate:', frameRate.toFixed(2), 'fps');
+                        }
+                        lastFrameTime = currentTime;
+
+                        if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+                            // Reset detection attempts on success
+                            detectionAttempts = 0;
+                            signInterpreterInstructions.textContent = "Hand detected! Wave to test gesture recognition.";
+
+                            // Detect a simple gesture (e.g., waving)
+                            const landmarks = results.multiHandLandmarks[0];
+                            if (landmarks) {
+                                // Log confidence scores for debugging
+                                const handedness = results.multiHandedness[0];
+                                console.log('Hand detected with confidence:', handedness.score);
+                                signInterpreterText.textContent = 'Hand detected';
+
+                                // Draw hand landmarks on the canvas overlay
+                                drawHandLandmarks(landmarks, handOverlay.width, handOverlay.height);
+
+                                // Simulate a wave gesture by checking if the hand is moving up and down
+                                const wrist = landmarks[0]; // Wrist landmark
+                                const tip = landmarks[8]; // Index finger tip
+                                const distance = Math.abs(wrist.y - tip.y);
+                                console.log('Distance between wrist and tip:', distance);
+                                if (distance > 0.05) { // Threshold for waving
+                                    signInterpreterText.textContent = 'Hello';
+                                    console.log('Wave gesture detected');
+                                }
+                            }
+                        } else {
+                            detectionAttempts++;
+                            console.log('No hands detected after', detectionAttempts, 'frames');
+                            signInterpreterText.textContent = '[No hands detected]';
+                            // Clear the canvas if no hands are detected
+                            ctx.clearRect(0, 0, handOverlay.width, handOverlay.height);
+
+                            // Provide feedback after several failed attempts
+                            if (detectionAttempts > 50) {
+                                signInterpreterInstructions.textContent = "No hand detected. Try moving closer to the camera, adjusting lighting, or ensuring your hand is palm-up in the dashed box.";
+                            } else if (detectionAttempts > 30) {
+                                signInterpreterInstructions.textContent = "No hand detected. Ensure your hand is centered in the dashed box and well-lit.";
+                            }
+                        }
+                    });
+
+                    cameraFeed = new Camera(patientVideo, {
+                        onFrame: async () => {
+                            console.log('Processing video frame for MediaPipe Hands');
+                            await hands.send({ image: patientVideo });
+                        },
+                        width: 1280,
+                        height: 720
+                    });
+                    cameraFeed.start();
+                    console.log('Sign-to-speech interpretation started');
+                } catch (error) {
+                    console.error('Error starting sign-to-speech:', error);
+                    signInterpreterText.textContent = '[Error starting sign-to-speech]';
+                }
+            }
+
+            // Function to Stop Sign-to-Speech Interpretation
+            function stopSignToSpeech() {
+                if (cameraFeed) {
+                    cameraFeed.stop();
+                    cameraFeed = null;
+                    console.log('Camera feed stopped');
+                }
+                if (hands) {
+                    hands.close();
+                    hands = null;
+                    console.log('MediaPipe Hands closed');
+                }
+                stopCamera();
+            }
+
             async function processTranscript(transcript) {
                 console.log('Processing transcript:', transcript);
                 isProcessing = true;
@@ -942,12 +1412,21 @@
                 submitTranscriptButton.disabled = true;
 
                 try {
+                    const email = sessionStorage.getItem('email') || "doctor@allergyaffiliates";
+                    const subscription = sessionStorage.getItem('subscription') || 'None';
+                    const trialEnd = sessionStorage.getItem('trial_end') || '';
+                    let currentDate = new Date().toISOString().split('T')[0];
+
+                    if (subscription === 'Trial' && trialEnd && currentDate > trialEnd) {
+                        throw new Error("Free trial has expired. Upgrade to Premium.");
+                    }
+
                     const response = await fetch('http://localhost:5000/analyze', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                         },
-                        body: JSON.stringify({ text: transcript, language: languageSelect.value }),
+                        body: JSON.stringify({ text: transcript, language: languageSelect.value, email }),
                     });
                     console.log('Response status:', response.status);
                     console.log('Response headers:', response.headers);
@@ -964,92 +1443,95 @@
                     }
 
                     // Render structured output with professional formatting
-                    transcriptContent.innerHTML = `<div class="content"><ul><li><strong>Transcript:</strong> ${transcript}</li></ul></div>`;
-                    summaryContent.innerHTML = `
+                    sectionContents.transcript = `<div class="content"><ul><li><strong>Transcript:</strong> ${transcript}</li></ul></div>`;
+                    transcriptContent.innerHTML = sectionContents.transcript;
+
+                    sectionContents.summary = `
                         <div class="content">
-                            <p><strong>Clinical Summary:</strong> Patient presents with chronic skin condition characterized by erythematous, scaly patches. Initial assessment suggests atopic dermatitis, with plans for diagnostic confirmation. Follow-up scheduled pending test results.</p>
-                            <p class="note">Note: Further evaluation recommended based on test outcomes.</p>
+                            <p><strong>Clinical Summary:</strong> ${data.summary || 'No summary available.'}</p>
+                            <p class="note">${data.summary ? 'Further evaluation recommended based on test outcomes.' : 'No data processed.'}</p>
                         </div>
                     `;
-                    diagnosisContent.innerHTML = `
+                    summaryContent.innerHTML = sectionContents.summary;
+
+                    sectionContents.diagnosis = `
                         <div class="content">
                             <h3>Differential Diagnoses:</h3>
                             <ol>
-                                <li>Atopic dermatitis (primary, supported by clinical presentation).</li>
-                                <li>Contact dermatitis (secondary, pending allergen testing).</li>
+                                ${data.differential_diagnosis ? data.differential_diagnosis.split('\n').map(item => `<li>${item.trim()}</li>`).join('') : '<li>No diagnosis available.</li>'}
                             </ol>
                         </div>
                     `;
-                    historyContent.innerHTML = `
+                    diagnosisContent.innerHTML = sectionContents.diagnosis;
+
+                    sectionContents.history = `
                         <div class="content">
                             <h3>Patient History:</h3>
                             <ul>
-                                <li><strong>Chief Complaint:</strong> Chronic eczema and dry skin for 5 years.</li>
-                                <li><strong>History of Present Illness:</strong> Erythematous, scaly patches on arms, legs, and face; intermittent itching exacerbated by weather and skincare products; history of sinus infections treated with antibiotics.</li>
-                                <li><strong>Past Medical History:</strong> Occasional sinus infections; no significant family history of allergies or eczema.</li>
-                                <li><strong>Allergies:</strong> Mild food reactions (e.g., drooling episodes) without severe symptoms.</li>
+                                <li><strong>Chief Complaint:</strong> ${data.patient_history?.chief_complaint || 'N/A'}</li>
+                                <li><strong>History of Present Illness:</strong> ${data.patient_history?.history_of_present_illness || 'N/A'}</li>
+                                <li><strong>Past Medical History:</strong> ${data.patient_history?.past_medical_history || 'N/A'}</li>
+                                <li><strong>Allergies:</strong> ${data.patient_history?.allergies || 'N/A'}</li>
                             </ul>
                         </div>
                     `;
-                    physicalExaminationContent.innerHTML = `
+                    historyContent.innerHTML = sectionContents.history;
+
+                    sectionContents['physical-examination'] = `
                         <div class="content">
                             <h3>Physical Examination Findings:</h3>
                             <ul>
-                                <li>General: No acute distress observed.</li>
-                                <li>Dermatological: Erythema and dry, scaly patches on arms, legs, and face consistent with atopic dermatitis; no signs of infection.</li>
+                                <li>${data.physical_examination || 'N/A'}</li>
                             </ul>
                         </div>
                     `;
-                    diagnosticWorkupContent.innerHTML = `
+                    physicalExaminationContent.innerHTML = sectionContents['physical-examination'];
+
+                    sectionContents['diagnostic-workup'] = `
                         <div class="content">
                             <h3>Diagnostic Workup:</h3>
                             <ul>
-                                <li>Patch testing to identify contact allergens (pending insurance approval).</li>
-                                <li>Environmental allergy testing (skin prick test and RAST) to rule out contributing factors.</li>
+                                ${data.diagnostic_workup ? data.diagnostic_workup.split('\n').map(item => `<li>${item.trim()}</li>`).join('') : '<li>No workup recommended.</li>'}
                             </ul>
                         </div>
                     `;
-                    planContent.innerHTML = `
+                    diagnosticWorkupContent.innerHTML = sectionContents['diagnostic-workup'];
+
+                    sectionContents.plan = `
                         <div class="content">
                             <h3>Plan of Care:</h3>
                             <ol>
-                                <li>Apply moisturizers (e.g., petroleum jelly) post-bathing.</li>
-                                <li>Avoid harsh soaps and irritants.</li>
-                                <li>Prescribe prednisone 20 mg daily for 5 days, then taper.</li>
-                                <li>Consider phototherapy if symptoms persist (follow-up evaluation).</li>
-                                <li>Schedule follow-up in 1-2 weeks post-test results.</li>
+                                ${data.plan_of_care ? data.plan_of_care.split('\n').map(item => `<li>${item.trim()}</li>`).join('') : '<li>No plan generated.</li>'}
                             </ol>
                         </div>
                     `;
-                    patientEducationContent.innerHTML = `
+                    planContent.innerHTML = sectionContents.plan;
+
+                    sectionContents['patient-education'] = `
                         <div class="content">
                             <h3>Patient Education:</h3>
                             <ul>
-                                <li>Use prescribed moisturizers consistently.</li>
-                                <li>Avoid skincare products with fragrances or alcohol.</li>
-                                <li>Identify and avoid potential triggers (e.g., metals, chemicals).</li>
+                                ${data.patient_education ? data.patient_education.split('\n').map(item => `<li>${item.trim()}</li>`).join('') : '<li>N/A</li>'}
                             </ul>
                         </div>
                     `;
-                    followUpInstructionsContent.innerHTML = `
+                    patientEducationContent.innerHTML = sectionContents['patient-education'];
+
+                    sectionContents['follow-up-instructions'] = `
                         <div class="content">
                             <h3>Follow-up Instructions:</h3>
                             <ul>
-                                <li>Contact clinic for test result updates.</li>
-                                <li>Explore alternative options if insurance denies testing.</li>
+                                ${data.follow_up_instructions ? data.follow_up_instructions.split('\n').map(item => `<li>${item.trim()}</li>`).join('') : '<li>N/A</li>'}
                             </ul>
                         </div>
                     `;
+                    followUpInstructionsContent.innerHTML = sectionContents['follow-up-instructions'];
 
                     // Analyze transcript for specific insights
                     const transcriptLower = transcript.toLowerCase();
 
-                    // Allergen Exposure
-                    let envAllergensText = 'Not Detected';
-                    let foodAllergensText = 'Not Detected';
-                    let venomAllergensText = 'Not Detected';
-                    let drugAllergensText = 'Not Detected';
-                    let contactAllergensText = 'Not Detected';
+                    // Allergen Exposure (Combine all detected allergens into one line)
+                    let allDetectedAllergens = [];
 
                     // Environmental Allergens
                     let envDetected = [];
@@ -1063,7 +1545,7 @@
                         envDetected.push('Mold');
                     }
                     if (envDetected.length > 0) {
-                        envAllergensText = envDetected.join(', ');
+                        allDetectedAllergens.push(...envDetected);
                     }
 
                     // Food Allergens
@@ -1076,7 +1558,7 @@
                         if (foodDetected.length === 0) foodDetected.push('Unspecified Food Reactions');
                     }
                     if (foodDetected.length > 0) {
-                        foodAllergensText = foodDetected.join(', ');
+                        allDetectedAllergens.push(...foodDetected);
                     }
 
                     // Venom Allergens
@@ -1085,7 +1567,7 @@
                         venomDetected.push('Bee Sting');
                     }
                     if (venomDetected.length > 0) {
-                        venomAllergensText = venomDetected.join(', ');
+                        allDetectedAllergens.push(...venomDetected);
                     }
 
                     // Drug Allergens
@@ -1097,7 +1579,7 @@
                         drugDetected.push('Unspecified Drug Reaction');
                     }
                     if (drugDetected.length > 0) {
-                        drugAllergensText = drugDetected.join(', ');
+                        allDetectedAllergens.push(...drugDetected);
                     }
 
                     // Contact Allergens
@@ -1109,26 +1591,42 @@
                         contactDetected.push('Metals');
                     }
                     if (contactDetected.length > 0) {
-                        contactAllergensText = contactDetected.join(', ');
+                        allDetectedAllergens.push(...contactDetected);
+                    }
+
+                    // Display all detected allergens in one line
+                    if (allDetectedAllergens.length > 0) {
+                        allergensDetected.textContent = allDetectedAllergens.join(', ');
+                        allergensDetected.parentElement.classList.add('show');
                     }
 
                     // Asthma Status
-                    let asthmaFrequencyText = 'Not Assessed';
-                    let asthmaSeverityText = 'Not Assessed';
-                    let asthmaTriggersText = 'Not Detected';
+                    let asthmaFrequencyText = '';
+                    let asthmaSeverityText = '';
+                    let asthmaTriggersText = '';
 
                     if (transcriptLower.includes('daily') || transcriptLower.includes('every day')) {
                         asthmaFrequencyText = 'Daily';
+                        asthmaFrequency.textContent = asthmaFrequencyText;
+                        asthmaFrequency.parentElement.classList.add('show');
                     } else if (transcriptLower.includes('weekly') || transcriptLower.includes('week')) {
                         asthmaFrequencyText = 'Weekly';
+                        asthmaFrequency.textContent = asthmaFrequencyText;
+                        asthmaFrequency.parentElement.classList.add('show');
                     } else if (transcriptLower.includes('monthly') || transcriptLower.includes('month')) {
                         asthmaFrequencyText = 'Monthly';
+                        asthmaFrequency.textContent = asthmaFrequencyText;
+                        asthmaFrequency.parentElement.classList.add('show');
                     }
 
                     if (transcriptLower.includes('severe') || transcriptLower.includes('wheezing') || transcriptLower.includes('breathing difficulty')) {
                         asthmaSeverityText = 'Severe';
+                        asthmaSeverity.textContent = asthmaSeverityText;
+                        asthmaSeverity.parentElement.classList.add('show');
                     } else if (transcriptLower.includes('mild') || transcriptLower.includes('shortness')) {
                         asthmaSeverityText = 'Mild';
+                        asthmaSeverity.textContent = asthmaSeverityText;
+                        asthmaSeverity.parentElement.classList.add('show');
                     }
 
                     let triggersDetected = [];
@@ -1143,11 +1641,13 @@
                     }
                     if (triggersDetected.length > 0) {
                         asthmaTriggersText = triggersDetected.join(', ');
+                        asthmaTriggers.textContent = asthmaTriggersText;
+                        asthmaTriggers.parentElement.classList.add('show');
                     }
 
                     // Immunology Profile
-                    let infectionFrequencyText = 'Not Assessed';
-                    let inflammationLevelText = 'Not Assessed';
+                    let infectionFrequencyText = '';
+                    let inflammationLevelText = '';
 
                     let infectionsDetected = [];
                     if (transcriptLower.includes('sinus infection')) {
@@ -1162,6 +1662,8 @@
                         } else {
                             infectionFrequencyText = 'Low (' + infectionsDetected.join(', ') + ')';
                         }
+                        infectionFrequency.textContent = infectionFrequencyText;
+                        infectionFrequency.parentElement.classList.add('show');
                     }
 
                     let inflammationDetected = [];
@@ -1173,48 +1675,120 @@
                     }
                     if (inflammationDetected.length > 0) {
                         inflammationLevelText = 'Elevated (' + inflammationDetected.join(', ') + ')';
+                        inflammationLevel.textContent = inflammationLevelText;
+                        inflammationLevel.parentElement.classList.add('show');
                     }
 
-                    // Recommendations
-                    let recommendationsText = 'Conduct allergen testing and review treatment plan.';
-                    if (foodAllergensText !== 'Not Detected' || venomAllergensText !== 'Not Detected') {
-                        recommendationsText += ' Consider epinephrine auto-injector for potential anaphylaxis.';
+                    // Recommendations (Split into separate bullet points)
+                    let recommendationsArray = [];
+                    if (foodDetected.length > 0 || venomDetected.length > 0) {
+                        recommendationsArray.push('Consider epinephrine auto-injector for potential anaphylaxis.');
                     }
                     if (asthmaSeverityText === 'Severe') {
-                        recommendationsText += ' Urgently assess asthma management plan.';
+                        recommendationsArray.push('Urgently assess asthma management plan.');
+                    }
+                    if (recommendationsArray.length === 0) {
+                        recommendationsArray.push('Conduct allergen testing and review treatment plan.');
                     }
 
-                    // Update KPI Dashboard
-                    envAllergens.textContent = envAllergensText;
-                    foodAllergens.textContent = foodAllergensText;
-                    venomAllergens.textContent = venomAllergensText;
-                    drugAllergens.textContent = drugAllergensText;
-                    contactAllergens.textContent = contactAllergensText;
-                    asthmaFrequency.textContent = asthmaFrequencyText;
-                    asthmaSeverity.textContent = asthmaSeverityText;
-                    asthmaTriggers.textContent = asthmaTriggersText;
-                    infectionFrequency.textContent = infectionFrequencyText;
-                    inflammationLevel.textContent = inflammationLevelText;
-                    recommendations.textContent = recommendationsText;
+                    // Clear existing recommendations and add new ones as separate <li> elements
+                    recommendationsList.innerHTML = '';
+                    recommendationsArray.forEach(rec => {
+                        const li = document.createElement('li');
+                        li.textContent = rec;
+                        li.classList.add('show');
+                        recommendationsList.appendChild(li);
+                    });
 
-                    // Clear the textarea after successful submission
-                    transcriptInput.value = '';
+                    // Update subscription info
+                    const subscriptionTier = sessionStorage.getItem('subscription') || 'None';
+                    const trialEndDate = sessionStorage.getItem('trial_end') || '';
+                    subscriptionInfo.textContent = `Subscription: ${subscriptionTier} Tier`;
+                    if (trialEndDate) {
+                        subscriptionInfo.textContent += ` (Trial ends: ${trialEndDate})`;
+                    }
+                    if (subscriptionTier === 'None' || subscriptionTier === 'Basic' || (subscriptionTier === 'Trial' && trialEndDate && new Date() > new Date(trialEndDate))) {
+                        subscriptionInfo.innerHTML += ' <a href="#" onclick="upgradeSubscription()" style="color: #a3bffa; text-decoration: underline;">Upgrade to Premium</a>';
+                    }
+
+                    // Interpret transcript into sign language if enabled
+                    if (isSignInterpreterEnabled) {
+                        interpretSignLanguage(transcript);
+                    }
                 } catch (error) {
                     console.error('Error in processTranscript:', error);
-                    transcriptContent.innerHTML = `<div class="content"><ul><li>Error processing transcript: ${error.message}</li></ul></div>`;
-                    summaryContent.innerHTML = `<div class="content"><ul><li>Error summarizing transcript: ${error.message}</li></ul></div>`;
-                    diagnosisContent.innerHTML = `<div class="content"><ul><li>Error analyzing transcript: ${error.message}</li></ul></div>`;
-                    historyContent.innerHTML = `<div class="content"><ul><li>Error analyzing transcript: ${error.message}</li></ul></div>`;
-                    physicalExaminationContent.innerHTML = `<div class="content"><ul><li>Error analyzing transcript: ${error.message}</li></ul></div>`;
-                    diagnosticWorkupContent.innerHTML = `<div class="content"><ul><li>Error analyzing transcript: ${error.message}</li></ul></div>`;
-                    planContent.innerHTML = `<div class="content"><ul><li>Error analyzing transcript: ${error.message}</li></ul></div>`;
-                    patientEducationContent.innerHTML = `<div class="content"><ul><li>Error analyzing transcript: ${error.message}</li></ul></div>`;
-                    followUpInstructionsContent.innerHTML = `<div class="content"><ul><li>Error analyzing transcript: ${error.message}</li></ul></div>`;
+                    sectionContents.transcript = `<div class="content"><ul><li>Error processing transcript: ${error.message}</li></ul></div>`;
+                    transcriptContent.innerHTML = sectionContents.transcript;
+
+                    sectionContents.summary = `<div class="content"><ul><li>Error summarizing transcript: ${error.message}</li></ul></div>`;
+                    summaryContent.innerHTML = sectionContents.summary;
+
+                    sectionContents.diagnosis = `<div class="content"><ul><li>Error analyzing transcript: ${error.message}</li></ul></div>`;
+                    diagnosisContent.innerHTML = sectionContents.diagnosis;
+
+                    sectionContents.history = `<div class="content"><ul><li>Error analyzing transcript: ${error.message}</li></ul></div>`;
+                    historyContent.innerHTML = sectionContents.history;
+
+                    sectionContents['physical-examination'] = `<div class="content"><ul><li>Error analyzing transcript: ${error.message}</li></ul></div>`;
+                    physicalExaminationContent.innerHTML = sectionContents['physical-examination'];
+
+                    sectionContents['diagnostic-workup'] = `<div class="content"><ul><li>Error analyzing transcript: ${error.message}</li></ul></div>`;
+                    diagnosticWorkupContent.innerHTML = sectionContents['diagnostic-workup'];
+
+                    sectionContents.plan = `<div class="content"><ul><li>Error analyzing transcript: ${error.message}</li></ul></div>`;
+                    planContent.innerHTML = sectionContents.plan;
+
+                    sectionContents['patient-education'] = `<div class="content"><ul><li>Error analyzing transcript: ${error.message}</li></ul></div>`;
+                    patientEducationContent.innerHTML = sectionContents['patient-education'];
+
+                    sectionContents['follow-up-instructions'] = `<div class="content"><ul><li>Error analyzing transcript: ${error.message}</li></ul></div>`;
+                    followUpInstructionsContent.innerHTML = sectionContents['follow-up-instructions'];
                 } finally {
                     isProcessing = false;
                     startButton.disabled = false;
                     stopButton.disabled = true;
                     submitTranscriptButton.disabled = false;
+                }
+            }
+
+            function upgradeSubscription() {
+                alert("Upgrade to Premium tier required for full access. Contact admin or enter payment details to subscribe.");
+                // In a real app, this could redirect to a payment page (e.g., Stripe integration)
+            }
+
+            // Attach logout event listener programmatically
+            logoutButton.addEventListener('click', () => {
+                console.log('Logout clicked');
+                sessionStorage.removeItem('isAuthenticated');
+                sessionStorage.removeItem('email');
+                sessionStorage.removeItem('subscription');
+                sessionStorage.removeItem('trial_end');
+                sessionStorage.removeItem('card_last4');
+                window.location.href = 'http://127.0.0.1:8080/login.html';
+            });
+
+            // Check authentication and subscription for sign language interpreter
+            const isAuthenticated = sessionStorage.getItem('isAuthenticated');
+            if (!isAuthenticated) {
+                console.log('User not authenticated, redirecting to login page.');
+                window.location.href = 'http://127.0.0.1:8080/login.html';
+            } else {
+                const email = sessionStorage.getItem('email') || "doctor@allergyaffiliates";
+                sessionStorage.setItem('email', email);
+                const subscription = sessionStorage.getItem('subscription') || 'None';
+                const trialEnd = sessionStorage.getItem('trial_end') || '';
+                sessionStorage.setItem('subscription', subscription);
+                sessionStorage.setItem('trial_end', trialEnd);
+                subscriptionInfo.textContent = `Subscription: ${subscription} Tier`;
+                if (trialEnd) {
+                    subscriptionInfo.textContent += ` (Trial ends: ${trialEnd})`;
+                }
+                if (subscription === 'None' || subscription === 'Basic' || (subscription === 'Trial' && trialEnd && new Date() > new Date(trialEnd))) {
+                    subscriptionInfo.innerHTML += ' <a href="#" onclick="upgradeSubscription()" style="color: #a3bffa; text-decoration: underline;">Upgrade to Premium</a>';
+                    signInterpreterButton.style.display = 'none';
+                    signInterpreterSection.style.display = 'none';
+                } else if (subscription === 'Premium') {
+                    signInterpreterButton.style.display = 'block';
                 }
             }
         });
