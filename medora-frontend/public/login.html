@@ -18,9 +18,47 @@
             color: #2d3748;
             min-height: 100vh;
             display: flex;
-            justify-content: center;
-            align-items: center;
+            flex-direction: column;
             line-height: 1.6;
+        }
+
+        /* Header */
+        .header {
+            width: 100%;
+            padding: 1.25rem 2rem;
+            background: linear-gradient(90deg, #1a3c87 0%, #2b5cb3 100%);
+            color: #ffffff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            width: 48px;
+            height: 48px;
+        }
+
+        .header-text h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .header-text p.tagline {
+            font-size: 0.875rem;
+            font-weight: 400;
+            opacity: 0.9;
         }
 
         .login-container {
@@ -31,6 +69,7 @@
             width: 100%;
             max-width: 400px;
             text-align: center;
+            margin: auto;
         }
 
         .login-container h2 {
@@ -82,6 +121,17 @@
     </style>
 </head>
 <body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-left">
+            <img src="images/Medora.png" alt="Medora Logo" class="logo">
+            <div class="header-text">
+                <h1>MEDORA</h1>
+                <p class="tagline">AI-Powered Scribe</p>
+            </div>
+        </div>
+    </div>
+
     <div class="login-container">
         <h2>Medora Login</h2>
         <input type="text" id="emailInput" placeholder="Email (e.g., doctor@allergyaffiliates)">
@@ -89,41 +139,6 @@
         <button id="loginButton">Login</button>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const loginButton = document.getElementById('loginButton');
-            const emailInput = document.getElementById('emailInput');
-            const passwordInput = document.getElementById('passwordInput');
-
-            loginButton.addEventListener('click', async () => {
-                const email = emailInput.value;
-                const password = passwordInput.value;
-
-                try {
-                    const response = await fetch('http://localhost:5000/login', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ email, password })
-                    });
-                    const data = await response.json();
-                    if (!data.success) throw new Error(data.message);
-
-                    sessionStorage.setItem('isAuthenticated', 'true');
-                    sessionStorage.setItem('email', email);
-                    sessionStorage.setItem('subscription', data.subscription);
-                    sessionStorage.setItem('trial_end', data.trial_end);
-                    sessionStorage.setItem('card_last4', data.card_last4);
-
-                    // Map email to tenantId (temporary hardcoded mapping)
-                    const tenantId = email === 'doctor@allergyaffiliates' ? 'clinic_123' : 'default_tenant';
-                    localStorage.setItem('tenantId', tenantId);
-
-                    window.location.href = '/index.html';
-                } catch (error) {
-                    alert('Login failed: ' + error.message);
-                }
-            });
-        });
-    </script>
+    <script src="js/login.js"></script>
 </body>
 </html>
