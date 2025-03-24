@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medora - AI-Powered Scribe</title>
+    <!-- Add Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Add Three.js for Avatar Animation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <!-- Add MediaPipe for Hand Tracking -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4/hands.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils@0.3/camera_utils.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <!-- Login Section -->
+    <div id="login-section" style="text-align: center; padding: 1rem;">
+        <input type="text" id="tenantIdInput" placeholder="Tenant ID (e.g., clinic_123)" style="padding: 0.5rem; margin-right: 0.5rem;">
+        <input type="password" id="passwordInput" placeholder="Password" style="padding: 0.5rem; margin-right: 0.5rem;">
+        <button id="loginButton" style="padding: 0.5rem 1rem;">Login</button>
+    </div>
+
+    <!-- Header -->
+    <div class="header">
+        <div class="header-content">
+            <div class="header-left">
+                <img src="/images/Medora.png" alt="Medora Logo" class="logo">
+                <div class="header-text">
+                    <h1>MEDORA</h1>
+                    <p class="tagline">AI-Powered Scribe</p>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="clock-container" id="clock"></div>
+                <button class="logout-button" id="logout-button">Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <div class="main-content">
+            <div class="input-section">
+                <button id="startButton">Start Listening</button>
+                <button id="stopButton" style="display: none;">Stop Listening</button>
+                <select id="language">
+                    <option value="EN">English</option>
+                    <option value="ES">Spanish</option>
+                    <option value="FR">French</option>
+                    <option value="ZH">Mandarin</option>
+                    <option value="PA">Punjabi</option>
+                    <option value="HI">Hindi</option>
+                </select>
+                <textarea id="transcriptInput" placeholder="Paste your transcript here..."></textarea>
+                <button id="submitTranscriptButton">Submit Transcript</button>
+                <button id="signInterpreterButton" style="display: none;">Enable Sign Language Interpreter</button>
+                <!-- Sign Language Interpreter Section -->
+                <div class="sign-interpreter-section" id="signInterpreterSection" style="display: none;">
+                    <h2>Sign Language Interpreter</h2>
+                    <p>Interpreting communication between doctor and patient using American Sign Language (ASL).</p>
+                    <div class="sign-interpreter-container">
+                        <div class="sign-interpreter-column">
+                            <h3>Doctor to Patient (Speech to Sign)</h3>
+                            <div class="sign-interpreter-avatar" id="signInterpreterAvatar"></div>
+                            <p class="sign-interpreter-text" id="signInterpreterOutput">[Interpreted ASL gestures will appear here]</p>
+                        </div>
+                        <div class="sign-interpreter-column">
+                            <h3>Patient to Doctor (Sign to Speech)</h3>
+                            <div class="sign-interpreter-video" id="signInterpreterVideo">
+                                <video id="patientVideo" autoplay></video>
+                                <canvas id="handOverlay" style="position: absolute; top: 0; left: 0;"></canvas>
+                                <div class="hand-bounding-box"></div>
+                            </div>
+                            <p class="sign-interpreter-text" id="signInterpreterText">[Interpreted text from patient's sign language will appear here]</p>
+                            <p class="sign-interpreter-instructions" id="signInterpreterInstructions">Hold your hand palm-up, centered within the dashed box, about 1-2 feet from the camera. Wave to test gesture detection.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- KPI Dashboard -->
+                <div class="kpi-dashboard" id="kpi-dashboard">
+                    <h2>Allergy & Asthma Insights</h2>
+                    <div class="kpi-summary">
+                        <ul>
+                            <li><strong>Allergen Exposure</strong>
+                                <ul>
+                                    <li>Detected: <span id="allergensDetected"></span></li>
+                                </ul>
+                            </li>
+                            <li><strong>Asthma Status</strong>
+                                <ul>
+                                    <li>Frequency: <span id="asthmaFrequency"></span></li>
+                                    <li>Severity: <span id="asthmaSeverity"></span></li>
+                                    <li>Triggers: <span id="asthmaTriggers"></span></li>
+                                </ul>
+                            </li>
+                            <li><strong>Immunology Profile</strong>
+                                <ul>
+                                    <li>Infections: <span id="infectionFrequency"></span></li>
+                                    <li>Inflammatory Response: <span id="inflammationLevel"></span></li>
+                                </ul>
+                            </li>
+                            <li><strong>Recommendations</strong>
+                                <ul id="recommendationsList">
+                                    <!-- Recommendations will be dynamically added as separate <li> elements -->
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="sections-grid">
+                <div class="section" id="transcript">
+                    <div class="section-header">
+                        <h2>Transcript</h2>
+                        <div class="section-actions">
+                            <button class="edit-button" data-section="transcript"><i class="fas fa-pen"></i><span class="tooltip">Edit</span></button>
+                            <button class="copy-button" data-section="transcript"><i class="fas fa-copy"></i><span class="tooltip">Copy</span></button>
+                        </div>
+                    </div>
+                    <div id="transcriptContent" class="content"></div>
+                </div>
+                <div class="section" id="subjective">
+                    <div class="section-header">
+                        <h2>Subjective</h2>
+                        <div class="section-actions">
+                            <button class="edit-button" data-section="subjective"><i class="fas fa-pen"></i><span class="tooltip">Edit</span></button>
+                            <button class="copy-button" data-section="subjective"><i class="fas fa-copy"></i><span class="tooltip">Copy</span></button>
+                        </div>
+                    </div>
+                    <div id="subjectiveContent" class="content"></div>
+                </div>
+                <div class="section" id="objective">
+                    <div class="section-header">
+                        <h2>Objective</h2>
+                        <div class="section-actions">
+                            <button class="edit-button" data-section="objective"><i class="fas fa-pen"></i><span class="tooltip">Edit</span></button>
+                            <button class="copy-button" data-section="objective"><i class="fas fa-copy"></i><span class="tooltip">Copy</span></button>
+                        </div>
+                    </div>
+                    <div id="objectiveContent" class="content"></div>
+                </div>
+                <div class="section" id="assessment">
+                    <div class="section-header">
+                        <h2>Assessment</h2>
+                        <div class="section-actions">
+                            <button class="edit-button" data-section="assessment"><i class="fas fa-pen"></i><span class="tooltip">Edit</span></button>
+                            <button class="copy-button" data-section="assessment"><i class="fas fa-copy"></i><span class="tooltip">Copy</span></button>
+                        </div>
+                    </div>
+                    <div id="assessmentContent" class="content"></div>
+                </div>
+                <div class="section" id="plan">
+                    <div class="section-header">
+                        <h2>Plan</h2>
+                        <div class="section-actions">
+                            <button class="edit-button" data-section="plan"><i class="fas fa-pen"></i><span class="tooltip">Edit</span></button>
+                            <button class="copy-button" data-section="plan"><i class="fas fa-copy"></i><span class="tooltip">Copy</span></button>
+                        </div>
+                    </div>
+                    <div id="planContent" class="content"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="flower-container">
+        <div class="flower"></div>
+        <div class="flower"></div>
+        <div class="flower"></div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2025 Medora AI-Powered Scribe. All rights reserved.</p>
+    </footer>
+
+    <script src="/js/script.js"></script>
+</body>
+</html>

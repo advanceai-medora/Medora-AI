@@ -1,9 +1,16 @@
 from flask import Flask, request, jsonify, make_response
 from flask_cors import CORS
+import logging
+import os
+from dotenv import load_dotenv
 import requests
 import json
 from datetime import datetime, timedelta
 
+# Load environment variables from .env file
+load_dotenv()
+
+# Initialize Flask app
 app = Flask(__name__)
 CORS(app, resources={
     r"/analyze": {"origins": ["http://127.0.0.1:8080", "http://localhost:8080"], "methods": ["POST", "OPTIONS"]},
@@ -11,11 +18,23 @@ CORS(app, resources={
     r"/register": {"origins": ["http://127.0.0.1:8080", "http://localhost:8080"], "methods": ["POST", "OPTIONS"]}
 })
 
-# API configurations (hardcoded for testing)
-GROK_API_KEY = "xai-JsuTwtlWoA40i9QsLoHlVuA8qRLd2gAo1qJmckB7a1CURT5iPmO6G5kHDRec6V1uJy637pg5icPKN7IR"
-GROK_API_URL = "https://api.x.ai/v1/chat/completions"
-DEEPL_API_KEY = ""  # Empty for now; replace with your DeepL key if needed
-DEEPL_API_URL = "https://api-free.deepl.com/v2/translate"
+# Configure logging
+log_level = os.getenv('LOG_LEVEL', 'INFO')
+logging.basicConfig(level=getattr(logging, log_level.upper(), logging.INFO))
+logger = logging.getLogger(__name__)
+
+# Load environment variables
+FLASK_ENV = os.getenv('FLASK_ENV', 'development')
+PORT = int(os.getenv('PORT', 5000))
+XAI_API_KEY = os.getenv('XAI_API_KEY')
+XAI_API_URL = os.getenv('XAI_API_URL')
+DEEPL_API_KEY = os.getenv('DEEPL_API_KEY')
+DEEPL_API_URL = os.getenv('DEEPL_API_URL')
+
+# Validate required environment variables
+if not XAI_API_KEY or not XAI_API_URL:
+    logger.error("Missing required environment variables: XAI_API_KEY or XAI_API_URL")
+    raise ValueError("Missing required environment variables: XAI_API_KEY or XAI_API_URL")
 
 # Hardcoded subscription and user data (simulated, to be replaced with DB in AWS)
 SUBSCRIPTIONS = {
@@ -76,7 +95,7 @@ def analyze_transcript(text, target_language="EN"):
     """
 
     headers = {
-        "Authorization": f"Bearer {GROK_API_KEY}",
+        "Authorization": f"Bearer {XAI_API_KEY}",
         "Content-Type": "application/json"
     }
 
@@ -91,13 +110,15 @@ def analyze_transcript(text, target_language="EN"):
     }
 
     try:
-        response = requests.post(GROK_API_URL, headers=headers, json=payload, timeout=30)
+        logger.debug(f"Sending request to xAI API: URL={XAI_API_URL}, Headers={headers}, Payload={payload}")
+        response = requests.post(XAI_API_URL, headers=headers, json=payload, timeout=30)
+        logger.debug(f"xAI API response: Status={response.status_code}, Body={response.text}")
         response.raise_for_status()
         result = response.json()
 
         if "choices" in result and len(result["choices"]) > 0:
             response_text = result["choices"][0]["message"]["content"]
-            print(f"Raw Grok response: {response_text}")
+            logger.info(f"Raw xAI response: {response_text}")
 
             # Extract the JSON object
             start_idx = response_text.find('{')
@@ -106,7 +127,7 @@ def analyze_transcript(text, target_language="EN"):
                 json_str = response_text[start_idx:end_idx].strip()
                 try:
                     parsed_data = json.loads(json_str)
-                    print(f"Parsed JSON: {parsed_data}")
+                    logger.info(f"Parsed JSON: {parsed_data}")
 
                     # Translate the summary if a different language is requested
                     if target_language.upper() != "EN":
@@ -121,7 +142,7 @@ def analyze_transcript(text, target_language="EN"):
                                 parsed_data[key] = translated
                     return parsed_data
                 except json.JSONDecodeError as e:
-                    print(f"JSON parsing error: {e} with raw data: {json_str[:e.pos + 20]}...")
+                    logger.error(f"JSON parsing error: {e} with raw data: {json_str[:e.pos + 20]}...")
                     return {
                         "patient_history": {"chief_complaint": f"JSON parsing error: {str(e)}", "history_of_present_illness": "N/A", "past_medical_history": "N/A", "allergies": "N/A"},
                         "physical_examination": "N/A",
@@ -133,20 +154,20 @@ def analyze_transcript(text, target_language="EN"):
                         "summary": f"JSON parsing error: {str(e)}"
                     }
             else:
-                print(f"No valid JSON object found in response: {response_text}")
+                logger.error(f"No valid JSON object found in response: {response_text}")
         return {
-            "patient_history": {"chief_complaint": "Unable to generate.", "history_of_present_illness": "N/A", "past_medical_history": "N/A", "allergies": "N/A"},
+            "patient_history": {"chief_complaint": "Unable to generate due to API response error", "history_of_present_illness": "N/A", "past_medical_history": "N/A", "allergies": "N/A"},
             "physical_examination": "N/A",
             "differential_diagnosis": "No diagnosis available.",
             "diagnostic_workup": "No workup recommended.",
             "plan_of_care": "No plan generated.",
             "patient_education": "N/A",
             "follow_up_instructions": "N/A",
-            "summary": "Unable to generate summary."
+            "summary": "Unable to generate summary due to API response error."
         }
     except requests.exceptions.HTTPError as http_err:
         error_message = f"HTTP Error: {http_err.response.status_code} - {http_err.response.text}"
-        print(f"Error calling Grok API: {error_message}")
+        logger.error(f"Error calling xAI API: {error_message}")
         return {
             "patient_history": {"chief_complaint": f"Error: {error_message}", "history_of_present_illness": "N/A", "past_medical_history": "N/A", "allergies": "N/A"},
             "physical_examination": "N/A",
@@ -158,7 +179,7 @@ def analyze_transcript(text, target_language="EN"):
             "summary": f"Error: {error_message}"
         }
     except Exception as e:
-        print(f"Error calling Grok API: {e}")
+        logger.error(f"Error calling xAI API: {str(e)}")
         return {
             "patient_history": {"chief_complaint": f"Error: {str(e)}", "history_of_present_illness": "N/A", "past_medical_history": "N/A", "allergies": "N/A"},
             "physical_examination": "N/A",
@@ -172,6 +193,7 @@ def analyze_transcript(text, target_language="EN"):
 
 def translate_text(text, target_language):
     if not DEEPL_API_KEY:
+        logger.warning("DeepL API key not provided; returning original text")
         return text  # Return original text if no DeepL key is provided
     headers = {"Authorization": f"DeepL-Auth-Key {DEEPL_API_KEY}"}
     payload = {
@@ -182,9 +204,11 @@ def translate_text(text, target_language):
         response = requests.post(DEEPL_API_URL, headers=headers, data=payload, timeout=10)
         response.raise_for_status()
         result = response.json()
-        return result["translations"][0]["text"]
+        translated_text = result["translations"][0]["text"]
+        logger.info(f"Translated text to {target_language}: {translated_text}")
+        return translated_text
     except Exception as e:
-        print(f"Translation error: {e}")
+        logger.error(f"Translation error: {str(e)}")
         return text
 
 @app.route('/analyze', methods=['POST', 'OPTIONS'])
@@ -193,7 +217,7 @@ def analyze_endpoint():
         # Handle CORS preflight request
         response = make_response()
         response.headers.add("Access-Control-Allow-Origin", "http://127.0.0.1:8080")
-        response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
         response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
         return response
     try:
@@ -219,6 +243,7 @@ def analyze_endpoint():
         result = analyze_transcript(text, target_language)
         return jsonify(result)
     except Exception as e:
+        logger.error(f'Error processing /analyze request: {str(e)}')
         return jsonify({"error": str(e)}), 500
 
 @app.route('/login', methods=['POST', 'OPTIONS'])
@@ -240,6 +265,7 @@ def login():
         else:
             return jsonify({"success": False, "message": "Invalid email or password"}), 401
     except Exception as e:
+        logger.error(f'Error processing /login request: {str(e)}')
         return jsonify({"error": str(e)}), 500
 
 @app.route('/register', methods=['POST', 'OPTIONS'])
@@ -273,7 +299,8 @@ def register():
         status = get_subscription_status(email)
         return jsonify({"success": True, "subscription": status["tier"], "trial_end": status["trial_end"], "card_last4": status["card_last4"]}), 200
     except Exception as e:
+        logger.error(f'Error processing /register request: {str(e)}')
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=PORT, debug=FLASK_ENV == 'development')
