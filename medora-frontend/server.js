@@ -43,9 +43,14 @@ app.use(helmet({
             styleSrc: [
                 "'self'",
                 "https://fonts.googleapis.com",
-                "'unsafe-inline'" // Allow inline styles in index.html
+                "https://cdnjs.cloudflare.com",
+                "'unsafe-inline'" // Allow inline styles in index.html and login.html
             ],
-            fontSrc: ["'self'", "https://fonts.gstatic.com"],
+            fontSrc: [
+                "'self'",
+                "https://fonts.gstatic.com",
+                "https://cdnjs.cloudflare.com" // Added for Font Awesome fonts
+            ],
             imgSrc: ["'self'", "data:"],
             connectSrc: ["'self'", "http://localhost:5000"], // Allow connections to Flask backend
             objectSrc: ["'none'"],
