@@ -1,15 +1,14 @@
 const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
-const jwt = require('jsonwebtoken');
+const helmet = require('helmet');
+require('dotenv').config();
+
 const app = express();
-const port = 8080;
+const port = process.env.PORT || 8080;
 
 // Connect to MongoDB
-mongoose.connect('mongodb://localhost/medora', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-}).then(() => {
+mongoose.connect(process.env.MONGODB_URI).then(() => {
     console.log('Connected to MongoDB');
 }).catch(err => {
     console.error('MongoDB connection error:', err);
@@ -30,53 +29,52 @@ const transcriptSchema = new mongoose.Schema({
 
 const Transcript = mongoose.model('Transcript', transcriptSchema);
 
+// Use Helmet for security headers with custom CSP
+app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: [
+                "'self'",
+                "https://cdnjs.cloudflare.com",
+                "https://cdn.jsdelivr.net",
+                "'unsafe-eval'" // Required for MediaPipe WebAssembly
+            ],
+            styleSrc: [
+                "'self'",
+                "https://fonts.googleapis.com",
+                "'unsafe-inline'" // Allow inline styles in index.html
+            ],
+            fontSrc: ["'self'", "https://fonts.gstatic.com"],
+            imgSrc: ["'self'", "data:"],
+            connectSrc: ["'self'", "http://localhost:5000"], // Allow connections to Flask backend
+            objectSrc: ["'none'"],
+            upgradeInsecureRequests: []
+        }
+    }
+}));
+
 // Serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Middleware to parse JSON bodies
 app.use(express.json());
 
-// Simulated tenant database (replace with a real database in production)
-const tenants = {
-    clinic_123: { password: 'clinic123pass' },
-    clinic_456: { password: 'clinic456pass' }
-};
-
-// Middleware to verify JWT
-const authenticateToken = (req, res, next) => {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
-    if (!token) return res.status(401).json({ error: 'Access denied' });
-
-    jwt.verify(token, 'your-secret-key', (err, user) => {
-        if (err) return res.status(403).json({ error: 'Invalid token' });
-        req.tenantId = user.tenantId;
-        next();
-    });
-};
-
-// Login route to generate JWT
-app.post('/login', (req, res) => {
-    const { tenantId, password } = req.body;
-    const tenant = tenants[tenantId];
-    if (!tenant || tenant.password !== password) {
-        return res.status(401).json({ error: 'Invalid credentials' });
-    }
-
-    const token = jwt.sign({ tenantId }, 'your-secret-key', { expiresIn: '1h' });
-    res.json({ token });
+// Route for the root URL to serve login.html
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'login.html'));
 });
 
-// Route for the root URL to serve index.html
-app.get('/', (req, res) => {
+// Route for /index.html to serve index.html
+app.get('/index.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Route to save and analyze transcripts
-app.post('/analyze', authenticateToken, async (req, res) => {
+// Route to save and analyze transcripts (no JWT authentication)
+app.post('/analyze', async (req, res) => {
     try {
-        const tenantId = req.tenantId;
-        const response = await fetch('http://localhost:5000/analyze', {
+        const tenantId = req.body.tenant_id || 'default_tenant'; // Use tenant_id from request body
+        const response = await fetch(`${process.env.FLASK_BACKEND_URL}/analyze`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ ...req.body, tenant_id: tenantId })

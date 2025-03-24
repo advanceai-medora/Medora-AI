@@ -1,10 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM fully loaded.');
+
     // DOM Elements
-    const loginSection = document.getElementById('login-section');
-    const mainContent = document.querySelector('.main-content');
-    const loginButton = document.getElementById('loginButton');
-    const tenantIdInput = document.getElementById('tenantIdInput');
-    const passwordInput = document.getElementById('passwordInput');
     const clock = document.getElementById('clock');
     const startButton = document.getElementById('startButton');
     const stopButton = document.getElementById('stopButton');
@@ -36,7 +33,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Check for required elements
     const requiredElements = {
-        loginSection, mainContent, loginButton, tenantIdInput, passwordInput,
         startButton, stopButton, transcriptContent, subjectiveContent, objectiveContent,
         assessmentContent, planContent, clock, transcriptInput, submitTranscriptButton,
         languageSelect, allergensDetected, asthmaFrequency, asthmaSeverity, asthmaTriggers,
@@ -74,37 +70,12 @@ document.addEventListener('DOMContentLoaded', () => {
     let lastFrameTime = 0;
     let detectionAttempts = 0;
 
-    // Login functionality
-    if (localStorage.getItem('jwt')) {
-        loginSection.style.display = 'none';
-        mainContent.style.display = 'block';
-    } else {
-        loginSection.style.display = 'block';
-        mainContent.style.display = 'none';
+    // Check authentication
+    if (!sessionStorage.getItem('isAuthenticated')) {
+        console.log('User not authenticated, redirecting to login page.');
+        window.location.href = '/login.html';
+        return;
     }
-
-    loginButton.addEventListener('click', async () => {
-        const tenantId = tenantIdInput.value;
-        const password = passwordInput.value;
-
-        try {
-            const response = await fetch('/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ tenantId, password })
-            });
-            const data = await response.json();
-            if (data.error) throw new Error(data.error);
-
-            localStorage.setItem('jwt', data.token);
-            localStorage.setItem('tenantId', tenantId);
-            sessionStorage.setItem('isAuthenticated', 'true'); // Set authentication flag
-            loginSection.style.display = 'none';
-            mainContent.style.display = 'block';
-        } catch (error) {
-            alert('Login failed: ' + error.message);
-        }
-    });
 
     // Initialize Three.js for Avatar Animation
     function initAvatar() {
@@ -633,13 +604,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch('/analyze', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('jwt')}`
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
                     text: transcript,
                     language: languageSelect.value,
                     email,
+                    tenant_id: localStorage.getItem('tenantId') || 'default_tenant',
                     allergensDetected: allergensDetected.textContent,
                     asthmaFrequency: asthmaFrequency.textContent,
                     asthmaSeverity: asthmaSeverity.textContent,
@@ -960,35 +931,22 @@ document.addEventListener('DOMContentLoaded', () => {
         sessionStorage.removeItem('subscription');
         sessionStorage.removeItem('trial_end');
         sessionStorage.removeItem('card_last4');
-        localStorage.removeItem('jwt');
         localStorage.removeItem('tenantId');
-        loginSection.style.display = 'block';
-        mainContent.style.display = 'none';
+        window.location.href = '/login.html';
     });
 
     // Check authentication and subscription for sign language interpreter
-    const isAuthenticated = sessionStorage.getItem('isAuthenticated');
-    const currentPath = window.location.pathname;
-    if (!isAuthenticated && currentPath !== '/') {
-        console.log('User not authenticated, redirecting to login page.');
-        window.location.href = 'http://127.0.0.1:8080/';
-    } else {
-        const email = sessionStorage.getItem('email') || "doctor@allergyaffiliates";
-        sessionStorage.setItem('email', email);
-        const subscription = sessionStorage.getItem('subscription') || 'None';
-        const trialEnd = sessionStorage.getItem('trial_end') || '';
-        sessionStorage.setItem('subscription', subscription);
-        sessionStorage.setItem('trial_end', trialEnd);
-        subscriptionInfo.textContent = `Subscription: ${subscription} Tier`;
-        if (trialEnd) {
-            subscriptionInfo.textContent += ` (Trial ends: ${trialEnd})`;
-        }
-        if (subscription === 'None' || subscription === 'Basic' || (subscription === 'Trial' && trialEnd && new Date() > new Date(trialEnd))) {
-            subscriptionInfo.innerHTML += ' <a href="#" onclick="upgradeSubscription()" style="color: #a3bffa; text-decoration: underline;">Upgrade to Premium</a>';
-            signInterpreterButton.style.display = 'none';
-            signInterpreterSection.style.display = 'none';
-        } else if (subscription === 'Premium') {
-            signInterpreterButton.style.display = 'block';
-        }
+    const subscription = sessionStorage.getItem('subscription') || 'None';
+    const trialEnd = sessionStorage.getItem('trial_end') || '';
+    subscriptionInfo.textContent = `Subscription: ${subscription} Tier`;
+    if (trialEnd) {
+        subscriptionInfo.textContent += ` (Trial ends: ${trialEnd})`;
+    }
+    if (subscription === 'None' || subscription === 'Basic' || (subscription === 'Trial' && trialEnd && new Date() > new Date(trialEnd))) {
+        subscriptionInfo.innerHTML += ' <a href="#" onclick="upgradeSubscription()" style="color: #a3bffa; text-decoration: underline;">Upgrade to Premium</a>';
+        signInterpreterButton.style.display = 'none';
+        signInterpreterSection.style.display = 'none';
+    } else if (subscription === 'Premium') {
+        signInterpreterButton.style.display = 'block';
     }
 });
