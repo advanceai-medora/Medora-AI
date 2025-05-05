@@ -12,24 +12,6 @@ async function fetchReferences(patientId, visitId) {
 
     window.showReferencesSpinner();
 
-    // Define mock references as a fallback
-    const mockReferences = [
-        {
-            article: "General Allergy Management Strategies",
-            author: "Wood RA",
-            journal: "Allergy and Asthma Proceedings",
-            year: 2017,
-            link: "https://pubmed.ncbi.nlm.nih.gov/28234061/"
-        },
-        {
-            article: "Overview of Allergic Reactions",
-            author: "Sicherer SH",
-            journal: "Journal of Allergy and Clinical Immunology",
-            year: 2019,
-            link: "https://pubmed.ncbi.nlm.nih.gov/31466691/"
-        }
-    ];
-
     try {
         // Extract conditions from latestAnalysis
         let conditions = '';
@@ -55,60 +37,59 @@ async function fetchReferences(patientId, visitId) {
         const url = `/get-insights?${queryParams.toString()}`;
         console.log('Fetching references from:', url);
 
-        // Attempt to fetch references from the backend
+        // Fetch references from the backend
         const response = await fetch(url, {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' }
         });
         if (!response.ok) throw new Error(`Failed to fetch references: ${response.statusText}`);
         const data = await response.json();
-        console.log('References API response:', data);
-
-        let references = [];
-        if (data.insights && data.insights.length > 0) {
-            // Map the backend insights to the frontend format
-            references = data.insights.map(insight => ({
-                article: insight.title || 'N/A',
-                author: insight.summary ? insight.summary.split(' ').slice(0, 2).join(' ') : 'Unknown Author', // Placeholder author extraction
-                journal: 'PubMed', // Since it's from PubMed
-                year: new Date().getFullYear(), // Placeholder year
-                link: insight.url || '#'
-            }));
-        } else {
-            console.log('No insights returned from API, using mock references');
-            references = mockReferences;
-        }
+        console.log('References API response:', JSON.stringify(data, null, 2));
 
         const tableBody = document.getElementById('references-table-body');
         if (tableBody) {
-            console.log('Populating references table with data:', references);
-            tableBody.innerHTML = references.map(ref => `
-                <tr>
-                    <td>${ref.article}</td>
-                    <td>${ref.author}</td>
-                    <td>${ref.journal}</td>
-                    <td>${ref.year}</td>
-                    <td><a href="${ref.link}" target="_blank">Link</a></td>
-                </tr>
-            `).join('');
+            tableBody.innerHTML = ''; // Clear previous references
+            if (data.insights && data.insights.length > 0) {
+                // Render all insights with their full details
+                data.insights.forEach((insight, index) => {
+                    // Log the insight to debug field mapping
+                    console.log(`Rendering insight #${index + 1}:`, JSON.stringify(insight, null, 2));
+                    // Truncate summary to 100 characters for better display
+                    const truncatedSummary = insight.summary && insight.summary.length > 100 
+                        ? insight.summary.substring(0, 100) + '...' 
+                        : insight.summary || 'N/A';
+                    // Format authors (truncate if too long)
+                    const formattedAuthors = insight.authors && insight.authors.length > 50 
+                        ? insight.authors.substring(0, 50) + '...' 
+                        : insight.authors || 'N/A';
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td><a href="${insight.url || '#'}" target="_blank">${insight.title || 'N/A'}</a></td>
+                        <td>${truncatedSummary}</td>
+                        <td>${insight.relevance_score || 'N/A'}</td>
+                        <td>${insight.confidence || 'N/A'}</td>
+                        <td>${insight.relevance_tag || 'N/A'}</td>
+                        <td>${insight.source || 'N/A'}</td>
+                        <td>${formattedAuthors}</td>
+                        <td>${insight.year || 'N/A'}</td>
+                        <td>${insight.citation_count || 'N/A'}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+                console.log('Populated references table with data:', data.insights);
+            } else {
+                console.log('No insights returned from API');
+                tableBody.innerHTML = '<tr><td colspan="10">No references available.</td></tr>';
+            }
         } else {
             console.error('References table body not found in DOM');
         }
     } catch (error) {
         console.error('Error fetching references:', error);
-        // Use mock data as a fallback
         const tableBody = document.getElementById('references-table-body');
         if (tableBody) {
-            console.log('Populating references table with mock data:', mockReferences);
-            tableBody.innerHTML = mockReferences.map(ref => `
-                <tr>
-                    <td>${ref.article}</td>
-                    <td>${ref.author}</td>
-                    <td>${ref.journal}</td>
-                    <td>${ref.year}</td>
-                    <td><a href="${ref.link}" target="_blank">Link</a></td>
-                </tr>
-            `).join('');
+            tableBody.innerHTML = '<tr><td colspan="10">Error loading references: ' + error.message + '</td></tr>';
         } else {
             console.error('References table body not found in DOM');
         }

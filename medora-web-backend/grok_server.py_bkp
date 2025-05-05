@@ -87,7 +87,7 @@ except Exception as e:
 
 # Hardcoded subscription and user data
 SUBSCRIPTIONS = {
-    "doctor@allergyaffiliates": {"tier": "Premium", "trial_start": None, "card_last4": "1234"},
+    "doctor@allergyaffiliates.com": {"tier": "Premium", "trial_start": None, "card_last4": "1234"},
     "testuser@example.com": {"tier": "Trial", "trial_start": "2025-03-11", "card_last4": "5678"}
 }
 
@@ -438,28 +438,44 @@ def get_patient_history():
 @app.route('/api/visit/start', methods=['POST', 'OPTIONS'])
 def start_visit():
     if request.method == 'OPTIONS':
+        logger.info("Handling OPTIONS request for /api/visit/start")
         response = make_response()
         response.headers.add("Access-Control-Allow-Origin", "https://test.medoramd.ai")
         response.headers.add("Access-Control-Allow-Headers", "Content-Type")
         response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
         return response
+    logger.info("Handling POST request for /api/visit/start")
     try:
+        # Log the incoming request
+        logger.debug(f"Request headers: {request.headers}")
+        logger.debug(f"Request JSON: {request.get_json()}")
+
         data = request.get_json()
         patient_id = data.get('patientId')
         email = data.get('email')
         tenant_id = data.get('tenantId', 'default_tenant')
 
+        logger.debug(f"Received data - patientId: {patient_id}, email: {email}, tenantId: {tenant_id}")
+
         if not patient_id or not email:
+            logger.error("Missing required fields: patientId or email")
             return jsonify({"success": False, "error": "Patient ID and email are required"}), 400
 
+        logger.debug("Checking subscription status")
         status = get_subscription_status(email)
+        logger.debug(f"Subscription status: {status}")
         if status["tier"] not in ["Trial", "Premium"]:
+            logger.error(f"Active subscription required for email: {email}")
             return jsonify({"success": False, "error": "Active subscription required"}), 403
         if status["tier"] == "Expired":
+            logger.error(f"Trial expired for email: {email} on {status['trial_end']}")
             return jsonify({"success": False, "error": f"Trial expired on {status['trial_end']}"}), 403
 
+        logger.debug("Finding patient in MongoDB")
         patient = patients_collection.find_one({"tenantId": tenant_id, "name": patient_id})
+        logger.debug(f"Patient found: {patient}")
         if not patient:
+            logger.info(f"Patient {patient_id} not found, creating new patient")
             patient_doc = {
                 "tenantId": tenant_id,
                 "name": patient_id,
@@ -469,9 +485,12 @@ def start_visit():
             }
             patient_result = patients_collection.insert_one(patient_doc)
             patient_id = str(patient_result.inserted_id)
+            logger.info(f"Created new patient with ID: {patient_id}")
         else:
             patient_id = str(patient["_id"])
+            logger.info(f"Using existing patient ID: {patient_id}")
 
+        logger.debug("Creating visit document")
         visit_id = str(uuid.uuid4())
         visit_doc = {
             "visitId": visit_id,
@@ -481,12 +500,14 @@ def start_visit():
             "startTime": datetime.now().isoformat(),
             "status": "active"
         }
+        logger.debug(f"Inserting visit document: {visit_doc}")
         visits_collection.insert_one(visit_doc)
-
         logger.info(f"Visit started: {visit_id} for patient {patient_id} by {email}")
+
         return jsonify({"success": True, "message": "Visit started", "visitId": visit_id, "patientId": patient_id}), 201
     except Exception as e:
         logger.error(f"Error starting visit: {str(e)}")
+        logger.error(f"Exception traceback: {str(e.__traceback__)}")
         return jsonify({"success": False, "error": str(e)}), 500
 
 @app.route('/api/delete-patient', methods=['POST', 'OPTIONS'])
@@ -718,7 +739,7 @@ def submit_transcript():
 def query_pubmed(condition, retmax=1):
     """
     Query PubMed for articles related to the given condition.
-    Returns a list of insights with title, summary, PubMed ID, URL, confidence, and relevance tag.
+    Returns a list of insights with title, summary, PubMed ID, URL, confidence, relevance score, and relevance tag.
     """
     try:
         # Step 1: Search PubMed for article IDs
@@ -730,11 +751,13 @@ def query_pubmed(condition, retmax=1):
             "sort": "relevance",
             "retmode": "json"
         }
+        logger.debug(f"Sending PubMed search request for condition '{condition}' with params: {search_params}")
         search_response = requests.get(search_url, params=search_params, timeout=10)
         search_response.raise_for_status()
         search_data = search_response.json()
 
         id_list = search_data.get("esearchresult", {}).get("idlist", [])
+        logger.debug(f"PubMed returned article IDs for condition '{condition}': {id_list}")
         if not id_list:
             logger.warning(f"No PubMed articles found for condition: {condition}")
             return []
@@ -769,24 +792,134 @@ def query_pubmed(condition, retmax=1):
             # Construct URL
             url = f"https://pubmed.ncbi.nlm.nih.gov/{pubmed_id_text}/"
 
-            # Assign confidence and relevance tag
-            confidence = "Recommended"  # Placeholder; can be improved with a relevance score
+            # Compute relevance score
+            relevance_score = 0.0
+            condition_lower = condition.lower()
+            if condition_lower in title_text.lower():
+                relevance_score += 0.5  # Higher weight for title match
+            if condition_lower in abstract_text.lower():
+                relevance_score += 0.3  # Lower weight for abstract match
+            # Normalize to 0-100
+            relevance_score = min(relevance_score * 100, 100)
+
+            # Assign confidence (textual) based on relevance score
+            confidence = "Recommended"
+            if relevance_score > 70:
+                confidence = "Highly Recommended"
+            elif relevance_score > 40:
+                confidence = "Recommended"
+            else:
+                confidence = "Relevant"
+
+            # Create relevance tag
             relevance_tag = f"Relevant to {condition.lower()}"
 
-            insights.append({
+            insight = {
                 "title": title_text,
                 "summary": abstract_text,
                 "pubmed_id": pubmed_id_text,
                 "url": url,
                 "confidence": confidence,
-                "relevance_tag": relevance_tag
-            })
+                "relevance_score": f"{relevance_score:.1f}%",
+                "relevance_tag": relevance_tag,
+                "source": "PubMed",
+                "raw_relevance_score": relevance_score  # Store raw score for sorting
+            }
+            insights.append(insight)
+            logger.debug(f"PubMed insight for condition '{condition}': {insight}")
 
-        logger.info(f"Fetched {len(insights)} insights for condition: {condition}")
+        logger.info(f"Fetched {len(insights)} insights from PubMed for condition: {condition}")
         return insights
 
     except Exception as e:
         logger.error(f"Error querying PubMed for condition {condition}: {str(e)}")
+        return []
+
+def query_semantic_scholar(condition, retmax=1):
+    """
+    Query Semantic Scholar for articles related to the given condition.
+    Returns a list of insights with title, summary, URL, and relevance info.
+    """
+    try:
+        # Semantic Scholar API endpoint
+        api_url = "https://api.semanticscholar.org/graph/v1/paper/search"
+        
+        params = {
+            "query": f"{condition} treatment OR management",
+            "limit": retmax,
+            "fields": "title,abstract,url,year,authors,venue,citationCount"
+        }
+        
+        headers = {
+            # Optional API key if you have registered one
+            # "x-api-key": os.getenv('SEMANTIC_SCHOLAR_API_KEY')
+        }
+        
+        logger.debug(f"Sending Semantic Scholar request for condition '{condition}' with params: {params}")
+        response = requests.get(api_url, params=params, headers=headers, timeout=10)
+        response.raise_for_status()
+        results = response.json()
+        
+        insights = []
+        
+        if "data" in results:
+            for paper in results["data"]:
+                title_text = paper.get("title", "N/A")
+                abstract_text = paper.get("abstract", "N/A")
+                url = paper.get("url", "#")
+                year = paper.get("year", "N/A")
+                
+                # Format authors
+                authors = []
+                if "authors" in paper:
+                    authors = [author.get("name", "") for author in paper["authors"]]
+                
+                # Get citation count as a proxy for importance
+                citation_count = paper.get("citationCount", 0)
+                
+                # Compute relevance score
+                relevance_score = 0.0
+                condition_lower = condition.lower()
+                if condition_lower in title_text.lower():
+                    relevance_score += 0.4  # Weight for title match
+                if abstract_text != "N/A" and condition_lower in abstract_text.lower():
+                    relevance_score += 0.3  # Weight for abstract match
+                # Add weight for citation count (normalize to 0-0.3)
+                citation_weight = min(citation_count / 200, 0.3)  # Cap at 200 citations for max weight
+                relevance_score += citation_weight
+                # Normalize to 0-100
+                relevance_score = min(relevance_score * 100, 100)
+
+                # Determine confidence level based on relevance score
+                confidence = "Recommended"
+                if relevance_score > 70:
+                    confidence = "Highly Recommended"
+                elif relevance_score > 40:
+                    confidence = "Recommended"
+                else:
+                    confidence = "Relevant"
+                
+                insight = {
+                    "title": title_text,
+                    "summary": abstract_text,
+                    "url": url,
+                    "authors": ", ".join(authors),
+                    "year": year,
+                    "citation_count": citation_count,
+                    "source": "Semantic Scholar",
+                    "confidence": confidence,
+                    "relevance_score": f"{relevance_score:.1f}%",
+                    "relevance_tag": f"Relevant to {condition.lower()}",
+                    "raw_relevance_score": relevance_score  # Store raw score for sorting
+                }
+                insights.append(insight)
+                logger.debug(f"Semantic Scholar insight for condition '{condition}': {insight}")
+        
+        logger.info(f"Fetched {len(insights)} insights from Semantic Scholar for condition: {condition}")
+        return insights
+        
+    except Exception as e:
+        logger.error(f"Error querying Semantic Scholar for condition {condition}: {str(e)}")
         return []
 
 @app.route('/get-insights', methods=['GET', 'OPTIONS'])
@@ -806,6 +939,8 @@ def get_insights():
         visit_id = request.args.get('visit_id')
         conditions = request.args.get('conditions', '')
 
+        logger.debug(f"Request parameters - patient_id: {patient_id}, visit_id: {visit_id}, conditions: {conditions}")
+
         if not patient_id or not visit_id:
             logger.error(f"Missing required parameters: patient_id={patient_id}, visit_id={visit_id}")
             return jsonify({"error": "patient_id and visit_id are required"}), 400
@@ -819,38 +954,55 @@ def get_insights():
             }), 200
 
         # Parse conditions into individual diagnoses
-        # Example conditions: "Seasonal allergic rhinitis with associated asthma symptoms. Alternative diagnoses: 1) Chronic rhinosinusitis, 2) Non-allergic rhinitis, 3) Oral allergy syndrome exacerbating respiratory symptoms."
         diagnoses = []
-        # Split by "Alternative diagnoses:" and process each part
         parts = conditions.split("Alternative diagnoses:")
         primary_part = parts[0].strip()
-        # Extract primary diagnosis (before the period)
         primary_diagnosis = primary_part.split('.')[0].replace("Primary diagnosis:", "").strip()
         if primary_diagnosis:
             diagnoses.append(primary_diagnosis)
 
-        # Process alternative diagnoses
         if len(parts) > 1:
             alternatives = parts[1].strip()
-            # Split by numbered items (e.g., "1)", "2)", "3)")
             alt_diagnoses = re.split(r'\d+\)', alternatives)
             for alt in alt_diagnoses:
                 alt = alt.strip()
                 if alt:
-                    # Remove trailing periods or commas
                     alt = alt.rstrip('.,').strip()
                     diagnoses.append(alt)
 
-        logger.info(f"Parsed diagnoses: {diagnoses}")
+        logger.info(f"Parsed diagnoses for patient_id {patient_id}: {diagnoses}")
 
-        # Query PubMed for each diagnosis
+        if not diagnoses:
+            logger.warning(f"No diagnoses parsed for patient_id: {patient_id}, conditions: {conditions}")
+            return jsonify({
+                "patient_id": patient_id,
+                "visit_id": visit_id,
+                "insights": []
+            }), 200
+
+        # Query both PubMed and Semantic Scholar for each diagnosis
         all_insights = []
         for diagnosis in diagnoses:
-            insights = query_pubmed(diagnosis, retmax=1)
-            all_insights.extend(insights)
+            logger.debug(f"Querying references for diagnosis: {diagnosis}")
+            # Fetch from PubMed
+            pubmed_insights = query_pubmed(diagnosis, retmax=2)
+            all_insights.extend(pubmed_insights)
+            # Fetch from Semantic Scholar
+            semantic_insights = query_semantic_scholar(diagnosis, retmax=1)
+            all_insights.extend(semantic_insights)
+
+        # Sort insights by raw relevance score and limit to top 3
+        def get_relevance_score(insight):
+            return insight.get("raw_relevance_score", 0.0)
+
+        all_insights.sort(key=get_relevance_score, reverse=True)
+        # Remove the raw_relevance_score field from the final output
+        for insight in all_insights:
+            insight.pop("raw_relevance_score", None)
+        all_insights = all_insights[:3]  # Limit to top 3 insights
 
         if not all_insights:
-            logger.warning(f"No insights found for patient_id: {patient_id}, visit_id: {visit_id}")
+            logger.warning(f"No insights found for patient_id: {patient_id}, visit_id: {visit_id}, diagnoses: {diagnoses}")
             return jsonify({
                 "patient_id": patient_id,
                 "visit_id": visit_id,
@@ -862,7 +1014,7 @@ def get_insights():
             "visit_id": visit_id,
             "insights": all_insights
         }
-        logger.info(f"Returning insights: {json.dumps(result, indent=2)}")
+        logger.info(f"Returning insights for patient_id {patient_id}: {json.dumps(result, indent=2)}")
         return jsonify(result), 200
 
     except Exception as e:

@@ -739,7 +739,7 @@ def submit_transcript():
 def query_pubmed(condition, retmax=1):
     """
     Query PubMed for articles related to the given condition.
-    Returns a list of insights with title, summary, PubMed ID, URL, confidence, and relevance tag.
+    Returns a list of insights with title, summary, PubMed ID, URL, confidence, relevance score, and relevance tag.
     """
     try:
         # Step 1: Search PubMed for article IDs
@@ -751,11 +751,13 @@ def query_pubmed(condition, retmax=1):
             "sort": "relevance",
             "retmode": "json"
         }
+        logger.debug(f"Sending PubMed search request for condition '{condition}' with params: {search_params}")
         search_response = requests.get(search_url, params=search_params, timeout=10)
         search_response.raise_for_status()
         search_data = search_response.json()
 
         id_list = search_data.get("esearchresult", {}).get("idlist", [])
+        logger.debug(f"PubMed returned article IDs for condition '{condition}': {id_list}")
         if not id_list:
             logger.warning(f"No PubMed articles found for condition: {condition}")
             return []
@@ -778,10 +780,12 @@ def query_pubmed(condition, retmax=1):
             # Extract title
             title = article.find(".//ArticleTitle")
             title_text = title.text if title is not None else "N/A"
+            logger.debug(f"PubMed article title: {title_text}")
 
             # Extract abstract (summary)
             abstract = article.find(".//Abstract/AbstractText")
             abstract_text = abstract.text if abstract is not None else "N/A"
+            logger.debug(f"PubMed article abstract: {abstract_text}")
 
             # Extract PubMed ID
             pubmed_id = article.find(".//PMID")
@@ -790,24 +794,217 @@ def query_pubmed(condition, retmax=1):
             # Construct URL
             url = f"https://pubmed.ncbi.nlm.nih.gov/{pubmed_id_text}/"
 
-            # Assign confidence and relevance tag
-            confidence = "Recommended"  # Placeholder; can be improved with a relevance score
-            relevance_tag = f"Relevant to {condition.lower()}"
+            # Extract authors
+            authors = []
+            author_list = article.findall(".//AuthorList/Author")
+            for author in author_list:
+                last_name = author.find("LastName")
+                fore_name = author.find("ForeName")
+                if last_name is not None and last_name.text:
+                    if fore_name is not None and fore_name.text:
+                        authors.append(f"{fore_name.text} {last_name.text}")
+                    else:
+                        authors.append(last_name.text)
+            authors_text = ", ".join(authors) if authors else "N/A"
+            logger.debug(f"PubMed article authors: {authors_text}")
 
-            insights.append({
+            # Extract publication year
+            pub_date = article.find(".//PubDate/Year")
+            year = pub_date.text if pub_date is not None else "N/A"
+            logger.debug(f"PubMed article year: {year}")
+
+            # Compute relevance score with partial matching
+            relevance_score = 0.0
+            condition_words = condition.lower().split()
+            logger.debug(f"Condition words for matching: {condition_words}")
+            title_lower = title_text.lower()
+            abstract_lower = abstract_text.lower()
+
+            # Check for partial matches in title
+            title_matches = sum(1 for word in condition_words if word in title_lower)
+            if title_matches > 0:
+                title_weight = (title_matches / len(condition_words)) * 0.5  # Scale based on number of matching words
+                relevance_score += title_weight
+                logger.debug(f"PubMed title partial matches for '{condition}': {title_matches}/{len(condition_words)}. Added {title_weight:.2f} to relevance score")
+            else:
+                logger.debug(f"No title partial matches for '{condition}' in '{title_lower}'")
+
+            # Check for partial matches in abstract
+            abstract_matches = sum(1 for word in condition_words if word in abstract_lower)
+            if abstract_matches > 0:
+                abstract_weight = (abstract_matches / len(condition_words)) * 0.3  # Scale based on number of matching words
+                relevance_score += abstract_weight
+                logger.debug(f"PubMed abstract partial matches for '{condition}': {abstract_matches}/{len(condition_words)}. Added {abstract_weight:.2f} to relevance score")
+            else:
+                logger.debug(f"No abstract partial matches for '{condition}' in '{abstract_lower}'")
+
+            # Ensure a minimum score if the article was returned (since it's relevant by search)
+            if relevance_score == 0.0:
+                relevance_score = 10.0  # Minimum score to avoid 0.0%
+                logger.debug(f"No direct matches found, assigning minimum relevance score of 10.0")
+
+            # Normalize to 0-100
+            relevance_score = min(relevance_score * 100, 100)
+            logger.debug(f"PubMed final relevance score for '{condition}': {relevance_score}")
+
+            # Assign confidence (textual) based on relevance score
+            confidence = "Recommended"
+            if relevance_score > 70:
+                confidence = "Highly Recommended"
+            elif relevance_score > 40:
+                confidence = "Recommended"
+            else:
+                confidence = "Relevant"
+            logger.debug(f"PubMed confidence for '{condition}': {confidence}")
+
+            # Create relevance tag
+            relevance_tag = f"Relevant to {condition.lower()}"
+            logger.debug(f"PubMed relevance tag: {relevance_tag}")
+
+            insight = {
                 "title": title_text,
                 "summary": abstract_text,
                 "pubmed_id": pubmed_id_text,
                 "url": url,
                 "confidence": confidence,
-                "relevance_tag": relevance_tag
-            })
+                "relevance_score": f"{relevance_score:.1f}%",
+                "relevance_tag": relevance_tag,
+                "source": "PubMed",
+                "authors": authors_text,
+                "year": year,
+                "raw_relevance_score": relevance_score  # Store raw score for sorting
+            }
+            insights.append(insight)
+            logger.debug(f"PubMed insight for condition '{condition}': {insight}")
 
-        logger.info(f"Fetched {len(insights)} insights for condition: {condition}")
+        logger.info(f"Fetched {len(insights)} insights from PubMed for condition: {condition}")
         return insights
 
     except Exception as e:
         logger.error(f"Error querying PubMed for condition {condition}: {str(e)}")
+        return []
+
+def query_semantic_scholar(condition, retmax=1):
+    """
+    Query Semantic Scholar for articles related to the given condition.
+    Returns a list of insights with title, summary, URL, and relevance info.
+    """
+    try:
+        # Semantic Scholar API endpoint
+        api_url = "https://api.semanticscholar.org/graph/v1/paper/search"
+        
+        params = {
+            "query": f"{condition} treatment OR management",
+            "limit": retmax,
+            "fields": "title,abstract,url,year,authors,venue,citationCount"
+        }
+        
+        headers = {
+            # Optional API key if you have registered one
+            # "x-api-key": os.getenv('SEMANTIC_SCHOLAR_API_KEY')
+        }
+        
+        logger.debug(f"Sending Semantic Scholar request for condition '{condition}' with params: {params}")
+        response = requests.get(api_url, params=params, headers=headers, timeout=10)
+        response.raise_for_status()
+        results = response.json()
+        
+        insights = []
+        
+        if "data" in results:
+            for paper in results["data"]:
+                title_text = paper.get("title", "N/A")
+                abstract_text = paper.get("abstract", "N/A")
+                url = paper.get("url", "#")
+                year = paper.get("year", "N/A")
+                logger.debug(f"Semantic Scholar article title: {title_text}")
+                logger.debug(f"Semantic Scholar article abstract: {abstract_text}")
+                
+                # Format authors
+                authors = []
+                if "authors" in paper:
+                    authors = [author.get("name", "") for author in paper["authors"]]
+                authors_text = ", ".join(authors) if authors else "N/A"
+                logger.debug(f"Semantic Scholar article authors: {authors_text}")
+                
+                # Get citation count as a proxy for importance
+                citation_count = paper.get("citationCount", 0)
+                logger.debug(f"Semantic Scholar citation count: {citation_count}")
+                
+                # Compute relevance score with partial matching
+                relevance_score = 0.0
+                condition_words = condition.lower().split()
+                logger.debug(f"Condition words for matching: {condition_words}")
+                title_lower = title_text.lower()
+                abstract_lower = abstract_text.lower()
+
+                # Check for partial matches in title
+                title_matches = sum(1 for word in condition_words if word in title_lower)
+                if title_matches > 0:
+                    title_weight = (title_matches / len(condition_words)) * 0.4  # Scale based on number of matching words
+                    relevance_score += title_weight
+                    logger.debug(f"Semantic Scholar title partial matches for '{condition}': {title_matches}/{len(condition_words)}. Added {title_weight:.2f} to relevance score")
+                else:
+                    logger.debug(f"No title partial matches for '{condition}' in '{title_lower}'")
+
+                # Check for partial matches in abstract
+                abstract_matches = sum(1 for word in condition_words if word in abstract_lower)
+                if abstract_matches > 0:
+                    abstract_weight = (abstract_matches / len(condition_words)) * 0.3  # Scale based on number of matching words
+                    relevance_score += abstract_weight
+                    logger.debug(f"Semantic Scholar abstract partial matches for '{condition}': {abstract_matches}/{len(condition_words)}. Added {abstract_weight:.2f} to relevance score")
+                else:
+                    logger.debug(f"No abstract partial matches for '{condition}' in '{abstract_lower}'")
+
+                # Add weight for citation count (normalize to 0-0.3)
+                citation_weight = min(citation_count / 200, 0.3)  # Cap at 200 citations for max weight
+                relevance_score += citation_weight
+                logger.debug(f"Semantic Scholar citation weight for '{condition}' (citation_count={citation_count}): Added {citation_weight} to relevance score")
+
+                # Ensure a minimum score if the article was returned
+                if relevance_score == 0.0:
+                    relevance_score = 10.0  # Minimum score to avoid 0.0%
+                    logger.debug(f"No direct matches found, assigning minimum relevance score of 10.0")
+
+                # Normalize to 0-100
+                relevance_score = min(relevance_score * 100, 100)
+                logger.debug(f"Semantic Scholar final relevance score for '{condition}': {relevance_score}")
+
+                # Determine confidence level based on relevance score
+                confidence = "Recommended"
+                if relevance_score > 70:
+                    confidence = "Highly Recommended"
+                elif relevance_score > 40:
+                    confidence = "Recommended"
+                else:
+                    confidence = "Relevant"
+                logger.debug(f"Semantic Scholar confidence for '{condition}': {confidence}")
+                
+                # Create relevance tag
+                relevance_tag = f"Relevant to {condition.lower()}"
+                logger.debug(f"Semantic Scholar relevance tag: {relevance_tag}")
+
+                insight = {
+                    "title": title_text,
+                    "summary": abstract_text,
+                    "url": url,
+                    "authors": authors_text,
+                    "year": year,
+                    "citation_count": citation_count,
+                    "source": "Semantic Scholar",
+                    "confidence": confidence,
+                    "relevance_score": f"{relevance_score:.1f}%",
+                    "relevance_tag": relevance_tag,
+                    "raw_relevance_score": relevance_score  # Store raw score for sorting
+                }
+                insights.append(insight)
+                logger.debug(f"Semantic Scholar insight for condition '{condition}': {insight}")
+        
+        logger.info(f"Fetched {len(insights)} insights from Semantic Scholar for condition: {condition}")
+        return insights
+        
+    except Exception as e:
+        logger.error(f"Error querying Semantic Scholar for condition {condition}: {str(e)}")
         return []
 
 @app.route('/get-insights', methods=['GET', 'OPTIONS'])
@@ -827,6 +1024,8 @@ def get_insights():
         visit_id = request.args.get('visit_id')
         conditions = request.args.get('conditions', '')
 
+        logger.debug(f"Request parameters - patient_id: {patient_id}, visit_id: {visit_id}, conditions: {conditions}")
+
         if not patient_id or not visit_id:
             logger.error(f"Missing required parameters: patient_id={patient_id}, visit_id={visit_id}")
             return jsonify({"error": "patient_id and visit_id are required"}), 400
@@ -840,38 +1039,58 @@ def get_insights():
             }), 200
 
         # Parse conditions into individual diagnoses
-        # Example conditions: "Seasonal allergic rhinitis with associated asthma symptoms. Alternative diagnoses: 1) Chronic rhinosinusitis, 2) Non-allergic rhinitis, 3) Oral allergy syndrome exacerbating respiratory symptoms."
         diagnoses = []
-        # Split by "Alternative diagnoses:" and process each part
         parts = conditions.split("Alternative diagnoses:")
         primary_part = parts[0].strip()
-        # Extract primary diagnosis (before the period)
         primary_diagnosis = primary_part.split('.')[0].replace("Primary diagnosis:", "").strip()
         if primary_diagnosis:
             diagnoses.append(primary_diagnosis)
 
-        # Process alternative diagnoses
         if len(parts) > 1:
             alternatives = parts[1].strip()
-            # Split by numbered items (e.g., "1)", "2)", "3)")
             alt_diagnoses = re.split(r'\d+\)', alternatives)
             for alt in alt_diagnoses:
                 alt = alt.strip()
                 if alt:
-                    # Remove trailing periods or commas
                     alt = alt.rstrip('.,').strip()
                     diagnoses.append(alt)
 
-        logger.info(f"Parsed diagnoses: {diagnoses}")
+        logger.info(f"Parsed diagnoses for patient_id {patient_id}: {diagnoses}")
 
-        # Query PubMed for each diagnosis
+        if not diagnoses:
+            logger.warning(f"No diagnoses parsed for patient_id: {patient_id}, conditions: {conditions}")
+            return jsonify({
+                "patient_id": patient_id,
+                "visit_id": visit_id,
+                "insights": []
+            }), 200
+
+        # Query both PubMed and Semantic Scholar for each diagnosis
         all_insights = []
         for diagnosis in diagnoses:
-            insights = query_pubmed(diagnosis, retmax=1)
-            all_insights.extend(insights)
+            logger.debug(f"Querying references for diagnosis: {diagnosis}")
+            # Fetch from PubMed
+            pubmed_insights = query_pubmed(diagnosis, retmax=2)
+            logger.debug(f"PubMed insights for '{diagnosis}': {pubmed_insights}")
+            all_insights.extend(pubmed_insights)
+            # Fetch from Semantic Scholar
+            semantic_insights = query_semantic_scholar(diagnosis, retmax=1)
+            logger.debug(f"Semantic Scholar insights for '{diagnosis}': {semantic_insights}")
+            all_insights.extend(semantic_insights)
+
+        # Sort insights by raw relevance score and limit to top 3
+        def get_relevance_score(insight):
+            return insight.get("raw_relevance_score", 0.0)
+
+        logger.debug(f"All insights before sorting: {all_insights}")
+        all_insights.sort(key=get_relevance_score, reverse=True)
+        # Remove the raw_relevance_score field from the final output
+        for insight in all_insights:
+            insight.pop("raw_relevance_score", None)
+        all_insights = all_insights[:3]  # Limit to top 3 insights
 
         if not all_insights:
-            logger.warning(f"No insights found for patient_id: {patient_id}, visit_id: {visit_id}")
+            logger.warning(f"No insights found for patient_id: {patient_id}, visit_id: {visit_id}, diagnoses: {diagnoses}")
             return jsonify({
                 "patient_id": patient_id,
                 "visit_id": visit_id,
@@ -883,7 +1102,7 @@ def get_insights():
             "visit_id": visit_id,
             "insights": all_insights
         }
-        logger.info(f"Returning insights: {json.dumps(result, indent=2)}")
+        logger.info(f"Final response for patient_id {patient_id}: {json.dumps(result, indent=2)}")
         return jsonify(result), 200
 
     except Exception as e:
