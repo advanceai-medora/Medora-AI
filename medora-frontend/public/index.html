@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medora: Medical Co-Pilot</title>
+    <!-- Load Inter and Roboto fonts with weights 400, 500, 600 -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Roboto:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="icon" href="/images/Medora.png" type="image/png">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="/images/Medora.png" alt="Medora Logo" class="logo-image">
+        </div>
+        <button id="logout-btn">Menu</button>
+    </header>
+    <div class="container">
+        <!-- Patient Sidebar -->
+        <div id="patient-sidebar">
+            <div class="sidebar-header">
+                <h2>Patients</h2>
+                <select id="patient-filter">
+                    <option value="all">Filter: All</option>
+                    <option value="today">Today's Visits</option>
+                    <option value="follow-up">Follow-Up</option>
+                </select>
+            </div>
+            <div id="patient-list"></div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div id="main-content">
+            <div id="patient-details" style="display: none;">
+                <div class="patient-details-header">
+                    <h3>Patient Details</h3>
+                    <button id="back-to-patient-list-btn">Back to Patient List</button>
+                </div>
+                <p><strong>Name:</strong> <span id="patient-details-name"></span></p>
+                <p><strong>MRN:</strong> <span id="patient-details-mrn"></span></p>
+                <p><strong>Last Visit:</strong> <span id="patient-details-last-visit"></span></p>
+                <p><strong>Current Visit:</strong> <span id="patient-details-current-visit"></span></p>
+                <p><strong>Visit History:</strong></p>
+                <div id="patient-details-visit-history"></div>
+            </div>
+
+            <!-- Transcript Section -->
+            <div id="transcript-section">
+                <label for="patient-id">Patient Name/ID:</label>
+                <input type="text" id="patient-id" placeholder="Enter patient name or ID">
+                <textarea id="transcript-input" placeholder="Enter transcript here..."></textarea>
+                <div class="action-buttons">
+                    <button id="start-visit-btn">Start Visit</button>
+                    <button id="start-listening-btn">Start Listening</button>
+                    <button id="stop-listening-btn" class="hidden">Stop Listening</button>
+                    <button id="submit-transcript-btn">Submit Transcript</button>
+                    <div id="transcript-spinner" class="hidden">Loading...</div>
+                    <button id="smart-learning-badge">Smart Learn</button>
+                </div>
+            </div>
+
+            <!-- SOAP Notes Section -->
+            <div id="notes-section">
+                <div class="soap-section">
+                    <h3>Subjective</h3>
+                    <div id="subjective-content" class="content"></div>
+                    <div class="action-buttons">
+                        <button class="copy-section-btn" data-section="subjective">Copy</button>
+                        <button class="edit-section-btn" data-section="subjective">Edit</button>
+                    </div>
+                </div>
+                <div class="soap-section">
+                    <h3>Objective</h3>
+                    <div id="objective-content" class="content"></div>
+                    <div class="action-buttons">
+                        <button class="copy-section-btn" data-section="objective">Copy</button>
+                        <button class="edit-section-btn" data-section="objective">Edit</button>
+                    </div>
+                </div>
+                <div class="soap-section">
+                    <h3>Assessment</h3>
+                    <div id="assessment-content" class="content"></div>
+                    <div class="action-buttons">
+                        <button class="copy-section-btn" data-section="assessment">Copy</button>
+                        <button class="edit-section-btn" data-section="assessment">Edit</button>
+                    </div>
+                </div>
+                <div class="soap-section">
+                    <h3>Plan</h3>
+                    <div id="plan-content-container"></div>
+                    <button id="plan-detail-toggle">Concise</button>
+                    <button id="plan-bullet-toggle">Bullet</button>
+                    <div class="action-buttons">
+                        <button class="copy-section-btn" data-section="plan">Copy</button>
+                        <button class="edit-section-btn" data-section="plan">Edit</button>
+                    </div>
+                </div>
+                <button id="copy-soap-btn">Copy All SOAP Notes</button>
+            </div>
+        </div>
+
+        <!-- AI Insights Section -->
+        <div id="ai-insights">
+            <h2>AI Insights</h2>
+            <div class="insights-section">
+                <h3>Allergy Triggers</h3>
+                <div id="insights-allergy-triggers"><p>N/A</p></div>
+            </div>
+            <div class="insights-section">
+                <h3>Condition</h3>
+                <div id="insights-condition"><p>N/A</p></div>
+            </div>
+            <div class="insights-section">
+                <h3>Recommendations</h3>
+                <div id="insights-recommendations"><p>N/A</p></div>
+                <div class="insights-actions">
+                    <button id="insights-detail-toggle">Concise</button>
+                    <button id="insights-bullet-toggle">Bullet</button>
+                    <button id="insights-copy-edit-btn">Copy/Edit</button>
+                </div>
+            </div>
+            <div class="insights-section">
+                <h3>References</h3>
+                <div id="references-spinner" style="display: none;">Loading...</div>
+                <table id="references-table">
+                    <thead>
+                        <tr>
+                            <th>Article</th>
+                            <th>Author</th>
+                            <th>Journal</th>
+                            <th>Year</th>
+                            <th>Link</th>
+                        </tr>
+                    </thead>
+                    <tbody id="references-table-body"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Smart Learning Modal -->
+        <div id="smart-learning-modal" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #fff; padding: 20px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); z-index: 1000; border-radius: 8px; width: 500px;"></div>
+
+        <!-- Edit Modal -->
+        <div id="separate-modal" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #fff; padding: 20px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); z-index: 1000; border-radius: 8px;">
+            <h3>Edit Section</h3>
+            <select id="separate-section-select">
+                <option value="subjective-content">Subjective</option>
+                <option value="objective-content">Objective</option>
+                <option value="assessment-content">Assessment</option>
+                <option value="plan-content-container">Plan</option>
+                <option value="insights-allergy-triggers">Insights - Allergy Triggers</option>
+                <option value="insights-recommendations">Insights - Recommendations</option>
+            </select>
+            <textarea id="separate-input" placeholder="Edit content here..." style="width: 100%; height: 100px; margin-top: 10px;"></textarea>
+            <div id="separate-preview" style="margin-top: 10px;"></div>
+            <button id="separate-apply-btn" style="margin-top: 10px; padding: 8px 16px; background: #4caf50; color: #fff; border: none; border-radius: 4px; cursor: pointer;">Apply</button>
+            <button id="separate-cancel-btn" style="margin-top: 10px; margin-left: 10px; padding: 8px 16px; background: #e63946; color: #fff; border: none; border-radius: 4px; cursor: pointer;">Cancel</button>
+            <button id="separate-save-btn" style="margin-top: 10px; margin-left: 10px; padding: 8px 16px; background: #4caf50; color: #fff; border: none; border-radius: 4px; cursor: pointer;">Save</button>
+        </div>
+    </div>
+
+    <!-- Include the JavaScript files in the correct order with error handling -->
+    <script src="patient-management.js" onerror="console.error('Failed to load patient-management.js');"></script>
+    <script src="patient-spinner.js" onerror="console.error('Failed to load patient-spinner.js');"></script>
+    <script src="patient-references.js" onerror="console.error('Failed to load patient-references.js');"></script>
+    <script src="patient-notes.js" onerror="console.error('Failed to load patient-notes.js');"></script>
+    <script src="patient-event-listeners.js" onerror="console.error('Failed to load patient-event-listeners.js');"></script>
+    <script src="script-transcript.js" onerror="console.error('Failed to load script-transcript.js');"></script>
+    <!-- Moved menu.js before script-core.js to ensure logout-btn is set up -->
+    <script src="menu.js" onerror="console.error('Failed to load menu.js');"></script>
+    <script src="script-core.js" onerror="console.error('Failed to load script-core.js');"></script>
+    <script>
+        // Sign out a user (for use in menu.js)
+        function logout() {
+            console.log('User signed out');
+            localStorage.removeItem('currentEmail');
+            // Redirect to the test login page after sign-out with a delay
+            setTimeout(() => {
+                window.location.href = 'https://test.medoramd.ai/login.html';
+            }, 5000); // 5-second delay to capture logs
+            // Reset any menu state if necessary
+            const userMenu = document.getElementById('user-menu-container');
+            if (userMenu) {
+                userMenu.style.display = 'none';
+            }
+        }
+
+        // Check authentication state on page load
+        function checkAuthState() {
+            console.log('Checking authentication state...');
+            const email = localStorage.getItem('currentEmail');
+            console.log('Retrieved email from localStorage:', email);
+
+            // Prevent redirect if already on login page
+            if (window.location.pathname.includes('login.html')) {
+                console.log('Already on login page, skipping redirect');
+                return false;
+            }
+
+            if (email) {
+                console.log('User is signed in:', email);
+                return true;
+            } else {
+                console.log('No user signed in, redirecting to login page');
+                setTimeout(() => {
+                    window.location.href = 'https://test.medoramd.ai/login.html';
+                }, 5000); // 5-second delay to capture logs
+                return false;
+            }
+        }
+
+        // Expose functions to the global scope
+        window.logout = logout;
+        window.checkAuthState = checkAuthState;
+
+        // Monitor localStorage changes
+        let lastEmail = localStorage.getItem('currentEmail');
+        setInterval(() => {
+            const currentEmail = localStorage.getItem('currentEmail');
+            if (currentEmail !== lastEmail) {
+                console.log('localStorage currentEmail changed from', lastEmail, 'to', currentEmail);
+                lastEmail = currentEmail;
+                if (!currentEmail) {
+                    console.log('currentEmail cleared, redirecting to login page with delay');
+                    setTimeout(() => {
+                        window.location.href = 'https://test.medoramd.ai/login.html';
+                    }, 5000); // 5-second delay to capture logs
+                }
+            }
+        }, 1000); // Check every second
+
+        // Check authentication state on page load with a delay and error handling
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                try {
+                    console.log('DOM fully loaded, checking authentication state...');
+                    const isAuthenticated = checkAuthState();
+                    window.currentEmail = localStorage.getItem('currentEmail');
+                    console.log('window.currentEmail set to:', window.currentEmail);
+                    if (!isAuthenticated || !window.currentEmail) {
+                        console.log('Authentication failed, redirecting to login page');
+                        setTimeout(() => {
+                            window.location.href = 'https://test.medoramd.ai/login.html';
+                        }, 5000); // 5-second delay to capture logs
+                    } else {
+                        console.log('Authentication successful, proceeding to load dashboard');
+                    }
+                } catch (error) {
+                    console.error('Error checking authentication state:', error);
+                    setTimeout(() => {
+                        window.location.href = 'https://test.medoramd.ai/login.html';
+                    }, 5000); // 5-second delay to capture logs
+                }
+            }, 100); // 100ms delay to ensure localStorage is updated
+        });
+    </script>
+</body>
+</html>

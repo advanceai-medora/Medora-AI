@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Medora - Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Favicon for branding -->
+    <link rel="icon" href="https://test.medoramd.ai/images/Medora.png" type="image/png">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .login-container {
+            background: #ffffff;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .login-container img {
+            width: 100px;
+            margin-bottom: 1rem;
+        }
+
+        .login-container h1 {
+            color: #1a3c87;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .login-container p {
+            color: #4a5568;
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .login-form input {
+            padding: 0.75rem;
+            font-size: 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .login-form input:focus {
+            border-color: #1a3c87;
+            box-shadow: 0 0 0 3px rgba(26, 60, 135, 0.1);
+            outline: none;
+        }
+
+        .login-form button {
+            padding: 0.75rem;
+            font-size: 1rem;
+            font-weight: 500;
+            background: #1a3c87;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
+            position: relative;
+        }
+
+        .login-form button:hover {
+            background: #2b5cb3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .login-form button:disabled {
+            background: #d1d5db;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Loading Spinner for Buttons */
+        .loading-spinner {
+            display: none;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #ffffff;
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        @keyframes spin {
+            0% { transform: translateY(-50%) rotate(0deg); }
+            100% { transform: translateY(-50%) rotate(360deg); }
+        }
+
+        .error-message {
+            color: #e53e3e;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            background: #fee2e2;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .hipaa-note {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+            color: #4a5568;
+            margin-top: 1rem;
+        }
+
+        .hipaa-note span {
+            margin-left: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <img src="https://test.medoramd.ai/images/Medora.png" alt="Medora Logo">
+        <!-- Login Section -->
+        <div id="login-section" style="display: block;">
+            <h1>Medora Login</h1>
+            <p>Sign in to access your AI-Powered Scribe</p>
+            <div class="login-form">
+                <input type="email" id="login-email" placeholder="Email">
+                <input type="password" id="login-password" placeholder="Password">
+                <button id="login-btn">
+                    Login
+                    <span class="loading-spinner" id="login-spinner"></span>
+                </button>
+                <p class="error-message" id="errorMessage">Invalid email or password</p>
+            </div>
+        </div>
+        <div class="hipaa-note">
+            <span>🔒 Your data is protected with HIPAA-compliant encryption.</span>
+        </div>
+    </div>
+
+    <script>
+        // Simple client-side authentication
+        function signIn(email, password) {
+            const errorMessage = document.getElementById('errorMessage');
+            if (errorMessage) {
+                errorMessage.style.display = 'none';
+            }
+
+            // Hardcoded credentials for doctor@allergyaffiliates.com
+            const validEmail = 'doctor@allergyaffiliates.com';
+            const validPassword = '18June2011!';
+
+            // Normalize input values
+            const normalizedEmail = email.trim().toLowerCase();
+            const normalizedPassword = password.trim();
+
+            // Debug logging to verify input values
+            console.log('Input email:', email);
+            console.log('Normalized email:', normalizedEmail);
+            console.log('Input password:', password);
+            console.log('Normalized password:', normalizedPassword);
+            console.log('Expected email:', validEmail);
+            console.log('Expected password:', validPassword);
+
+            if (normalizedEmail === validEmail.toLowerCase() && normalizedPassword === validPassword) {
+                console.log('Sign-in successful for:', email);
+                // Store email in localStorage to persist across pages
+                localStorage.setItem('currentEmail', email);
+                // Redirect to the test dashboard after successful login
+                setTimeout(() => {
+                    window.location.href = 'https://test.medoramd.ai/index.html';
+                }, 100); // Add a small delay to ensure localStorage is updated
+            } else {
+                console.error('Invalid email or password');
+                if (errorMessage) {
+                    errorMessage.textContent = 'Invalid email or password';
+                    errorMessage.style.display = 'block';
+                    setLoadingState('login-btn', 'login-spinner', false);
+                }
+            }
+        }
+
+        // Sign out a user (for use in index.html and menu.js)
+        function logout() {
+            console.log('User signed out');
+            localStorage.removeItem('currentEmail');
+            // Redirect to the test login page after sign-out
+            setTimeout(() => {
+                window.location.href = 'https://test.medoramd.ai/login.html';
+            }, 5000); // 5-second delay to capture logs
+            // Reset any menu state if necessary
+            const userMenu = document.getElementById('user-menu-container');
+            if (userMenu) {
+                userMenu.style.display = 'none';
+            }
+        }
+
+        // Check authentication state (for use in index.html)
+        function checkAuthState() {
+            console.log('Checking authentication state...');
+            const email = localStorage.getItem('currentEmail');
+            console.log('Retrieved email from localStorage:', email);
+            if (email) {
+                console.log('User is signed in:', email);
+                return true;
+            } else {
+                console.log('No user signed in');
+                // Redirect to the test login page if not authenticated
+                setTimeout(() => {
+                    window.location.href = 'https://test.medoramd.ai/login.html';
+                }, 5000); // 5-second delay to capture logs
+                return false;
+            }
+        }
+
+        // Add loading state to buttons
+        function setLoadingState(buttonId, spinnerId, isLoading) {
+            const button = document.getElementById(buttonId);
+            const spinner = document.getElementById(spinnerId);
+            if (button && spinner) {
+                if (isLoading) {
+                    button.disabled = true;
+                    spinner.style.display = 'inline-block';
+                } else {
+                    button.disabled = false;
+                    spinner.style.display = 'none';
+                }
+            }
+        }
+
+        // Add loading state handler for the login button
+        document.addEventListener('DOMContentLoaded', () => {
+            const loginBtn = document.getElementById('login-btn');
+            if (loginBtn) {
+                loginBtn.addEventListener('click', () => {
+                    setLoadingState('login-btn', 'login-spinner', true);
+                    const email = document.getElementById('login-email').value;
+                    const password = document.getElementById('login-password').value;
+                    if (!email || !password) {
+                        const errorMessage = document.getElementById('errorMessage');
+                        errorMessage.textContent = 'Please enter an email and password.';
+                        errorMessage.style.display = 'block';
+                        setLoadingState('login-btn', 'login-spinner', false);
+                        return;
+                    }
+                    signIn(email, password);
+                });
+            }
+        });
+
+        // Expose functions for use in other scripts (e.g., menu.js, index.html)
+        window.logout = logout;
+        window.checkAuthState = checkAuthState;
+
+        // Monitor localStorage changes
+        let lastEmail = localStorage.getItem('currentEmail');
+        setInterval(() => {
+            const currentEmail = localStorage.getItem('currentEmail');
+            if (currentEmail !== lastEmail) {
+                console.log('localStorage currentEmail changed from', lastEmail, 'to', currentEmail);
+                lastEmail = currentEmail;
+                if (!currentEmail) {
+                    console.log('currentEmail cleared, redirecting to login page with delay');
+                    setTimeout(() => {
+                        window.location.href = 'https://test.medoramd.ai/login.html';
+                    }, 5000); // 5-second delay to capture logs
+                }
+            }
+        }, 1000); // Check every second
+    </script>
+</body>
+</html>

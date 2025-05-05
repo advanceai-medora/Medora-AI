@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Medora - Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Favicon for branding -->
+    <link rel="icon" href="https://test.medoramd.ai/images/Medora.png" type="image/png">
+    <!-- Load AWS Amplify library locally -->
+    <script defer src="https://test.medoramd.ai/js/aws-amplify.min.js" id="amplify-script"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .login-container {
+            background: #ffffff;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .login-container img {
+            width: 100px;
+            margin-bottom: 1rem;
+        }
+
+        .login-container h1 {
+            color: #1a3c87;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .login-container p {
+            color: #4a5568;
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .login-form input {
+            padding: 0.75rem;
+            font-size: 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .login-form input:focus {
+            border-color: #1a3c87;
+            box-shadow: 0 0 0 3px rgba(26, 60, 135, 0.1);
+            outline: none;
+        }
+
+        .login-form button {
+            padding: 0.75rem;
+            font-size: 1rem;
+            font-weight: 500;
+            background: #1a3c87;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
+            position: relative;
+        }
+
+        .login-form button:hover {
+            background: #2b5cb3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .login-form button:disabled {
+            background: #d1d5db;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Google Sign-In Button Styling */
+        .google-btn {
+            background: #ffffff;
+            color: #333;
+            border: 1px solid #d1d5db;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 0.75rem;
+            font-size: 1rem;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
+        }
+
+        .google-btn:hover {
+            background: #f0f0f0;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .google-btn::before {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            background: url('https://www.google.com/favicon.ico') no-repeat center center;
+            background-size: contain;
+        }
+
+        /* Loading Spinner for Buttons */
+        .loading-spinner {
+            display: none;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #ffffff;
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        @keyframes spin {
+            0% { transform: translateY(-50%) rotate(0deg); }
+            100% { transform: translateY(-50%) rotate(360deg); }
+        }
+
+        .error-message {
+            color: #e53e3e;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            background: #fee2e2;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .or-divider {
+            position: relative;
+            text-align: center;
+            color: #6b7280;
+            margin: 15px 0;
+        }
+
+        .or-divider:before,
+        .or-divider:after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 40%;
+            height: 1px;
+            background: #e2e8f0;
+        }
+
+        .or-divider:before {
+            left: 0;
+        }
+
+        .or-divider:after {
+            right: 0;
+        }
+
+        .login-form a {
+            color: #1a3c87;
+            text-decoration: none;
+            font-size: 0.875rem;
+        }
+
+        .login-form a:hover {
+            text-decoration: underline;
+        }
+
+        .login-form label {
+            display: flex;
+            align-items: center;
+            font-size: 0.875rem;
+            color: #4a5568;
+            margin-bottom: 0.5rem;
+        }
+
+        .login-form label input[type="checkbox"] {
+            margin-right: 8px;
+        }
+
+        .hipaa-note {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+            color: #4a5568;
+            margin-top: 1rem;
+        }
+
+        .hipaa-note span {
+            margin-left: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <img src="https://test.medoramd.ai/images/Medora.png" alt="Medora Logo">
+        <!-- Login Section -->
+        <div id="login-section" style="display: block;">
+            <h1>Medora Login</h1>
+            <p>Sign in to access your AI-Powered Scribe</p>
+            <div class="login-form">
+                <button id="google-signin-btn" class="google-btn">
+                    Sign in with Google
+                    <span class="loading-spinner" id="google-spinner"></span>
+                </button>
+                <div class="or-divider">OR</div>
+                <input type="email" id="login-email" placeholder="Email">
+                <input type="password" id="login-password" placeholder="Password">
+                <button id="login-btn">
+                    Login
+                    <span class="loading-spinner" id="login-spinner"></span>
+                </button>
+                <p class="error-message" id="errorMessage">Invalid email or password</p>
+                <p><a href="#" onclick="showSignupSection()">Don't have an account? Sign up</a></p>
+                <p><a href="#" onclick="showForgotPasswordSection()">Forgot your password?</a></p>
+            </div>
+        </div>
+
+        <!-- Signup Section -->
+        <div id="signup-section" style="display: none;">
+            <h1>Create Your MedoraMD Account</h1>
+            <p>7-day trial. Unlimited visits. No credit card needed.</p>
+            <div class="login-form">
+                <input type="email" id="signup-email" placeholder="Email">
+                <input type="password" id="signup-password" placeholder="Create password">
+                <label>
+                    <input type="checkbox" id="signup-terms">
+                    I agree to the terms of MedoraMD's privacy policy, terms of use, and BAA.
+                </label>
+                <button id="signup-btn">
+                    Create Account
+                    <span class="loading-spinner" id="signup-spinner"></span>
+                </button>
+                <p class="error-message" id="signup-error"></p>
+                <p><a href="#" onclick="showLoginSection()">Already have an account? Sign in</a></p>
+            </div>
+        </div>
+
+        <!-- Forgot Password Section -->
+        <div id="forgot-password-section" style="display: none;">
+            <h1>Forgot Password</h1>
+            <p>Enter your email to receive a password reset code.</p>
+            <div class="login-form">
+                <input type="email" id="forgot-password-email" placeholder="Email">
+                <button id="forgot-password-btn">
+                    Send Reset Code
+                    <span class="loading-spinner" id="forgot-spinner"></span>
+                </button>
+                <p class="error-message" id="forgot-error"></p>
+                <p><a href="#" onclick="showLoginSection()">Back to Sign In</a></p>
+            </div>
+        </div>
+
+        <!-- Reset Password Section -->
+        <div id="reset-password-section" style="display: none;">
+            <h1>Reset Password</h1>
+            <p>Enter the code sent to your email and your new password.</p>
+            <div class="login-form">
+                <input type="email" id="reset-email" placeholder="Email">
+                <input type="text" id="reset-code" placeholder="Reset Code">
+                <input type="password" id="reset-new-password" placeholder="New Password">
+                <button id="reset-password-btn">
+                    Reset Password
+                    <span class="loading-spinner" id="reset-spinner"></span>
+                </button>
+                <p class="error-message" id="reset-error"></p>
+                <p><a href="#" onclick="showLoginSection()">Back to Sign In</a></p>
+            </div>
+        </div>
+        <div class="hipaa-note">
+            <span>🔒 Your data is protected with HIPAA-compliant encryption.</span>
+        </div>
+    </div>
+
+    <!-- Load cognito-auth.js after Amplify -->
+    <script src="https://test.medoramd.ai/js/cognito-auth.js" defer></script>
+    <script>
+        // Ensure Amplify is loaded before proceeding, with multiple fallbacks
+        window.addEventListener('load', () => {
+            if (typeof Amplify === 'undefined') {
+                console.error('Amplify failed to load from local source. Attempting to load from jsDelivr CDN...');
+                const amplifyScript = document.createElement('script');
+                amplifyScript.src = 'https://cdn.jsdelivr.net/npm/aws-amplify@5.0.2/lib/index.min.js';
+                amplifyScript.async = true;
+                amplifyScript.onload = () => {
+                    console.log('Amplify loaded from jsDelivr CDN successfully.');
+                    // Reload cognito-auth.js after Amplify is loaded
+                    const cognitoScript = document.createElement('script');
+                    cognitoScript.src = 'https://test.medoramd.ai/js/cognito-auth.js';
+                    document.body.appendChild(cognitoScript);
+                };
+                amplifyScript.onerror = (error) => {
+                    console.error('Amplify failed to load from jsDelivr CDN. Attempting to load from unpkg CDN...', error);
+                    // Fallback to unpkg CDN
+                    const unpkgScript = document.createElement('script');
+                    unpkgScript.src = 'https://unpkg.com/aws-amplify@5.0.2/dist/aws-amplify.min.js';
+                    unpkgScript.async = true;
+                    unpkgScript.onload = () => {
+                        console.log('Amplify loaded from unpkg CDN successfully.');
+                        const cognitoScript = document.createElement('script');
+                        cognitoScript.src = 'https://test.medoramd.ai/js/cognito-auth.js';
+                        document.body.appendChild(cognitoScript);
+                    };
+                    unpkgScript.onerror = (error) => {
+                        console.error('Amplify failed to load from unpkg CDN. Authentication will not work.', error);
+                        alert('Authentication service failed to load. Please try again later or contact support.');
+                    };
+                    document.body.appendChild(unpkgScript);
+                };
+                document.body.appendChild(amplifyScript);
+            }
+        });
+
+        function showLoginSection() {
+            document.getElementById('login-section').style.display = 'block';
+            document.getElementById('signup-section').style.display = 'none';
+            document.getElementById('forgot-password-section').style.display = 'none';
+            document.getElementById('reset-password-section').style.display = 'none';
+        }
+
+        function showSignupSection() {
+            document.getElementById('login-section').style.display = 'none';
+            document.getElementById('signup-section').style.display = 'block';
+            document.getElementById('forgot-password-section').style.display = 'none';
+            document.getElementById('reset-password-section').style.display = 'none';
+        }
+
+        function showForgotPasswordSection() {
+            document.getElementById('login-section').style.display = 'none';
+            document.getElementById('signup-section').style.display = 'none';
+            document.getElementById('forgot-password-section').style.display = 'block';
+            document.getElementById('reset-password-section').style.display = 'none';
+        }
+
+        function showResetPasswordSection() {
+            document.getElementById('login-section').style.display = 'none';
+            document.getElementById('signup-section').style.display = 'none';
+            document.getElementById('forgot-password-section').style.display = 'none';
+            document.getElementById('reset-password-section').style.display = 'block';
+        }
+
+        // Add loading state to buttons
+        function setLoadingState(buttonId, spinnerId, isLoading) {
+            const button = document.getElementById(buttonId);
+            const spinner = document.getElementById(spinnerId);
+            if (button && spinner) {
+                if (isLoading) {
+                    button.disabled = true;
+                    spinner.style.display = 'inline-block';
+                } else {
+                    button.disabled = false;
+                    spinner.style.display = 'none';
+                }
+            }
+        }
+
+        // Add loading state handlers for buttons
+        document.addEventListener('DOMContentLoaded', () => {
+            // Google sign-in button
+            const googleSignInBtn = document.getElementById('google-signin-btn');
+            if (googleSignInBtn) {
+                googleSignInBtn.addEventListener('click', () => {
+                    setLoadingState('google-signin-btn', 'google-spinner', true);
+                });
+            }
+
+            // Login button
+            const loginBtn = document.getElementById('login-btn');
+            if (loginBtn) {
+                loginBtn.addEventListener('click', () => {
+                    setLoadingState('login-btn', 'login-spinner', true);
+                });
+            }
+
+            // Signup button
+            const signupBtn = document.getElementById('signup-btn');
+            if (signupBtn) {
+                signupBtn.addEventListener('click', () => {
+                    setLoadingState('signup-btn', 'signup-spinner', true);
+                });
+            }
+
+            // Forgot password button
+            const forgotPasswordBtn = document.getElementById('forgot-password-btn');
+            if (forgotPasswordBtn) {
+                forgotPasswordBtn.addEventListener('click', () => {
+                    setLoadingState('forgot-password-btn', 'forgot-spinner', true);
+                });
+            }
+
+            // Reset password button
+            const resetPasswordBtn = document.getElementById('reset-password-btn');
+            if (resetPasswordBtn) {
+                resetPasswordBtn.addEventListener('click', () => {
+                    setLoadingState('reset-password-btn', 'reset-spinner', true);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
