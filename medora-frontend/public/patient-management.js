@@ -44,7 +44,9 @@ function updatePatientList() {
     filteredPatients.forEach(patient => {
         const patientItem = document.createElement('div');
         patientItem.className = 'patient-item';
-        const initials = patient.name ? patient.name.split(' ').map(word => word[0]).join('').substring(0, 2).toUpperCase() : 'NA';
+        // Fixed line to properly handle non-string patient name values
+        const initials = (patient.name && typeof patient.name === 'string') ? 
+            patient.name.split(' ').map(word => word[0]).join('').substring(0, 2).toUpperCase() : 'NA';
         const visitType = patient.visitType || 'follow-up';
         const badgeHtml = visitType === 'today' ? `<span class="visit-badge today">Today</span>` : '';
         patientItem.innerHTML = `
@@ -560,7 +562,13 @@ async function selectPatient(patient) {
                 if (insightsAllergyTriggers && insightsCondition && insightsRecommendations) {
                     insightsAllergyTriggers.innerHTML = `<p>${transcript.insights?.allergy_triggers || 'Not specified'}</p>`;
                     insightsCondition.innerHTML = `<p>${transcript.insights?.condition || 'Not specified'}</p>`;
-                    const recommendationsItems = (transcript.insights?.recommendations || '').split('\n').filter(item => item.trim());
+                    
+                    // Check if recommendations exists and is a string before splitting
+                    const recommendations = transcript.insights?.recommendations || '';
+                    const recommendationsItems = (typeof recommendations === 'string') ? 
+                        recommendations.split('\n').filter(item => item.trim()) : 
+                        ['No recommendations available'];
+                    
                     // Initially render as a bulleted list
                     insightsRecommendations.innerHTML = `
                         <ul>
@@ -569,6 +577,13 @@ async function selectPatient(patient) {
                     `;
                     insightsRecommendations.dataset.originalItems = JSON.stringify(recommendationsItems);
                     insightsRecommendations.classList.add('bulleted');
+                    
+                    // Initialize enhanced recommendations display if available
+                    if (typeof window.initRecommendationsDisplay === 'function') {
+                        window.initRecommendationsDisplay();
+                    } else {
+                        console.error('initRecommendationsDisplay function not found');
+                    }
                 }
                 const notesSection = document.getElementById('notes-section');
                 if (notesSection) notesSection.style.display = 'block';

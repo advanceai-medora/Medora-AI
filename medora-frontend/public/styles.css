@@ -1506,3 +1506,414 @@ select:focus {
 .menu-item.logout-item a:hover {
     background-color: #fff5f5;
 }
+
+/* Enhanced Recommendations Component Styles - UPDATED FIXES */
+
+/* Main container for recommendations */
+.enhanced-recommendations {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    color: #4b5563;
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+/* Recommendations container */
+.recommendations-container {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 0 0 8px 0;
+}
+
+/* Section styling */
+.recommendation-section {
+    border-radius: 6px;
+    background: #f8fafd;
+    transition: all 0.2s ease;
+    overflow: hidden;
+    border-left: 4px solid transparent;
+}
+
+/* Hover effect for sections */
+.recommendation-section:hover {
+    background: #f0f7ff;
+}
+
+/* Section with blue background (selected) */
+.recommendation-section:nth-child(2n) {
+    background: #edf4fe;
+}
+
+/* Active section with expanded content */
+.recommendation-section.active {
+    border-left-color: #3a5ba9;
+}
+
+/* Section header styling */
+.section-header {
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+}
+
+/* Header content styling */
+.header-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+}
+
+/* Section icon styling */
+.section-icon {
+    font-size: 16px;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.7;
+}
+
+/* Section title styling */
+.section-header h3 {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    color: #1f2937 !important;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+/* Item count badge */
+.item-count {
+    background-color: #e5e7eb;
+    color: #4b5563;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 12px;
+    min-width: 16px;
+    text-align: center;
+    margin-left: 4px;
+}
+
+/* Toggle button styling */
+.toggle-btn {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: #f0f2f5;
+    border: none;
+    color: #4b5563;
+    font-size: 16px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 0;
+    line-height: 1;
+    box-shadow: none;
+}
+
+.toggle-btn:hover {
+    background-color: #3a5ba9;
+    color: #fff;
+}
+
+.toggle-btn.expanded {
+    background-color: #3a5ba9;
+    color: #fff;
+}
+
+/* Section content styling */
+.section-content {
+    padding: 0 16px 12px 48px;
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.3s ease-out;
+}
+
+/* List styling */
+.section-content ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+.section-content li {
+    position: relative;
+    padding: 6px 0 6px 16px;
+    font-size: 12px;
+    line-height: 1.5;
+    color: #4b5563;
+    border-bottom: 1px dashed rgba(0, 0, 0, 0.05);
+}
+
+.section-content li:last-child {
+    border-bottom: none;
+}
+
+/* Bullet styling */
+.section-content li::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    top: 6px;
+    color: #3a5ba9;
+    font-size: 14px;
+}
+
+/* Highlight styling */
+.section-content .highlight {
+    font-weight: 600;
+    color: #ef4444;
+    background-color: rgba(239, 68, 68, 0.08);
+    padding: 0 2px;
+    border-radius: 2px;
+}
+
+/* Section actions container */
+.section-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    padding-bottom: 4px;
+}
+
+/* Action buttons */
+.section-actions button {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 500;
+    background-color: #f0f2f5;
+    color: #4b5563;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    box-shadow: none;
+}
+
+.section-actions button:hover {
+    background-color: #e5e7eb;
+    transform: scale(1.05);
+}
+
+.section-actions .copy-btn.copied {
+    background-color: #10b981;
+    color: #fff;
+}
+
+/* View toggle container - Match existing buttons */
+.recommendations-view-toggle {
+    display: flex;
+    gap: 8px;
+    padding: 12px 4px;
+    margin-top: 8px;
+}
+
+/* View toggle buttons - Match existing buttons */
+.recommendations-view-toggle .view-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 500;
+    background-color: #f0f2f5;
+    color: #4b5563;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    box-shadow: none;
+}
+
+.recommendations-view-toggle .view-btn:hover {
+    background-color: #e5e7eb;
+}
+
+.recommendations-view-toggle .view-btn.active {
+    background-color: #3a5ba9;
+    color: #fff;
+}
+
+/* Special styles for concise mode */
+.enhanced-recommendations.concise-mode .recommendation-section {
+    margin-bottom: 4px;
+}
+
+.enhanced-recommendations.concise-mode .section-header {
+    padding: 8px 16px;
+}
+
+.enhanced-recommendations.concise-mode .section-content {
+    display: none;
+}
+
+/* Special styles for edit mode */
+.enhanced-recommendations.edit-mode .section-content {
+    display: block;
+    max-height: none;
+    transition: none;
+}
+
+/* Toast notifications for copy confirmation */
+#toast-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+}
+
+.toast {
+    background-color: #3a5ba9;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s ease;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Modal for editing recommendations */
+.recommendations-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.modal-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    width: 90%;
+    max-width: 600px;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+}
+
+.modal-header {
+    padding: 16px 20px;
+    background-color: #f9fafb;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1a3c5e;
+    margin: 0;
+}
+
+/* Close button for modal */
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: #6b7280;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+    margin: 0;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.modal-instructions {
+    font-size: 12px;
+    color: #6b7280;
+    margin-bottom: 12px;
+}
+
+#edit-recommendations-textarea {
+    width: 100%;
+    min-height: 200px;
+    padding: 12px;
+    border: 1px solid #e0e4e8;
+    border-radius: 6px;
+    font-size: 13px;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    resize: vertical;
+}
+
+#edit-recommendations-textarea:focus {
+    outline: none;
+    border-color: #3a5ba9;
+    box-shadow: 0 0 0 3px rgba(58, 91, 169, 0.1);
+}
+
+.modal-footer {
+    padding: 16px 20px;
+    background-color: #f9fafb;
+    border-top: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+/* Button styles in modal footer */
+.secondary-btn {
+    padding: 8px 16px;
+    background-color: #f0f2f5;
+    color: #4b5563;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.secondary-btn:hover {
+    background-color: #e5e7eb;
+}
+
+.primary-btn {
+    padding: 8px 16px;
+    background-color: #3a5ba9;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.primary-btn:hover {
+    background-color: #2d4b8a;
+}
