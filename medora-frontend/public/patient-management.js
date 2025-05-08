@@ -1,20 +1,73 @@
 console.log('patient-management.js loaded');
 
+// Initialize user data on page load to ensure correct tenantID
+function initializeUserData() {
+    try {
+        // Get user data from localStorage or wherever you store it
+        const userData = JSON.parse(localStorage.getItem('user') || '{}');
+        
+        // Set the email as the tenantID - this is critical for your DynamoDB GSI
+        currentEmail = userData.email || null;
+        currentTenantId = userData.email || null; // TenantID must be the email to match DynamoDB GSI
+        currentRole = userData.role || null;
+        
+        console.log('Initialized user data:', { 
+            currentEmail, 
+            currentTenantId, 
+            currentRole 
+        });
+        
+        // Return true if initialization was successful
+        return (currentEmail !== null && currentTenantId !== null);
+    } catch (error) {
+        console.error('Error initializing user data:', error);
+        return false;
+    }
+}
+
 // Fetch patients from backend
 async function fetchPatients() {
     console.log('Fetching patients for tenant:', currentTenantId);
     window.showSpinner();
     try {
-        // Check if currentTenantId is defined
+        // Ensure tenantID is set correctly for DynamoDB GSI
         if (typeof currentTenantId === 'undefined' || currentTenantId === null) {
-            throw new Error('Tenant ID is not defined. Please ensure you are logged in.');
+            // If currentTenantId isn't set but email is available, use email
+            if (typeof currentEmail !== 'undefined' && currentEmail !== null) {
+                currentTenantId = currentEmail;
+                console.log('Setting tenantID to email for DynamoDB GSI compatibility:', currentTenantId);
+            } else {
+                throw new Error('Tenant ID is not defined. Please ensure you are logged in.');
+            }
+        } else if (currentTenantId !== currentEmail && currentEmail !== null) {
+            // If tenantID doesn't match email, update it (they should always match)
+            console.warn('TenantID doesn\'t match email, updating for GSI compatibility:', {
+                oldTenantId: currentTenantId,
+                newTenantId: currentEmail
+            });
+            currentTenantId = currentEmail;
         }
-        const response = await fetch(`/api/get-patients?tenantId=${currentTenantId}`, {
+        
+        // Log the exact API URL being called
+        const apiUrl = `/api/get-patients?tenantId=${encodeURIComponent(currentTenantId)}`;
+        console.log('API call to match DynamoDB GSI query:', apiUrl);
+        
+        const response = await fetch(apiUrl, {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' }
         });
-        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}, Status Text: ${response.statusText}`);
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`HTTP error! Status: ${response.status}, Status Text: ${response.statusText}, Response: ${errorText}`);
+        }
+        
         const data = await response.json();
+        console.log('Patient data received from API:', {
+            patientCount: data.patients?.length || 0,
+            success: data.success
+        });
+        
         patients = data.patients || [];
         updatePatientList();
     } catch (error) {
@@ -229,13 +282,27 @@ async function startVisit() {
         alert('Please enter a patient name or ID.');
         return;
     }
+    
+    // Ensure tenantID is set correctly for DynamoDB GSI
+    if (typeof currentTenantId === 'undefined' || currentTenantId === null) {
+        if (typeof currentEmail !== 'undefined' && currentEmail !== null) {
+            currentTenantId = currentEmail;
+            console.log('Setting tenantID to email for DynamoDB GSI compatibility:', currentTenantId);
+        } else {
+            alert('Current email is not defined. Please ensure you are logged in.');
+            return;
+        }
+    } else if (currentTenantId !== currentEmail && currentEmail !== null) {
+        console.warn('TenantID doesn\'t match email, updating for GSI compatibility:', {
+            oldTenantId: currentTenantId,
+            newTenantId: currentEmail
+        });
+        currentTenantId = currentEmail;
+    }
+    
     // Additional checks for global variables
     if (typeof currentEmail === 'undefined' || currentEmail === null) {
         alert('Current email is not defined. Please ensure you are logged in.');
-        return;
-    }
-    if (typeof currentTenantId === 'undefined' || currentTenantId === null) {
-        alert('Tenant ID is not defined. Please ensure you are logged in.');
         return;
     }
     if (typeof templates === 'undefined' || !Array.isArray(templates)) {
@@ -262,7 +329,17 @@ async function proceedWithVisit(patientId) {
         return;
     }
 
-    console.log('Starting visit for patient:', patientId, 'with email:', currentEmail, 'and tenantId:', currentTenantId, 'using template:', currentTemplate.name);
+    // Ensure tenantID matches email for DynamoDB GSI
+    if (currentTenantId !== currentEmail) {
+        console.warn('Fixing tenantID for DynamoDB GSI compliance:', {
+            oldTenantId: currentTenantId, 
+            correctTenantId: currentEmail
+        });
+        currentTenantId = currentEmail;
+    }
+
+    console.log('Starting visit for patient:', patientId, 'with email:', currentEmail, 
+               'and tenantId:', currentTenantId, 'using template:', currentTemplate.name);
     console.log('Before API call: currentPatientId:', currentPatientId);
     window.showSpinner();
     try {
@@ -270,10 +347,18 @@ async function proceedWithVisit(patientId) {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 10000); // 10-second timeout
 
+        const requestBody = {
+            patientId, 
+            email: currentEmail, 
+            tenantId: currentTenantId  // Using email as tenantId for DynamoDB GSI
+        };
+        
+        console.log('API request for starting visit:', requestBody);
+
         const response = await fetch('/api/visit/start', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ patientId, email: currentEmail, tenantId: currentTenantId }),
+            body: JSON.stringify(requestBody),
             signal: controller.signal
         });
 
@@ -410,13 +495,30 @@ async function selectPatient(patient) {
         if (visitHistoryEl) visitHistoryEl.innerHTML = '<div>No visit history available.</div>'; // Removed mock data
     }
 
+    // Ensure tenantID matches email for DynamoDB GSI
+    if (currentTenantId !== currentEmail) {
+        console.warn('Fixing tenantID for DynamoDB GSI compliance:', {
+            oldTenantId: currentTenantId, 
+            correctTenantId: currentEmail
+        });
+        currentTenantId = currentEmail;
+    }
+
     window.showContentSpinner();
     try {
-        const response = await fetch(`/api/get-patient-history?tenantId=${currentTenantId}&patientId=${currentPatientId}`, {
+        // Log the exact API URL being called for debugging
+        const apiUrl = `/api/get-patient-history?tenantId=${encodeURIComponent(currentTenantId)}&patientId=${currentPatientId}`;
+        console.log('Fetching patient history using tenantID for GSI:', apiUrl);
+        
+        const response = await fetch(apiUrl, {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' }
         });
-        if (!response.ok) throw new Error('Failed to fetch patient history');
+        
+        if (!response.ok) {
+            throw new Error('Failed to fetch patient history');
+        }
+        
         const data = await response.json();
         console.log('Patient history response:', JSON.stringify(data, null, 2));
         // Check if the response has transcripts; if not, display a message
@@ -650,14 +752,37 @@ async function selectPatient(patient) {
 // Delete a patient
 async function deletePatient(patientId) {
     if (!confirm('Are you sure you want to delete this patient and all associated transcripts?')) return;
+    
+    // Ensure tenantID matches email for DynamoDB GSI
+    if (currentTenantId !== currentEmail) {
+        console.warn('Fixing tenantID for DynamoDB GSI compliance:', {
+            oldTenantId: currentTenantId, 
+            correctTenantId: currentEmail
+        });
+        currentTenantId = currentEmail;
+    }
+    
     window.showSpinner();
     try {
+        const requestBody = {
+            email: currentEmail,
+            patientId: patientId,
+            tenantId: currentTenantId  // Using email as tenantId for DynamoDB GSI
+        };
+        
+        console.log('Deleting patient with params:', requestBody);
+        
         const response = await fetch('/api/delete-patient', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: currentEmail, patientId: patientId, tenantId: currentTenantId })
+            body: JSON.stringify(requestBody)
         });
-        if (!response.ok) throw new Error('Failed to delete patient');
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Failed to delete patient: ${errorText}`);
+        }
+        
         const data = await response.json();
         if (data.success) {
             alert('Patient deleted successfully');
@@ -675,7 +800,7 @@ async function deletePatient(patientId) {
                 window.hideReferencesSpinner();
             }
         } else {
-            alert('Failed to delete patient');
+            alert('Failed to delete patient: ' + (data.error || 'Unknown error'));
         }
     } catch (error) {
         console.error('Error deleting patient:', error);
@@ -702,7 +827,27 @@ function logout() {
     window.location.href = '/login.html';
 }
 
+// Install an initialization function that runs on page load
+window.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM loaded, initializing user data...');
+    const initialized = initializeUserData();
+    
+    if (initialized) {
+        console.log('User data initialized successfully');
+        // Fetch patients if on the right page
+        if (document.getElementById('patient-list')) {
+            console.log('Patient list found, fetching patients...');
+            fetchPatients();
+        }
+    } else {
+        console.warn('Failed to initialize user data, may need to log in again');
+        // Optionally redirect to login
+        // window.location.href = '/login.html';
+    }
+});
+
 // Expose functions to the global scope
+window.initializeUserData = initializeUserData;
 window.fetchPatients = fetchPatients;
 window.updatePatientList = updatePatientList;
 window.filterPatients = filterPatients;

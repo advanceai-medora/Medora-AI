@@ -173,7 +173,7 @@
     <script src="patient-event-listeners.js" onerror="console.error('Failed to load patient-event-listeners.js');"></script>
     <script src="script-transcript.js" onerror="console.error('Failed to load script-transcript.js');"></script>
     <script src="recommendations-display.js" onerror="console.error('Failed to load recommendations-display.js');"></script>
-    <!-- Moved menu.js before script-core.js to ensure logout-btn is set up -->
+    <!-- Load menu.js before script-core.js to ensure logout-btn is set up -->
     <script src="menu.js" onerror="console.error('Failed to load menu.js');"></script>
     <script src="script-core.js" onerror="console.error('Failed to load script-core.js');"></script>
     <script>
@@ -184,7 +184,7 @@
             // Redirect to the test login page after sign-out with a delay
             setTimeout(() => {
                 window.location.href = 'https://test.medoramd.ai/login.html';
-            }, 5000); // 5-second delay to capture logs
+            }, 1000); // 1-second delay for better UX
             // Reset any menu state if necessary
             const userMenu = document.getElementById('user-menu-container');
             if (userMenu) {
@@ -211,7 +211,7 @@
                 console.log('No user signed in, redirecting to login page');
                 setTimeout(() => {
                     window.location.href = 'https://test.medoramd.ai/login.html';
-                }, 5000); // 5-second delay to capture logs
+                }, 1000); // 1-second delay for better UX
                 return false;
             }
         }
@@ -231,7 +231,7 @@
                     console.log('currentEmail cleared, redirecting to login page with delay');
                     setTimeout(() => {
                         window.location.href = 'https://test.medoramd.ai/login.html';
-                    }, 5000); // 5-second delay to capture logs
+                    }, 1000); // 1-second delay for better UX
                 }
             }
         }, 1000); // Check every second
@@ -248,7 +248,7 @@
                         console.log('Authentication failed, redirecting to login page');
                         setTimeout(() => {
                             window.location.href = 'https://test.medoramd.ai/login.html';
-                        }, 5000); // 5-second delay to capture logs
+                        }, 1000); // 1-second delay for better UX
                     } else {
                         console.log('Authentication successful, proceeding to load dashboard');
                     }
@@ -256,7 +256,7 @@
                     console.error('Error checking authentication state:', error);
                     setTimeout(() => {
                         window.location.href = 'https://test.medoramd.ai/login.html';
-                    }, 5000); // 5-second delay to capture logs
+                    }, 1000); // 1-second delay for better UX
                 }
             }, 100); // 100ms delay to ensure localStorage is updated
         });
