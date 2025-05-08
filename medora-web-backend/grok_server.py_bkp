@@ -136,10 +136,56 @@ def analyze_transcript(text, target_language="EN"):
     - patient_education: [Provide specific advice for the patient on managing their condition, avoiding triggers, and adhering to the treatment plan]
     - follow_up_instructions: [Provide specific instructions for follow-up appointments, tests, or actions]
     - summary: [Summarize the visit in 2-3 sentences, including key findings, immediate actions, and next steps]
+    - enhanced_recommendations: [Provide a comprehensive, evidence-based set of recommendations with the following structure:
+      1. Medication Management:
+         - Detailed list of medications with specific dosages, frequencies, administration routes
+         - Medication interactions and contraindications
+         - Step-by-step protocol for adjusting medications based on symptom severity
+         - Evidence-based rationale for each medication
+      
+      2. Lifestyle Modifications:
+         - Specific environmental controls to implement immediately
+         - Detailed trigger avoidance strategies personalized to the patient's situation
+         - Dietary adjustments if relevant (specific foods to avoid/include)
+         - Exercise recommendations or restrictions with clear guidelines
+         - Stress management techniques specific to the condition
+      
+      3. Monitoring Protocol:
+         - Specific parameters the patient should monitor (symptoms, vital signs)
+         - Exact frequency and method of monitoring
+         - Clear thresholds for contacting healthcare provider
+         - Recommended tools or devices for home monitoring
+         - Documentation approach (symptom diary, digital tracking)
+      
+      4. Emergency Action Plan:
+         - Step-by-step guide for managing acute exacerbations or severe symptoms
+         - Precise indicators for when to seek emergency care
+         - Emergency medication usage instructions with exact dosing
+         - Instructions for caregivers or family members
+      
+      5. Long-term Management Strategy:
+         - Timeline for treatment reassessment (specific dates/intervals)
+         - Concrete goals of therapy with measurable outcomes
+         - Potential future treatment options based on response
+         - Criteria for treatment success or failure
+         - Specialized referral recommendations with rationale
+      
+      6. Patient Education Resources:
+         - Specific educational materials recommended (exact titles, websites, resources)
+         - Support groups or community resources with contact information
+         - Reliable online resources for further information
+         - Mobile applications that may help manage the condition
+      
+      7. Follow-up Schedule:
+         - Precise timing for follow-up appointments
+         - Tests to be completed before next visit
+         - Information to bring to follow-up appointments
+         - Clear expectations for treatment milestones
+    ]
 
     Transcript: {text}
 
-    Ensure all medical terms are accurate and contextualized for a professional allergist. Include specific details (e.g., medication names, dosages, test types). Avoid speculative diagnoses; flag uncertainty for human review.
+    Ensure all medical terms are accurate and contextualized for a professional allergist. Include specific details (e.g., medication names with exact dosages, test types). Avoid speculative diagnoses; flag uncertainty for human review. For the enhanced_recommendations section, be exceptionally thorough and specific, providing detailed actionable insights based on current clinical guidelines and evidence-based best practices. Include precise timelines and measurable outcomes where appropriate.
 
     Output in JSON format:
     {{
@@ -157,7 +203,8 @@ def analyze_transcript(text, target_language="EN"):
         "plan_of_care": "string",
         "patient_education": "string",
         "follow_up_instructions": "string",
-        "summary": "string"
+        "summary": "string",
+        "enhanced_recommendations": "string"
     }}
     """
 
@@ -172,13 +219,13 @@ def analyze_transcript(text, target_language="EN"):
             {"role": "system", "content": "You are an expert medical scribe AI assisting healthcare professionals. Provide accurate, detailed, and structured medical notes for an allergist, ensuring professional-grade output with specific details and flag uncertainties for review."},
             {"role": "user", "content": prompt}
         ],
-        "max_tokens": 1500,
-        "temperature": 0.3
+        "max_tokens": 2500,  # Increased from 1500 to allow for more detailed response
+        "temperature": 0.25   # Slightly reduced to increase precision and consistency
     }
 
     try:
         logger.debug(f"Sending request to xAI API: URL={XAI_API_URL}, Headers={headers}, Payload={payload}")
-        response = requests.post(XAI_API_URL, headers=headers, json=payload, timeout=30)
+        response = requests.post(XAI_API_URL, headers=headers, json=payload, timeout=45)  # Increased timeout
         logger.debug(f"xAI API response: Status={response.status_code}, Body={response.text}")
         response.raise_for_status()
         result = response.json()
@@ -193,12 +240,16 @@ def analyze_transcript(text, target_language="EN"):
                 json_str = response_text[start_idx:end_idx].strip()
                 try:
                     parsed_data = json.loads(json_str)
-                    logger.info(f"Parsed JSON from xAI: {parsed_data}")
-                    # Log the differential_diagnosis specifically to debug relevance tag issue
-                    if "differential_diagnosis" in parsed_data:
-                        logger.info(f"Differential diagnosis from xAI: {parsed_data['differential_diagnosis']}")
-                    else:
-                        logger.warning("No differential_diagnosis field in xAI response")
+                    logger.info(f"Parsed JSON: {parsed_data}")
+                    
+                    # Extract enhanced recommendations for displaying in the recommendations section
+                    if "enhanced_recommendations" in parsed_data:
+                        enhanced_recs = parsed_data["enhanced_recommendations"]
+                        # If patient_education exists, complement it with the enhanced recommendations
+                        if "patient_education" in parsed_data:
+                            # We'll keep the original patient_education but make the recommendations field more comprehensive
+                            parsed_data["recommendations"] = enhanced_recs
+                        
                     if target_language.upper() != "EN":
                         for key, value in parsed_data.items():
                             if isinstance(value, dict):
@@ -585,6 +636,10 @@ def analyze_endpoint():
 
         result = analyze_transcript(text, target_language)
 
+        # Prepare recommendations for the insights section
+        # First check if we have enhanced recommendations, otherwise use patient_education
+        recommendations = result.get("enhanced_recommendations", result.get("patient_education", "N/A"))
+        
         transcript_doc = {
             "tenantId": tenant_id,
             "patientId": patient_id,
@@ -594,7 +649,7 @@ def analyze_endpoint():
             "insights": {
                 "allergy_triggers": result.get("patient_history", {}).get("allergies", "N/A"),
                 "condition": result.get("differential_diagnosis", "N/A").split('\n')[0],
-                "recommendations": result.get("patient_education", "N/A")
+                "recommendations": recommendations
             },
             "createdAt": datetime.now().isoformat()
         }
@@ -690,6 +745,9 @@ def submit_transcript():
         soap_notes = analyze_transcript(transcript)
         logger.info(f"Generated SOAP notes: {json.dumps(soap_notes, indent=2)}")
 
+        # Check for enhanced recommendations
+        recommendations = soap_notes.get("enhanced_recommendations", soap_notes.get("patient_education", "N/A"))
+
         # Step 2: Store SOAP notes in MedoraSOAPNotes table
         logger.info(f"Storing SOAP notes in MedoraSOAPNotes for patient_id: {patient_id}, visit_id: {visit_id}")
         try:
@@ -717,7 +775,7 @@ def submit_transcript():
             "insights": {
                 "allergy_triggers": soap_notes.get("patient_history", {}).get("allergies", "N/A"),
                 "condition": soap_notes.get("differential_diagnosis", "N/A").split('\n')[0],
-                "recommendations": soap_notes.get("patient_education", "N/A")
+                "recommendations": recommendations
             },
             "createdAt": datetime.now().isoformat()
         }
@@ -843,7 +901,7 @@ def query_pubmed(condition, retmax=1):
             else:
                 logger.debug(f"No abstract partial matches for '{condition}' in '{abstract_lower}'")
 
-            # Ensure a minimum score if the article was returned
+            # Ensure a minimum score if the article was returned (since it's relevant by search)
             if relevance_score == 0.0:
                 relevance_score = 10.0  # Minimum score to avoid 0.0%
                 logger.debug(f"No direct matches found, assigning minimum relevance score of 10.0")
@@ -1012,6 +1070,131 @@ def query_semantic_scholar(condition, retmax=1):
         logger.error(f"Error querying Semantic Scholar for condition {condition}: {str(e)}")
         return []
 
+# Enhanced function to fetch related clinical guidelines
+def query_clinical_guidelines(condition, retmax=1):
+    """
+    Query for clinical guidelines related to the given condition.
+    Returns a list of guidelines with title, source, URL, and relevance info.
+    """
+    try:
+        # For demonstration, we're using PubMed to find guidelines
+        # In a production environment, you might want to use specialized API endpoints
+        search_url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi"
+        search_params = {
+            "db": "pubmed",
+            "term": f"{condition} clinical practice guideline OR consensus statement",
+            "retmax": retmax,
+            "sort": "relevance",
+            "retmode": "json"
+        }
+        
+        logger.debug(f"Sending guideline search request for condition '{condition}' with params: {search_params}")
+        search_response = requests.get(search_url, params=search_params, timeout=10)
+        search_response.raise_for_status()
+        search_data = search_response.json()
+
+        id_list = search_data.get("esearchresult", {}).get("idlist", [])
+        logger.debug(f"Clinical guideline search returned article IDs for condition '{condition}': {id_list}")
+        if not id_list:
+            logger.warning(f"No clinical guidelines found for condition: {condition}")
+            return []
+
+        # Fetch guideline details
+        fetch_url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi"
+        fetch_params = {
+            "db": "pubmed",
+            "id": ",".join(id_list),
+            "retmode": "xml"
+        }
+        fetch_response = requests.get(fetch_url, params=fetch_params, timeout=10)
+        fetch_response.raise_for_status()
+
+        # Parse XML response
+        root = ET.fromstring(fetch_response.content)
+        guidelines = []
+
+        for article in root.findall(".//PubmedArticle"):
+            # Extract title
+            title = article.find(".//ArticleTitle")
+            title_text = title.text if title is not None else "N/A"
+            
+            # Extract abstract
+            abstract = article.find(".//Abstract/AbstractText")
+            abstract_text = abstract.text if abstract is not None else "N/A"
+            
+            # Extract PubMed ID
+            pubmed_id = article.find(".//PMID")
+            pubmed_id_text = pubmed_id.text if pubmed_id is not None else "N/A"
+            
+            # Construct URL
+            url = f"https://pubmed.ncbi.nlm.nih.gov/{pubmed_id_text}/"
+            
+            # Extract authors and organizations
+            authors = []
+            author_list = article.findall(".//AuthorList/Author")
+            for author in author_list:
+                last_name = author.find("LastName")
+                fore_name = author.find("ForeName")
+                if last_name is not None and last_name.text:
+                    if fore_name is not None and fore_name.text:
+                        authors.append(f"{fore_name.text} {last_name.text}")
+                    else:
+                        authors.append(last_name.text)
+            
+            # Extract organization or society if available
+            journal_name = article.find(".//Journal/Title")
+            organization = journal_name.text if journal_name is not None else "Medical Journal"
+            
+            # Extract publication year
+            pub_date = article.find(".//PubDate/Year")
+            year = pub_date.text if pub_date is not None else "N/A"
+            
+            # Compute relevance and determine if it's a guideline
+            is_guideline = False
+            guideline_terms = ["guideline", "consensus", "practice parameter", "recommendation", "position statement"]
+            title_lower = title_text.lower()
+            
+            for term in guideline_terms:
+                if term in title_lower:
+                    is_guideline = True
+                    break
+            
+            if not is_guideline:
+                abstract_lower = abstract_text.lower()
+                for term in guideline_terms:
+                    if term in abstract_lower:
+                        is_guideline = True
+                        break
+            
+            # Only include if it appears to be a guideline
+            if is_guideline:
+                # Format a cleaner summary
+                summary = abstract_text[:500] + "..." if len(abstract_text) > 500 else abstract_text
+                
+                guideline = {
+                    "title": title_text,
+                    "summary": summary,
+                    "url": url,
+                    "source": organization,
+                    "authors": ", ".join(authors) if authors else "N/A",
+                    "year": year,
+                    "content_type": "Clinical Guideline",
+                    "relevance_tag": f"Clinical Practice Guideline for {condition}",
+                    "confidence": "Highly Recommended",
+                    "relevance_score": "95.0%",  # Guidelines are always highly relevant
+                    "raw_relevance_score": 95.0  # For sorting purposes
+                }
+                
+                guidelines.append(guideline)
+                logger.debug(f"Found clinical guideline for '{condition}': {title_text}")
+        
+        logger.info(f"Fetched {len(guidelines)} clinical guidelines for condition: {condition}")
+        return guidelines
+    
+    except Exception as e:
+        logger.error(f"Error querying clinical guidelines for condition {condition}: {str(e)}")
+        return []
+
 @app.route('/get-insights', methods=['GET', 'OPTIONS'])
 def get_insights():
     logger.info("Received request for /get-insights")
@@ -1050,9 +1233,6 @@ def get_insights():
         primary_diagnosis = primary_part.split('.')[0].replace("Primary diagnosis:", "").strip()
         if primary_diagnosis:
             diagnoses.append(primary_diagnosis)
-            logger.debug(f"Parsed primary diagnosis: {primary_diagnosis}")
-        else:
-            logger.warning(f"No primary diagnosis parsed from: {primary_part}")
 
         if len(parts) > 1:
             alternatives = parts[1].strip()
@@ -1062,9 +1242,6 @@ def get_insights():
                 if alt:
                     alt = alt.rstrip('.,').strip()
                     diagnoses.append(alt)
-                    logger.debug(f"Parsed alternative diagnosis: {alt}")
-                else:
-                    logger.debug(f"Skipped empty alternative diagnosis: {alt}")
 
         logger.info(f"Parsed diagnoses for patient_id {patient_id}: {diagnoses}")
 
@@ -1076,15 +1253,22 @@ def get_insights():
                 "insights": []
             }), 200
 
-        # Query both PubMed and Semantic Scholar for each diagnosis
+        # Query sources for each diagnosis
         all_insights = []
         for diagnosis in diagnoses:
             logger.debug(f"Querying references for diagnosis: {diagnosis}")
-            # Fetch from PubMed
+            
+            # First try to get clinical guidelines (high priority)
+            guidelines = query_clinical_guidelines(diagnosis, retmax=1)
+            logger.debug(f"Clinical guidelines for '{diagnosis}': {guidelines}")
+            all_insights.extend(guidelines)
+            
+            # Then get PubMed articles
             pubmed_insights = query_pubmed(diagnosis, retmax=2)
             logger.debug(f"PubMed insights for '{diagnosis}': {pubmed_insights}")
             all_insights.extend(pubmed_insights)
-            # Fetch from Semantic Scholar
+            
+            # Finally get Semantic Scholar articles
             semantic_insights = query_semantic_scholar(diagnosis, retmax=1)
             logger.debug(f"Semantic Scholar insights for '{diagnosis}': {semantic_insights}")
             all_insights.extend(semantic_insights)

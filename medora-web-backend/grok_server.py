@@ -80,6 +80,16 @@ try:
     patients_collection = db['patients']
     transcripts_collection = db['transcripts']
     visits_collection = db['visits']
+    
+    # Create index on tenantId field for better performance
+    try:
+        patients_collection.create_index("tenantId")
+        transcripts_collection.create_index("tenantId")
+        visits_collection.create_index("tenantId")
+        logger.info("Created indexes on tenantId fields in MongoDB collections")
+    except Exception as e:
+        logger.error(f"Error creating indexes: {str(e)}")
+    
     logger.info("Successfully connected to MongoDB")
 except Exception as e:
     logger.error(f"Failed to connect to MongoDB: {str(e)}")
@@ -88,7 +98,8 @@ except Exception as e:
 # Hardcoded subscription and user data
 SUBSCRIPTIONS = {
     "doctor@allergyaffiliates.com": {"tier": "Premium", "trial_start": None, "card_last4": "1234"},
-    "testuser@example.com": {"tier": "Trial", "trial_start": "2025-03-11", "card_last4": "5678"}
+    "testuser@example.com": {"tier": "Trial", "trial_start": "2025-03-11", "card_last4": "5678"},
+    "geepan1806@gmail.com": {"tier": "Premium", "trial_start": None, "card_last4": "7890"}
 }
 
 def get_subscription_status(email):
@@ -102,6 +113,198 @@ def get_subscription_status(email):
         if datetime.now() > trial_end:
             return {"tier": "Expired", "trial_end": trial_end.strftime("%Y-%m-%d"), "card_last4": user_data["card_last4"]}
     return {"tier": tier, "trial_end": None, "card_last4": user_data["card_last4"]}
+
+# Function to validate and standardize tenantId
+def validate_tenant_id(tenant_id):
+    """
+    Ensure tenant_id is valid and standardized
+    """
+    if not tenant_id or tenant_id == 'default_tenant':
+        # For backward compatibility, return a default tenant
+        return 'default_tenant'
+    
+    # Otherwise, return the tenant_id as-is
+    return tenant_id
+
+# New function to get SOAP notes by tenant
+def get_soap_notes(patient_id, visit_id, tenant_id=None):
+    """
+    Get SOAP notes from DynamoDB with tenant filtering
+    """
+    try:
+        # First try direct lookup by primary key
+        response = dynamodb.get_item(
+            TableName='MedoraSOAPNotes',
+            Key={
+                'patient_id': {'S': patient_id},
+                'visit_id': {'S': visit_id}
+            }
+        )
+        
+        item = response.get('Item')
+        if not item:
+            logger.warning(f"No SOAP notes found for patient {patient_id}, visit {visit_id}")
+            return None
+        
+        # If tenant_id is provided, check if it matches
+        if tenant_id:
+            item_tenant_id = item.get('tenantID', {}).get('S')
+            # Return the item if it has no tenantID (legacy data) or if tenant matches
+            if not item_tenant_id or item_tenant_id == tenant_id:
+                soap_notes_json = item.get('soap_notes', {}).get('S')
+                if soap_notes_json:
+                    return json.loads(soap_notes_json)
+                else:
+                    logger.warning(f"SOAP notes field missing for patient {patient_id}, visit {visit_id}")
+                    return None
+            else:
+                logger.warning(f"Tenant mismatch for patient {patient_id}, visit {visit_id}. Expected: {tenant_id}, Found: {item_tenant_id}")
+                return None
+        else:
+            # No tenant filtering, return the item
+            soap_notes_json = item.get('soap_notes', {}).get('S')
+            if soap_notes_json:
+                return json.loads(soap_notes_json)
+            else:
+                logger.warning(f"SOAP notes field missing for patient {patient_id}, visit {visit_id}")
+                return None
+                
+    except Exception as e:
+        logger.error(f"Error fetching SOAP notes from DynamoDB: {str(e)}")
+        return None
+
+# New function to get all SOAP notes for a tenant
+def get_all_soap_notes_for_tenant(tenant_id):
+    """
+    Get all SOAP notes for a specific tenant
+    """
+    try:
+        # Try using GSI if available
+        try:
+            response = dynamodb.query(
+                TableName='MedoraSOAPNotes',
+                IndexName='tenantID-patient_id-index',
+                KeyConditionExpression='tenantID = :tid',
+                ExpressionAttributeValues={
+                    ':tid': {'S': tenant_id}
+                }
+            )
+            items = response.get('Items', [])
+            logger.info(f"Found {len(items)} SOAP notes for tenant {tenant_id} using GSI")
+            return items
+        except Exception as e:
+            logger.warning(f"GSI query failed, falling back to scan: {str(e)}")
+            
+            # Fall back to scan with filter
+            response = dynamodb.scan(
+                TableName='MedoraSOAPNotes',
+                FilterExpression='tenantID = :tid',
+                ExpressionAttributeValues={
+                    ':tid': {'S': tenant_id}
+                }
+            )
+            items = response.get('Items', [])
+            logger.info(f"Found {len(items)} SOAP notes for tenant {tenant_id} using scan")
+            return items
+    except Exception as e:
+        logger.error(f"Error fetching SOAP notes for tenant {tenant_id}: {str(e)}")
+        return []
+
+# New function to get patient insights for a tenant
+def get_patient_insights(patient_id, tenant_id=None):
+    """
+    Get patient insights from DynamoDB with tenant filtering
+    """
+    try:
+        if tenant_id:
+            # Try using GSI if available
+            try:
+                response = dynamodb.query(
+                    TableName='MedoraPatientInsights',
+                    IndexName='tenantID-patient_id-index',
+                    KeyConditionExpression='tenantID = :tid AND patient_id = :pid',
+                    ExpressionAttributeValues={
+                        ':tid': {'S': tenant_id},
+                        ':pid': {'S': patient_id}
+                    }
+                )
+                items = response.get('Items', [])
+                logger.info(f"Found {len(items)} insights for patient {patient_id} using GSI")
+                return items
+            except Exception as e:
+                logger.warning(f"GSI query failed, falling back to scan: {str(e)}")
+                
+                # Fall back to scan with filter
+                response = dynamodb.scan(
+                    TableName='MedoraPatientInsights',
+                    FilterExpression='patient_id = :pid AND tenantID = :tid',
+                    ExpressionAttributeValues={
+                        ':pid': {'S': patient_id},
+                        ':tid': {'S': tenant_id}
+                    }
+                )
+                items = response.get('Items', [])
+                logger.info(f"Found {len(items)} insights for patient {patient_id} using scan")
+                return items
+        else:
+            # No tenant filtering, query directly by patient_id
+            response = dynamodb.query(
+                TableName='MedoraPatientInsights',
+                KeyConditionExpression='patient_id = :pid',
+                ExpressionAttributeValues={
+                    ':pid': {'S': patient_id}
+                }
+            )
+            items = response.get('Items', [])
+            logger.info(f"Found {len(items)} insights for patient {patient_id} without tenant filtering")
+            return items
+    except Exception as e:
+        logger.error(f"Error fetching patient insights: {str(e)}")
+        return []
+
+# New function to get references for a tenant
+def get_references(tenant_id=None):
+    """
+    Get references from DynamoDB with tenant filtering
+    """
+    try:
+        if tenant_id:
+            # Try using GSI if available
+            try:
+                response = dynamodb.query(
+                    TableName='MedoraReferences',
+                    IndexName='tenantID-index',
+                    KeyConditionExpression='tenantID = :tid',
+                    ExpressionAttributeValues={
+                        ':tid': {'S': tenant_id}
+                    }
+                )
+                items = response.get('Items', [])
+                logger.info(f"Found {len(items)} references for tenant {tenant_id} using GSI")
+                return items
+            except Exception as e:
+                logger.warning(f"GSI query failed, falling back to scan: {str(e)}")
+                
+                # Fall back to scan with filter
+                response = dynamodb.scan(
+                    TableName='MedoraReferences',
+                    FilterExpression='tenantID = :tid',
+                    ExpressionAttributeValues={
+                        ':tid': {'S': tenant_id}
+                    }
+                )
+                items = response.get('Items', [])
+                logger.info(f"Found {len(items)} references for tenant {tenant_id} using scan")
+                return items
+        else:
+            # No tenant filtering, scan all references
+            response = dynamodb.scan(TableName='MedoraReferences')
+            items = response.get('Items', [])
+            logger.info(f"Found {len(items)} references without tenant filtering")
+            return items
+    except Exception as e:
+        logger.error(f"Error fetching references: {str(e)}")
+        return []
 
 def analyze_transcript(text, target_language="EN"):
     prompt = f"""
@@ -366,6 +569,7 @@ def transcribe_audio():
 
     audio_file = request.files['audio']
     tenant_id = request.form.get('tenantId', 'default_tenant')
+    tenant_id = validate_tenant_id(tenant_id)
 
     try:
         audio_key = f"audio/{tenant_id}/{datetime.now().isoformat()}_{audio_file.filename}"
@@ -427,6 +631,7 @@ def create_patient():
     try:
         data = request.get_json()
         tenant_id = data.get('tenantId', 'default_tenant')
+        tenant_id = validate_tenant_id(tenant_id)
         name = data.get('name')
         age = data.get('age')
         medical_history = data.get('medicalHistory', '')
@@ -450,15 +655,52 @@ def create_patient():
         logger.error(f'Error processing /api/create-patient request: {str(e)}')
         return jsonify({"success": False, "error": str(e)}), 500
 
+# Debug endpoint to check patients by tenant
+@app.route('/api/debug/patients', methods=['GET'])
+def debug_patients():
+    try:
+        # List all patients with their tenantId
+        all_patients = list(patients_collection.find({}, {"name": 1, "tenantId": 1}))
+        result = []
+        for patient in all_patients:
+            result.append({
+                "id": str(patient["_id"]),
+                "name": patient.get("name", "Unknown"),
+                "tenantId": patient.get("tenantId", "MISSING")
+            })
+        
+        # Get total patients by tenant
+        tenant_counts = {}
+        for patient in result:
+            tenant_id = patient.get("tenantId", "MISSING")
+            tenant_counts[tenant_id] = tenant_counts.get(tenant_id, 0) + 1
+        
+        return jsonify({
+            "patients": result, 
+            "tenant_counts": tenant_counts,
+            "total_patients": len(result)
+        }), 200
+    except Exception as e:
+        logger.error(f"Error in debug endpoint: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
 @app.route('/api/get-patients', methods=['GET'])
 def get_patients():
     try:
         tenant_id = request.args.get('tenantId', 'default_tenant')
+        tenant_id = validate_tenant_id(tenant_id)
+        
+        logger.info(f"Fetching patients for tenant_id: {tenant_id}")
+        
+        # Find patients with exact match for this tenant
         patients = list(patients_collection.find({"tenantId": tenant_id}))
+        
+        logger.info(f"Found {len(patients)} patients for tenant {tenant_id}")
+        
         for patient in patients:
             patient["patientId"] = str(patient["_id"])
             patient.pop("_id")
-        logger.info(f"Retrieved patients for tenant {tenant_id}")
+        
         return jsonify({"success": True, "patients": patients}), 200
     except Exception as e:
         logger.error(f'Error processing /api/get-patients request: {str(e)}')
@@ -476,16 +718,18 @@ def fetch_patients():
 def get_patient_history():
     try:
         tenant_id = request.args.get('tenantId', 'default_tenant')
+        tenant_id = validate_tenant_id(tenant_id)
         patient_id = request.args.get('patientId')
 
         if not patient_id:
             return jsonify({"success": False, "error": "Missing patientId"}), 400
 
+        logger.info(f"Fetching history for patient {patient_id} in tenant {tenant_id}")
         transcripts = list(transcripts_collection.find({"tenantId": tenant_id, "patientId": patient_id}))
         for transcript in transcripts:
             transcript["id"] = str(transcript["_id"])
             transcript.pop("_id")
-        logger.info(f"Retrieved patient history for patient {patient_id} in tenant {tenant_id}")
+        logger.info(f"Retrieved {len(transcripts)} transcripts for patient {patient_id} in tenant {tenant_id}")
         return jsonify({"success": True, "transcripts": transcripts}), 200
     except Exception as e:
         logger.error(f'Error processing /api/get-patient-history request: {str(e)}')
@@ -510,6 +754,7 @@ def start_visit():
         patient_id = data.get('patientId')
         email = data.get('email')
         tenant_id = data.get('tenantId', 'default_tenant')
+        tenant_id = validate_tenant_id(tenant_id)
 
         logger.debug(f"Received data - patientId: {patient_id}, email: {email}, tenantId: {tenant_id}")
 
@@ -578,6 +823,7 @@ def delete_patient():
         data = request.get_json()
         patient_id = data.get('patientId')
         tenant_id = data.get('tenantId', 'default_tenant')
+        tenant_id = validate_tenant_id(tenant_id)
 
         if not patient_id:
             return jsonify({"success": False, "error": "Missing patientId"}), 400
@@ -609,6 +855,7 @@ def analyze_endpoint():
         visit_id = data.get('visitId')
         status = get_subscription_status(email)
         tenant_id = data.get('tenantId', 'default_tenant')
+        tenant_id = validate_tenant_id(tenant_id)
 
         tier = status["tier"]
         trial_end = status["trial_end"]
@@ -733,12 +980,14 @@ def submit_transcript():
         patient_id = data.get('patient_id')
         transcript = data.get('transcript')
         visit_id = data.get('visit_id')
+        tenant_id = data.get('tenantId', 'default_tenant')  # Get tenantID from request or use default
+        tenant_id = validate_tenant_id(tenant_id)
 
         if not all([patient_id, transcript, visit_id]):
             logger.error(f"Missing required fields: patient_id={patient_id}, transcript={'provided' if transcript else 'missing'}, visit_id={visit_id}")
             return jsonify({"error": "patient_id, transcript, and visit_id are required"}), 400
 
-        logger.info(f"Processing transcript for patient_id: {patient_id}, visit_id: {visit_id}")
+        logger.info(f"Processing transcript for patient_id: {patient_id}, visit_id: {visit_id}, tenant_id: {tenant_id}")
 
         # Step 1: Generate SOAP notes using xAI API
         logger.info("Generating SOAP notes via xAI API")
@@ -748,8 +997,8 @@ def submit_transcript():
         # Check for enhanced recommendations
         recommendations = soap_notes.get("enhanced_recommendations", soap_notes.get("patient_education", "N/A"))
 
-        # Step 2: Store SOAP notes in MedoraSOAPNotes table
-        logger.info(f"Storing SOAP notes in MedoraSOAPNotes for patient_id: {patient_id}, visit_id: {visit_id}")
+        # Step 2: Store SOAP notes in MedoraSOAPNotes table - MODIFIED to include tenantID
+        logger.info(f"Storing SOAP notes in MedoraSOAPNotes for patient_id: {patient_id}, visit_id: {visit_id}, tenant_id: {tenant_id}")
         try:
             dynamodb_response = dynamodb.put_item(
                 TableName='MedoraSOAPNotes',
@@ -757,17 +1006,18 @@ def submit_transcript():
                     'patient_id': {'S': patient_id},
                     'visit_id': {'S': visit_id},
                     'soap_notes': {'S': json.dumps(soap_notes)},
-                    'ttl': {'N': str(int(datetime.now().timestamp()) + 30 * 24 * 60 * 60)}
+                    'ttl': {'N': str(int(datetime.now().timestamp()) + 30 * 24 * 60 * 60)},
+                    'tenantID': {'S': tenant_id}  # Added tenantID
                 }
             )
-            logger.info(f"Successfully stored SOAP notes in MedoraSOAPNotes")
+            logger.info(f"Successfully stored SOAP notes in MedoraSOAPNotes for tenant {tenant_id}")
         except Exception as e:
             logger.error(f"Failed to store SOAP notes in MedoraSOAPNotes: {str(e)}")
             return jsonify({"error": f"Failed to store SOAP notes in DynamoDB: {str(e)}"}), 500
 
         # Step 3: Store transcript in MongoDB
         transcript_doc = {
-            "tenantId": "default_tenant",
+            "tenantId": tenant_id,
             "patientId": patient_id,
             "visitId": visit_id,
             "transcript": transcript,
@@ -779,10 +1029,10 @@ def submit_transcript():
             },
             "createdAt": datetime.now().isoformat()
         }
-        logger.info(f"Preparing to save transcript for patient {patient_id}")
+        logger.info(f"Preparing to save transcript for patient {patient_id} with tenant {tenant_id}")
         try:
             transcript_result = transcripts_collection.insert_one(transcript_doc)
-            logger.info(f"Stored transcript for patient {patient_id}: Inserted ID {transcript_result.inserted_id}")
+            logger.info(f"Stored transcript for patient {patient_id}, tenant {tenant_id}: Inserted ID {transcript_result.inserted_id}")
         except Exception as e:
             logger.error(f"Failed to store transcript in MongoDB: {str(e)}")
             return jsonify({"error": f"Failed to store transcript in MongoDB: {str(e)}"}), 500
@@ -791,7 +1041,8 @@ def submit_transcript():
             "statusCode": 200,
             "body": {
                 "soap_notes": soap_notes,
-                "visit_id": visit_id
+                "visit_id": visit_id,
+                "tenant_id": tenant_id  # Added tenant_id to response
             }
         }), 200
 
@@ -1027,7 +1278,7 @@ def query_semantic_scholar(condition, retmax=1):
                 # Ensure a minimum score if the article was returned
                 if relevance_score == 0.0:
                     relevance_score = 10.0  # Minimum score to avoid 0.0%
-                    logger.debug(f"No direct matches found, assigning minimum relevance score of 10.0")
+                logger.debug(f"No direct matches found, assigning minimum relevance score of 10.0")
 
                 # Normalize to 0-100
                 relevance_score = min(relevance_score * 100, 100)
@@ -1211,8 +1462,10 @@ def get_insights():
         patient_id = request.args.get('patient_id')
         visit_id = request.args.get('visit_id')
         conditions = request.args.get('conditions', '')
+        tenant_id = request.args.get('tenantId', 'default_tenant')  # Get tenantID from request or use default
+        tenant_id = validate_tenant_id(tenant_id)
 
-        logger.debug(f"Request parameters - patient_id: {patient_id}, visit_id: {visit_id}, conditions: {conditions}")
+        logger.debug(f"Request parameters - patient_id: {patient_id}, visit_id: {visit_id}, conditions: {conditions}, tenant_id: {tenant_id}")
 
         if not patient_id or not visit_id:
             logger.error(f"Missing required parameters: patient_id={patient_id}, visit_id={visit_id}")
@@ -1298,11 +1551,81 @@ def get_insights():
             "insights": all_insights
         }
         logger.info(f"Final response for patient_id {patient_id}: {json.dumps(result, indent=2)}")
+        
+        # Store insights in MedoraReferences with tenantID
+        try:
+            for insight in all_insights:
+                insight_id = str(uuid.uuid4())
+                dynamodb.put_item(
+                    TableName='MedoraReferences',
+                    Item={
+                        'id': {'S': insight_id},
+                        'patient_id': {'S': patient_id},
+                        'visit_id': {'S': visit_id}, 
+                        'references': {'S': json.dumps(insight)},
+                        'ttl': {'N': str(int(datetime.now().timestamp()) + 30 * 24 * 60 * 60)},
+                        'tenantID': {'S': tenant_id}  # Added tenantID
+                    }
+                )
+                logger.info(f"Stored reference {insight_id} for patient {patient_id}, tenant {tenant_id}")
+        except Exception as e:
+            logger.error(f"Error storing references in DynamoDB: {str(e)}")
+            # Continue with response even if storage fails
+        
         return jsonify(result), 200
 
     except Exception as e:
         logger.error(f"Unexpected error in /get-insights: {str(e)}")
         return jsonify({"error": f"Unexpected error: {str(e)}"}), 500
 
+# Add a script to fix existing MongoDB patient records that might be missing tenantId
+@app.route('/api/admin/fix-patients', methods=['POST'])
+def fix_patient_tenant_ids():
+    try:
+        # This endpoint should be protected in production!
+        data = request.get_json()
+        admin_key = data.get('admin_key')
+        if admin_key != "medora_admin_key_2025":  # Simple protection for demo purposes
+            return jsonify({"success": False, "error": "Unauthorized"}), 401
+            
+        default_tenant = data.get('default_tenant', 'doctor@allergyaffiliates.com')
+        
+        # Update all patients without a tenantId
+        result = patients_collection.update_many(
+            {"tenantId": {"$exists": False}},
+            {"$set": {"tenantId": default_tenant}}
+        )
+        
+        # Update all transcripts without a tenantId
+        transcript_result = transcripts_collection.update_many(
+            {"tenantId": {"$exists": False}},
+            {"$set": {"tenantId": default_tenant}}
+        )
+        
+        # Update all visits without a tenantId
+        visit_result = visits_collection.update_many(
+            {"tenantId": {"$exists": False}},
+            {"$set": {"tenantId": default_tenant}}
+        )
+        
+        return jsonify({
+            "success": True, 
+            "updated_patients": result.modified_count,
+            "updated_transcripts": transcript_result.modified_count,
+            "updated_visits": visit_result.modified_count
+        }), 200
+    except Exception as e:
+        logger.error(f"Error fixing tenant IDs: {str(e)}")
+        return jsonify({"success": False, "error": str(e)}), 500
+
 if __name__ == '__main__':
+    # At startup, ensure MongoDB indexes exist
+    try:
+        patients_collection.create_index([("tenantId", 1)])
+        transcripts_collection.create_index([("tenantId", 1), ("patientId", 1)])
+        visits_collection.create_index([("tenantId", 1), ("patientId", 1)])
+        logger.info("MongoDB indexes created successfully")
+    except Exception as e:
+        logger.error(f"Error creating MongoDB indexes: {str(e)}")
+        
     app.run(host='0.0.0.0', port=PORT, debug=False)
