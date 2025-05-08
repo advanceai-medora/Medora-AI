@@ -6,8 +6,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Medora - Login</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
-    <!-- Favicon for branding -->
     <link rel="icon" href="https://test.medoramd.ai/images/Medora.png" type="image/png">
+    <!-- AWS SDK -->
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1068.0.min.js"></script>
+    <!-- Amazon Cognito Identity SDK -->
+    <script src="https://unpkg.com/amazon-cognito-identity-js@6.3.1/dist/amazon-cognito-identity.min.js"></script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -54,7 +57,7 @@
             gap: 1rem;
         }
 
-        .login-form input {
+        .login-form input, .login-form select {
             padding: 0.75rem;
             font-size: 1rem;
             border: 1px solid #e2e8f0;
@@ -63,7 +66,7 @@
             transition: border-color 0.3s, box-shadow 0.3s;
         }
 
-        .login-form input:focus {
+        .login-form input:focus, .login-form select:focus {
             border-color: #1a3c87;
             box-shadow: 0 0 0 3px rgba(26, 60, 135, 0.1);
             outline: none;
@@ -125,6 +128,26 @@
             display: none;
         }
 
+        .success-message {
+            color: #047857;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            background: #d1fae5;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .info-message {
+            color: #2563eb;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            background: #dbeafe;
+            border-radius: 4px;
+            display: none;
+        }
+
         .hipaa-note {
             display: flex;
             align-items: center;
@@ -137,15 +160,61 @@
         .hipaa-note span {
             margin-left: 5px;
         }
+
+        .form-toggle {
+            font-size: 0.875rem;
+            color: #4a5568;
+            margin-top: 1rem;
+            cursor: pointer;
+        }
+
+        .form-toggle a {
+            color: #1a3c87;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .form-toggle a:hover {
+            text-decoration: underline;
+        }
+        
+        .signup-form, .verification-form, .confirmation-form {
+            display: none;
+        }
+        
+        .specialty-select {
+            padding: 0.75rem;
+            font-size: 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background-color: white;
+        }
+        
+        .action-link {
+            color: #1a3c87;
+            text-decoration: underline;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .secondary-button {
+            background-color: #718096;
+        }
+        
+        .secondary-button:hover {
+            background-color: #4a5568;
+        }
     </style>
 </head>
 <body>
     <div class="login-container">
         <img src="https://test.medoramd.ai/images/Medora.png" alt="Medora Logo">
+        
         <!-- Login Section -->
         <div id="login-section" style="display: block;">
             <h1>Medora Login</h1>
             <p>Sign in to access your AI-Powered Scribe</p>
+            
             <div class="login-form">
                 <input type="email" id="login-email" placeholder="Email">
                 <input type="password" id="login-password" placeholder="Password">
@@ -153,93 +222,499 @@
                     Login
                     <span class="loading-spinner" id="login-spinner"></span>
                 </button>
-                <p class="error-message" id="errorMessage">Invalid email or password</p>
+                <div class="error-message" id="login-error">Invalid email or password</div>
+                <div class="info-message" id="login-info">Info message</div>
+            </div>
+            
+            <div class="form-toggle">
+                <p>Don't have an account? <a href="#" id="show-signup">Create one now</a></p>
             </div>
         </div>
+        
+        <!-- Signup Section -->
+        <div id="signup-section" class="signup-form">
+            <h1>Create Account</h1>
+            <p>Join the Medora Medical Co-Pilot</p>
+            
+            <div class="login-form">
+                <input type="email" id="signup-email" placeholder="Email">
+                <input type="password" id="signup-password" placeholder="Password">
+                <input type="password" id="signup-confirm-password" placeholder="Confirm Password">
+                <select id="specialty" class="specialty-select">
+                    <option value="" disabled selected>Select your specialty</option>
+                    <option value="allergist">Allergist</option>
+                    <option value="cardiologist">Cardiologist</option>
+                    <option value="dermatologist">Dermatologist</option>
+                    <option value="emergency">Emergency Medicine</option>
+                    <option value="family">Family Medicine</option>
+                    <option value="internal">Internal Medicine</option>
+                    <option value="other">Other Specialty</option>
+                </select>
+                <button id="signup-btn">
+                    Create Account
+                    <span class="loading-spinner" id="signup-spinner"></span>
+                </button>
+                <div class="error-message" id="signup-error">Error message</div>
+                <div class="success-message" id="signup-success">Account created successfully!</div>
+            </div>
+            
+            <div class="form-toggle">
+                <p>Already have an account? <a href="#" id="show-login">Login</a></p>
+            </div>
+        </div>
+        
+        <!-- Account Confirmation Section -->
+        <div id="confirmation-section" class="confirmation-form">
+            <h1>Complete Your Registration</h1>
+            <p>One last step to get started</p>
+            
+            <div class="login-form">
+                <input type="hidden" id="confirm-email">
+                <input type="hidden" id="confirm-password">
+                <button id="confirm-account-btn">
+                    Verify My Account
+                    <span class="loading-spinner" id="confirm-spinner"></span>
+                </button>
+                <div class="error-message" id="confirm-error">Error message</div>
+                <div class="success-message" id="confirm-success">Account verified successfully!</div>
+                <div class="info-message" id="confirm-info" style="display: block;">Click "Verify My Account" to complete your registration.</div>
+            </div>
+            
+            <div class="form-toggle">
+                <p>Back to <a href="#" id="confirm-to-login">Login</a></p>
+            </div>
+        </div>
+        
         <div class="hipaa-note">
             <span>🔒 Your data is protected with HIPAA-compliant encryption.</span>
         </div>
     </div>
 
     <script>
-        // Simple client-side authentication
+        // AWS Cognito Configuration - commented out in development mode
+        // const poolData = {
+        //     UserPoolId: 'ap-south-1_6zdLiOolJ',
+        //     ClientId: '4dtmlgehjfoamnlibijn3kt85u'
+        // };
+        
+        // // Configure AWS region
+        // AWS.config.region = 'ap-south-1';
+        
+        // const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
+        
+        // ======= DOM Event Handlers =======
+        
+        // Add event listeners when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            // Toggle between forms
+            setupFormToggling();
+            
+            // Login button event listener
+            setupLoginButton();
+            
+            // Signup button event listener
+            setupSignupButton();
+            
+            // Confirm account button event listener
+            setupConfirmButton();
+            
+            // Check if user is already logged in
+            checkIfUserIsLoggedIn();
+        });
+        
+        // ======= UI Navigation Functions =======
+        
+        // Setup form toggling between login, signup, and confirmation
+        function setupFormToggling() {
+            // Show signup form
+            const showSignupLink = document.getElementById('show-signup');
+            if (showSignupLink) {
+                showSignupLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    document.getElementById('login-section').style.display = 'none';
+                    document.getElementById('signup-section').style.display = 'block';
+                    document.getElementById('confirmation-section').style.display = 'none';
+                });
+            }
+            
+            // Show login form
+            const showLoginLink = document.getElementById('show-login');
+            if (showLoginLink) {
+                showLoginLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    document.getElementById('signup-section').style.display = 'none';
+                    document.getElementById('login-section').style.display = 'block';
+                    document.getElementById('confirmation-section').style.display = 'none';
+                });
+            }
+            
+            // Back to login from confirmation
+            const confirmToLoginLink = document.getElementById('confirm-to-login');
+            if (confirmToLoginLink) {
+                confirmToLoginLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    document.getElementById('confirmation-section').style.display = 'none';
+                    document.getElementById('login-section').style.display = 'block';
+                });
+            }
+            
+            // Enter key support for login
+            const loginPasswordInput = document.getElementById('login-password');
+            if (loginPasswordInput) {
+                loginPasswordInput.addEventListener('keyup', function(e) {
+                    if (e.key === 'Enter') {
+                        const loginBtn = document.getElementById('login-btn');
+                        if (loginBtn) loginBtn.click();
+                    }
+                });
+            }
+            
+            // Enter key support for signup
+            const signupConfirmPasswordInput = document.getElementById('signup-confirm-password');
+            if (signupConfirmPasswordInput) {
+                signupConfirmPasswordInput.addEventListener('keyup', function(e) {
+                    if (e.key === 'Enter') {
+                        const signupBtn = document.getElementById('signup-btn');
+                        if (signupBtn) signupBtn.click();
+                    }
+                });
+            }
+        }
+        
+        // ======= Login Functions =======
+        
+        // Setup login button click handler
+        function setupLoginButton() {
+            const loginBtn = document.getElementById('login-btn');
+            if (loginBtn) {
+                loginBtn.addEventListener('click', function() {
+                    const email = document.getElementById('login-email').value;
+                    const password = document.getElementById('login-password').value;
+                    
+                    if (!email || !password) {
+                        showElement('login-error', 'Please enter both email and password.');
+                        return;
+                    }
+                    
+                    signIn(email, password);
+                });
+            }
+        }
+        
+        // Handle user login
         function signIn(email, password) {
-            const errorMessage = document.getElementById('errorMessage');
-            if (errorMessage) {
-                errorMessage.style.display = 'none';
-            }
-
-            // Hardcoded credentials for doctor@allergyaffiliates.com
-            const validEmail = 'doctor@allergyaffiliates.com';
-            const validPassword = '18June2011!';
-
-            // Normalize input values
-            const normalizedEmail = email.trim().toLowerCase();
-            const normalizedPassword = password.trim();
-
-            // Debug logging to verify input values
-            console.log('Input email:', email);
-            console.log('Normalized email:', normalizedEmail);
-            console.log('Input password:', password);
-            console.log('Normalized password:', normalizedPassword);
-            console.log('Expected email:', validEmail);
-            console.log('Expected password:', validPassword);
-
-            if (normalizedEmail === validEmail.toLowerCase() && normalizedPassword === validPassword) {
-                console.log('Sign-in successful for:', email);
-                // Store email in localStorage to persist across pages
+            setLoadingState('login-btn', 'login-spinner', true);
+            hideElement('login-error');
+            hideElement('login-info');
+            
+            // Handle the hardcoded doctor account
+            if (email.toLowerCase() === 'doctor@allergyaffiliates.com' && password === '18June2011!') {
+                console.log('Using hardcoded doctor account');
                 localStorage.setItem('currentEmail', email);
-                // Redirect to the test dashboard after successful login
-                setTimeout(() => {
+                localStorage.setItem('userSpecialty', 'allergist');
+                
+                // Redirect to dashboard
+                setTimeout(function() {
                     window.location.href = 'https://test.medoramd.ai/index.html';
-                }, 100); // Add a small delay to ensure localStorage is updated
-            } else {
-                console.error('Invalid email or password');
-                if (errorMessage) {
-                    errorMessage.textContent = 'Invalid email or password';
-                    errorMessage.style.display = 'block';
-                    setLoadingState('login-btn', 'login-spinner', false);
+                }, 100);
+                return;
+            }
+            
+            // Check if this is one of our manually verified users
+            const storedPassword = localStorage.getItem('verified_user_' + email);
+            if (storedPassword === password) {
+                console.log('Using locally stored verified user');
+                localStorage.setItem('currentEmail', email);
+                
+                // Get specialty if available
+                const specialty = localStorage.getItem('user_specialty_' + email) || 'verified_user';
+                localStorage.setItem('userSpecialty', specialty);
+                
+                // Redirect to dashboard
+                setTimeout(function() {
+                    window.location.href = 'https://test.medoramd.ai/index.html';
+                }, 100);
+                return;
+            }
+            
+            // If we get here, credentials are invalid
+            console.log('Invalid login credentials');
+            showElement('login-error', 'Invalid email or password. Please try again.');
+            setLoadingState('login-btn', 'login-spinner', false);
+        }
+        
+        // Try to login using Cognito
+        function loginWithCognito(email, password) {
+            try {
+                const authenticationData = {
+                    Username: email,
+                    Password: password
+                };
+                
+                const authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails(authenticationData);
+                
+                const userData = {
+                    Username: email,
+                    Pool: userPool
+                };
+                
+                const cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
+                
+                cognitoUser.authenticateUser(authenticationDetails, {
+                    onSuccess: function(result) {
+                        console.log('Cognito authentication successful');
+                        
+                        // Store user email
+                        localStorage.setItem('currentEmail', email);
+                        
+                        try {
+                            // Get tokens
+                            const idToken = result.getIdToken().getJwtToken();
+                            const accessToken = result.getAccessToken().getJwtToken();
+                            const refreshToken = result.getRefreshToken().getToken();
+                            
+                            localStorage.setItem('idToken', idToken);
+                            localStorage.setItem('accessToken', accessToken);
+                            localStorage.setItem('refreshToken', refreshToken);
+                            
+                            // Get user attributes
+                            cognitoUser.getUserAttributes(function(err, attributes) {
+                                try {
+                                    if (!err && attributes) {
+                                        // Find specialty attribute
+                                        for (let i = 0; i < attributes.length; i++) {
+                                            if (attributes[i].getName() === 'custom:specialty') {
+                                                localStorage.setItem('userSpecialty', attributes[i].getValue());
+                                                break;
+                                            }
+                                        }
+                                    }
+                                } catch (e) {
+                                    console.error('Error processing attributes:', e);
+                                }
+                                
+                                // Redirect to dashboard
+                                redirectToDashboard();
+                            });
+                        } catch (e) {
+                            console.error('Error processing tokens:', e);
+                            redirectToDashboard();
+                        }
+                    },
+                    onFailure: function(err) {
+                        console.error('Cognito authentication failed:', err);
+                        
+                        if (err.code === 'UserNotConfirmedException') {
+                            // Show confirmation section
+                            document.getElementById('confirm-email').value = email;
+                            document.getElementById('confirm-password').value = password;
+                            document.getElementById('login-section').style.display = 'none';
+                            document.getElementById('confirmation-section').style.display = 'block';
+                        } else {
+                            // Show error message
+                            showElement('login-error', err.message || 'Login failed. Please check your credentials.');
+                        }
+                        
+                        setLoadingState('login-btn', 'login-spinner', false);
+                    }
+                });
+            } catch (e) {
+                console.error('Exception during login:', e);
+                showElement('login-error', 'An error occurred. Please try again.');
+                setLoadingState('login-btn', 'login-spinner', false);
+            }
+        }
+        
+        // Redirect to dashboard
+        function redirectToDashboard() {
+            setTimeout(function() {
+                window.location.href = 'https://test.medoramd.ai/index.html';
+            }, 100);
+        }
+        
+        // ======= Signup Functions =======
+        
+        // Setup signup button click handler
+        function setupSignupButton() {
+            const signupBtn = document.getElementById('signup-btn');
+            if (signupBtn) {
+                signupBtn.addEventListener('click', function() {
+                    const email = document.getElementById('signup-email').value;
+                    const password = document.getElementById('signup-password').value;
+                    const confirmPassword = document.getElementById('signup-confirm-password').value;
+                    const specialty = document.getElementById('specialty').value;
+                    
+                    // Basic validation
+                    if (!email || !password || !confirmPassword || !specialty) {
+                        showElement('signup-error', 'Please fill in all fields.');
+                        return;
+                    }
+                    
+                    if (password !== confirmPassword) {
+                        showElement('signup-error', 'Passwords do not match.');
+                        return;
+                    }
+                    
+                    if (password.length < 8) {
+                        showElement('signup-error', 'Password must be at least 8 characters long.');
+                        return;
+                    }
+                    
+                    // Create account
+                    createAccount(email, password, specialty);
+                });
+            }
+        }
+        
+        // Create a new user account
+        function createAccount(email, password, specialty) {
+            setLoadingState('signup-btn', 'signup-spinner', true);
+            hideElement('signup-error');
+            hideElement('signup-success');
+            
+            // Check if a user with this email already exists in our local storage
+            if (localStorage.getItem('verified_user_' + email)) {
+                setLoadingState('signup-btn', 'signup-spinner', false);
+                showElement('signup-error', 'An account with this email already exists. Please log in instead.');
+                return;
+            }
+            
+            // DEVELOPMENT MODE: Skip Cognito completely and use localStorage only
+            console.log('Creating account in development mode:', email);
+            
+            // Store user credentials in localStorage
+            localStorage.setItem('verified_user_' + email, password);
+            localStorage.setItem('user_specialty_' + email, specialty);
+            
+            // Show success message
+            showElement('signup-success', 'Account created successfully!');
+            
+            // Store credentials for verification
+            document.getElementById('confirm-email').value = email;
+            document.getElementById('confirm-password').value = password;
+            
+            // Clear form
+            document.getElementById('signup-email').value = '';
+            document.getElementById('signup-password').value = '';
+            document.getElementById('signup-confirm-password').value = '';
+            document.getElementById('specialty').value = '';
+            
+            // Show confirmation section
+            setTimeout(function() {
+                document.getElementById('signup-section').style.display = 'none';
+                document.getElementById('confirmation-section').style.display = 'block';
+                setLoadingState('signup-btn', 'signup-spinner', false);
+            }, 1500);
+        }
+        
+        // ======= Account Confirmation Functions =======
+        
+        // Setup confirm button click handler
+        function setupConfirmButton() {
+            const confirmBtn = document.getElementById('confirm-account-btn');
+            if (confirmBtn) {
+                confirmBtn.addEventListener('click', function() {
+                    const email = document.getElementById('confirm-email').value;
+                    const password = document.getElementById('confirm-password').value;
+                    
+                    if (!email || !password) {
+                        showElement('confirm-error', 'Missing account information. Please try again.');
+                        return;
+                    }
+                    
+                    // Verify account
+                    verifyAccount(email, password);
+                });
+            }
+        }
+        
+        // Verify a user account without email confirmation
+        function verifyAccount(email, password) {
+            setLoadingState('confirm-account-btn', 'confirm-spinner', true);
+            hideElement('confirm-error');
+            hideElement('confirm-success');
+            
+            try {
+                console.log('Verifying account for:', email);
+                
+                // Simple verification - store in localStorage
+                localStorage.setItem('verified_user_' + email, password);
+                
+                // Get specialty if available
+                const specialty = localStorage.getItem('user_specialty_' + email) || 'verified_user';
+                localStorage.setItem('userSpecialty', specialty);
+                
+                // Show success
+                showElement('confirm-success', 'Account verified successfully!');
+                
+                // Redirect to login
+                setTimeout(function() {
+                    document.getElementById('confirmation-section').style.display = 'none';
+                    document.getElementById('login-section').style.display = 'block';
+                    document.getElementById('login-email').value = email;
+                    document.getElementById('login-password').value = password;
+                    showElement('login-info', 'Your account is verified. Please log in.');
+                    setLoadingState('confirm-account-btn', 'confirm-spinner', false);
+                    
+                    // Auto-click login after a delay
+                    setTimeout(function() {
+                        document.getElementById('login-btn').click();
+                    }, 500);
+                }, 1500);
+            } catch (e) {
+                console.error('Error during verification:', e);
+                showElement('confirm-error', 'An error occurred. Please try again.');
+                setLoadingState('confirm-account-btn', 'confirm-spinner', false);
+            }
+        }
+        
+        // ======= Session Management Functions =======
+        
+        // Check if user is already logged in
+        function checkIfUserIsLoggedIn() {
+            try {
+                // Check for any stored email
+                const storedEmail = localStorage.getItem('currentEmail');
+                if (storedEmail) {
+                    window.location.href = 'https://test.medoramd.ai/index.html';
+                    return;
                 }
+            } catch (e) {
+                console.error('Error checking login state:', e);
             }
         }
-
-        // Sign out a user (for use in index.html and menu.js)
+        
+        // Sign out user
         function logout() {
-            console.log('User signed out');
-            localStorage.removeItem('currentEmail');
-            // Redirect to the test login page after sign-out
-            setTimeout(() => {
-                window.location.href = 'https://test.medoramd.ai/login.html';
-            }, 5000); // 5-second delay to capture logs
-            // Reset any menu state if necessary
-            const userMenu = document.getElementById('user-menu-container');
-            if (userMenu) {
-                userMenu.style.display = 'none';
+            try {
+                // Sign out from Cognito
+                const cognitoUser = userPool.getCurrentUser();
+                if (cognitoUser) {
+                    cognitoUser.signOut();
+                }
+                
+                // Clear local storage
+                localStorage.removeItem('idToken');
+                localStorage.removeItem('accessToken');
+                localStorage.removeItem('refreshToken');
+                localStorage.removeItem('currentEmail');
+                localStorage.removeItem('userSpecialty');
+                
+                // Redirect to login page
+                window.location.href = 'login.html';
+            } catch (e) {
+                console.error('Error during logout:', e);
+                window.location.href = 'login.html';
             }
         }
-
-        // Check authentication state (for use in index.html)
-        function checkAuthState() {
-            console.log('Checking authentication state...');
-            const email = localStorage.getItem('currentEmail');
-            console.log('Retrieved email from localStorage:', email);
-            if (email) {
-                console.log('User is signed in:', email);
-                return true;
-            } else {
-                console.log('No user signed in');
-                // Redirect to the test login page if not authenticated
-                setTimeout(() => {
-                    window.location.href = 'https://test.medoramd.ai/login.html';
-                }, 5000); // 5-second delay to capture logs
-                return false;
-            }
-        }
-
-        // Add loading state to buttons
+        
+        // ======= UI Helper Functions =======
+        
+        // Set loading state for button
         function setLoadingState(buttonId, spinnerId, isLoading) {
             const button = document.getElementById(buttonId);
             const spinner = document.getElementById(spinnerId);
+            
             if (button && spinner) {
                 if (isLoading) {
                     button.disabled = true;
@@ -250,46 +725,28 @@
                 }
             }
         }
-
-        // Add loading state handler for the login button
-        document.addEventListener('DOMContentLoaded', () => {
-            const loginBtn = document.getElementById('login-btn');
-            if (loginBtn) {
-                loginBtn.addEventListener('click', () => {
-                    setLoadingState('login-btn', 'login-spinner', true);
-                    const email = document.getElementById('login-email').value;
-                    const password = document.getElementById('login-password').value;
-                    if (!email || !password) {
-                        const errorMessage = document.getElementById('errorMessage');
-                        errorMessage.textContent = 'Please enter an email and password.';
-                        errorMessage.style.display = 'block';
-                        setLoadingState('login-btn', 'login-spinner', false);
-                        return;
-                    }
-                    signIn(email, password);
-                });
-            }
-        });
-
-        // Expose functions for use in other scripts (e.g., menu.js, index.html)
-        window.logout = logout;
-        window.checkAuthState = checkAuthState;
-
-        // Monitor localStorage changes
-        let lastEmail = localStorage.getItem('currentEmail');
-        setInterval(() => {
-            const currentEmail = localStorage.getItem('currentEmail');
-            if (currentEmail !== lastEmail) {
-                console.log('localStorage currentEmail changed from', lastEmail, 'to', currentEmail);
-                lastEmail = currentEmail;
-                if (!currentEmail) {
-                    console.log('currentEmail cleared, redirecting to login page with delay');
-                    setTimeout(() => {
-                        window.location.href = 'https://test.medoramd.ai/login.html';
-                    }, 5000); // 5-second delay to capture logs
+        
+        // Show element with message
+        function showElement(elementId, message) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                if (message) {
+                    element.innerHTML = message;
                 }
+                element.style.display = 'block';
             }
-        }, 1000); // Check every second
+        }
+        
+        // Hide element
+        function hideElement(elementId) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.style.display = 'none';
+            }
+        }
+        
+        // Expose functions for external use
+        window.logout = logout;
     </script>
 </body>
 </html>

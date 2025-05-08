@@ -1,0 +1,12 @@
+{
+  "keys": [
+    {
+      "kty": "RSA",
+      "n": "sOp0QTDQBZDR6woS0UykAACWH9bVK-6ZWlNantgwQDVM3uVCaXlcMwiLmXxE9HwgCpbn-S-N3lzPmQ5WNvE15gCJ7YIWJhf1E_FF-LsWJ1IixKrdoFyZB_Ae0sGdOXC0q_rqHoZjphkWbfmemNxB1REifC_spYM6fy3onhF9EIHKxCpopNnykQQ1jTqLLz-uwgdpWUDVIVgjqxYeakqDCxH-1HIg_x9jrQ1FwPEFgsznbC6jKCWxORju03urf4IQ6VndXZt6Kj4-xAqiTbyX1tTAVSgcNfxVnwzSSthGHqJfVQ75_HZtzCP_qiPu2tG294AhH9AzjwVubhScuy9XxQ",
+      "e": "AQAB",
+      "kid": "medora-key-1",
+      "use": "sig",
+      "alg": "RS384"
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JWK Set Verification</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        pre { background-color: #f4f4f4; padding: 10px; border-radius: 5px; overflow-x: auto; }
+        .success { color: green; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h1>JWK Set Verification</h1>
+    <p>This page verifies that your JWK Set is properly accessible.</p>
+    
+    <h2>JWK Set URL</h2>
+    <p><a href="/.well-known/jwks.json" target="_blank">/.well-known/jwks.json</a></p>
+    
+    <h2>JWK Set Content</h2>
+    <pre id="jwkContent">Loading...</pre>
+    
+    <div id="status"></div>
+    
+    <script>
+        async function checkJwkSet() {
+            try {
+                const response = await fetch('/.well-known/jwks.json');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                
+                const jwkSet = await response.json();
+                document.getElementById('jwkContent').textContent = JSON.stringify(jwkSet, null, 2);
+                
+                if (jwkSet.keys && jwkSet.keys.length > 0 && jwkSet.keys[0].kid) {
+                    document.getElementById('status').innerHTML = '<p class="success">✓ JWK Set is valid and accessible!</p>';
+                } else {
+                    document.getElementById('status').innerHTML = '<p class="error">✗ JWK Set is missing required properties.</p>';
+                }
+            } catch (error) {
+                document.getElementById('jwkContent').textContent = 'Error loading JWK Set';
+                document.getElementById('status').innerHTML = `<p class="error">✗ Error: ${error.message}</p>`;
+            }
+        }
+        
+        window.onload = checkJwkSet;
+    </script>
+</body>
+</html>

@@ -20,15 +20,16 @@ body {
     overflow: hidden;
 }
 
-/* Header - Updated with professional gradient */
+/* Header - Updated with light blue background */
 header {
-    background: linear-gradient(135deg, #3a5ba9 0%, #4d8af0 100%); /* Professional gradient */
-    color: #fff;
+    background: #F0F7FF; /* Light blue background */
+    color: #3a5ba9; /* Darker blue for text */
     padding: 12px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15); /* Enhanced shadow for depth */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Lighter shadow */
+    border-bottom: 1px solid #e5e7eb; /* Subtle border */
 }
 
 /* Enlarged Logo */
@@ -48,24 +49,24 @@ header {
     filter: none; /* Removed drop shadow */
 }
 
-/* Logout Button */
+/* Logout Button - Updated for light header */
 #logout-btn {
-    background-color: #fff;
-    color: #3a5ba9; /* Updated from #5a9bd5 */
+    background-color: #3a5ba9; /* Blue button */
+    color: #fff; /* White text */
     padding: 8px 14px;
     border: none;
-    border-radius: 6px; /* Standardized from 4px */
+    border-radius: 6px;
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.15s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px rgba(58, 91, 169, 0.2);
 }
 
 #logout-btn:hover {
-    background-color: #f0f7ff;
-    transform: scale(1.05); /* Subtle hover effect */
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+    background-color: #2d4b8a;
+    transform: scale(1.05);
+    box-shadow: 0 3px 6px rgba(58, 91, 169, 0.3);
 }
 
 /* Provider icon in menu button */
@@ -86,16 +87,18 @@ header {
     padding: 0;
     border-radius: 50%;
     position: relative;
+    background-color: #3a5ba9;
+    color: white;
 }
 
 #logout-btn.has-dropdown::after {
     content: '▼';
     font-size: 8px;
-    opacity: 0.7;
+    opacity: 0.9;
     position: absolute;
     bottom: 2px;
     right: 0;
-    background-color: #3a5ba9;
+    background-color: #2d4b8a;
     color: white;
     width: 12px;
     height: 12px;
@@ -1507,7 +1510,7 @@ select:focus {
     background-color: #fff5f5;
 }
 
-/* Enhanced Recommendations Component Styles - UPDATED FIXES */
+/* Enhanced Recommendations Component Styles */
 
 /* Main container for recommendations */
 .enhanced-recommendations {
@@ -1711,57 +1714,6 @@ select:focus {
 .section-actions .copy-btn.copied {
     background-color: #10b981;
     color: #fff;
-}
-
-/* View toggle container - Match existing buttons */
-.recommendations-view-toggle {
-    display: flex;
-    gap: 8px;
-    padding: 12px 4px;
-    margin-top: 8px;
-}
-
-/* View toggle buttons - Match existing buttons */
-.recommendations-view-toggle .view-btn {
-    padding: 8px 16px;
-    border: none;
-    border-radius: 4px;
-    font-size: 13px;
-    font-weight: 500;
-    background-color: #f0f2f5;
-    color: #4b5563;
-    cursor: pointer;
-    transition: all 0.15s ease;
-    box-shadow: none;
-}
-
-.recommendations-view-toggle .view-btn:hover {
-    background-color: #e5e7eb;
-}
-
-.recommendations-view-toggle .view-btn.active {
-    background-color: #3a5ba9;
-    color: #fff;
-}
-
-/* Special styles for concise mode */
-.enhanced-recommendations.concise-mode .recommendation-section {
-    margin-bottom: 4px;
-}
-
-.enhanced-recommendations.concise-mode .section-header {
-    padding: 8px 16px;
-}
-
-.enhanced-recommendations.concise-mode .section-content {
-    display: none;
-}
-
-/* Special styles for edit mode */
-.enhanced-recommendations.edit-mode .section-content {
-    display: block;
-    max-height: none;
-    transition: none;
 }
 
 /* Toast notifications for copy confirmation */
