@@ -1,4 +1,5 @@
 console.log('patient-management.js loaded');
+console.log('patient-management.js version: 1.2.5'); // Updated version to confirm deployment
 
 // Initialize user data on page load to ensure correct tenantID
 function initializeUserData() {
@@ -20,7 +21,7 @@ function initializeUserData() {
         // Return true if initialization was successful
         return (currentEmail !== null && currentTenantId !== null);
     } catch (error) {
-        console.error('Error initializing user data:', error);
+        console.error('Error initializing user data:', error.message);
         return false;
     }
 }
@@ -71,7 +72,7 @@ async function fetchPatients() {
         patients = data.patients || [];
         updatePatientList();
     } catch (error) {
-        console.error('Error fetching patients:', error);
+        console.error('Error fetching patients:', error.message);
         alert('Error fetching patients: ' + error.message);
     } finally {
         window.hideSpinner();
@@ -102,12 +103,33 @@ function updatePatientList() {
             patient.name.split(' ').map(word => word[0]).join('').substring(0, 2).toUpperCase() : 'NA';
         const visitType = patient.visitType || 'follow-up';
         const badgeHtml = visitType === 'today' ? `<span class="visit-badge today">Today</span>` : '';
+        // Ensure createdAt is parsed as UTC and formatted in Eastern Time
+        const createdAtDate = new Date(patient.createdAt + (patient.createdAt.endsWith('Z') ? '' : 'Z')); // Ensure UTC
+        const createdAtFormatted = createdAtDate.toLocaleString('en-US', {
+            timeZone: 'America/New_York',
+            month: '2-digit',
+            day: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false
+        }).replace(',', '');
+        // Determine if it's DST to set the correct timezone label
+        const isDST = (date) => {
+            const jan = new Date(date.getFullYear(), 0, 1);
+            const jul = new Date(date.getFullYear(), 6, 1);
+            const stdOffset = Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
+            return date.getTimezoneOffset() < stdOffset ? 'EDT' : 'EST';
+        };
+        const timezoneLabel = isDST(createdAtDate);
+        console.log(`[DEBUG] Rendering patient ${patient.name || patient.id}: createdAt=${patient.createdAt}, formatted=${createdAtFormatted} ${timezoneLabel}`);
         patientItem.innerHTML = `
             <div class="patient-initials">${initials}</div>
             <div class="patient-info">
                 <div class="name">${patient.name || patient.id}${badgeHtml}</div>
                 <div class="details">${patient.age ? patient.age + ' years' : 'Age N/A'}, ${patient.medicalHistory || 'No history'}</div>
-                <div class="details">Created: ${new Date(patient.createdAt).toLocaleString()}</div>
+                <div class="details">Created: ${createdAtFormatted} ${timezoneLabel}</div>
             </div>
             <button class="delete-btn" data-patient-id="${patient.patientId}">🗑️</button>
         `;
@@ -350,7 +372,7 @@ async function proceedWithVisit(patientId) {
         const requestBody = {
             patientId, 
             email: currentEmail, 
-            tenantId: currentTenantId  // Using email as tenantId for DynamoDB GSI
+            tenantId: currentEmail  // Using email as tenantId for DynamoDB GSI
         };
         
         console.log('API request for starting visit:', requestBody);
@@ -440,7 +462,7 @@ async function proceedWithVisit(patientId) {
             alert('Error: ' + (result.error || 'Unknown error'));
         }
     } catch (error) {
-        console.error('Error starting visit:', error);
+        console.error('Error starting visit:', error.message);
         console.error('Error stack:', error.stack);
         if (error.name === 'AbortError') {
             alert('Failed to start visit: Request timed out after 10 seconds. Please check the server status and try again.');
@@ -460,10 +482,41 @@ async function selectPatient(patient) {
     console.log('After setting patient in selectPatient: currentPatientId:', currentPatientId);
     console.log('Selected patient:', JSON.stringify(patient, null, 2));
 
-    // Show patient details and hide patient list
+    // Declare DOM elements at the top to ensure they are in scope throughout the function
     const patientDetails = document.getElementById('patient-details');
     const patientList = document.getElementById('patient-list');
     const transcriptSection = document.getElementById('transcript-section');
+    const nameEl = document.getElementById('patient-details-name');
+    const mrnEl = document.getElementById('patient-details-mrn');
+    const lastVisitEl = document.getElementById('patient-details-last-visit');
+    const currentVisitEl = document.getElementById('patient-details-current-visit');
+    const visitHistoryEl = document.getElementById('patient-details-visit-history');
+
+    // Define formatDateTime and isDST functions at the top of the function scope
+    const isDST = (date) => {
+        const jan = new Date(date.getFullYear(), 0, 1);
+        const jul = new Date(date.getFullYear(), 6, 1);
+        const stdOffset = Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
+        return date.getTimezoneOffset() < stdOffset ? 'EDT' : 'EST';
+    };
+
+    const formatDateTime = (dateStr) => {
+        if (!dateStr) return 'N/A';
+        const date = new Date(dateStr + (dateStr.endsWith('Z') ? '' : 'Z')); // Ensure UTC
+        const formatted = date.toLocaleString('en-US', {
+            timeZone: 'America/New_York',
+            month: '2-digit',
+            day: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false
+        }).replace(',', '');
+        return `${formatted} ${isDST(date)}`;
+    };
+
+    // Show patient details and hide patient list
     if (patientDetails && patientList && transcriptSection) {
         patientDetails.style.display = 'block';
         patientList.style.display = 'none';
@@ -482,17 +535,43 @@ async function selectPatient(patient) {
         }, 50);
 
         // Populate patient details
-        const nameEl = document.getElementById('patient-details-name');
-        const mrnEl = document.getElementById('patient-details-mrn');
-        const lastVisitEl = document.getElementById('patient-details-last-visit');
-        const currentVisitEl = document.getElementById('patient-details-current-visit');
-        const visitHistoryEl = document.getElementById('patient-details-visit-history');
-
-        if (nameEl) nameEl.textContent = patient.name || 'N/A';
-        if (mrnEl) mrnEl.textContent = patient.mrn || 'N/A';
-        if (lastVisitEl) lastVisitEl.textContent = patient.lastVisit || 'N/A';
-        if (currentVisitEl) currentVisitEl.textContent = patient.currentVisit || 'N/A';
-        if (visitHistoryEl) visitHistoryEl.innerHTML = '<div>No visit history available.</div>'; // Removed mock data
+        if (nameEl) {
+            nameEl.textContent = patient.name || 'N/A';
+            nameEl.dataset.patientId = patient.patientId; // Ensure patientId is set for AllergenIQ
+        } else {
+            console.error('patient-details-name element not found');
+        }
+        if (mrnEl) {
+            mrnEl.textContent = patient.mrn || 'N/A';
+        } else {
+            console.error('patient-details-mrn element not found');
+        }
+        // Format lastVisit and currentVisit in Eastern Time
+        const lastVisitFormatted = formatDateTime(patient.lastVisit);
+        const currentVisitFormatted = formatDateTime(patient.currentVisit);
+        console.log(`[DEBUG] Rendering patient details for ${patient.name || patient.id}: lastVisit=${patient.lastVisit}, formatted=${lastVisitFormatted}, currentVisit=${patient.currentVisit}, formatted=${currentVisitFormatted}`);
+        if (lastVisitEl) {
+            lastVisitEl.textContent = lastVisitFormatted;
+        } else {
+            console.error('patient-details-last-visit element not found');
+        }
+        if (currentVisitEl) {
+            currentVisitEl.textContent = currentVisitFormatted;
+            currentVisitEl.dataset.visitId = activeVisitId || ''; // Ensure visitId is set for AllergenIQ
+        } else {
+            console.error('patient-details-current-visit element not found');
+        }
+        if (visitHistoryEl) {
+            visitHistoryEl.innerHTML = '<div>No visit history available.</div>'; // Placeholder
+        } else {
+            console.error('patient-details-visit-history element not found');
+        }
+    } else {
+        console.error('Required elements for patient details not found:', {
+            patientDetails: !!patientDetails,
+            patientList: !!patientList,
+            transcriptSection: !!transcriptSection
+        });
     }
 
     // Ensure tenantID matches email for DynamoDB GSI
@@ -516,7 +595,8 @@ async function selectPatient(patient) {
         });
         
         if (!response.ok) {
-            throw new Error('Failed to fetch patient history');
+            const errorText = await response.text();
+            throw new Error(`Failed to fetch patient history: HTTP ${response.status} - ${errorText}`);
         }
         
         const data = await response.json();
@@ -558,6 +638,40 @@ async function selectPatient(patient) {
             return;
         }
         data.transcripts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        // Set lastVisit and currentVisit based on transcripts
+        if (data.transcripts.length > 0) {
+            patient.currentVisit = data.transcripts[0].createdAt; // Most recent transcript
+            if (data.transcripts.length > 1) {
+                patient.lastVisit = data.transcripts[1].createdAt; // Second most recent transcript
+            }
+            // Update the UI with the new values
+            const lastVisitFormatted = formatDateTime(patient.lastVisit);
+            const currentVisitFormatted = formatDateTime(patient.currentVisit);
+            console.log(`[DEBUG] Updated patient details after transcripts for ${patient.name || patient.id}: lastVisit=${patient.lastVisit}, formatted=${lastVisitFormatted}, currentVisit=${patient.currentVisit}, formatted=${currentVisitFormatted}`);
+            if (lastVisitEl) {
+                lastVisitEl.textContent = lastVisitFormatted;
+            } else {
+                console.error('patient-details-last-visit element not found when updating after transcripts');
+            }
+            if (currentVisitEl) {
+                currentVisitEl.textContent = currentVisitFormatted;
+                currentVisitEl.dataset.visitId = data.transcripts[0].visitId || activeVisitId || '';
+            } else {
+                console.error('patient-details-current-visit element not found when updating after transcripts');
+            }
+        }
+        // Display visit history with formatted timestamps
+        if (visitHistoryEl) {
+            if (data.transcripts.length > 0) {
+                visitHistoryEl.innerHTML = data.transcripts.map(transcript => {
+                    const visitDate = formatDateTime(transcript.createdAt);
+                    console.log(`[DEBUG] Rendering visit history entry: createdAt=${transcript.createdAt}, formatted=${visitDate}`);
+                    return `<div>Visit on ${visitDate}</div>`;
+                }).join('');
+            } else {
+                visitHistoryEl.innerHTML = '<div>No visit history available.</div>';
+            }
+        }
         data.transcripts.forEach(transcript => {
             if (transcript.soapNotes) {
                 latestAnalysis = { soapNotes: transcript.soapNotes, insights: transcript.insights || {} };
@@ -613,13 +727,19 @@ async function selectPatient(patient) {
                             items: ['No specific plan recommendations available. Please follow up with standard care protocols.']
                         }];
                     } else {
-                        const sections = planText.split(/(?=In regards to\s+[\w\s]+:)/i).filter(section => section.trim());
+                        // Split the planText into sections using a more robust regex
+                        const sections = planText.split(/(?=In regards to\s+[^:]+:)/i).filter(section => section.trim());
                         console.log('Split Plan Sections (SelectPatient):', sections);
                         sections.forEach(section => {
-                            const sectionMatch = section.match(/In regards to\s+(.+?)(?::|$)/i);
+                            const sectionMatch = section.match(/In regards to\s+(.+?):/i);
                             if (sectionMatch) {
                                 const title = sectionMatch[1].trim();
-                                const items = section.replace(/In regards to\s+.+?(?::|$)/i, '').trim().split('\n').filter(item => item.trim()).map(item => item.replace(/^- /, ''));
+                                // Extract the content after the section header, excluding subsequent headers
+                                const sectionContent = section.replace(/In regards to\s+.+?:/i, '').trim();
+                                // Split the content into items, stopping at the next section header
+                                const items = sectionContent.split('\n')
+                                    .filter(item => item.trim() && !item.match(/In regards to\s+.+?:/i))
+                                    .map(item => item.replace(/^- /, '').trim());
                                 console.log(`Parsed Section (SelectPatient) - ${title}:`, items);
                                 if (items.length > 0) {
                                     planSections.push({ title, items });
@@ -651,7 +771,7 @@ async function selectPatient(patient) {
                             console.log(`Rendering section (SelectPatient): ${section.title} with items:`, section.items);
                             planContainer.appendChild(sectionDiv);
                         } catch (error) {
-                            console.error(`Error rendering section ${section.title} (SelectPatient):`, error);
+                            console.error(`Error rendering section ${section.title} (SelectPatient):`, error.message);
                         }
                     });
                     planContainer.style.display = 'block';
@@ -708,10 +828,7 @@ async function selectPatient(patient) {
             console.error('updateTooltipVisibility function not found');
         }
     } catch (error) {
-        console.error('Error fetching patient history:', error);
-        // Removed alert to prevent user interruption
-        // alert('Error fetching patient history: ' + error.message);
-
+        console.error('Error fetching patient history:', error.message);
         // Display message indicating no history
         console.log('No transcripts found for patient:', currentPatientId);
         const notesSection = document.getElementById('notes-section');
@@ -803,7 +920,7 @@ async function deletePatient(patientId) {
             alert('Failed to delete patient: ' + (data.error || 'Unknown error'));
         }
     } catch (error) {
-        console.error('Error deleting patient:', error);
+        console.error('Error deleting patient:', error.message);
         alert('Error deleting patient: ' + error.message);
     } finally {
         window.hideSpinner();

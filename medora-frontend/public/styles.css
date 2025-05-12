@@ -1869,3 +1869,447 @@ select:focus {
 .primary-btn:hover {
     background-color: #2d4b8a;
 }
+
+/* ======================================
+   AllergenIQ™ New Patient Profile Styles
+   ====================================== */
+
+/* AllergenIQ Section Styles */
+.allergeniq-section {
+  position: relative;
+}
+
+/* NEW badge styling */
+.new-badge {
+  display: inline-block;
+  background: #e74c3c;
+  color: white;
+  font-size: 0.65rem;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 10px;
+  margin-right: 6px;
+  vertical-align: middle;
+  position: relative;
+  top: -1px;
+  animation: pulse-red 2s infinite;
+}
+
+@keyframes pulse-red {
+  0% {
+    box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(231, 76, 60, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(231, 76, 60, 0);
+  }
+}
+
+/* Main container for the AllergenIQ Profile */
+#allergeniq-profile-container {
+  background: #fff;
+  border-radius: 6px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  min-height: 100px;
+  position: relative;
+}
+
+/* Loading message styles */
+#allergeniq-profile-container .loading-message {
+  color: #6b7280;
+  text-align: center;
+  padding: 20px;
+  font-style: italic;
+}
+
+/* AllergenIQ Profile component */
+.allergeniq-profile {
+  font-family: 'Inter', sans-serif;
+}
+
+/* Header styles */
+.allergeniq-header {
+  background: linear-gradient(135deg, #f0f7ff 0%, #e5eefa 100%);
+  padding: 12px 16px;
+  border-radius: 6px 6px 0 0;
+  border-bottom: 1px solid #e5eefa;
+}
+
+.allergeniq-header h2 {
+  color: #1a3c5e;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+}
+
+/* Tab navigation styles */
+.tab-navigation {
+  display: flex;
+  gap: 4px;
+}
+
+.tab-navigation button {
+  background: #edf2f7;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #4a5568;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tab-navigation button:hover {
+  background: #e2e8f0;
+}
+
+.tab-navigation button.active {
+  background: #3a5ba9;
+  color: white;
+  border-color: #3a5ba9;
+}
+
+/* Tab content styles */
+.tab-content {
+  padding: 16px;
+}
+
+/* Symptoms panel styles */
+.symptoms-panel {
+  margin-bottom: 16px;
+}
+
+.symptoms-panel h3 {
+  color: #1a3c5e;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 0 0 12px 0;
+}
+
+.symptom-severity-chart {
+  background: white;
+  border-radius: 6px;
+  padding: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  margin-bottom: 16px;
+  height: 300px;
+  overflow: hidden;
+}
+
+.chart-container {
+  height: 100%;
+  width: 100%;
+}
+
+.symptom-details h4 {
+  color: #3a5ba9;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin: 16px 0 8px 0;
+}
+
+.symptom-details ul {
+  list-style-type: disc;
+  padding-left: 20px;
+  margin: 0;
+}
+
+.symptom-details li {
+  font-size: 0.8rem;
+  margin-bottom: 4px;
+  color: #4b5563;
+}
+
+.symptom-details strong {
+  color: #1a3c5e;
+  font-weight: 600;
+}
+
+/* Treatments panel styles */
+.treatments-panel {
+  margin-bottom: 16px;
+}
+
+.treatments-panel h3 {
+  color: #1a3c5e;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 0 0 12px 0;
+}
+
+.treatment-efficacy-chart {
+  background: white;
+  border-radius: 6px;
+  padding: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  margin-bottom: 16px;
+  height: 300px;
+  overflow: hidden;
+}
+
+.treatment-insights h4 {
+  color: #3a5ba9;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin: 16px 0 8px 0;
+}
+
+.treatment-insights ul {
+  list-style-type: disc;
+  padding-left: 20px;
+  margin: 0;
+}
+
+.treatment-insights li {
+  font-size: 0.8rem;
+  margin-bottom: 4px;
+  color: #4b5563;
+}
+
+.treatment-insights strong {
+  color: #1a3c5e;
+  font-weight: 600;
+}
+
+/* Allergens panel styles */
+.allergens-panel {
+  margin-bottom: 16px;
+}
+
+.allergens-panel h3 {
+  color: #1a3c5e;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 0 0 12px 0;
+}
+
+.allergens-table {
+  overflow-x: auto;
+  margin-bottom: 16px;
+}
+
+.allergens-table table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.75rem;
+}
+
+.allergens-table th {
+  background: #f8fafc;
+  color: #1a3c5e;
+  font-weight: 600;
+  text-align: left;
+  padding: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.allergens-table td {
+  padding: 8px;
+  border: 1px solid #e2e8f0;
+  vertical-align: top;
+}
+
+.allergens-table tr:nth-child(even) td {
+  background: #f8fafc;
+}
+
+.allergens-table ul {
+  list-style-type: disc;
+  padding-left: 20px;
+  margin: 0;
+}
+
+.allergens-table li {
+  font-size: 0.75rem;
+  margin-bottom: 2px;
+}
+
+.cross-reactivity-insights h4 {
+  color: #3a5ba9;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin: 16px 0 8px 0;
+}
+
+.cross-reactivity-insights ul {
+  list-style-type: disc;
+  padding-left: 20px;
+  margin: 0;
+}
+
+.cross-reactivity-insights li {
+  font-size: 0.8rem;
+  margin-bottom: 4px;
+  color: #4b5563;
+}
+
+.cross-reactivity-insights strong {
+  color: #1a3c5e;
+  font-weight: 600;
+}
+
+/* Clinical summary panel styles */
+.clinical-summary {
+  background: #f0f7ff;
+  border-radius: 6px;
+  padding: 16px;
+  margin-top: 16px;
+  border-left: 4px solid #3a5ba9;
+}
+
+.clinical-summary h3 {
+  color: #1a3c5e;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+}
+
+.clinical-summary p {
+  font-size: 0.8rem;
+  color: #4b5563;
+  margin-bottom: 8px;
+}
+
+.clinical-summary p:last-child {
+  margin-bottom: 0;
+}
+
+.clinical-summary strong {
+  color: #1a3c5e;
+  font-weight: 600;
+}
+
+/* Action buttons customization */
+.allergeniq-section .insights-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+#allergeniq-download-btn::before {
+  content: "📥";
+  font-size: 14px;
+}
+
+#allergeniq-copy-btn::before {
+  content: "📋";
+  font-size: 14px;
+}
+
+/* The PDF generation overlay */
+.pdf-generating {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  border-radius: 6px;
+  animation: fadeIn 0.3s ease;
+}
+
+.pdf-generating .message {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1a3c5e;
+  margin-top: 12px;
+}
+
+.pdf-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #e5eefa;
+  border-top: 3px solid #3a5ba9;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Button states and hover effects */
+.allergeniq-actions button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .tab-navigation {
+    flex-wrap: wrap;
+  }
+
+  .symptom-severity-chart,
+  .treatment-efficacy-chart {
+    height: 250px;
+  }
+}
+
+/* Tooltip styles */
+.allergeniq-tooltip {
+  position: absolute;
+  background: #1a3c5e;
+  color: white;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  max-width: 200px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
+.allergeniq-tooltip.visible {
+  opacity: 1;
+}
+
+.allergeniq-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #1a3c5e transparent transparent transparent;
+}
+
+/* Focus and accessibility enhancements */
+.tab-navigation button:focus,
+.allergeniq-section .insights-actions button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(58, 91, 169, 0.4);
+}
+
+/* Chart fallback styles */
+.chart-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #6b7280;
+  font-style: italic;
+  font-size: 14px;
+  text-align: center;
+  padding: 20px;
+}

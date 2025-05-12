@@ -131,81 +131,152 @@ try {
         const transcriptInput = document.getElementById('transcript-input');
         const submitTranscriptBtn = document.getElementById('submit-transcript-btn');
         const transcriptSpinner = document.getElementById('transcript-spinner');
+        
         if (transcriptInput && submitTranscriptBtn && transcriptSpinner) {
             const transcriptText = transcriptInput.value.trim() || finalTranscript;
-            if (transcriptText) {
-                console.log('Transcript submitted:', transcriptText);
-                // Add a DOM-based feedback mechanism
-                const feedbackDiv = document.createElement('div');
-                feedbackDiv.className = 'transcript-feedback';
-                feedbackDiv.style.color = 'green';
-                feedbackDiv.style.marginTop = '10px';
-                feedbackDiv.style.display = 'block'; // Ensure visibility
-                feedbackDiv.style.fontSize = '14px';
-                feedbackDiv.style.textAlign = 'center';
-                feedbackDiv.innerText = 'Transcript submitted successfully!';
-                console.log('Adding feedback div to DOM...');
-                transcriptInput.parentNode.appendChild(feedbackDiv);
-                console.log('Feedback div added:', feedbackDiv);
-                setTimeout(() => {
-                    console.log('Removing feedback div...');
-                    if (feedbackDiv.parentNode) {
-                        feedbackDiv.parentNode.removeChild(feedbackDiv);
-                    }
-                }, 3000); // Remove after 3 seconds
-
-                // Show spinner and disable button
-                submitTranscriptBtn.disabled = true;
-                submitTranscriptBtn.classList.add('disabled');
-                submitTranscriptBtn.classList.remove('blink'); // Remove blinking effect during submission
-                transcriptSpinner.classList.remove('hidden');
-                transcriptSpinner.style.display = 'inline-block'; // Ensure spinner is visible
-                console.log('Showing spinner during submission, spinner display:', transcriptSpinner.style.display);
-
-                // Submit the transcript to the backend
-                const transcriptData = {
-                    patient_id: currentPatientId,
-                    visit_id: activeVisitId,
-                    transcript: transcriptText
-                };
-                fetch('/submit-transcript', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(transcriptData)
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.statusCode === 200) {
-                        console.log('Transcript successfully submitted to backend:', data.body);
-                        // Refresh SOAP notes by re-selecting the patient
-                        if (typeof window.selectPatient === 'function' && currentPatient) {
-                            console.log('Re-selecting patient to update SOAP notes:', currentPatient);
-                            window.selectPatient(currentPatient);
-                        } else {
-                            console.error('Cannot update SOAP notes: selectPatient function or currentPatient not available');
-                        }
-                    } else {
-                        console.error('Failed to submit transcript to backend:', data);
-                        alert('Failed to submit transcript: ' + (data.error || 'Unknown error'));
-                    }
-                })
-                .catch(error => {
-                    console.error('Error submitting transcript to backend:', error);
-                    alert('Error submitting transcript: ' + error.message);
-                })
-                .finally(() => {
-                    // Hide spinner and re-enable button
-                    submitTranscriptBtn.disabled = false;
-                    submitTranscriptBtn.classList.remove('disabled');
-                    submitTranscriptBtn.classList.remove('blink'); // Ensure blinking is removed after submission
-                    transcriptSpinner.classList.add('hidden');
-                    transcriptSpinner.style.display = 'none'; // Ensure spinner is hidden
-                    console.log('Hiding spinner after submission, spinner display:', transcriptSpinner.style.display);
-                });
-            } else {
+            
+            if (!transcriptText) {
                 console.log('No transcript to submit');
                 alert('No transcript to submit. Please enter or dictate a transcript.');
+                return;
             }
+            
+            if (!currentPatientId) {
+                console.error('No patient selected for transcript submission');
+                alert('Please select a patient before submitting a transcript.');
+                return;
+            }
+            
+            if (!activeVisitId) {
+                console.error('No active visit for transcript submission');
+                alert('Please start a visit before submitting a transcript.');
+                return;
+            }
+            
+            // Ensure tenantID is set to email for DynamoDB GSI compatibility
+            if (typeof currentTenantId === 'undefined' || currentTenantId === null) {
+                if (typeof currentEmail !== 'undefined' && currentEmail !== null) {
+                    currentTenantId = currentEmail;
+                    console.log('Setting tenantID to email for transcript submission:', currentTenantId);
+                } else {
+                    alert('User email is not defined. Please ensure you are logged in.');
+                    return;
+                }
+            } else if (currentTenantId !== currentEmail && currentEmail !== null) {
+                console.warn('TenantID doesn\'t match email, updating for transcript submission:', {
+                    oldTenantId: currentTenantId,
+                    newTenantId: currentEmail
+                });
+                currentTenantId = currentEmail;
+            }
+
+            // Print critical validation info
+            console.log("CRITICAL - Values before transcript submission:", {
+                currentEmail,
+                currentTenantId,
+                currentPatientId,
+                activeVisitId
+            });
+            
+            // Add a DOM-based feedback mechanism
+            const feedbackDiv = document.createElement('div');
+            feedbackDiv.className = 'transcript-feedback';
+            feedbackDiv.style.color = 'green';
+            feedbackDiv.style.marginTop = '10px';
+            feedbackDiv.style.display = 'block'; // Ensure visibility
+            feedbackDiv.style.fontSize = '14px';
+            feedbackDiv.style.textAlign = 'center';
+            feedbackDiv.innerText = 'Transcript submitted successfully!';
+            console.log('Adding feedback div to DOM...');
+            transcriptInput.parentNode.appendChild(feedbackDiv);
+            console.log('Feedback div added:', feedbackDiv);
+            setTimeout(() => {
+                console.log('Removing feedback div...');
+                if (feedbackDiv.parentNode) {
+                    feedbackDiv.parentNode.removeChild(feedbackDiv);
+                }
+            }, 3000); // Remove after 3 seconds
+
+            // Show spinner and disable button
+            submitTranscriptBtn.disabled = true;
+            submitTranscriptBtn.classList.add('disabled');
+            submitTranscriptBtn.classList.remove('blink'); // Remove blinking effect during submission
+            transcriptSpinner.classList.remove('hidden');
+            transcriptSpinner.style.display = 'inline-block'; // Ensure spinner is visible
+            console.log('Showing spinner during submission, spinner display:', transcriptSpinner.style.display);
+
+            // Important: Use BOTH formats and provide email as the tenant value in API requests
+            // This is a critical fix to ensure compatibility with the backend
+            const transcriptData = {
+                // Submit in both formats (snake_case and camelCase) for compatibility
+                patient_id: currentPatientId,
+                patientId: currentPatientId,
+                visit_id: activeVisitId,
+                visitId: activeVisitId,
+                transcript: transcriptText,
+                
+                // CRITICAL: Include BOTH formats to ensure backend receives email
+                tenantId: currentEmail,       // New format (camelCase)
+                tenant_id: currentEmail,      // Old format (snake_case)
+                
+                // Include email separately as well
+                email: currentEmail
+            };
+            
+            // Log the exact request for debugging
+            console.log('Submitting transcript with data:', {
+                patientId: transcriptData.patientId,
+                visitId: transcriptData.visitId,
+                tenantId: transcriptData.tenantId,
+                tenant_id: transcriptData.tenant_id,
+                email: transcriptData.email,
+                transcriptLength: transcriptData.transcript.length
+            });
+
+            // Use the correct endpoint
+            fetch('/api/analyze-transcript', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(transcriptData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        throw new Error(`HTTP error! Status: ${response.status}, Response: ${text}`);
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Transcript successfully submitted to backend:', data);
+                
+                // Check if the backend returned 'default_tenant' value
+                const responseTenantId = data.tenant_id || data.tenantId;
+                if (responseTenantId === 'default_tenant') {
+                    console.warn('BACKEND ISSUE: Server still using default_tenant despite sending email! The backend validate_tenant_id() function may need fixing.');
+                }
+                
+                // Refresh SOAP notes by re-selecting the patient
+                if (typeof window.selectPatient === 'function' && currentPatient) {
+                    console.log('Re-selecting patient to update SOAP notes:', currentPatient);
+                    window.selectPatient(currentPatient);
+                } else {
+                    console.error('Cannot update SOAP notes: selectPatient function or currentPatient not available');
+                }
+            })
+            .catch(error => {
+                console.error('Error submitting transcript to backend:', error);
+                alert('Error submitting transcript: ' + error.message);
+            })
+            .finally(() => {
+                // Hide spinner and re-enable button
+                submitTranscriptBtn.disabled = false;
+                submitTranscriptBtn.classList.remove('disabled');
+                submitTranscriptBtn.classList.remove('blink'); // Ensure blinking is removed after submission
+                transcriptSpinner.classList.add('hidden');
+                transcriptSpinner.style.display = 'none'; // Ensure spinner is hidden
+                console.log('Hiding spinner after submission, spinner display:', transcriptSpinner.style.display);
+            });
         } else {
             console.error('Transcript input, submit button, or spinner element not found', { transcriptInput, submitTranscriptBtn, transcriptSpinner });
             alert('Error: Transcript input field or submit button not found.');
