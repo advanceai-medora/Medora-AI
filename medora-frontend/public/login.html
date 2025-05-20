@@ -342,7 +342,7 @@
             if (showLoginLink) {
                 showLoginLink.addEventListener('click', function(e) {
                     e.preventDefault();
-                    document.getElementById('signup-section').style.display = 'none';
+                    document.getElementById('signup-section').style.display = "none";
                     document.getElementById('login-section').style.display = 'block';
                     document.getElementById('confirmation-section').style.display = 'none';
                 });
@@ -407,13 +407,23 @@
             hideElement('login-error');
             hideElement('login-info');
             
-            // Handle the hardcoded doctor account
+            // Handle hardcoded accounts
             if (email.toLowerCase() === 'doctor@allergyaffiliates.com' && password === '18June2011!') {
                 console.log('Using hardcoded doctor account');
                 localStorage.setItem('currentEmail', email);
                 localStorage.setItem('userSpecialty', 'allergist');
-                
-                // Redirect to dashboard
+                localStorage.setItem('tenantID', 'allergyaffiliates');
+                setTimeout(function() {
+                    window.location.href = 'https://test.medoramd.ai/index.html';
+                }, 100);
+                return;
+            }
+            
+            if (email.toLowerCase() === 'siddharthc@meditab.com' && password === 'Siddharth123!') {
+                console.log('Using hardcoded IMS account');
+                localStorage.setItem('currentEmail', email);
+                localStorage.setItem('userSpecialty', 'allergist');
+                localStorage.setItem('tenantID', 'ims');
                 setTimeout(function() {
                     window.location.href = 'https://test.medoramd.ai/index.html';
                 }, 100);
@@ -425,12 +435,10 @@
             if (storedPassword === password) {
                 console.log('Using locally stored verified user');
                 localStorage.setItem('currentEmail', email);
-                
-                // Get specialty if available
                 const specialty = localStorage.getItem('user_specialty_' + email) || 'verified_user';
                 localStorage.setItem('userSpecialty', specialty);
-                
-                // Redirect to dashboard
+                // For locally stored users, set a default tenantID (update as needed)
+                localStorage.setItem('tenantID', 'default');
                 setTimeout(function() {
                     window.location.href = 'https://test.medoramd.ai/index.html';
                 }, 100);
@@ -644,6 +652,15 @@
                 const specialty = localStorage.getItem('user_specialty_' + email) || 'verified_user';
                 localStorage.setItem('userSpecialty', specialty);
                 
+                // Set tenantID for locally stored users (update as needed)
+                if (email.toLowerCase() === 'siddharthc@meditab.com') {
+                    localStorage.setItem('tenantID', 'ims');
+                } else if (email.toLowerCase() === 'doctor@allergyaffiliates.com') {
+                    localStorage.setItem('tenantID', 'allergyaffiliates');
+                } else {
+                    localStorage.setItem('tenantID', 'default');
+                }
+                
                 // Show success
                 showElement('confirm-success', 'Account verified successfully!');
                 
@@ -699,6 +716,7 @@
                 localStorage.removeItem('refreshToken');
                 localStorage.removeItem('currentEmail');
                 localStorage.removeItem('userSpecialty');
+                localStorage.removeItem('tenantID');
                 
                 // Redirect to login page
                 window.location.href = 'login.html';

@@ -1,5 +1,5 @@
 console.log('patient-management.js loaded');
-console.log('patient-management.js version: 1.2.16');
+console.log('patient-management.js version: 1.2.20');
 
 // Initialize user data on page load to ensure correct tenantID
 async function initializeUserData() {
@@ -1005,9 +1005,23 @@ Breathing test, albuterol treatment, repeat breathing test, full allergy testing
                 if (transcript.visitId && transcript.visitId !== 'undefined') {
                     activeVisitId = transcript.visitId;
                     console.log('Set activeVisitId in selectPatient:', activeVisitId);
+                    // Directly call updateProfileWithVisitId for AllergenIQ profile
+                    if (window.updateProfileWithVisitId) {
+                        console.log('[DEBUG] Manually calling updateProfileWithVisitId', { patientId: currentPatientId, visitId: activeVisitId });
+                        window.updateProfileWithVisitId(currentPatientId, activeVisitId);
+                    } else {
+                        console.error('[ERROR] updateProfileWithVisitId not found');
+                    }
                     window.fetchReferences(currentPatientId, activeVisitId);
                 } else {
                     console.log('No valid visit ID available for references');
+                    // Directly call updateProfileWithVisitId even if no visitId, using a default or null
+                    if (window.updateProfileWithVisitId) {
+                        console.log('[DEBUG] Manually calling updateProfileWithVisitId with null visitId', { patientId: currentPatientId, visitId: null });
+                        window.updateProfileWithVisitId(currentPatientId, null);
+                    } else {
+                        console.error('[ERROR] updateProfileWithVisitId not found');
+                    }
                     window.hideReferencesSpinner();
                 }
             }

@@ -1876,440 +1876,211 @@ select:focus {
 
 /* AllergenIQ Section Styles */
 .allergeniq-section {
-  position: relative;
+    position: relative;
 }
 
 /* NEW badge styling */
 .new-badge {
-  display: inline-block;
-  background: #e74c3c;
-  color: white;
-  font-size: 0.65rem;
-  font-weight: 600;
-  padding: 2px 6px;
-  border-radius: 10px;
-  margin-right: 6px;
-  vertical-align: middle;
-  position: relative;
-  top: -1px;
-  animation: pulse-red 2s infinite;
+    display: inline-block;
+    background: #e74c3c;
+    color: white;
+    font-size: 0.65rem;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 10px;
+    margin-right: 6px;
+    vertical-align: middle;
+    position: relative;
+    top: -1px;
+    animation: pulse-red 2s infinite;
 }
 
 @keyframes pulse-red {
-  0% {
-    box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7);
-  }
-  70% {
-    box-shadow: 0 0 0 6px rgba(231, 76, 60, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(231, 76, 60, 0);
-  }
+    0% {
+        box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 6px rgba(231, 76, 60, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(231, 76, 60, 0);
+    }
 }
 
 /* Main container for the AllergenIQ Profile */
 #allergeniq-profile-container {
-  background: #fff;
-  border-radius: 6px;
-  overflow: hidden;
-  transition: all 0.3s ease;
-  min-height: 100px;
-  position: relative;
+    background: #fff;
+    border-radius: 6px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    min-height: 100px;
+    position: relative;
 }
 
 /* Loading message styles */
 #allergeniq-profile-container .loading-message {
-  color: #6b7280;
-  text-align: center;
-  padding: 20px;
-  font-style: italic;
+    color: #6b7280;
+    text-align: center;
+    padding: 20px;
+    font-style: italic;
 }
 
-/* AllergenIQ Profile component */
-.allergeniq-profile {
-  font-family: 'Inter', sans-serif;
+/* Profile block styles */
+.profile-block {
+    font-size: 14px;
+    color: #333;
 }
 
-/* Header styles */
-.allergeniq-header {
-  background: linear-gradient(135deg, #f0f7ff 0%, #e5eefa 100%);
-  padding: 12px 16px;
-  border-radius: 6px 6px 0 0;
-  border-bottom: 1px solid #e5eefa;
+/* Category block styles */
+.category-block {
+    margin-bottom: 25px;
+    padding: 15px;
+    border: 1px solid #e0e4e8;
+    border-radius: 5px;
+    background-color: #f9fafb;
 }
 
-.allergeniq-header h2 {
-  color: #1a3c5e;
-  font-size: 1.1rem;
-  font-weight: 600;
-  margin: 0 0 8px 0;
+.category-block h3 {
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1a3c5e;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #e0e4e8;
+    padding-bottom: 5px;
+    text-transform: uppercase;
 }
 
-/* Tab navigation styles */
-.tab-navigation {
-  display: flex;
-  gap: 4px;
+.category-block p {
+    margin: 5px 0;
+    line-height: 1.5;
+    font-size: 13px;
+    color: #4b5563;
 }
 
-.tab-navigation button {
-  background: #edf2f7;
-  border: 1px solid #e2e8f0;
-  border-radius: 6px;
-  padding: 6px 12px;
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: #4a5568;
-  cursor: pointer;
-  transition: all 0.2s ease;
+.category-block ul {
+    list-style-type: disc;
+    padding-left: 20px;
+    margin: 5px 0;
 }
 
-.tab-navigation button:hover {
-  background: #e2e8f0;
+.category-block li {
+    margin-bottom: 5px;
+    line-height: 1.5;
+    font-size: 13px;
+    color: #4b5563;
 }
 
-.tab-navigation button.active {
-  background: #3a5ba9;
-  color: white;
-  border-color: #3a5ba9;
+/* Heatmap table styling for Symptoms */
+.symptom-heatmap {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+    font-size: 13px;
 }
 
-/* Tab content styles */
-.tab-content {
-  padding: 16px;
+.symptom-heatmap th,
+.symptom-heatmap td {
+    padding: 10px;
+    border: 1px solid #e0e4e8;
+    text-align: left;
 }
 
-/* Symptoms panel styles */
-.symptoms-panel {
-  margin-bottom: 16px;
+.symptom-heatmap th {
+    background-color: #f0f7ff;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 600;
+    color: #1a3c5e;
 }
 
-.symptoms-panel h3 {
-  color: #1a3c5e;
-  font-size: 0.9rem;
-  font-weight: 600;
-  margin: 0 0 12px 0;
+.symptom-heatmap td {
+    background-color: #fff;
+    transition: background-color 0.3s ease;
 }
 
-.symptom-severity-chart {
-  background: white;
-  border-radius: 6px;
-  padding: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  margin-bottom: 16px;
-  height: 300px;
-  overflow: hidden;
+.symptom-heatmap tr:nth-child(even) td {
+    background-color: #f9f9f9;
 }
 
-.chart-container {
-  height: 100%;
-  width: 100%;
+/* Ensure heatmap colors are applied correctly */
+.symptom-heatmap td[style*="background-color: #90ee90"] {
+    color: #333;
 }
 
-.symptom-details h4 {
-  color: #3a5ba9;
-  font-size: 0.85rem;
-  font-weight: 600;
-  margin: 16px 0 8px 0;
+.symptom-heatmap td[style*="background-color: #ffff99"] {
+    color: #333;
 }
 
-.symptom-details ul {
-  list-style-type: disc;
-  padding-left: 20px;
-  margin: 0;
+.symptom-heatmap td[style*="background-color: #ff6347"] {
+    color: #fff;
 }
 
-.symptom-details li {
-  font-size: 0.8rem;
-  margin-bottom: 4px;
-  color: #4b5563;
+/* Action buttons for the AllergenIQ section */
+.allergeniq-section .insights-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 12px;
 }
 
-.symptom-details strong {
-  color: #1a3c5e;
-  font-weight: 600;
+#allergeniq-download-btn,
+#allergeniq-copy-btn {
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Treatments panel styles */
-.treatments-panel {
-  margin-bottom: 16px;
+#allergeniq-download-btn:hover,
+#allergeniq-copy-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
 }
 
-.treatments-panel h3 {
-  color: #1a3c5e;
-  font-size: 0.9rem;
-  font-weight: 600;
-  margin: 0 0 12px 0;
+#allergeniq-download-btn {
+    background-color: #4caf50;
+    color: #fff;
 }
 
-.treatment-efficacy-chart {
-  background: white;
-  border-radius: 6px;
-  padding: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  margin-bottom: 16px;
-  height: 300px;
-  overflow: hidden;
+#allergeniq-download-btn:hover {
+    background-color: #45a049;
 }
 
-.treatment-insights h4 {
-  color: #3a5ba9;
-  font-size: 0.85rem;
-  font-weight: 600;
-  margin: 16px 0 8px 0;
+#allergeniq-copy-btn {
+    background-color: #3a5ba9;
+    color: #fff;
 }
 
-.treatment-insights ul {
-  list-style-type: disc;
-  padding-left: 20px;
-  margin: 0;
+#allergeniq-copy-btn:hover {
+    background-color: #2d4b8a;
 }
 
-.treatment-insights li {
-  font-size: 0.8rem;
-  margin-bottom: 4px;
-  color: #4b5563;
+/* Toast notification for copy confirmation */
+.allergeniq-toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #3a5ba9;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s ease;
+    z-index: 9999;
 }
 
-.treatment-insights strong {
-  color: #1a3c5e;
-  font-weight: 600;
-}
-
-/* Allergens panel styles */
-.allergens-panel {
-  margin-bottom: 16px;
-}
-
-.allergens-panel h3 {
-  color: #1a3c5e;
-  font-size: 0.9rem;
-  font-weight: 600;
-  margin: 0 0 12px 0;
-}
-
-.allergens-table {
-  overflow-x: auto;
-  margin-bottom: 16px;
-}
-
-.allergens-table table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.75rem;
-}
-
-.allergens-table th {
-  background: #f8fafc;
-  color: #1a3c5e;
-  font-weight: 600;
-  text-align: left;
-  padding: 8px;
-  border: 1px solid #e2e8f0;
-}
-
-.allergens-table td {
-  padding: 8px;
-  border: 1px solid #e2e8f0;
-  vertical-align: top;
-}
-
-.allergens-table tr:nth-child(even) td {
-  background: #f8fafc;
-}
-
-.allergens-table ul {
-  list-style-type: disc;
-  padding-left: 20px;
-  margin: 0;
-}
-
-.allergens-table li {
-  font-size: 0.75rem;
-  margin-bottom: 2px;
-}
-
-.cross-reactivity-insights h4 {
-  color: #3a5ba9;
-  font-size: 0.85rem;
-  font-weight: 600;
-  margin: 16px 0 8px 0;
-}
-
-.cross-reactivity-insights ul {
-  list-style-type: disc;
-  padding-left: 20px;
-  margin: 0;
-}
-
-.cross-reactivity-insights li {
-  font-size: 0.8rem;
-  margin-bottom: 4px;
-  color: #4b5563;
-}
-
-.cross-reactivity-insights strong {
-  color: #1a3c5e;
-  font-weight: 600;
-}
-
-/* Clinical summary panel styles */
-.clinical-summary {
-  background: #f0f7ff;
-  border-radius: 6px;
-  padding: 16px;
-  margin-top: 16px;
-  border-left: 4px solid #3a5ba9;
-}
-
-.clinical-summary h3 {
-  color: #1a3c5e;
-  font-size: 0.9rem;
-  font-weight: 600;
-  margin: 0 0 8px 0;
-}
-
-.clinical-summary p {
-  font-size: 0.8rem;
-  color: #4b5563;
-  margin-bottom: 8px;
-}
-
-.clinical-summary p:last-child {
-  margin-bottom: 0;
-}
-
-.clinical-summary strong {
-  color: #1a3c5e;
-  font-weight: 600;
-}
-
-/* Action buttons customization */
-.allergeniq-section .insights-actions button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  transition: all 0.2s ease;
-}
-
-#allergeniq-download-btn::before {
-  content: "📥";
-  font-size: 14px;
-}
-
-#allergeniq-copy-btn::before {
-  content: "📋";
-  font-size: 14px;
-}
-
-/* The PDF generation overlay */
-.pdf-generating {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(255, 255, 255, 0.8);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 10;
-  border-radius: 6px;
-  animation: fadeIn 0.3s ease;
-}
-
-.pdf-generating .message {
-  font-size: 14px;
-  font-weight: 500;
-  color: #1a3c5e;
-  margin-top: 12px;
-}
-
-.pdf-spinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid #e5eefa;
-  border-top: 3px solid #3a5ba9;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-/* Button states and hover effects */
-.allergeniq-actions button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .tab-navigation {
-    flex-wrap: wrap;
-  }
-
-  .symptom-severity-chart,
-  .treatment-efficacy-chart {
-    height: 250px;
-  }
-}
-
-/* Tooltip styles */
-.allergeniq-tooltip {
-  position: absolute;
-  background: #1a3c5e;
-  color: white;
-  padding: 6px 10px;
-  border-radius: 4px;
-  font-size: 12px;
-  z-index: 100;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  max-width: 200px;
-  opacity: 0;
-  transition: opacity 0.2s ease;
-  pointer-events: none;
-}
-
-.allergeniq-tooltip.visible {
-  opacity: 1;
-}
-
-.allergeniq-tooltip::after {
-  content: '';
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  margin-left: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: #1a3c5e transparent transparent transparent;
+.allergeniq-toast.show {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 /* Focus and accessibility enhancements */
-.tab-navigation button:focus,
 .allergeniq-section .insights-actions button:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(58, 91, 169, 0.4);
-}
-
-/* Chart fallback styles */
-.chart-fallback {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  color: #6b7280;
-  font-style: italic;
-  font-size: 14px;
-  text-align: center;
-  padding: 20px;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(58, 91, 169, 0.3);
 }

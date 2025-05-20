@@ -1,0 +1,12 @@
+[2025-05-20 15:55:54] === STARTING MEDORA-IMS INTEGRATION TEST ===
+[2025-05-20 15:55:54] Generated JWT assertion with jti: 6893c031-a6cc-4e97-a6e0-1ca3e3d5e91c
+[2025-05-20 15:55:54] Requesting access token...
+[2025-05-20 15:55:54] Token request failed with status 400
+[2025-05-20 15:55:54] Response: {"error":"invalid_client","error_description":"Client authentication with signed JWT failed: Error when loading public keys: javax.net.ssl.SSLHandshakeException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target"}
+[2025-05-20 15:55:54] Failed to obtain access token. Test aborted.
+[2025-05-20 16:02:14] === STARTING MEDORA-IMS INTEGRATION TEST ===
+[2025-05-20 16:02:14] Generated JWT assertion with jti: 801c2914-925a-45d2-9ea3-0679e1b16a50
+[2025-05-20 16:02:14] Requesting access token...
+[2025-05-20 16:02:14] Token request failed with status 400
+[2025-05-20 16:02:14] Response: {"error":"invalid_client","error_description":"Client authentication with signed JWT failed: Error when loading public keys: javax.net.ssl.SSLHandshakeException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target"}
+[2025-05-20 16:02:14] Failed to obtain access token. Test aborted.
