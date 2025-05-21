@@ -50,7 +50,7 @@
     if (!window.location.pathname.includes('login.html')) {
       console.log('Not on login page, will redirect shortly...');
       setTimeout(() => {
-        window.location.href = 'https://test.medoramd.ai/login.html';
+        window.location.href = 'https://medoramd.ai/login.html';
       }, 1000);
     }
   }

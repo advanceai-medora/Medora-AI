@@ -145,7 +145,7 @@ Output in JSON format:
             "statusCode": 200,
             "body": json.dumps("Insights generated and stored successfully"),
             "headers": {
-                "Access-Control-Allow-Origin": "https://test.medoramd.ai",
+                "Access-Control-Allow-Origin": "https://medoramd.ai",
                 "Access-Control-Allow-Headers": "Content-Type",
                 "Access-Control-Allow-Methods": "POST, OPTIONS"
             }
@@ -157,7 +157,7 @@ Output in JSON format:
             "statusCode": 500,
             "body": json.dumps(f"Error: {str(e)}"),
             "headers": {
-                "Access-Control-Allow-Origin": "https://test.medoramd.ai",
+                "Access-Control-Allow-Origin": "https://medoramd.ai",
                 "Access-Control-Allow-Headers": "Content-Type",
                 "Access-Control-Allow-Methods": "POST, OPTIONS"
             }

@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Medora - Login</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="icon" href="https://test.medoramd.ai/images/Medora.png" type="image/png">
+    <link rel="icon" href="https://medoramd.ai/images/Medora.png" type="image/png">
     <!-- AWS SDK -->
     <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1068.0.min.js"></script>
     <!-- Amazon Cognito Identity SDK -->
@@ -208,7 +208,7 @@
 </head>
 <body>
     <div class="login-container">
-        <img src="https://test.medoramd.ai/images/Medora.png" alt="Medora Logo">
+        <img src="https://medoramd.ai/images/Medora.png" alt="Medora Logo">
         
         <!-- Login Section -->
         <div id="login-section" style="display: block;">
@@ -414,7 +414,7 @@
                 localStorage.setItem('userSpecialty', 'allergist');
                 localStorage.setItem('tenantID', 'allergyaffiliates');
                 setTimeout(function() {
-                    window.location.href = 'https://test.medoramd.ai/index.html';
+                    window.location.href = 'https://medoramd.ai/index.html';
                 }, 100);
                 return;
             }
@@ -425,7 +425,7 @@
                 localStorage.setItem('userSpecialty', 'allergist');
                 localStorage.setItem('tenantID', 'ims');
                 setTimeout(function() {
-                    window.location.href = 'https://test.medoramd.ai/index.html';
+                    window.location.href = 'https://medoramd.ai/index.html';
                 }, 100);
                 return;
             }
@@ -440,7 +440,7 @@
                 // For locally stored users, set a default tenantID (update as needed)
                 localStorage.setItem('tenantID', 'default');
                 setTimeout(function() {
-                    window.location.href = 'https://test.medoramd.ai/index.html';
+                    window.location.href = 'https://medoramd.ai/index.html';
                 }, 100);
                 return;
             }
@@ -536,7 +536,7 @@
         // Redirect to dashboard
         function redirectToDashboard() {
             setTimeout(function() {
-                window.location.href = 'https://test.medoramd.ai/index.html';
+                window.location.href = 'https://medoramd.ai/index.html';
             }, 100);
         }
         
@@ -693,7 +693,7 @@
                 // Check for any stored email
                 const storedEmail = localStorage.getItem('currentEmail');
                 if (storedEmail) {
-                    window.location.href = 'https://test.medoramd.ai/index.html';
+                    window.location.href = 'https://medoramd.ai/index.html';
                     return;
                 }
             } catch (e) {

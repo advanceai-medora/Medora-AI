@@ -213,7 +213,7 @@
             localStorage.removeItem('currentEmail');
             // Redirect to the test login page after sign-out with a delay
             setTimeout(() => {
-                window.location.href = 'https://test.medoramd.ai/login.html';
+                window.location.href = 'https://medoramd.ai/login.html';
             }, 1000); // 1-second delay for better UX
             // Reset any menu state if necessary
             const userMenu = document.getElementById('user-menu-container');
@@ -240,7 +240,7 @@
             } else {
                 console.log('No user signed in, redirecting to login page');
                 setTimeout(() => {
-                    window.location.href = 'https://test.medoramd.ai/login.html';
+                    window.location.href = 'https://medoramd.ai/login.html';
                 }, 1000); // 1-second delay for better UX
                 return false;
             }
@@ -260,7 +260,7 @@
                 if (!currentEmail) {
                     console.log('currentEmail cleared, redirecting to login page with delay');
                     setTimeout(() => {
-                        window.location.href = 'https://test.medoramd.ai/login.html';
+                        window.location.href = 'https://medoramd.ai/login.html';
                     }, 1000); // 1-second delay for better UX
                 }
             }
@@ -277,7 +277,7 @@
                     if (!isAuthenticated || !window.currentEmail) {
                         console.log('Authentication failed, redirecting to login page');
                         setTimeout(() => {
-                            window.location.href = 'https://test.medoramd.ai/login.html';
+                            window.location.href = 'https://medoramd.ai/login.html';
                         }, 1000); // 1-second delay for better UX
                     } else {
                         console.log('Authentication successful, proceeding to load dashboard');
@@ -285,7 +285,7 @@
                 } catch (error) {
                     console.error('Error checking authentication state:', error);
                     setTimeout(() => {
-                        window.location.href = 'https://test.medoramd.ai/login.html';
+                        window.location.href = 'https://medoramd.ai/login.html';
                     }, 1000); // 1-second delay for better UX
                 }
             }, 100); // 100ms delay to ensure localStorage is updated

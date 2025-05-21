@@ -19,7 +19,7 @@
         	console.error('Missing email or tenantID in localStorage');
         	return { success: false, error: 'Authentication error: Missing email or tenantID' };
     	}
-    	const url = `https://test.medoramd.ai/api/allergeniq-profile?patient_id=${patientId}&visit_id=${visitId}&email=${email}&tenantID=${tenantID}`;
+    	const url = `https://medoramd.ai/api/allergeniq-profile?patient_id=${patientId}&visit_id=${visitId}&email=${email}&tenantID=${tenantID}`;
     	debugLog('Fetching AllergenIQ profile data', { url });
 
     	try {

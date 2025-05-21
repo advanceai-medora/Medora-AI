@@ -9,7 +9,7 @@ const cognitoConfig = {
     domain: 'https://ap-south-1esdojoj.auth.ap-south-1.amazoncognito.com',
     clientId: '2be02c28m6clvp6fC505164',
     region: 'ap-south-1',
-    redirectUri: 'https://test.medoramd.ai/index.html'
+    redirectUri: 'https://medoramd.ai/index.html'
 };
 
 // Check if we're authenticated

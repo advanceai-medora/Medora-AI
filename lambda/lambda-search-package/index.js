@@ -29,7 +29,7 @@ exports.handler = async (event) => {
             statusCode: 200,
             body: JSON.stringify({ results: references }),
             headers: {
-                'Access-Control-Allow-Origin': 'https://test.medoramd.ai',
+                'Access-Control-Allow-Origin': 'https://medoramd.ai',
                 'Access-Control-Allow-Headers': 'Content-Type',
                 'Access-Control-Allow-Methods': 'GET, OPTIONS'
             }
@@ -40,7 +40,7 @@ exports.handler = async (event) => {
             statusCode: 500,
             body: JSON.stringify('Error fetching references: ' + error.message),
             headers: {
-                'Access-Control-Allow-Origin': 'https://test.medoramd.ai',
+                'Access-Control-Allow-Origin': 'https://medoramd.ai',
                 'Access-Control-Allow-Headers': 'Content-Type',
                 'Access-Control-Allow-Methods': 'GET, OPTIONS'
             }

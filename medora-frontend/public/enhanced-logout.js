@@ -40,7 +40,7 @@ window.logout = function() {
         
         // Redirect to login page
         setTimeout(() => {
-            window.location.href = 'https://test.medoramd.ai/login.html';
+            window.location.href = 'https://medoramd.ai/login.html';
         }, 100);
     }
 };

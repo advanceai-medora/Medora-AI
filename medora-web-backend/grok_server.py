@@ -23,9 +23,9 @@ load_dotenv()
 # Initialize Flask app
 app = Flask(__name__)
 CORS(app, resources={
-    r"/api/*": {"origins": ["http://127.0.0.1:8080", "http://localhost:8080", "https://test.medoramd.ai"], "methods": ["GET", "POST", "OPTIONS"]},
-    r"/submit-transcript": {"origins": ["https://test.medoramd.ai"], "methods": ["POST", "OPTIONS"]},
-    r"/get-insights": {"origins": ["https://test.medoramd.ai"], "methods": ["GET", "OPTIONS"]}
+    r"/api/*": {"origins": ["http://127.0.0.1:8080", "http://localhost:8080", "https://medoramd.ai"], "methods": ["GET", "POST", "OPTIONS"]},
+    r"/submit-transcript": {"origins": ["https://medoramd.ai"], "methods": ["POST", "OPTIONS"]},
+    r"/get-insights": {"origins": ["https://medoramd.ai"], "methods": ["GET", "OPTIONS"]}
 })
 
 # Configure logging
@@ -62,7 +62,7 @@ logger.info("Logging setup complete. Logs will be written to /var/www/medora-web
 # Load environment variables
 FLASK_ENV = os.getenv('FLASK_ENV', 'development')
 PORT = int(os.getenv('PORT', 5000))
-AWS_REGION = os.getenv('AWS_REGION', 'ap-south-1')
+AWS_REGION = os.getenv('AWS_REGION', 'us-east-1')
 S3_BUCKET = os.getenv('S3_BUCKET', 'medora-healthscribe-2025')
 XAI_API_KEY = os.getenv('XAI_API_KEY')
 XAI_API_URL = os.getenv('XAI_API_URL')
@@ -98,11 +98,7 @@ except Exception as e:
 
 # Connect to MongoDB (DocumentDB)
 try:
-    client = MongoClient(
-        MONGO_URI,
-        tls=True,
-        tlsCAFile='/var/www/medora-web-backend/global-bundle.pem'
-    )
+    client = MongoClient(MONGO_URI)
     db = client[MONGO_DB_NAME]
     patients_collection = db['patients']
     transcripts_collection = db['transcripts']
@@ -1021,7 +1017,7 @@ def transcribe_audio():
 def create_patient():
     if request.method == 'OPTIONS':
         response = make_response()
-        response.headers.add("Access-Control-Allow-Origin", "https://test.medoramd.ai")
+        response.headers.add("Access-Control-Allow-Origin", "https://medoramd.ai")
         response.headers.add("Access-Control-Allow-Headers", "Content-Type")
         response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
         return response
@@ -1140,7 +1136,7 @@ def start_visit():
     if request.method == 'OPTIONS':
         logger.info("Handling OPTIONS request for /api/visit/start")
         response = make_response()
-        response.headers.add("Access-Control-Allow-Origin", "https://test.medoramd.ai")
+        response.headers.add("Access-Control-Allow-Origin", "https://medoramd.ai")
         response.headers.add("Access-Control-Allow-Headers", "Content-Type")
         response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
         return response
@@ -1215,7 +1211,7 @@ def start_visit():
 def delete_patient():
     if request.method == 'OPTIONS':
         response = make_response()
-        response.headers.add("Access-Control-Allow-Origin", "https://test.medoramd.ai")
+        response.headers.add("Access-Control-Allow-Origin", "https://medoramd.ai")
         response.headers.add("Access-Control-Allow-Headers", "Content-Type")
         response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
         return response
@@ -1370,7 +1366,7 @@ def analyze_transcript_endpoint():
     if request.method == 'OPTIONS':
         logger.info("Handling OPTIONS request for /api/analyze-transcript")
         response = make_response()
-        response.headers.add("Access-Control-Allow-Origin", "https://test.medoramd.ai")
+        response.headers.add("Access-Control-Allow-Origin", "https://medoramd.ai")
         response.headers.add("Access-Control-Allow-Headers", "Content-Type")
         response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
         return response
@@ -1469,7 +1465,7 @@ def submit_transcript():
     if request.method == 'OPTIONS':
         logger.info("Handling OPTIONS request for /submit-transcript")
         response = make_response()
-        response.headers.add("Access-Control-Allow-Origin", "https://test.medoramd.ai")
+        response.headers.add("Access-Control-Allow-Origin", "https://medoramd.ai")
         response.headers.add("Access-Control-Allow-Headers", "Content-Type")
         response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
         return response
@@ -1953,7 +1949,7 @@ def get_insights():
     if request.method == 'OPTIONS':
         logger.info("Handling OPTIONS request for /get-insights")
         response = make_response()
-        response.headers.add("Access-Control-Allow-Origin", "https://test.medoramd.ai")
+        response.headers.add("Access-Control-Allow-Origin", "https://medoramd.ai")
         response.headers.add("Access-Control-Allow-Headers", "Content-Type")
         response.headers.add("Access-Control-Allow-Methods", "GET, OPTIONS")
         return response

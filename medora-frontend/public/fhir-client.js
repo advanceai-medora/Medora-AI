@@ -5,7 +5,7 @@ const qs = require('querystring');
 
 // Configuration - update with values from IMS Meditab
 const config = {
-  clientId: 'https://test.medoramd.ai',
+  clientId: 'https://medoramd.ai',
   tokenEndpoint: 'https://fhir-auth.meditab.com/token', // Replace with actual endpoint from Meditab
   fhirServerUrl: 'https://fhir.meditab.com/fhir/R4',    // Replace with actual FHIR server URL
   keyId: 'medora-key-1'                                 // Same as in jwks.json

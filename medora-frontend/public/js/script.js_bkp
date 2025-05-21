@@ -1051,7 +1051,7 @@ async function fetchReferences(patientId, visitId) {
                 if (url.startsWith('http://') || url.startsWith('https://')) {
                     href = url;
                 } else {
-                    href = `https://test.medoramd.ai/${url}`;
+                    href = `https://medoramd.ai/${url}`;
                 }
                 const doiPattern = /https:\/\/test\.medoramd\.ai\/(10\.\d{4,9}\/[-._;()/:A-Z0-9]+)$/i;
                 const match = href.match(doiPattern);
