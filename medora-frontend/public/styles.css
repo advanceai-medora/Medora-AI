@@ -582,8 +582,76 @@ button.active-stop {
     100% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
 }
 
-/* Simple macOS-style Spinner */
-#transcript-spinner,
+/* Custom Medora "M" Logo Spinner */
+#transcript-spinner {
+    display: none; /* Hidden by default */
+    margin-left: 8px;
+    width: 40px; /* Adjusted for logo size and orbiting dots */
+    height: 40px;
+    position: relative;
+    background: none; /* Remove any background */
+    border: none; /* Remove any border */
+    border-radius: 0; /* Remove border-radius */
+    animation: none; /* Remove any animation */
+}
+
+.spinner-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.spinner-logo {
+    width: 32px; /* Slightly smaller than header logo */
+    height: 32px;
+    border-radius: 50%;
+    object-fit: contain;
+    animation: logo-pulse 1.5s ease-in-out infinite, logo-glow 1.5s ease-in-out infinite;
+}
+
+/* Pulsing animation for the logo */
+@keyframes logo-pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+/* Glowing animation for the logo */
+@keyframes logo-glow {
+    0% { box-shadow: 0 0 5px rgba(58, 91, 169, 0.3); }
+    50% { box-shadow: 0 0 15px rgba(58, 91, 169, 0.6); }
+    100% { box-shadow: 0 0 5px rgba(58, 91, 169, 0.3); }
+}
+
+/* Orbiting dots around the logo */
+.orbiting-dot {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background-color: #3a5ba9; /* Match the Medora blue */
+    border-radius: 50%;
+    animation: orbit 2s linear infinite;
+}
+
+/* Position and delay for each dot to create an orbiting effect */
+.dot-1 { animation-delay: 0s; }
+.dot-2 { animation-delay: 0.5s; }
+.dot-3 { animation-delay: 1s; }
+
+/* Orbiting animation */
+@keyframes orbit {
+    0% {
+        transform: rotate(0deg) translateX(16px) rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg) translateX(16px) rotate(-360deg);
+    }
+}
+
+/* macOS-style spinner for references only */
 #references-spinner {
     display: none; /* Hidden by default */
     width: 20px; /* Adjusted size for simplicity */
@@ -706,34 +774,6 @@ button.active-stop {
     text-rendering: optimizeLegibility !important;
 }
 
-/* Strengthened rules for .plan-section */
-.plan-section,
-.plan-section h3,
-.plan-section p,
-.plan-section strong,
-.plan-section ul li {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
-    font-size: 12px !important; /* Increased from 11px */
-    font-weight: 400 !important;
-    color: #4b5563 !important;
-    line-height: 1.4 !important; /* Increased from 1.2 */
-    font-style: normal !important;
-    -webkit-font-smoothing: antialiased !important;
-    -moz-osx-font-smoothing: grayscale !important;
-    text-rendering: optimizeLegibility !important;
-}
-
-.plan-section h3 {
-    font-family: 'Roboto', sans-serif !important; /* Secondary font for headings */
-    font-weight: 600 !important;
-    font-size: 14px !important; /* Increased to match other headings */
-}
-
-.plan-section strong {
-    font-weight: 600 !important;
-    color: #1a3c5e !important; /* Updated from #1f2937 */
-}
-
 /* Enhanced action buttons */
 .soap-section .action-buttons {
     display: flex;
@@ -821,13 +861,6 @@ button.active-stop {
 #plan-content-container {
     margin-bottom: 8px; /* Increased from 4px */
 }
-
-.plan-section ul {
-    margin: 0 !important;
-    padding: 0 0 0 16px !important; /* Increased from 12px */
-    list-style-type: disc !important;
-}
-
 /* AI Insights Section - Enhanced with better spacing and shadows */
 #ai-insights {
     grid-column: 3;
@@ -1382,7 +1415,7 @@ input:checked + .slider:before {
 @keyframes successPulse {
     0% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7); }
     70% { box-shadow: 0 0 0 10px rgba(76, 175, 80, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(76, 204, 80, 0); }
 }
 
 .success-pulse {
@@ -1405,7 +1438,7 @@ select:focus {
         gap: 16px;
         padding: 16px;
     }
-    
+
     /* Adjust for patient view */
     .container.patient-view {
         grid-template-columns: 0 minmax(0, 3fr) minmax(300px, 1.2fr);
@@ -1418,18 +1451,18 @@ select:focus {
         grid-template-columns: 200px minmax(0, 2fr) minmax(280px, 1fr);
         gap: 12px;
     }
-    
+
     /* Adjust for patient view */
     .container.patient-view {
         grid-template-columns: 0 minmax(0, 2fr) minmax(280px, 1fr);
         gap: 0 12px;
     }
-    
+
     .container.patient-view {
         grid-template-columns: 0 minmax(0, 2fr) minmax(280px, 1fr);
         gap: 0 12px;
     }
-    
+
     #patient-sidebar, #main-content, #ai-insights {
         padding: 16px;
     }
@@ -1869,7 +1902,6 @@ select:focus {
 .primary-btn:hover {
     background-color: #2d4b8a;
 }
-
 /* ======================================
    AllergenIQ™ New Patient Profile Styles
    ====================================== */
@@ -2083,4 +2115,227 @@ select:focus {
 .allergeniq-section .insights-actions button:focus {
     outline: none;
     box-shadow: 0 0 0 3px rgba(58, 91, 169, 0.3);
+}
+
+/* Refined Plan Section Styling for a More Distinct, Professional Look */
+.plan-section {
+    margin-bottom: 48px;
+    padding: 28px;
+    background: linear-gradient(145deg, #fefeff, #f9f9ff); /* Softer gradient for a cleaner look */
+    border-radius: 12px;
+    border-left: 6px solid transparent; /* Gradient border via pseudo-element */
+    border-top: 3px solid transparent; /* Top accent border */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Gradient left border effect */
+.plan-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 6px;
+    height: 100%;
+    background: linear-gradient(to bottom, #4a6ee0, #9b59b6); /* Adjusted gradient for more contrast */
+    z-index: 1;
+}
+
+/* Top accent border */
+.plan-section::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(to right, #4a6ee0, #9b59b6);
+    z-index: 1;
+}
+
+/* Alternating background shades for stronger visual distinction */
+.plan-section--even {
+    background: linear-gradient(145deg, #fefeff, #f5f5fa);
+}
+
+.plan-section--odd {
+    background: linear-gradient(145deg, #f9f9ff, #ececff);
+}
+
+/* Enhanced hover effect */
+.plan-section:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+}
+
+/* Empty section styling */
+.plan-section--empty {
+    background: #fefefe;
+    border-left-color: #d1d5db;
+    text-align: center;
+    padding: 24px;
+}
+
+/* Condition heading with increased prominence */
+.plan-section .condition-heading {
+    font-family: 'Roboto', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    color: #1e3a8a; /* Darker blue for higher contrast */
+    margin-bottom: 24px;
+    padding-bottom: 14px;
+    border-bottom: 2px solid #e0e7ff;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+}
+
+/* Icon for condition heading */
+.plan-section .condition-icon {
+    font-size: 24px;
+    color: #4a6ee0;
+    opacity: 0.85;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.plan-section:hover .condition-icon {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+/* Background container with more contrast */
+.plan-section .background-container {
+    margin-bottom: 24px;
+    padding: 16px;
+    background: rgba(229, 231, 235, 0.6); /* Slightly darker background for contrast */
+    border-radius: 8px;
+    border: 1px solid #e0e7ff;
+}
+
+/* Background and plan lists with increased indentation */
+.plan-section .background-list,
+.plan-section .plan-list {
+    list-style-type: none;
+    padding-left: 4.5em; /* Further increased indentation for more space from the edge */
+    margin-bottom: 0;
+}
+
+/* Background and plan items with adjusted bullet alignment */
+.plan-section .background-item,
+.plan-section .plan-item {
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    line-height: 1.8;
+    color: #1f2937;
+    margin-bottom: 16px;
+    position: relative;
+    transition: color 0.3s ease;
+}
+
+/* Custom bullet styling with adjusted positioning */
+.plan-section .background-item::before,
+.plan-section .plan-item::before {
+    content: '◆'; /* Unicode diamond for a distinct bullet */
+    position: absolute;
+    left: -3.2em; /* Adjusted to maintain a 1.3em gap between bullet and text */
+    top: 0.2em; /* Vertically center with the first line */
+    font-size: 0.9em; /* Slightly smaller than the text for balance */
+    color: #9b59b6; /* Purple to match the gradient border */
+    line-height: 1; /* Ensure bullet aligns with text */
+}
+
+/* Highlight items on hover */
+.plan-section .background-item:hover,
+.plan-section .plan-item:hover {
+    color: #1e3a8a;
+}
+
+/* Empty background/plan messages with matching indentation */
+.plan-section .background-empty,
+.plan-section .plan-empty {
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    line-height: 1.8;
+    color: #6b7280;
+    font-style: italic;
+    padding-left: 4.5em; /* Match the increased list padding for consistency */
+}
+
+/* Plan heading with a more distinct style */
+.plan-section .plan-heading {
+    font-family: 'Roboto', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: #1e3a8a;
+    margin-top: 24px;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e0e7ff;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Plan container with more contrast */
+.plan-section .plan-container {
+    margin-bottom: 24px;
+    padding: 16px;
+    background: rgba(229, 231, 235, 0.4);
+    border-radius: 8px;
+    border: 1px solid #e0e7ff;
+}
+
+/* Concise mode styling with higher contrast */
+.plan-section .concise-content {
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    line-height: 1.8;
+    color: #1f2937;
+    padding: 16px;
+    background: rgba(229, 231, 235, 0.3);
+    border-radius: 8px;
+    border: 1px solid #e0e7ff;
+}
+
+/* Plan label in concise mode */
+.plan-section .plan-label {
+    font-weight: 700;
+    color: #1e3a8a;
+}
+
+/* Italic text for empty or placeholder messages */
+.plan-section .italic {
+    font-style: italic;
+    color: #6b7280;
+}
+
+/* Toggle Buttons with a more modern look */
+#plan-detail-toggle,
+#plan-bullet-toggle {
+    background-color: #f0f2f5;
+    color: #4b5563;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+#plan-detail-toggle:hover,
+#plan-bullet-toggle:hover {
+    background-color: #e5e7eb;
+    transform: scale(1.05);
+}
+
+#plan-detail-toggle.active,
+#plan-bullet-toggle.active {
+    background-color: #4a6ee0;
+    color: #fff;
 }

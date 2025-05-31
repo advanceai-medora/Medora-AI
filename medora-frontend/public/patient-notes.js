@@ -1,6 +1,180 @@
-console.log('patient-notes.js loaded');
+function parsePlanOfCare(planText) {
+    const sections = [];
+    const lines = planText.split('\n');
+    let currentSection = null;
 
-// Copy the content of a section to clipboard
+    for (const line of lines) {
+        if (line.startsWith('In regards to')) {
+            if (currentSection) {
+                sections.push(currentSection);
+            }
+            const condition = line.replace('In regards to ', '').replace(':', '').trim();
+            currentSection = { condition, background: [], plan: [] };
+        } else if (line.startsWith('* ') && currentSection) {
+            if (line.startsWith('* Plan:')) {
+                continue; // Skip the "Plan:" line
+            }
+            currentSection.background.push(line.replace('* ', '').trim());
+        } else if (line.startsWith('- ') && currentSection) {
+            currentSection.plan.push(line.replace('- ', '').trim());
+        }
+    }
+
+    if (currentSection) {
+        sections.push(currentSection);
+    }
+
+    return sections;
+}
+
+function renderPlanSections(sections, mode) {
+    const container = document.getElementById('plan-content-container');
+    container.innerHTML = ''; // Clear existing content
+
+    if (sections.length === 0) {
+        const noContentDiv = document.createElement('div');
+        noContentDiv.className = 'plan-section plan-section--empty';
+        noContentDiv.innerHTML = '<p class="ai-style italic">No plan of care available.</p>';
+        container.appendChild(noContentDiv);
+        return;
+    }
+
+    sections.forEach((section, index) => {
+        const sectionDiv = document.createElement('div');
+        sectionDiv.className = `plan-section plan-section--${index % 2 === 0 ? 'even' : 'odd'}`;
+
+        // Condition heading with icon
+        const conditionHeading = document.createElement('h4');
+        conditionHeading.className = 'condition-heading';
+        conditionHeading.innerHTML = `
+            <span class="condition-icon">📋</span>
+            In regards to ${section.condition}:
+        `;
+        sectionDiv.appendChild(conditionHeading);
+
+        if (mode === 'bullet') {
+            // Background items
+            const backgroundDiv = document.createElement('div');
+            backgroundDiv.className = 'background-container';
+            if (section.background.length > 0) {
+                const backgroundList = document.createElement('ul');
+                backgroundList.className = 'background-list';
+                section.background.forEach(item => {
+                    const li = document.createElement('li');
+                    li.className = 'background-item ai-style';
+                    li.textContent = item;
+                    backgroundList.appendChild(li);
+                });
+                backgroundDiv.appendChild(backgroundList);
+            } else {
+                backgroundDiv.innerHTML = '<p class="ai-style italic background-empty">No background information provided.</p>';
+            }
+            sectionDiv.appendChild(backgroundDiv);
+
+            // Plan heading
+            const planHeading = document.createElement('p');
+            planHeading.className = 'plan-heading ai-style';
+            planHeading.textContent = 'Plan:';
+            sectionDiv.appendChild(planHeading);
+
+            // Plan items
+            const planDiv = document.createElement('div');
+            planDiv.className = 'plan-container';
+            if (section.plan.length > 0) {
+                const planList = document.createElement('ul');
+                planList.className = 'plan-list';
+                section.plan.forEach(item => {
+                    const li = document.createElement('li');
+                    li.className = 'plan-item ai-style';
+                    li.textContent = item;
+                    planList.appendChild(li);
+                });
+                planDiv.appendChild(planList);
+            } else {
+                planDiv.innerHTML = '<p class="ai-style italic plan-empty">No specific plan instructions provided.</p>';
+            }
+            sectionDiv.appendChild(planDiv);
+        } else {
+            // Concise mode: Combine into a paragraph
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'concise-content ai-style';
+
+            const backgroundText = section.background.length > 0 ? section.background.join(' ') : 'No background information provided.';
+            const planText = section.plan.length > 0 ? section.plan.join(' ') : 'No specific plan instructions provided.';
+
+            contentDiv.innerHTML = `
+                <span class="background-text">${backgroundText}</span>
+                <span class="plan-label"> Plan: </span>
+                <span class="plan-text">${planText}</span>
+            `;
+            sectionDiv.appendChild(contentDiv);
+        }
+
+        container.appendChild(sectionDiv);
+    });
+}
+
+function setupPlanToggles(sections) {
+    const detailToggle = document.getElementById('plan-detail-toggle');
+    const bulletToggle = document.getElementById('plan-bullet-toggle');
+    let isBulletMode = true; // Default to bullet mode
+
+    bulletToggle.addEventListener('click', () => {
+        isBulletMode = !isBulletMode;
+        bulletToggle.textContent = isBulletMode ? 'Bullet' : 'Concise';
+        bulletToggle.classList.toggle('active', isBulletMode);
+        detailToggle.textContent = isBulletMode ? 'Concise' : 'Bullet';
+        renderPlanSections(sections, isBulletMode ? 'bullet' : 'concise');
+    });
+
+    detailToggle.addEventListener('click', () => {
+        isBulletMode = !isBulletMode;
+        bulletToggle.textContent = isBulletMode ? 'Bullet' : 'Concise';
+        bulletToggle.classList.toggle('active', isBulletMode);
+        detailToggle.textContent = isBulletMode ? 'Concise' : 'Bullet';
+        renderPlanSections(sections, isBulletMode ? 'bullet' : 'concise');
+    });
+
+    // Initial render in bullet mode
+    renderPlanSections(sections, 'bullet');
+}
+
+function renderSOAPNotes(soapNotes) {
+    // Subjective
+    const subjectiveContent = document.getElementById('subjective-content');
+    subjectiveContent.innerHTML = soapNotes.patient_history ? formatSOAPSection(soapNotes.patient_history) : '<p class="ai-style">N/A</p>';
+
+    // Objective
+    const objectiveContent = document.getElementById('objective-content');
+    objectiveContent.innerHTML = soapNotes.physical_examination ? `<p class="ai-style">${soapNotes.physical_examination}</p>` : '<p class="ai-style">N/A</p>';
+
+    // Assessment
+    const assessmentContent = document.getElementById('assessment-content');
+    assessmentContent.innerHTML = soapNotes.differential_diagnosis ? `<p class="ai-style">${soapNotes.differential_diagnosis}</p>` : '<p class="ai-style">N/A</p>';
+
+    // Plan
+    const planSections = parsePlanOfCare(soapNotes.plan_of_care || '');
+    setupPlanToggles(planSections);
+}
+
+function formatSOAPSection(data) {
+    if (typeof data === 'string') {
+        return `<p class="ai-style">${data}</p>`;
+    }
+    let html = '';
+    for (const [key, value] of Object.entries(data)) {
+        const formattedKey = key.replace(/_/g, ' ').replace(/\b\w/g, char => char.toUpperCase());
+        if (typeof value === 'string') {
+            html += `<p class="ai-style"><strong>${formattedKey}:</strong> ${value}</p>`;
+        } else if (typeof value === 'object') {
+            html += `<p class="ai-style"><strong>${formattedKey}:</strong></p>`;
+            html += formatSOAPSection(value);
+        }
+    }
+    return html;
+}
+
+// Integrate existing functions from the provided patient-notes.js
 function copySection(sectionId) {
     let text = '';
     if (sectionId === 'subjective') {
@@ -18,9 +192,20 @@ function copySection(sectionId) {
         if (planContainer) {
             const sections = planContainer.querySelectorAll('.plan-section');
             sections.forEach(section => {
-                const title = section.querySelector('h3').textContent;
-                const items = Array.from(section.querySelector('ul').querySelectorAll('li')).map(li => li.textContent).join('\n');
-                planContent += `${title}\n${items}\n\n`;
+                const title = section.querySelector('.condition-heading').textContent;
+                const backgroundItems = Array.from(section.querySelectorAll('.background-item') || []).map(li => li.textContent);
+                const planItems = Array.from(section.querySelectorAll('.plan-item') || []).map(li => li.textContent);
+                let sectionText = `${title}\n`;
+                if (backgroundItems.length > 0) {
+                    sectionText += backgroundItems.map(item => `* ${item}`).join('\n') + '\n';
+                }
+                sectionText += '* Plan:\n';
+                if (planItems.length > 0) {
+                    sectionText += planItems.map(item => `- ${item}`).join('\n');
+                } else {
+                    sectionText += '- No specific plan instructions provided.';
+                }
+                planContent += `${sectionText}\n\n`;
             });
         }
         text = `PLAN\n\n${planContent}`;
@@ -40,7 +225,6 @@ function copySection(sectionId) {
     });
 }
 
-// Copy all SOAP notes
 function copySOAP() {
     const subjectiveContent = document.getElementById('subjective-content')?.textContent || 'N/A';
     const objectiveContent = document.getElementById('objective-content')?.textContent || 'N/A';
@@ -50,9 +234,20 @@ function copySOAP() {
     if (planContainer) {
         const sections = planContainer.querySelectorAll('.plan-section');
         sections.forEach(section => {
-            const title = section.querySelector('h3').textContent;
-            const items = Array.from(section.querySelector('ul').querySelectorAll('li')).map(li => li.textContent).join('\n');
-            planContent += `${title}\n${items}\n\n`;
+            const title = section.querySelector('.condition-heading').textContent;
+            const backgroundItems = Array.from(section.querySelectorAll('.background-item') || []).map(li => li.textContent);
+            const planItems = Array.from(section.querySelectorAll('.plan-item') || []).map(li => li.textContent);
+            let sectionText = `${title}\n`;
+            if (backgroundItems.length > 0) {
+                sectionText += backgroundItems.map(item => `* ${item}`).join('\n') + '\n';
+            }
+            sectionText += '* Plan:\n';
+            if (planItems.length > 0) {
+                sectionText += planItems.map(item => `- ${item}`).join('\n');
+            } else {
+                sectionText += '- No specific plan instructions provided.';
+            }
+            planContent += `${sectionText}\n\n`;
         });
     }
     const insightsAllergyTriggers = document.getElementById('insights-allergy-triggers')?.textContent || 'N/A';
@@ -83,14 +278,11 @@ Recommendations: ${insightsRecommendations}
     });
 }
 
-// Edit the content of a SOAP section by opening the modal
 function editSection(sectionId) {
     console.log(`editSection called with sectionId: ${sectionId}`);
-    // Open the modal with the specified section
     openEditModal(sectionId);
 }
 
-// Add the editPlanSection function
 function editPlanSection() {
     console.log('editPlanSection called');
     const planContainer = document.getElementById('plan-content-container');
@@ -114,7 +306,6 @@ function editPlanSection() {
 
     planContainer.classList.add('editing');
 
-    // Add event listeners for the Save and Cancel buttons
     const saveBtn = planContainer.querySelector('.save-btn');
     const cancelBtn = planContainer.querySelector('.cancel-btn');
     if (saveBtn) {
@@ -125,38 +316,27 @@ function editPlanSection() {
     }
 }
 
-// Improved function to load section content when section is selected
 function loadSectionContent() {
     const sectionId = document.getElementById('separate-section-select').value;
     const preview = document.getElementById('separate-preview');
     const textarea = document.getElementById('separate-input');
 
-    // Get the content from the selected section
     const contentElement = document.getElementById(sectionId);
     if (contentElement) {
-        // Get the current content as plain text
         const plainText = contentElement.innerText || '';
-
-        // Set content in textarea for editing
         textarea.value = plainText;
-
-        // Show preview of current content
         preview.innerHTML = contentElement.innerHTML || '';
     } else {
-        // Handle case where the section is not found
         textarea.value = '';
         preview.innerHTML = '<p>No content found for this section</p>';
     }
 }
 
-// Make sure to call loadSectionContent when edit modal is opened
 function openEditModal(sectionId) {
     const modal = document.getElementById('separate-modal');
     const sectionSelect = document.getElementById('separate-section-select');
 
-    // Set the appropriate section in dropdown if specified
     if (sectionId) {
-        // Adjust sectionId to match the dropdown value (e.g., 'subjective' -> 'subjective-content')
         let sectionValue;
         if (sectionId === 'plan') {
             sectionValue = 'plan-content-container';
@@ -173,14 +353,10 @@ function openEditModal(sectionId) {
         }
     }
 
-    // Load the selected section's content
     loadSectionContent();
-
-    // Show the modal
     modal.style.display = 'block';
 }
 
-// Apply the edited content from the modal
 function applySeparateEdits() {
     console.log('Applying separate edits');
     const sectionId = document.getElementById('separate-section-select').value;
@@ -196,52 +372,9 @@ function applySeparateEdits() {
     const editedContent = textarea.value.trim();
 
     if (sectionId === 'plan-content-container') {
-        // Parse the edited content back into plan sections
-        const planSections = editedContent.split(/\n\s*\n/).filter(section => section.trim());
-        contentElement.innerHTML = '';
-
-        if (planSections.length === 0) {
-            contentElement.innerHTML = `
-                <div class="plan-section">
-                    <h3>In regards to General Plan:</h3>
-                    <ul id="plan-content-general-plan">
-                        <li>No specific plan recommendations available.</li>
-                    </ul>
-                </div>
-            `;
-        } else {
-            planSections.forEach(sectionText => {
-                const lines = sectionText.split('\n').filter(line => line.trim());
-                if (lines.length === 0) return;
-
-                let title, items;
-
-                if (lines[0].includes('In regards to') || lines[0].includes(':')) {
-                    title = lines[0];
-                    items = lines.slice(1).map(item => item.replace(/^[-*•]\s*/, '')).filter(item => item.trim());
-                } else {
-                    title = 'In regards to General Plan:';
-                    items = lines.map(item => item.replace(/^[-*•]\s*/, '')).filter(item => item.trim());
-                }
-
-                if (items.length === 0) {
-                    items = ['No specific plan recommendations available.'];
-                }
-
-                const safeTitle = title.replace(/In regards to\s+/i, '').replace(/:/g, '').replace(/[^a-zA-Z0-9-]/g, '-').toLowerCase();
-                const sectionDiv = document.createElement('div');
-                sectionDiv.className = 'plan-section';
-                sectionDiv.innerHTML = `
-                    <h3>${title}</h3>
-                    <ul id="plan-content-${safeTitle}" data-original-items='${JSON.stringify(items)}'>
-                        ${items.map(item => `<li>${item}</li>`).join('')}
-                    </ul>
-                `;
-                contentElement.appendChild(sectionDiv);
-            });
-        }
+        const planSections = parsePlanOfCare(editedContent || '');
+        renderPlanSections(planSections, contentElement.classList.contains('bulleted') ? 'bullet' : 'concise');
     } else if (sectionId === 'insights-recommendations') {
-        // Handle the recommendations section, which may be bulleted
         const isBulleted = contentElement.classList.contains('bulleted');
         const items = editedContent.split('\n').filter(item => item.trim());
         if (isBulleted) {
@@ -255,7 +388,6 @@ function applySeparateEdits() {
         }
         contentElement.dataset.originalItems = JSON.stringify(items);
     } else {
-        // For other sections, format the edited content into paragraphs
         const formattedContent = editedContent.split('\n')
             .map(line => line.trim())
             .filter(line => line.length > 0)
@@ -264,34 +396,26 @@ function applySeparateEdits() {
         contentElement.innerHTML = formattedContent;
     }
 
-    // Add success animation
     contentElement.classList.add('success-pulse');
     setTimeout(() => {
         contentElement.classList.remove('success-pulse');
     }, 1500);
 
-    // Update backend if needed
     updateNotesOnBackend();
-
-    // Close the modal
     closeSeparateModal();
 }
 
-// Close the separate modal
 function closeSeparateModal() {
     const modal = document.getElementById('separate-modal');
     if (modal) {
         modal.style.display = 'none';
-        // Reset the modal content
         document.getElementById('separate-input').value = '';
         document.getElementById('separate-preview').innerHTML = '';
     }
 }
 
-// Save the edited content of a SOAP section (retained for compatibility with inline editing)
 function saveSection(sectionId) {
     console.log(`saveSection called for ${sectionId}`);
-
     const contentElement = document.getElementById(`${sectionId}-content`);
 
     if (!contentElement) {
@@ -306,30 +430,23 @@ function saveSection(sectionId) {
     }
 
     const editedContent = textarea.value.trim();
-
-    // Remove editing state
     contentElement.classList.remove('editing');
 
-    // Format content with paragraphs
     const formattedContent = editedContent.split('\n')
         .map(line => line.trim())
         .filter(line => line.length > 0)
         .map(line => `<p>${line}</p>`)
         .join('');
-
     contentElement.innerHTML = formattedContent;
 
-    // Add success animation
     contentElement.classList.add('success-pulse');
     setTimeout(() => {
         contentElement.classList.remove('success-pulse');
     }, 1500);
 
-    // Update backend if needed
     updateNotesOnBackend();
 }
 
-// Save the edited plan section (retained for compatibility with inline editing)
 function savePlanSection() {
     console.log('Saving plan section');
     const planContainer = document.getElementById('plan-content-container');
@@ -346,72 +463,21 @@ function savePlanSection() {
     }
 
     const editedContent = textarea.value.trim();
-
-    // Remove editing state
     planContainer.classList.remove('editing');
 
-    // Parse the edited content back into plan sections
-    const planSections = editedContent.split(/\n\s*\n/).filter(section => section.trim());
-    planContainer.innerHTML = '';
+    const planSections = parsePlanOfCare(editedContent || '');
+    renderPlanSections(planSections, planContainer.classList.contains('bulleted') ? 'bullet' : 'concise');
 
-    if (planSections.length === 0) {
-        // If no content, add a default empty section
-        planContainer.innerHTML = `
-            <div class="plan-section">
-                <h3>In regards to General Plan:</h3>
-                <ul id="plan-content-general-plan">
-                    <li>No specific plan recommendations available.</li>
-                </ul>
-            </div>
-        `;
-    } else {
-        planSections.forEach(sectionText => {
-            const lines = sectionText.split('\n').filter(line => line.trim());
-            if (lines.length === 0) return;
-
-            let title, items;
-
-            // Check if first line looks like a title
-            if (lines[0].includes('In regards to') || lines[0].includes(':')) {
-                title = lines[0];
-                items = lines.slice(1).map(item => item.replace(/^[-*•]\s*/, '')).filter(item => item.trim());
-            } else {
-                title = 'In regards to General Plan:';
-                items = lines.map(item => item.replace(/^[-*•]\s*/, '')).filter(item => item.trim());
-            }
-
-            // If no items found, add a default one
-            if (items.length === 0) {
-                items = ['No specific plan recommendations available.'];
-            }
-
-            const safeTitle = title.replace(/In regards to\s+/i, '').replace(/:/g, '').replace(/[^a-zA-Z0-9-]/g, '-').toLowerCase();
-            const sectionDiv = document.createElement('div');
-            sectionDiv.className = 'plan-section';
-            sectionDiv.innerHTML = `
-                <h3>${title}</h3>
-                <ul id="plan-content-${safeTitle}" data-original-items='${JSON.stringify(items)}'>
-                    ${items.map(item => `<li>${item}</li>`).join('')}
-                </ul>
-            `;
-            planContainer.appendChild(sectionDiv);
-        });
-    }
-
-    // Add success animation
     planContainer.classList.add('success-pulse');
     setTimeout(() => {
         planContainer.classList.remove('success-pulse');
     }, 1500);
 
-    // Update backend if needed
     updateNotesOnBackend();
 }
 
-// Cancel editing a SOAP section (retained for compatibility with inline editing)
 function cancelEdit(sectionId) {
     console.log(`cancelEdit called for ${sectionId}`);
-
     const contentElement = document.getElementById(`${sectionId}-content`);
 
     if (!contentElement) {
@@ -419,56 +485,50 @@ function cancelEdit(sectionId) {
         return;
     }
 
-    // Remove editing state
     contentElement.classList.remove('editing');
 
-    // Restore original content from dataset
     if (contentElement.dataset.originalContent) {
         contentElement.innerHTML = contentElement.dataset.originalContent;
         delete contentElement.dataset.originalContent;
-    } else {
-        // Fallback using latestAnalysis if available
-        if (latestAnalysis && latestAnalysis.soapNotes) {
-            if (sectionId === 'subjective') {
-                const chiefComplaint = latestAnalysis.soapNotes.patient_history?.chief_complaint || 'Not specified';
-                const historyOfPresentIllness = latestAnalysis.soapNotes.patient_history?.history_of_present_illness || 'Not specified';
-                const pastMedicalHistory = latestAnalysis.soapNotes.patient_history?.past_medical_history || 'Not specified';
-                const allergies = latestAnalysis.soapNotes.patient_history?.allergies || 'Not specified';
-                const socialHistory = latestAnalysis.soapNotes.patient_history?.social_history || 'Not specified';
-                const reviewOfSystems = latestAnalysis.soapNotes.patient_history?.review_of_systems || 'Not specified';
-                contentElement.innerHTML = `
-                    <strong>Chief Complaint:</strong><br>
-                    The patient presents with ${chiefComplaint.toLowerCase()}.<br><br>
-                    <strong>History of Present Illness:</strong><br>
-                    ${historyOfPresentIllness}. The symptoms have persisted, affecting the patient's daily activities and quality of life. The patient reports the onset and progression of symptoms, including any triggering factors, duration, and associated complaints.<br><br>
-                    <strong>Past Medical History:</strong><br>
-                    The patient's medical history includes ${pastMedicalHistory.toLowerCase()}. They have a history of managing these conditions, with varying degrees of control and past interventions noted.<br><br>
-                    <strong>Allergies:</strong><br>
-                    ${allergies}. The patient confirms any known allergic reactions and their severity, which may influence treatment plans.<br><br>
-                    <strong>Social History:</strong><br>
-                    ${socialHistory}. The patient reports lifestyle factors that may contribute to their condition, including occupational, environmental, and social determinants of health.<br><br>
-                    <strong>Review of Systems:</strong><br>
-                    ${reviewOfSystems}. Additional symptoms may be present, impacting multiple systems, and are noted for a comprehensive understanding of the patient's health status.
-                `;
-            } else if (sectionId === 'objective') {
-                const physicalExamination = latestAnalysis.soapNotes.physical_examination || 'Not specified';
-                contentElement.innerHTML = `
-                    <strong>Physical Examination:</strong><br>
-                    ${physicalExamination}. Vital signs include blood pressure, heart rate, respiratory rate, and temperature. Physical findings indicate the patient's current health status, with specific attention to respiratory, cardiovascular, ENT, and general appearance. Additional observations include skin condition, neurological status, and musculoskeletal findings.
-                `;
-            } else if (sectionId === 'assessment') {
-                let assessmentText = latestAnalysis.soapNotes.differential_diagnosis || 'Not specified';
-                assessmentText = assessmentText.replace(/\*/g, '<br>*');
-                contentElement.innerHTML = `
-                    ${assessmentText}<br><br>
-                    The assessment considers the patient's symptoms, history, and physical findings to determine potential diagnoses and contributing factors. Differential diagnoses are prioritized based on clinical presentation, with recommendations for further evaluation to confirm the primary diagnosis.
-                `;
-            }
+    } else if (latestAnalysis && latestAnalysis.soapNotes) {
+        if (sectionId === 'subjective') {
+            const chiefComplaint = latestAnalysis.soapNotes.patient_history?.chief_complaint || 'Not specified';
+            const historyOfPresentIllness = latestAnalysis.soapNotes.patient_history?.history_of_present_illness || 'Not specified';
+            const pastMedicalHistory = latestAnalysis.soapNotes.patient_history?.past_medical_history || 'Not specified';
+            const allergies = latestAnalysis.soapNotes.patient_history?.allergies || 'Not specified';
+            const socialHistory = latestAnalysis.soapNotes.patient_history?.social_history || 'Not specified';
+            const reviewOfSystems = latestAnalysis.soapNotes.patient_history?.review_of_systems || 'Not specified';
+            contentElement.innerHTML = `
+                <strong>Chief Complaint:</strong><br>
+                The patient presents with ${chiefComplaint.toLowerCase()}.<br><br>
+                <strong>History of Present Illness:</strong><br>
+                ${historyOfPresentIllness}. The symptoms have persisted, affecting the patient's daily activities and quality of life. The patient reports the onset and progression of symptoms, including any triggering factors, duration, and associated complaints.<br><br>
+                <strong>Past Medical History:</strong><br>
+                The patient's medical history includes ${pastMedicalHistory.toLowerCase()}. They have a history of managing these conditions, with varying degrees of control and past interventions noted.<br><br>
+                <strong>Allergies:</strong><br>
+                ${allergies}. The patient confirms any known allergic reactions and their severity, which may influence treatment plans.<br><br>
+                <strong>Social History:</strong><br>
+                ${socialHistory}. The patient reports lifestyle factors that may contribute to their condition, including occupational, environmental, and social determinants of health.<br><br>
+                <strong>Review of Systems:</strong><br>
+                ${reviewOfSystems}. Additional symptoms may be present, impacting multiple systems, and are noted for a comprehensive understanding of the patient's health status.
+            `;
+        } else if (sectionId === 'objective') {
+            const physicalExamination = latestAnalysis.soapNotes.physical_examination || 'Not specified';
+            contentElement.innerHTML = `
+                <strong>Physical Examination:</strong><br>
+                ${physicalExamination}. Vital signs include blood pressure, heart rate, respiratory rate, and temperature. Physical findings indicate the patient's current health status, with specific attention to respiratory, cardiovascular, ENT, and general appearance. Additional observations include skin condition, neurological status, and musculoskeletal findings.
+            `;
+        } else if (sectionId === 'assessment') {
+            let assessmentText = latestAnalysis.soapNotes.differential_diagnosis || 'Not specified';
+            assessmentText = assessmentText.replace(/\*/g, '<br>*');
+            contentElement.innerHTML = `
+                ${assessmentText}<br><br>
+                The assessment considers the patient's symptoms, history, and physical findings to determine potential diagnoses and contributing factors. Differential diagnoses are prioritized based on clinical presentation, with recommendations for further evaluation to confirm the primary diagnosis.
+            `;
         }
     }
 }
 
-// Cancel editing the plan section (retained for compatibility with inline editing)
 function cancelPlanEdit() {
     console.log('Canceling plan edit');
     const planContainer = document.getElementById('plan-content-container');
@@ -478,73 +538,23 @@ function cancelPlanEdit() {
         return;
     }
 
-    // Remove editing state
     planContainer.classList.remove('editing');
 
-    // Restore original content from dataset
     if (planContainer.dataset.originalContent) {
         planContainer.innerHTML = planContainer.dataset.originalContent;
         delete planContainer.dataset.originalContent;
-    } else {
-        // Fallback using latestAnalysis if available
-        if (latestAnalysis && latestAnalysis.soapNotes) {
-            const planText = latestAnalysis.soapNotes.plan_of_care || '';
-            let planSections = [];
-
-            if (!planText) {
-                planSections = [{
-                    title: "General Plan",
-                    items: ['No specific plan recommendations available. Please follow up with standard care protocols.']
-                }];
-            } else {
-                const sections = planText.split(/(?=In regards to\s+[\w\s]+:)/i).filter(section => section.trim());
-                sections.forEach(section => {
-                    const sectionMatch = section.match(/In regards to\s+(.+?)(?::|$)/i);
-                    if (sectionMatch) {
-                        const title = sectionMatch[1].trim();
-                        const items = section.replace(/In regards to\s+.+?(?::|$)/i, '').trim().split('\n').filter(item => item.trim()).map(item => item.replace(/^- /, ''));
-                        if (items.length > 0) {
-                            planSections.push({ title, items });
-                        }
-                    }
-                });
-
-                if (planSections.length === 0 && planText.trim()) {
-                    const items = planText.split(/[\n•-]/).filter(item => item.trim()).map(item => item.trim());
-                    planSections = [{ title: "General Plan", items }];
-                }
-            }
-
-            if (planSections.length === 0) {
-                planSections = [{ title: "General Plan", items: ['No specific plan recommendations available.'] }];
-            }
-
-            planContainer.innerHTML = '';
-            planSections.forEach(section => {
-                const sectionDiv = document.createElement('div');
-                sectionDiv.className = 'plan-section';
-                const safeTitle = section.title.replace(/[^a-zA-Z0-9-]/g, '-').toLowerCase();
-                sectionDiv.innerHTML = `
-                    <h3>In regards to ${section.title}:</h3>
-                    <ul id="plan-content-${safeTitle}" data-original-items='${JSON.stringify(section.items)}'>
-                        ${section.items.map(item => `<li>${item.trim()}</li>`).join('')}
-                    </ul>
-                `;
-                planContainer.appendChild(sectionDiv);
-            });
-        }
+    } else if (latestAnalysis && latestAnalysis.soapNotes) {
+        const planSections = parsePlanOfCare(latestAnalysis.soapNotes.plan_of_care || '');
+        renderPlanSections(planSections, planContainer.classList.contains('bulleted') ? 'bullet' : 'concise');
     }
 }
 
-// Helper function to update notes on the backend
 function updateNotesOnBackend() {
-    // Only proceed if we have active visit and patient
     if (!activeVisitId || !currentPatientId) {
         console.log('No active visit or patient, skipping backend update');
         return;
     }
 
-    // Collect all section content
     const updatedNotes = {
         subjective: document.getElementById('subjective-content')?.innerText || '',
         objective: document.getElementById('objective-content')?.innerText || '',
@@ -552,7 +562,6 @@ function updateNotesOnBackend() {
         plan: document.getElementById('plan-content-container')?.innerText || ''
     };
 
-    // Send to backend
     fetch('/api/update-notes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -572,11 +581,9 @@ function updateNotesOnBackend() {
     })
     .catch(error => {
         console.error('Error saving updated notes:', error);
-        // Don't show alert to avoid disrupting the user experience
     });
 }
 
-// Toggle bullet points in the Recommendations section
 function toggleBullets() {
     console.log('toggleBullets called');
     const recommendations = document.getElementById('insights-recommendations');
@@ -586,13 +593,11 @@ function toggleBullets() {
         const originalItems = JSON.parse(recommendations.dataset.originalItems || '[]');
 
         if (isBulleted) {
-            // Switch to non-bulleted format
             recommendations.classList.remove('bulleted');
             recommendations.innerHTML = originalItems.map(item => `<p>${item.trim()}</p>`).join('');
             bulletToggleBtn.classList.remove('active');
             bulletToggleBtn.textContent = 'Bullet';
         } else {
-            // Switch to bulleted format
             recommendations.classList.add('bulleted');
             recommendations.innerHTML = `
                 <ul>
@@ -607,7 +612,6 @@ function toggleBullets() {
     }
 }
 
-// Toggle detail level in the Recommendations section
 function toggleDetail() {
     console.log('toggleDetail called');
     const recommendations = document.getElementById('insights-recommendations');
@@ -617,10 +621,8 @@ function toggleDetail() {
         const originalItems = JSON.parse(recommendations.dataset.originalItems || '[]');
 
         if (isDetailed) {
-            // Switch to summary mode
             recommendations.classList.remove('detailed');
             recommendations.classList.add('summary');
-            // For simplicity, we'll keep the content the same but toggle the class
             if (recommendations.classList.contains('bulleted')) {
                 recommendations.innerHTML = `
                     <ul>
@@ -633,7 +635,6 @@ function toggleDetail() {
             detailToggleBtn.classList.remove('active');
             detailToggleBtn.textContent = 'Detailed';
         } else {
-            // Switch to detailed mode
             recommendations.classList.remove('summary');
             recommendations.classList.add('detailed');
             if (recommendations.classList.contains('bulleted')) {
@@ -653,7 +654,6 @@ function toggleDetail() {
     }
 }
 
-// Toggle bullet points in the Plan section
 function togglePlanBullets() {
     console.log('togglePlanBullets called');
     const planContainer = document.getElementById('plan-content-container');
@@ -667,13 +667,11 @@ function togglePlanBullets() {
             if (ulElement && ulElement.dataset.originalItems) {
                 const items = JSON.parse(ulElement.dataset.originalItems);
                 if (isBulleted) {
-                    // Switch to non-bulleted format
                     const pElements = items.map(item => `<p>${item.trim()}</p>`).join('');
                     const newDiv = document.createElement('div');
                     newDiv.innerHTML = pElements;
                     ulElement.parentNode.replaceChild(newDiv, ulElement);
                 } else {
-                    // Switch to bulleted format
                     const ul = document.createElement('ul');
                     ul.id = ulElement.id;
                     ul.dataset.originalItems = JSON.stringify(items);
@@ -697,7 +695,6 @@ function togglePlanBullets() {
     }
 }
 
-// Toggle detail level in the Plan section
 function togglePlanDetail() {
     console.log('togglePlanDetail called');
     const planContainer = document.getElementById('plan-content-container');
@@ -711,7 +708,6 @@ function togglePlanDetail() {
             if (contentElement && contentElement.dataset.originalItems) {
                 const items = JSON.parse(contentElement.dataset.originalItems);
                 if (isDetailed) {
-                    // Switch to summary mode
                     if (items.length > 0) {
                         if (contentElement.tagName.toLowerCase() === 'ul') {
                             contentElement.innerHTML = `<li>${items[0]}</li>`;
@@ -720,7 +716,6 @@ function togglePlanDetail() {
                         }
                     }
                 } else {
-                    // Switch to detailed mode
                     if (contentElement.tagName.toLowerCase() === 'ul') {
                         contentElement.innerHTML = items.map(item => `<li>${item.trim()}</li>`).join('');
                     } else {
@@ -746,7 +741,6 @@ function togglePlanDetail() {
     }
 }
 
-// Expose functions to the global scope
 window.copySection = copySection;
 window.copySOAP = copySOAP;
 window.editSection = editSection;

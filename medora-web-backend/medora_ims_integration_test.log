@@ -10,3 +10,27 @@
 [2025-05-20 16:02:14] Token request failed with status 400
 [2025-05-20 16:02:14] Response: {"error":"invalid_client","error_description":"Client authentication with signed JWT failed: Error when loading public keys: javax.net.ssl.SSLHandshakeException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target"}
 [2025-05-20 16:02:14] Failed to obtain access token. Test aborted.
+[2025-05-29 14:58:53] === STARTING MEDORA-IMS INTEGRATION TEST ===
+[2025-05-29 14:58:53] Generated JWT assertion with jti: 1abfd28c-a55e-4800-bf3a-fe7172cf9444
+[2025-05-29 14:58:53] Requesting access token...
+[2025-05-29 14:58:54] Token request failed with status 400
+[2025-05-29 14:58:54] Response: {"error":"invalid_client","error_description":"Client authentication with signed JWT failed: Error when loading public keys: javax.net.ssl.SSLHandshakeException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target"}
+[2025-05-29 14:58:54] Failed to obtain access token. Test aborted.
+[2025-05-29 15:06:21] === STARTING MEDORA-IMS INTEGRATION TEST ===
+[2025-05-29 15:06:21] Generated JWT assertion with jti: bf951b62-7020-46b5-8a9f-0220d3526bed
+[2025-05-29 15:06:21] Requesting access token...
+[2025-05-29 15:06:22] Successfully obtained token. Expires in: 86400 seconds
+[2025-05-29 15:06:22] Testing FHIR capability statement (metadata)
+[2025-05-29 15:06:42] ERROR during FHIR metadata request: HTTPSConnectionPool(host='meditabfhirsandbox.meditab.com', port=443): Max retries exceeded with url: /mps/fhir/R4/metadata (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x792fe2542630>, 'Connection to meditabfhirsandbox.meditab.com timed out. (connect timeout=20)'))
+[2025-05-29 15:06:42] Testing FHIR endpoint: Patient
+[2025-05-29 15:07:02] ERROR during FHIR Patient request: HTTPSConnectionPool(host='meditabfhirsandbox.meditab.com', port=443): Max retries exceeded with url: /mps/fhir/R4/Patient (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x792fe27d23c0>, 'Connection to meditabfhirsandbox.meditab.com timed out. (connect timeout=20)'))
+[2025-05-29 15:07:02] Testing FHIR endpoint: Practitioner
+[2025-05-29 15:07:22] ERROR during FHIR Practitioner request: HTTPSConnectionPool(host='meditabfhirsandbox.meditab.com', port=443): Max retries exceeded with url: /mps/fhir/R4/Practitioner (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x792fe2542b70>, 'Connection to meditabfhirsandbox.meditab.com timed out. (connect timeout=20)'))
+[2025-05-29 15:07:22] Testing FHIR endpoint: Organization
+[2025-05-29 15:07:42] ERROR during FHIR Organization request: HTTPSConnectionPool(host='meditabfhirsandbox.meditab.com', port=443): Max retries exceeded with url: /mps/fhir/R4/Organization (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x792fe25432c0>, 'Connection to meditabfhirsandbox.meditab.com timed out. (connect timeout=20)'))
+[2025-05-29 15:07:42] Testing FHIR endpoint: Patient
+[2025-05-29 15:09:01] === STARTING MEDORA-IMS INTEGRATION TEST ===
+[2025-05-29 15:09:01] Generated JWT assertion with jti: fb4f9468-d4c6-4080-9740-1adef682c989
+[2025-05-29 15:09:01] Requesting access token...
+[2025-05-29 15:09:01] Successfully obtained token. Expires in: 86400 seconds
+[2025-05-29 15:09:01] Testing FHIR capability statement (metadata)

@@ -16,6 +16,25 @@ import certifi
 import xml.etree.ElementTree as ET
 import re
 import traceback
+from requests.exceptions import HTTPError
+import jwt
+from concurrent.futures import ThreadPoolExecutor, as_completed, TimeoutError as FuturesTimeoutError
+from typing import List, Dict, Tuple, Optional
+
+# Persistent cache with TTL for API results
+persistent_api_cache = {}  # Format: {cache_key: (result, timestamp)}
+
+def get_cached_result(cache_key, ttl_minutes=60):
+    if cache_key in persistent_api_cache:
+        result, timestamp = persistent_api_cache[cache_key]
+        if datetime.now() < timestamp + timedelta(minutes=ttl_minutes):
+            return result
+        else:
+            del persistent_api_cache[cache_key]
+    return None
+
+def set_cached_result(cache_key, result):
+    persistent_api_cache[cache_key] = (result, datetime.now())
 
 # Load environment variables from .env file
 load_dotenv()
@@ -23,46 +42,37 @@ load_dotenv()
 # Initialize Flask app
 app = Flask(__name__)
 CORS(app, resources={
-    r"/api/*": {"origins": ["http://127.0.0.1:8080", "http://localhost:8080", "https://medoramd.ai"], "methods": ["GET", "POST", "OPTIONS"]},
-    r"/submit-transcript": {"origins": ["https://medoramd.ai"], "methods": ["POST", "OPTIONS"]},
-    r"/get-insights": {"origins": ["https://medoramd.ai"], "methods": ["GET", "OPTIONS"]}
+    r"/api/*": {"origins": ["http://127.0.0.1:8080", "http://localhost:8080", "https://test.medoramd.ai"], "methods": ["GET", "POST", "OPTIONS"]},
+    r"/submit-transcript": {"origins": ["https://test.medoramd.ai"], "methods": ["POST", "OPTIONS"]},
+    r"/get-insights": {"origins": ["https://test.medoramd.ai"], "methods": ["GET", "OPTIONS"]}
 })
 
 # Configure logging
-import logging
 from logging.handlers import RotatingFileHandler
 
-# Set log level from environment variable (default to INFO)
 log_level = os.getenv('LOG_LEVEL', 'INFO')
-
-# Create a logger
 logger = logging.getLogger(__name__)
 logger.setLevel(getattr(logging, log_level.upper(), logging.INFO))
-
-# Define log format with timestamp, level, and message
 log_formatter = logging.Formatter('%(asctime)s [%(levelname)s] %(message)s')
 
-# File handler (logs to a file with rotation)
 file_handler = RotatingFileHandler(
     '/var/www/medora-web-backend/flask-app.log',
-    maxBytes=10*1024*1024,  # 10 MB per file
-    backupCount=5  # Keep up to 5 backup files
+    maxBytes=10*1024*1024,
+    backupCount=5
 )
 file_handler.setFormatter(log_formatter)
 logger.addHandler(file_handler)
 
-# Console handler (logs to stdout)
 console_handler = logging.StreamHandler()
 console_handler.setFormatter(log_formatter)
 logger.addHandler(console_handler)
 
-# Test logging setup
 logger.info("Logging setup complete. Logs will be written to /var/www/medora-web-backend/flask-app.log and console.")
 
 # Load environment variables
 FLASK_ENV = os.getenv('FLASK_ENV', 'development')
 PORT = int(os.getenv('PORT', 5000))
-AWS_REGION = os.getenv('AWS_REGION', 'us-east-1')
+AWS_REGION = os.getenv('AWS_REGION', 'ap-south-1')
 S3_BUCKET = os.getenv('S3_BUCKET', 'medora-healthscribe-2025')
 XAI_API_KEY = os.getenv('XAI_API_KEY')
 XAI_API_URL = os.getenv('XAI_API_URL')
@@ -70,6 +80,10 @@ DEEPL_API_KEY = os.getenv('DEEPL_API_KEY')
 DEEPL_API_URL = os.getenv('DEEPL_API_URL', 'https://api-free.deepl.com/v2/translate')
 MONGO_URI = os.getenv('MONGO_URI', 'mongodb://localhost:27017/medora')
 MONGO_DB_NAME = os.getenv('MONGO_DB_NAME', 'medora')
+IMS_FHIR_SERVER_URL = os.getenv('IMS_FHIR_SERVER_URL', 'https://meditabfhirsandbox.meditab.com/mps/fhir/R4')
+IMS_TOKEN_ENDPOINT = os.getenv('IMS_TOKEN_ENDPOINT', 'https://keycloak-qa.medpharmservices.com:8443/realms/fhir-0051185/protocol/openid-connect/token')
+IMS_CLIENT_ID = os.getenv('IMS_CLIENT_ID', '4ddd3a59-414c-405e-acc5-226c097a7060')
+PRIVATE_KEY_PATH = os.getenv('PRIVATE_KEY_PATH', '/var/www/medora-frontend/public/medora_private_key.pem')
 
 # Validate required environment variables
 if not XAI_API_KEY or not XAI_API_URL:
@@ -98,13 +112,16 @@ except Exception as e:
 
 # Connect to MongoDB (DocumentDB)
 try:
-    client = MongoClient(MONGO_URI)
+    client = MongoClient(
+        MONGO_URI,
+        tls=True,
+        tlsCAFile='/var/www/medora-web-backend/global-bundle.pem'
+    )
     db = client[MONGO_DB_NAME]
     patients_collection = db['patients']
     transcripts_collection = db['transcripts']
     visits_collection = db['visits']
     
-    # Create index on tenantId field for better performance
     try:
         patients_collection.create_index("tenantId")
         transcripts_collection.create_index("tenantId")
@@ -137,30 +154,24 @@ def get_subscription_status(email):
         if datetime.now() > trial_end:
             return {"tier": "Expired", "trial_end": trial_end.strftime("%Y-%m-%d"), "card_last4": user_data["card_last4"]}
     return {"tier": tier, "trial_end": None, "card_last4": user_data["card_last4"]}
-# FIXED Function to validate and standardize tenantId
+
 def validate_tenant_id(tenant_id, email=None):
     """
     Ensure tenant_id is valid and standardized
     If tenant_id is 'default_tenant' but email is provided, use email instead
     """
     if not tenant_id or tenant_id == 'default_tenant':
-        # If email is provided, use it as the tenant_id
         if email:
             logger.info(f"Converting default_tenant to email: {email}")
             return email
-        # Otherwise, fall back to default_tenant for backward compatibility
         return 'default_tenant'
-
-    # Otherwise, return the tenant_id as-is
     return tenant_id
 
-# New function to get SOAP notes by tenant
 def get_soap_notes(patient_id, visit_id, tenant_id=None):
     """
     Get SOAP notes from DynamoDB with tenant filtering
     """
     try:
-        # First try direct lookup by primary key
         response = dynamodb.get_item(
             TableName='MedoraSOAPNotes',
             Key={
@@ -174,10 +185,8 @@ def get_soap_notes(patient_id, visit_id, tenant_id=None):
             logger.warning(f"No SOAP notes found for patient {patient_id}, visit {visit_id}")
             return None
 
-        # If tenant_id is provided, check if it matches
         if tenant_id:
             item_tenant_id = item.get('tenantID', {}).get('S')
-            # Return the item if it has no tenantID (legacy data) or if tenant matches
             if not item_tenant_id or item_tenant_id == tenant_id:
                 soap_notes_json = item.get('soap_notes', {}).get('S')
                 if soap_notes_json:
@@ -189,7 +198,6 @@ def get_soap_notes(patient_id, visit_id, tenant_id=None):
                 logger.warning(f"Tenant mismatch for patient {patient_id}, visit {visit_id}. Expected: {tenant_id}, Found: {item_tenant_id}")
                 return None
         else:
-            # No tenant filtering, return the item
             soap_notes_json = item.get('soap_notes', {}).get('S')
             if soap_notes_json:
                 return json.loads(soap_notes_json)
@@ -201,13 +209,11 @@ def get_soap_notes(patient_id, visit_id, tenant_id=None):
         logger.error(f"Error fetching SOAP notes from DynamoDB: {str(e)}")
         return None
 
-# New function to get all SOAP notes for a tenant
 def get_all_soap_notes_for_tenant(tenant_id):
     """
     Get all SOAP notes for a specific tenant
     """
     try:
-        # Try using GSI if available
         try:
             response = dynamodb.query(
                 TableName='MedoraSOAPNotes',
@@ -223,7 +229,6 @@ def get_all_soap_notes_for_tenant(tenant_id):
         except Exception as e:
             logger.warning(f"GSI query failed, falling back to scan: {str(e)}")
 
-            # Fall back to scan with filter
             response = dynamodb.scan(
                 TableName='MedoraSOAPNotes',
                 FilterExpression='tenantID = :tid',
@@ -238,14 +243,12 @@ def get_all_soap_notes_for_tenant(tenant_id):
         logger.error(f"Error fetching SOAP notes for tenant {tenant_id}: {str(e)}")
         return []
 
-# New function to get patient insights for a tenant
 def get_patient_insights(patient_id, tenant_id=None):
     """
     Get patient insights from DynamoDB with tenant filtering
     """
     try:
         if tenant_id:
-            # Try using GSI if available
             try:
                 response = dynamodb.query(
                     TableName='MedoraPatientInsights',
@@ -262,7 +265,6 @@ def get_patient_insights(patient_id, tenant_id=None):
             except Exception as e:
                 logger.warning(f"GSI query failed, falling back to scan: {str(e)}")
 
-                # Fall back to scan with filter
                 response = dynamodb.scan(
                     TableName='MedoraPatientInsights',
                     FilterExpression='patient_id = :pid AND tenantID = :tid',
@@ -275,7 +277,6 @@ def get_patient_insights(patient_id, tenant_id=None):
                 logger.info(f"Found {len(items)} insights for patient {patient_id} using scan")
                 return items
         else:
-            # No tenant filtering, query directly by patient_id
             response = dynamodb.query(
                 TableName='MedoraPatientInsights',
                 KeyConditionExpression='patient_id = :pid',
@@ -290,14 +291,12 @@ def get_patient_insights(patient_id, tenant_id=None):
         logger.error(f"Error fetching patient insights: {str(e)}")
         return []
 
-# New function to get references for a tenant
 def get_references(tenant_id=None):
     """
     Get references from DynamoDB with tenant filtering
     """
     try:
         if tenant_id:
-            # Try using GSI if available
             try:
                 response = dynamodb.query(
                     TableName='MedoraReferences',
@@ -313,7 +312,6 @@ def get_references(tenant_id=None):
             except Exception as e:
                 logger.warning(f"GSI query failed, falling back to scan: {str(e)}")
 
-                # Fall back to scan with filter
                 response = dynamodb.scan(
                     TableName='MedoraReferences',
                     FilterExpression='tenantID = :tid',
@@ -325,7 +323,6 @@ def get_references(tenant_id=None):
                 logger.info(f"Found {len(items)} references for tenant {tenant_id} using scan")
                 return items
         else:
-            # No tenant filtering, scan all references
             response = dynamodb.scan(TableName='MedoraReferences')
             items = response.get('Items', [])
             logger.info(f"Found {len(items)} references without tenant filtering")
@@ -450,13 +447,13 @@ def analyze_transcript(text, target_language="EN"):
             {"role": "system", "content": "You are an expert medical scribe AI assisting healthcare professionals. Provide accurate, detailed, and structured medical notes for an allergist, ensuring professional-grade output with specific details and flag uncertainties for review."},
             {"role": "user", "content": prompt}
         ],
-        "max_tokens": 2500,  # Increased from 1500 to allow for more detailed response
-        "temperature": 0.25   # Slightly reduced to increase precision and consistency
+        "max_tokens": 2500,
+        "temperature": 0.25
     }
 
     try:
         logger.debug(f"Sending request to xAI API: URL={XAI_API_URL}, Headers={headers}, Payload={payload}")
-        response = requests.post(XAI_API_URL, headers=headers, json=payload, timeout=45)  # Increased timeout
+        response = requests.post(XAI_API_URL, headers=headers, json=payload, timeout=45)
         logger.debug(f"xAI API response: Status={response.status_code}, Body={response.text}")
         response.raise_for_status()
         result = response.json()
@@ -473,12 +470,9 @@ def analyze_transcript(text, target_language="EN"):
                     parsed_data = json.loads(json_str)
                     logger.info(f"Parsed JSON: {parsed_data}")
 
-                    # Extract enhanced recommendations for displaying in the recommendations section
                     if "enhanced_recommendations" in parsed_data:
                         enhanced_recs = parsed_data["enhanced_recommendations"]
-                        # If patient_education exists, complement it with the enhanced recommendations
                         if "patient_education" in parsed_data:
-                            # We'll keep the original patient_education but make the recommendations field more comprehensive
                             parsed_data["recommendations"] = enhanced_recs
 
                     if target_language.upper() != "EN":
@@ -631,7 +625,6 @@ def get_default_summary():
         ]
     }
 
-
 def process_transcript_for_allergeniq(transcript):
     """
     Process the transcript to extract allergy-related data for AllergenIQ profile.
@@ -639,36 +632,29 @@ def process_transcript_for_allergeniq(transcript):
     """
     logger.info("ALLERGENIQ: Processing transcript for allergy data")
     try:
-        # Convert transcript to lowercase for easier matching
         transcript_lower = transcript.lower()
         lines = transcript.split('\n')
 
-        # Initialize extracted data with sets to track duplicates
         symptoms_dict = {}
         medications_dict = {}
         allergens_dict = {}
 
-        # Define keywords for extraction
         symptom_keywords = ['sneezing', 'itchy eyes', 'nasal congestion', 'wheezing', 'skin rash', 'snoring', 'loss of smell', 'asthma', 'sore throat', 'ear itching']
         medication_keywords = ['dupixent', 'symbicort', 'flonase', 'allegra', 'albuterol', 'montelukast', 'xolair', 'nucala', 'epipen', 'prednisone']
         allergen_keywords = ['codeine', 'grass', 'wasp', 'garlic', 'onion', 'pollen', 'dust mites', 'pet dander', 'peanuts', 'mold']
 
-        # Track context
         recent_prednisone = False
         stopped_medications = set()
 
-        # Extract symptoms
         for line in lines:
             line_lower = line.lower()
-            # Check for symptoms
             for symptom in symptom_keywords:
                 if symptom in line_lower:
                     symptom_key = symptom.lower()
                     if symptom_key in symptoms_dict:
-                        continue  # Skip duplicates
-                    severity = 5  # Default severity
-                    frequency = "Unknown"  # Default frequency
-                    # Infer severity
+                        continue
+                    severity = 5
+                    frequency = "Unknown"
                     if 'severe' in line_lower or 'bad' in line_lower:
                         severity = 8
                     elif 'mild' in line_lower:
@@ -683,7 +669,6 @@ def process_transcript_for_allergeniq(transcript):
                         severity = 7
                     elif 'nasal congestion' in symptom_key:
                         severity = 8
-                    # Infer frequency
                     if 'daily' in line_lower:
                         frequency = "Daily"
                     elif 'constant' in line_lower:
@@ -699,25 +684,21 @@ def process_transcript_for_allergeniq(transcript):
                     }
                     logger.debug(f"ALLERGENIQ: Extracted symptom - {symptom.capitalize()}: severity={severity}, frequency={frequency}")
 
-            # Check for medications
             for med in medication_keywords:
                 if med in line_lower:
-                    med_key = med.lower() + "_" + line_lower  # Use line context to differentiate
+                    med_key = med.lower() + "_" + line_lower
                     if med_key in medications_dict:
-                        continue  # Skip duplicates within the same context
-                    status = "Active"  # Default status
-                    dosage = "Unknown"  # Default dosage
-                    # Determine status
+                        continue
+                    status = "Active"
+                    dosage = "Unknown"
                     if 'stop' in line_lower or 'discontinued' in line_lower:
                         status = "Discontinued"
                         stopped_medications.add(med)
                     elif 'pending' in line_lower or 'prescribed' in line_lower:
                         status = "Pending"
-                    # Extract dosage if available
                     dosage_match = re.search(r'(\d+\s*(mg|mcg|puffs)[^\.]*)', line_lower)
                     if dosage_match:
                         dosage = dosage_match.group(0).strip()
-                    # Hardcode known dosages for TEST205
                     if med.lower() == 'dupixent':
                         dosage = "300 mg every 2 weeks"
                         status = "Discontinued" if 'discontinued' in line_lower else "Active"
@@ -740,14 +721,12 @@ def process_transcript_for_allergeniq(transcript):
                     }
                     logger.debug(f"ALLERGENIQ: Extracted medication - {med.capitalize()}: dosage={dosage}, status={status}")
 
-            # Check for allergens
             for allergen in allergen_keywords:
                 if allergen in line_lower:
                     allergen_key = allergen.lower()
                     if allergen_key in allergens_dict:
-                        continue  # Skip duplicates
-                    reaction = "Unknown"  # Default reaction
-                    # Determine reaction
+                        continue
+                    reaction = "Unknown"
                     if 'allergy' in line_lower:
                         reaction = "Allergic Reaction"
                     if 'intolerance' in line_lower:
@@ -764,20 +743,16 @@ def process_transcript_for_allergeniq(transcript):
                     }
                     logger.debug(f"ALLERGENIQ: Extracted allergen - {allergen.capitalize()}: reaction={reaction}")
 
-            # Track context for additional logic
             if 'prednisone' in line_lower and '5 days ago' in line_lower:
                 recent_prednisone = True
 
-        # Convert dictionaries to lists and remove duplicates more intelligently
         symptoms = list(symptoms_dict.values())
-        # Deduplicate medications by name, keeping the most relevant entry
         final_medications = {}
         for med_key, med_info in medications_dict.items():
             med_name = med_info["name"].lower()
             if med_name not in final_medications:
                 final_medications[med_name] = med_info
             else:
-                # Prefer "Discontinued" or "Pending" over "Active" if duplicate
                 existing = final_medications[med_name]
                 if existing["status"] == "Active" and med_info["status"] in ["Discontinued", "Pending"]:
                     final_medications[med_name] = med_info
@@ -796,13 +771,13 @@ def process_transcript_for_allergeniq(transcript):
             "medications": [],
             "allergens": []
         }
+
 def structure_allergeniq_data(soap_notes, patient_insights, transcript_data):
     """
     Structure the AllergenIQ profile data using SOAP notes, patient insights, and transcript data.
     """
     logger.info("ALLERGENIQ: Structuring profile data")
     try:
-        # Initialize profile data with defaults
         profile = {
             "symptomData": [],
             "medicationHistory": [],
@@ -813,10 +788,8 @@ def structure_allergeniq_data(soap_notes, patient_insights, transcript_data):
             }
         }
 
-        # Extract symptoms (prioritize transcript data)
         if transcript_data and "symptoms" in transcript_data:
             profile["symptomData"] = transcript_data["symptoms"]
-        # Fallback to SOAP notes if transcript data is unavailable
         if not profile["symptomData"]:
             review_of_systems = soap_notes.get("patient_history", {}).get("review_of_systems", "")
             if review_of_systems and review_of_systems != "No data available":
@@ -826,40 +799,36 @@ def structure_allergeniq_data(soap_notes, patient_insights, transcript_data):
                     if symptom and "no " not in symptom.lower():
                         symptoms.append({
                             "name": symptom.capitalize(),
-                            "severity": 5,  # Default severity
-                            "frequency": "Unknown"  # Default frequency
+                            "severity": 5,
+                            "frequency": "Unknown"
                         })
                 profile["symptomData"] = symptoms
             logger.debug(f"ALLERGENIQ: Extracted symptoms: {profile['symptomData']}")
 
-        # Extract medications (prioritize SOAP notes over transcript for accuracy)
         medications_from_soap = []
         plan_of_care = soap_notes.get("plan_of_care", "")
         if plan_of_care and plan_of_care != "No data available":
             sections = plan_of_care.split('\n\n')
-            # Define allowed medications for TEST205
             allowed_medications = ['dupixent', 'symbicort', 'flonase', 'allegra', 'albuterol']
             for section in sections:
                 if "In regards to" in section:
                     lines = section.split('\n')
-                    for line in lines[1:]:  # Skip the section header
+                    for line in lines[1:]:
                         line = line.strip()
                         if line.startswith('-'):
                             med_info = line[1:].strip().lower()
                             dosage = "Unknown"
                             status = "Active"
-                            # Skip action verbs and look for actual medication names
                             medication_keywords = ['dupixent', 'symbicort', 'flonase', 'allegra', 'albuterol', 'montelukast', 'xolair', 'nucala', 'epipen', 'prednisone']
                             name = None
                             for med in medication_keywords:
                                 if med in med_info:
-                                    # Only include allowed medications
                                     if med not in allowed_medications:
                                         continue
                                     name = med.capitalize()
                                     break
                             if not name:
-                                continue  # Skip if no medication name is found or not allowed
+                                continue
                             if 'discontinued' in med_info:
                                 status = "Discontinued"
                             elif 'pending' in med_info:
@@ -867,7 +836,6 @@ def structure_allergeniq_data(soap_notes, patient_insights, transcript_data):
                             dosage_match = re.search(r'(\d+\s*(mg|mcg|puffs)[^\.]*)', med_info)
                             if dosage_match:
                                 dosage = dosage_match.group(0).strip()
-                            # Hardcode known dosages for TEST205
                             if name.lower() == 'dupixent':
                                 dosage = "300 mg every 2 weeks"
                                 status = "Discontinued"
@@ -894,10 +862,8 @@ def structure_allergeniq_data(soap_notes, patient_insights, transcript_data):
             profile["medicationHistory"] = transcript_data["medications"]
         logger.debug(f"ALLERGENIQ: Extracted medications: {profile['medicationHistory']}")
 
-        # Extract allergens (prioritize transcript data)
         if transcript_data and "allergens" in transcript_data:
             profile["allergenData"] = transcript_data["allergens"]
-        # Fallback to SOAP notes allergies
         if not profile["allergenData"]:
             allergies = soap_notes.get("patient_history", {}).get("allergies", "")
             if allergies and allergies != "No data available":
@@ -925,7 +891,6 @@ def structure_allergeniq_data(soap_notes, patient_insights, transcript_data):
                 profile["allergenData"] = allergens
             logger.debug(f"ALLERGENIQ: Extracted allergens: {profile['allergenData']}")
 
-        # Extract summary
         differential_diagnosis = soap_notes.get("differential_diagnosis", "")
         if differential_diagnosis and differential_diagnosis != "No data available":
             parts = differential_diagnosis.split("Alternative Diagnoses:")
@@ -954,6 +919,914 @@ def structure_allergeniq_data(soap_notes, patient_insights, transcript_data):
             "allergenData": get_default_allergen_data(),
             "summary": get_default_summary()
         }
+
+# IMPROVED VETERINARY FILTERING LOGIC
+
+# Enhanced keyword categorization
+VETERINARY_KEYWORDS = {
+    'animals': ['dog', 'cat', 'horse', 'cow', 'pig', 'sheep', 'goat', 'rabbit', 'ferret'],
+    'animal_types': ['canine', 'feline', 'equine', 'bovine', 'swine', 'rodent', 'avian'],
+    'research_animals': ['mouse', 'mice', 'rat', 'rats', 'guinea pig', 'hamster'],
+    'wildlife': ['wildlife', 'zoo', 'marine', 'aquatic', 'fish', 'bird', 'reptile'],
+    'veterinary_terms': ['veterinary', 'vet', 'animal health', 'pet health', 'livestock']
+}
+
+# Human allergy contexts where animal mentions are relevant
+HUMAN_ALLERGY_CONTEXTS = {
+    'allergen_sources': [
+        'allergen', 'allergy', 'allergic', 'sensitization', 'sensitized',
+        'dander', 'hair', 'fur', 'saliva', 'urine', 'epithelial',
+        'exposure to', 'exposed to', 'contact with'
+    ],
+    'medical_conditions': [
+        'asthma', 'rhinitis', 'dermatitis', 'eczema', 'urticaria', 'hives',
+        'anaphylaxis', 'allergic reaction', 'hypersensitivity'
+    ],
+    'research_terms': [
+        'model', 'study', 'research', 'experiment', 'trial', 'investigation',
+        'analysis', 'evaluation', 'assessment', 'comparison'
+    ],
+    'human_subjects': [
+        'human', 'patient', 'subject', 'participant', 'individual',
+        'people', 'person', 'clinical', 'children', 'adults'
+    ]
+}
+
+# Terms that strongly indicate veterinary focus (should be excluded)
+STRONG_VETERINARY_INDICATORS = [
+    'veterinary medicine', 'animal medicine', 'pet therapy', 'animal welfare',
+    'companion animal', 'small animal practice', 'large animal',
+    'animal nutrition', 'pet food', 'animal diet', 'livestock management',
+    'zoo medicine', 'wildlife medicine', 'animal behavior'
+]
+
+# Terms that strongly indicate human medical focus
+STRONG_HUMAN_INDICATORS = [
+    'human allergy', 'patient management', 'clinical practice',
+    'human exposure', 'occupational allergy', 'environmental allergy',
+    'allergic disease', 'immunotherapy', 'human immunology'
+]
+
+def get_enhanced_context_window(text: str, keyword: str, window_size: int = 150) -> str:
+    """
+    Extract a larger, more meaningful context window around a keyword.
+    """
+    if not text or not keyword:
+        return ""
+    
+    text_lower = text.lower()
+    keyword_lower = keyword.lower()
+    
+    # Find all occurrences of the keyword
+    start_pos = text_lower.find(keyword_lower)
+    if start_pos == -1:
+        return ""
+    
+    # Extract context window
+    context_start = max(0, start_pos - window_size)
+    context_end = min(len(text), start_pos + len(keyword) + window_size)
+    
+    return text[context_start:context_end].strip()
+
+def analyze_animal_mention_context(text: str, animal_keyword: str) -> Dict[str, any]:
+    """
+    Analyze the context of an animal mention to determine if it's relevant to human allergies.
+    """
+    context_window = get_enhanced_context_window(text, animal_keyword, window_size=200)
+    context_lower = context_window.lower()
+    
+    analysis = {
+        'context_type': 'unknown',
+        'is_human_relevant': False,
+        'confidence': 0.0,
+        'reasoning': [],
+        'context_snippet': context_window[:100] + "..." if len(context_window) > 100 else context_window
+    }
+    
+    # Check for strong human medical indicators
+    human_indicators_found = []
+    for category, terms in HUMAN_ALLERGY_CONTEXTS.items():
+        found_terms = [term for term in terms if term in context_lower]
+        if found_terms:
+            human_indicators_found.extend([(category, term) for term in found_terms])
+    
+    # Check for strong veterinary indicators
+    vet_indicators_found = [term for term in STRONG_VETERINARY_INDICATORS if term in context_lower]
+    
+    # Check for strong human indicators
+    strong_human_found = [term for term in STRONG_HUMAN_INDICATORS if term in context_lower]
+    
+    # Scoring logic
+    human_score = 0
+    vet_score = 0
+    
+    # Strong indicators carry more weight
+    human_score += len(strong_human_found) * 10
+    vet_score += len(vet_indicators_found) * 15
+    
+    # Category-based scoring
+    allergen_terms = len([term for cat, term in human_indicators_found if cat == 'allergen_sources'])
+    medical_terms = len([term for cat, term in human_indicators_found if cat == 'medical_conditions'])
+    research_terms = len([term for cat, term in human_indicators_found if cat == 'research_terms'])
+    human_subject_terms = len([term for cat, term in human_indicators_found if cat == 'human_subjects'])
+    
+    # Allergen context is highly relevant
+    if allergen_terms > 0:
+        human_score += allergen_terms * 8
+        analysis['reasoning'].append(f"Found {allergen_terms} allergen-related terms")
+    
+    # Medical condition context is very relevant
+    if medical_terms > 0:
+        human_score += medical_terms * 6
+        analysis['reasoning'].append(f"Found {medical_terms} medical condition terms")
+    
+    # Research context with human subjects is relevant
+    if research_terms > 0 and human_subject_terms > 0:
+        human_score += (research_terms + human_subject_terms) * 4
+        analysis['reasoning'].append(f"Found research context with human subjects")
+    elif research_terms > 0:
+        human_score += research_terms * 2
+        analysis['reasoning'].append(f"Found research context")
+    
+    # Human subjects mentioned
+    if human_subject_terms > 0:
+        human_score += human_subject_terms * 5
+        analysis['reasoning'].append(f"Found {human_subject_terms} human subject terms")
+    
+    # Special patterns for allergy research
+    allergy_patterns = [
+        f"{animal_keyword} allergy", f"{animal_keyword} allergen", 
+        f"{animal_keyword} dander", f"{animal_keyword} exposure",
+        f"allergic to {animal_keyword}", f"{animal_keyword}-induced"
+    ]
+    
+    pattern_matches = sum(1 for pattern in allergy_patterns if pattern in context_lower)
+    if pattern_matches > 0:
+        human_score += pattern_matches * 12
+        analysis['reasoning'].append(f"Found {pattern_matches} specific allergy patterns")
+    
+    # Calculate final relevance
+    total_score = human_score - vet_score
+    analysis['human_score'] = human_score
+    analysis['vet_score'] = vet_score
+    analysis['total_score'] = total_score
+    
+    if total_score >= 10:
+        analysis['is_human_relevant'] = True
+        analysis['confidence'] = min(0.95, 0.5 + (total_score / 50))
+        analysis['context_type'] = 'human_allergy_relevant'
+    elif total_score >= 5:
+        analysis['is_human_relevant'] = True
+        analysis['confidence'] = 0.6
+        analysis['context_type'] = 'likely_human_relevant'
+    elif total_score <= -10:
+        analysis['is_human_relevant'] = False
+        analysis['confidence'] = 0.9
+        analysis['context_type'] = 'veterinary_focused'
+    else:
+        analysis['is_human_relevant'] = False
+        analysis['confidence'] = 0.7
+        analysis['context_type'] = 'unclear_context'
+    
+    return analysis
+
+def should_include_article_for_human_allergies(title: str, abstract: str, source: str = "PubMed") -> Dict[str, any]:
+    """
+    Determine if an article should be included based on enhanced veterinary filtering.
+    """
+    decision = {
+        'include': True,
+        'confidence': 0.8,
+        'reasoning': [],
+        'veterinary_analysis': {},
+        'overall_assessment': 'human_relevant'
+    }
+    
+    # Combine title and abstract for analysis
+    full_text = f"{title or ''} {abstract or ''}"
+    title_lower = (title or '').lower()
+    abstract_lower = (abstract or '').lower()
+    
+    # Check for obvious veterinary exclusions first
+    strong_vet_found = [term for term in STRONG_VETERINARY_INDICATORS if term in full_text.lower()]
+    if strong_vet_found:
+        decision['include'] = False
+        decision['confidence'] = 0.95
+        decision['reasoning'].append(f"Contains strong veterinary indicators: {strong_vet_found}")
+        decision['overall_assessment'] = 'veterinary_focused'
+        return decision
+    
+    # Check for strong human medical indicators
+    strong_human_found = [term for term in STRONG_HUMAN_INDICATORS if term in full_text.lower()]
+    if strong_human_found:
+        decision['include'] = True
+        decision['confidence'] = 0.95
+        decision['reasoning'].append(f"Contains strong human medical indicators: {strong_human_found}")
+        return decision
+    
+    # Find all veterinary keywords
+    all_vet_keywords = []
+    for category, keywords in VETERINARY_KEYWORDS.items():
+        all_vet_keywords.extend(keywords)
+    
+    found_vet_keywords = [kw for kw in all_vet_keywords if kw in full_text.lower()]
+    
+    if not found_vet_keywords:
+        decision['reasoning'].append("No veterinary keywords found")
+        return decision
+    
+    # Analyze each veterinary keyword in context
+    human_relevant_count = 0
+    total_analyses = 0
+    
+    for keyword in found_vet_keywords:
+        # Analyze in title
+        if keyword in title_lower:
+            title_analysis = analyze_animal_mention_context(title, keyword)
+            decision['veterinary_analysis'][f"{keyword}_title"] = title_analysis
+            total_analyses += 1
+            if title_analysis['is_human_relevant']:
+                human_relevant_count += 2  # Title context weighted more heavily
+        
+        # Analyze in abstract
+        if keyword in abstract_lower:
+            abstract_analysis = analyze_animal_mention_context(abstract, keyword)
+            decision['veterinary_analysis'][f"{keyword}_abstract"] = abstract_analysis
+            total_analyses += 1
+            if abstract_analysis['is_human_relevant']:
+                human_relevant_count += 1
+    
+    # Make inclusion decision based on analysis
+    if total_analyses == 0:
+        decision['reasoning'].append("No veterinary keywords found in context analysis")
+    elif human_relevant_count == 0:
+        decision['include'] = False
+        decision['confidence'] = 0.85
+        decision['reasoning'].append("All veterinary keyword mentions appear to be non-human relevant")
+        decision['overall_assessment'] = 'likely_veterinary'
+    elif human_relevant_count >= total_analyses * 0.7:
+        decision['include'] = True
+        decision['confidence'] = 0.9
+        decision['reasoning'].append(f"Most veterinary mentions ({human_relevant_count}/{total_analyses}) are human-allergy relevant")
+    else:
+        decision['include'] = True
+        decision['confidence'] = 0.6
+        decision['reasoning'].append(f"Mixed context: {human_relevant_count}/{total_analyses} mentions are human-relevant")
+        decision['overall_assessment'] = 'mixed_context'
+    
+    return decision
+
+def simplify_diagnosis(diagnosis):
+    """
+    Simplify diagnosis strings by removing extraneous text like uncertainty statements.
+    """
+    try:
+        for marker in ["Uncertainty", "uncertainty", "Further review", "further review"]:
+            if marker in diagnosis:
+                diagnosis = diagnosis.split(marker)[0].strip()
+        diagnosis = diagnosis.rstrip('.,;').strip()
+        return diagnosis
+    except Exception as e:
+        logger.error(f"Error simplifying diagnosis '{diagnosis}': {str(e)}")
+        return diagnosis
+
+def simplify_search_term(condition):
+    """
+    Simplify overly specific diagnosis terms for broader search results.
+    Returns a list of terms to try, starting with the original, then a simplified version.
+    """
+    terms = [condition]
+    # Remove qualifiers like "likely due to" and specific drugs, but prioritize a single simplified term
+    simplified = condition.lower()
+    qualifiers = ["likely due to", "due to", "caused by", "though less likely given the temporal relationship with meloxicam use"]
+    for qualifier in qualifiers:
+        if qualifier in simplified:
+            base_term = simplified.split(qualifier)[0].strip()
+            terms.append(base_term)
+            break
+    return terms[:2]  # Limit to 2 terms to reduce API calls
+
+def query_semantic_scholar(condition, retmax=2, timeout=3, rate_limit_hit=None):
+    """
+    Query Semantic Scholar for articles related to the given condition, focusing on human allergies.
+    Returns a list of insights with title, summary, URL, and relevance info.
+    """
+    try:
+        api_url = "https://api.semanticscholar.org/graph/v1/paper/search"
+        
+        # Use simplified search without veterinary exclusions to let our improved filtering handle it
+        query = f"{condition}"
+        params = {
+            "query": query,
+            "limit": retmax,
+            "fields": "title,abstract,url,year,authors,venue,citationCount"
+        }
+        logger.debug(f"Semantic Scholar query for '{condition}': {query}")
+        
+        headers = {}
+        
+        max_retries = 1
+        retry_delay = 5
+        for attempt in range(max_retries):
+            try:
+                if attempt > 0:
+                    wait_time = retry_delay
+                    logger.warning(f"Rate limit hit on Semantic Scholar API for condition '{condition}'. Retrying after {wait_time} seconds (Attempt {attempt + 1}/{max_retries})")
+                    time.sleep(wait_time)
+                logger.debug(f"Sending Semantic Scholar request for condition '{condition}' with params: {params} (Attempt {attempt + 1}/{max_retries})")
+                response = requests.get(api_url, params=params, headers=headers, timeout=timeout)
+                response.raise_for_status()
+                try:
+                    results = response.json()
+                except json.JSONDecodeError as e:
+                    logger.error(f"Failed to parse Semantic Scholar JSON response for condition {condition}: {str(e)}")
+                    return []
+                break
+            except HTTPError as e:
+                if e.response.status_code == 429:
+                    if attempt == max_retries - 1:
+                        logger.error(f"Error querying Semantic Scholar for condition {condition}: {str(e)}")
+                        if rate_limit_hit is not None:
+                            rate_limit_hit['semantic_scholar'] = True
+                        return []
+                    continue
+                else:
+                    logger.error(f"Error querying Semantic Scholar for condition {condition}: {str(e)}")
+                    return []
+            except requests.exceptions.Timeout:
+                logger.error(f"Timeout querying Semantic Scholar for condition {condition} after {timeout} seconds")
+                return []
+            except Exception as e:
+                logger.error(f"Unexpected error querying Semantic Scholar for condition {condition}: {str(e)}")
+                return []
+        else:
+            logger.error(f"Failed to query Semantic Scholar for condition {condition} after {max_retries} attempts due to rate limiting")
+            if rate_limit_hit is not None:
+                rate_limit_hit['semantic_scholar'] = True
+            return []
+        
+        insights = []
+        
+        if "data" in results:
+            for paper in results["data"]:
+                try:
+                    title_text = paper.get("title", "N/A")
+                    abstract_text = paper.get("abstract", "N/A")
+                    url = paper.get("url", "#")
+                    year = paper.get("year", "N/A")
+                    logger.debug(f"Semantic Scholar article title: {title_text}")
+                    logger.debug(f"Semantic Scholar article abstract: {abstract_text}")
+                    
+                    # Apply improved filtering
+                    inclusion_decision = should_include_article_for_human_allergies(
+                        title_text, abstract_text, source="Semantic Scholar"
+                    )
+                    
+                    if not inclusion_decision['include']:
+                        safe_title = str(title_text).replace('\n', ' ').replace('\r', ' ')
+                        logger.info(f"Excluding Semantic Scholar article '{safe_title}': {'; '.join(inclusion_decision['reasoning'])}")
+                        continue
+                    
+                    safe_title = str(title_text).replace('\n', ' ').replace('\r', ' ')
+                    logger.info(f"Including Semantic Scholar article '{safe_title}' (confidence: {inclusion_decision['confidence']:.2f}): {'; '.join(inclusion_decision['reasoning'])}")
+                    
+                    authors = []
+                    if "authors" in paper:
+                        authors = [author.get("name", "") for author in paper["authors"]]
+                    authors_text = ", ".join(authors) if authors else "N/A"
+                    logger.debug(f"Semantic Scholar article authors: {authors_text}")
+                    
+                    citation_count = paper.get("citationCount", 0)
+                    logger.debug(f"Semantic Scholar citation count: {citation_count}")
+                    
+                    relevance_score = 0.0
+                    condition_words = condition.lower().split()
+                    logger.debug(f"Condition words for matching: {condition_words}")
+
+                    # Enhanced relevance scoring with keyword matching
+                    title_lower = title_text.lower() if title_text else ""
+                    abstract_lower = abstract_text.lower() if abstract_text else ""
+                    
+                    title_matches = sum(1 for word in condition_words if word in title_lower)
+                    if title_matches > 0:
+                        title_weight = (title_matches / len(condition_words)) * 0.5
+                        relevance_score += title_weight
+                        logger.debug(f"Semantic Scholar title partial matches for '{condition}': {title_matches}/{len(condition_words)}. Added {title_weight:.2f} to relevance score")
+                    else:
+                        logger.debug(f"No title partial matches for '{condition}' in '{title_lower}'")
+                        relevance_score -= 10.0  # Penalize if no title match
+
+                    abstract_matches = sum(1 for word in condition_words if word in abstract_lower)
+                    if abstract_matches > 0:
+                        abstract_weight = (abstract_matches / len(condition_words)) * 0.3
+                        relevance_score += abstract_weight
+                        logger.debug(f"Semantic Scholar abstract partial matches for '{condition}': {abstract_matches}/{len(condition_words)}. Added {abstract_weight:.2f} to relevance score")
+                    else:
+                        logger.debug(f"No abstract partial matches for '{condition}' in '{abstract_lower}'")
+                        relevance_score -= 5.0  # Penalize if no abstract match
+
+                    citation_weight = min(citation_count / 200, 0.3)
+                    relevance_score += citation_weight
+                    logger.debug(f"Semantic Scholar citation weight for '{condition}' (citation_count={citation_count}): Added {citation_weight} to relevance score")
+
+                    # Boost relevance for high-confidence human allergy articles
+                    if inclusion_decision['confidence'] > 0.8:
+                        relevance_score += 0.1
+                        logger.debug(f"High-confidence human allergy article, boosting relevance score")
+
+                    if relevance_score <= 0.0:
+                        relevance_score = 5.0
+                        logger.debug(f"Low relevance match, assigning minimum relevance score of 5.0")
+
+                    relevance_score = min(relevance_score * 100, 100)
+                    logger.debug(f"Semantic Scholar final relevance score for '{condition}': {relevance_score}")
+
+                    confidence = "Recommended"
+                    if relevance_score > 70:
+                        confidence = "Highly Recommended"
+                    elif relevance_score > 40:
+                        confidence = "Recommended"
+                    else:
+                        confidence = "Relevant"
+                    logger.debug(f"Semantic Scholar confidence for '{condition}': {confidence}")
+                    
+                    relevance_tag = f"Relevant to {condition.lower()}"
+                    logger.debug(f"Semantic Scholar relevance tag: {relevance_tag}")
+
+                    insight = {
+                        "title": title_text,
+                        "summary": abstract_text,
+                        "url": url,
+                        "authors": authors_text,
+                        "year": year,
+                        "citation_count": citation_count,
+                        "source": "Semantic Scholar",
+                        "confidence": confidence,
+                        "relevance_score": f"{relevance_score:.1f}%",
+                        "relevance_tag": relevance_tag,
+                        "raw_relevance_score": relevance_score,
+                        "inclusion_confidence": inclusion_decision['confidence']
+                    }
+                    insights.append(insight)
+                    logger.debug(f"Semantic Scholar insight for condition '{condition}': {insight}")
+                except Exception as e:
+                    logger.error(f"Error processing Semantic Scholar article for condition {condition}: {str(e)}")
+                    continue
+        
+        logger.info(f"Fetched {len(insights)} insights from Semantic Scholar for condition: {condition}")
+        return insights
+        
+    except Exception as e:
+        logger.error(f"Error querying Semantic Scholar for condition {condition}: {str(e)}")
+        return []
+
+def query_pubmed(condition, retmax=2, timeout=3, rate_limit_hit=None, max_attempts=2, max_rate_limit_hits=2, skip_guidelines=False):
+    """
+    Query PubMed for articles related to the given condition, focusing on human allergies.
+    Returns a list of insights with title, summary, PubMed ID, URL, confidence, relevance score, and relevance tag.
+    """
+    # Check rate limit hits for this specific diagnosis
+    diagnosis_key = f"pubmed_hits_{condition}"
+    rate_limit_hits = rate_limit_hit.get(diagnosis_key, 0)
+    if rate_limit_hits >= max_rate_limit_hits:
+        logger.warning(f"Circuit breaker triggered: Skipping PubMed query for condition '{condition}' due to excessive rate limit hits ({rate_limit_hits}/{max_rate_limit_hits})")
+        rate_limit_hit[diagnosis_key] = rate_limit_hits
+        return []
+
+    search_terms = simplify_search_term(condition)
+    insights = []
+    for search_term in search_terms:
+        logger.debug(f"Attempting PubMed query with term: '{search_term}'")
+        attempt_count = 0
+        while attempt_count < max_attempts:
+            try:
+                search_url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi"
+                # Use simplified search without veterinary exclusions to let our improved filtering handle it
+                search_params = {
+                    "db": "pubmed",
+                    "term": search_term,
+                    "retmax": retmax,
+                    "sort": "relevance",
+                    "retmode": "json"
+                }
+                logger.debug(f"PubMed search term: '{search_term}'")
+                max_retries = 1  # Reduced to 1 retry to minimize rate limit hits
+                retry_delay = 10  # Reduced retry delay
+                for attempt in range(max_retries):
+                    try:
+                        if attempt > 0:
+                            wait_time = retry_delay
+                            logger.warning(f"Rate limit hit on PubMed API for condition '{search_term}'. Retrying after {wait_time} seconds (Attempt {attempt + 1}/{max_retries})")
+                            time.sleep(wait_time)
+                        logger.debug(f"Sending PubMed search request for condition '{search_term}' with params: {search_params} (Attempt {attempt + 1}/{max_retries})")
+                        search_response = requests.get(search_url, params=search_params, timeout=timeout)
+                        search_response.raise_for_status()
+                        search_data = search_response.json()
+                        break
+                    except HTTPError as e:
+                        if e.response.status_code == 429:
+                            rate_limit_hits += 1
+                            rate_limit_hit[diagnosis_key] = rate_limit_hits
+                            if rate_limit_hits >= max_rate_limit_hits:
+                                logger.warning(f"Circuit breaker triggered: Skipping PubMed query for condition '{condition}' due to excessive rate limit hits ({rate_limit_hits}/{max_rate_limit_hits})")
+                                rate_limit_hit['skip_guidelines'] = True  # Skip clinical guidelines for this diagnosis
+                                return []
+                            if attempt == max_retries - 1:
+                                logger.error(f"Error querying PubMed for condition {search_term}: {str(e)}")
+                                return []  # Skip retries to save time
+                            continue
+                        else:
+                            logger.error(f"Error querying PubMed for condition {search_term}: {str(e)}")
+                            return []
+                    except requests.exceptions.Timeout:
+                        logger.error(f"Timeout querying PubMed for condition {search_term} after {timeout} seconds")
+                        return []
+                    except Exception as e:
+                        logger.error(f"Unexpected error querying PubMed for condition {search_term}: {str(e)}")
+                        return []
+                else:
+                    logger.error(f"Failed to query PubMed for condition {search_term} after {max_retries} retries due to rate limiting")
+                    return []
+
+                id_list = search_data.get("esearchresult", {}).get("idlist", [])
+                logger.debug(f"PubMed returned article IDs for condition '{search_term}': {id_list}")
+
+                if not id_list:
+                    logger.warning(f"No PubMed articles found for condition: {search_term}")
+                    continue  # Try the next search term
+
+                fetch_url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi"
+                fetch_params = {
+                    "db": "pubmed",
+                    "id": ",".join(id_list),
+                    "retmode": "xml"
+                }
+                try:
+                    fetch_response = requests.get(fetch_url, params=fetch_params, timeout=timeout)
+                    fetch_response.raise_for_status()
+                except Exception as e:
+                    logger.error(f"Failed to fetch PubMed articles for condition {search_term}: {str(e)}")
+                    return []
+
+                try:
+                    root = ET.fromstring(fetch_response.content)
+                except ET.ParseError as e:
+                    logger.error(f"Failed to parse PubMed XML response for condition {search_term}: {str(e)}")
+                    return []
+                insights = []
+
+                for article in root.findall(".//PubmedArticle"):
+                    try:
+                        title = article.find(".//ArticleTitle")
+                        title_text = title.text if title is not None else "N/A"
+                        logger.debug(f"PubMed article title: {title_text}")
+
+                        abstract = article.find(".//Abstract/AbstractText")
+                        abstract_text = abstract.text if abstract is not None else "N/A"
+                        logger.debug(f"PubMed article abstract: {abstract_text}")
+
+                        # Apply improved filtering
+                        inclusion_decision = should_include_article_for_human_allergies(
+                            title_text, abstract_text, source="PubMed"
+                        )
+                        
+                        if not inclusion_decision['include']:
+                            safe_title = str(title_text).replace('\n', ' ').replace('\r', ' ')
+                            logger.info(f"Excluding PubMed article '{safe_title}': {'; '.join(inclusion_decision['reasoning'])}")
+                            continue
+                        
+                        # Log inclusion with reasoning
+                        safe_title = str(title_text).replace('\n', ' ').replace('\r', ' ')
+                        logger.info(f"Including PubMed article '{safe_title}' (confidence: {inclusion_decision['confidence']:.2f}): {'; '.join(inclusion_decision['reasoning'])}")
+                        
+                        pubmed_id = article.find(".//PMID")
+                        pubmed_id_text = pubmed_id.text if pubmed_id is not None else "N/A"
+
+                        url = f"https://pubmed.ncbi.nlm.nih.gov/{pubmed_id_text}/"
+
+                        authors = []
+                        author_list = article.findall(".//AuthorList/Author")
+                        for author in author_list:
+                            last_name = author.find("LastName")
+                            fore_name = author.find("ForeName")
+                            if last_name is not None and last_name.text:
+                                if fore_name is not None and fore_name.text:
+                                    authors.append(f"{fore_name.text} {last_name.text}")
+                                else:
+                                    authors.append(last_name.text)
+                        authors_text = ", ".join(authors) if authors else "N/A"
+                        logger.debug(f"PubMed article authors: {authors_text}")
+
+                        pub_date = article.find(".//PubDate/Year")
+                        year = pub_date.text if pub_date is not None else "N/A"
+                        logger.debug(f"PubMed article year: {year}")
+
+                        relevance_score = 0.0
+                        condition_words = condition.lower().split()
+                        logger.debug(f"Condition words for matching: {condition_words}")
+
+                        # Enhanced relevance scoring with keyword matching
+                        title_lower = title_text.lower() if title_text else ""
+                        abstract_lower = abstract_text.lower() if abstract_text else ""
+                        
+                        title_matches = sum(1 for word in condition_words if word in title_lower)
+                        if title_matches > 0:
+                            title_weight = (title_matches / len(condition_words)) * 0.5
+                            relevance_score += title_weight
+                            logger.debug(f"PubMed title partial matches for '{condition}': {title_matches}/{len(condition_words)}. Added {title_weight:.2f} to relevance score")
+                        else:
+                            logger.debug(f"No title partial matches for '{condition}' in '{title_lower}'")
+                            relevance_score -= 10.0  # Penalize if no title match
+
+                        abstract_matches = sum(1 for word in condition_words if word in abstract_lower)
+                        if abstract_matches > 0:
+                            abstract_weight = (abstract_matches / len(condition_words)) * 0.3
+                            relevance_score += abstract_weight
+                            logger.debug(f"PubMed abstract partial matches for '{condition}': {abstract_matches}/{len(condition_words)}. Added {abstract_weight:.2f} to relevance score")
+                        else:
+                            logger.debug(f"No abstract partial matches for '{condition}' in '{abstract_lower}'")
+                            relevance_score -= 5.0  # Penalize if no abstract match
+
+                        # Boost relevance for high-confidence human allergy articles
+                        if inclusion_decision['confidence'] > 0.8:
+                            relevance_score += 0.1
+                            logger.debug(f"High-confidence human allergy article, boosting relevance score")
+
+                        if relevance_score <= 0.0:
+                            relevance_score = 5.0
+                            logger.debug(f"Low relevance match, assigning minimum relevance score of 5.0")
+
+                        relevance_score = min(relevance_score * 100, 100)
+                        logger.debug(f"PubMed final relevance score for '{condition}': {relevance_score}")
+
+                        confidence = "Recommended"
+                        if relevance_score > 70:
+                            confidence = "Highly Recommended"
+                        elif relevance_score > 40:
+                            confidence = "Recommended"
+                        else:
+                            confidence = "Relevant"
+                        logger.debug(f"PubMed confidence for '{condition}': {confidence}")
+
+                        relevance_tag = f"Relevant to {condition.lower()}"
+                        logger.debug(f"PubMed relevance tag: {relevance_tag}")
+
+                        insight = {
+                            "title": title_text,
+                            "summary": abstract_text,
+                            "pubmed_id": pubmed_id_text,
+                            "url": url,
+                            "confidence": confidence,
+                            "relevance_score": f"{relevance_score:.1f}%",
+                            "relevance_tag": relevance_tag,
+                            "source": "PubMed",
+                            "authors": authors_text,
+                            "year": year,
+                            "raw_relevance_score": relevance_score,
+                            "inclusion_confidence": inclusion_decision['confidence']
+                        }
+                        insights.append(insight)
+                        logger.debug(f"PubMed insight for condition '{condition}': {insight}")
+                    except Exception as e:
+                        logger.error(f"Error processing PubMed article for condition {condition}: {str(e)}")
+                        continue
+
+                logger.info(f"Fetched {len(insights)} insights from PubMed for condition: {condition} with search term '{search_term}'")
+                if insights:  # If we found insights, stop trying additional search terms
+                    return insights
+
+            except Exception as e:
+                logger.error(f"Error querying PubMed for condition {condition} after {max_attempts} attempts: {str(e)}")
+                return []
+
+        logger.warning(f"No PubMed articles found for condition '{condition}' after trying all search terms: {search_terms}")
+        return insights
+
+def query_clinical_guidelines(condition, retmax=1, timeout=3, rate_limit_hit=None, max_attempts=2, max_rate_limit_hits=2, skip_guidelines=False):
+    """
+    Query for clinical guidelines related to the given condition, focusing on human allergies.
+    Returns a list of guidelines with title, source, URL, and relevance info.
+    """
+    if skip_guidelines or (rate_limit_hit and rate_limit_hit.get('skip_guidelines')):
+        logger.warning(f"Skipping clinical guidelines query for condition '{condition}' due to previous PubMed rate limit hit")
+        return []
+
+    # Check rate limit hits for this specific diagnosis
+    diagnosis_key = f"pubmed_hits_{condition}"
+    rate_limit_hits = rate_limit_hit.get(diagnosis_key, 0)
+    if rate_limit_hits >= max_rate_limit_hits:
+        logger.warning(f"Circuit breaker triggered: Skipping clinical guidelines query for condition '{condition}' due to excessive rate limit hits ({rate_limit_hits}/{max_rate_limit_hits})")
+        rate_limit_hit[diagnosis_key] = rate_limit_hits
+        return []
+
+    search_terms = simplify_search_term(condition)
+    guidelines = []
+    for search_term in search_terms:
+        logger.debug(f"Attempting clinical guidelines query with term: '{search_term}'")
+        attempt_count = 0
+        while attempt_count < max_attempts:
+            try:
+                search_url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi"
+                # Use simplified search without veterinary exclusions
+                term_with_guidelines = f"{search_term} (clinical practice guideline OR consensus statement)"
+                search_params = {
+                    "db": "pubmed",
+                    "term": term_with_guidelines,
+                    "retmax": retmax,
+                    "sort": "relevance",
+                    "retmode": "json"
+                }
+                logger.debug(f"Clinical guidelines search term: '{term_with_guidelines}'")
+                
+                max_retries = 1  # Reduced to 1 retry to minimize rate limit hits
+                retry_delay = 10  # Reduced retry delay
+                for attempt in range(max_retries):
+                    try:
+                        if attempt > 0:
+                            wait_time = retry_delay
+                            logger.warning(f"Rate limit hit on PubMed API (guidelines) for condition '{search_term}'. Retrying after {wait_time} seconds (Attempt {attempt + 1}/{max_retries})")
+                            time.sleep(wait_time)
+                        logger.debug(f"Sending guideline search request for condition '{search_term}' with params: {search_params} (Attempt {attempt + 1}/{max_retries})")
+                        search_response = requests.get(search_url, params=search_params, timeout=timeout)
+                        search_response.raise_for_status()
+                        search_data = search_response.json()
+                        break
+                    except HTTPError as e:
+                        if e.response.status_code == 429:
+                            rate_limit_hits += 1
+                            rate_limit_hit[diagnosis_key] = rate_limit_hits
+                            if rate_limit_hits >= max_rate_limit_hits:
+                                logger.warning(f"Circuit breaker triggered: Skipping clinical guidelines query for condition '{condition}' due to excessive rate limit hits ({rate_limit_hits}/{max_rate_limit_hits})")
+                                rate_limit_hit['skip_guidelines'] = True  # Skip future guideline queries for this diagnosis
+                                return []
+                            if attempt == max_retries - 1:
+                                logger.error(f"Error querying clinical guidelines for condition {search_term}: {str(e)}")
+                                return []  # Skip retries to save time
+                            continue
+                        else:
+                            logger.error(f"Error querying clinical guidelines for condition {search_term}: {str(e)}")
+                            return []
+                    except requests.exceptions.Timeout:
+                        logger.error(f"Timeout querying clinical guidelines for condition {search_term} after {timeout} seconds")
+                        return []
+                    except Exception as e:
+                        logger.error(f"Unexpected error querying clinical guidelines for condition {search_term}: {str(e)}")
+                        return []
+                else:
+                    logger.error(f"Failed to query clinical guidelines for condition {search_term} after {max_retries} retries due to rate limiting")
+                    return []
+
+                id_list = search_data.get("esearchresult", {}).get("idlist", [])
+                logger.debug(f"Clinical guideline search returned article IDs for condition '{search_term}': {id_list}")
+
+                if not id_list:
+                    logger.warning(f"No clinical guidelines found for condition: {search_term}")
+                    continue  # Try the next search term
+
+                fetch_url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi"
+                fetch_params = {
+                    "db": "pubmed",
+                    "id": ",".join(id_list),
+                    "retmode": "xml"
+                }
+                try:
+                    fetch_response = requests.get(fetch_url, params=fetch_params, timeout=timeout)
+                    fetch_response.raise_for_status()
+                except Exception as e:
+                    logger.error(f"Failed to fetch clinical guidelines for condition {search_term}: {str(e)}")
+                    return []
+
+                try:
+                    root = ET.fromstring(fetch_response.content)
+                except ET.ParseError as e:
+                    logger.error(f"Failed to parse PubMed XML response for guidelines on condition {search_term}: {str(e)}")
+                    return []
+                guidelines = []
+
+                for article in root.findall(".//PubmedArticle"):
+                    try:
+                        title = article.find(".//ArticleTitle")
+                        title_text = title.text if title is not None else "N/A"
+                        
+                        abstract = article.find(".//Abstract/AbstractText")
+                        abstract_text = abstract.text if abstract is not None else "N/A"
+                        
+                        # Apply improved filtering - guidelines have a more lenient standard
+                        inclusion_decision = should_include_article_for_human_allergies(
+                            title_text, abstract_text, source="Clinical Guideline"
+                        )
+                        
+                        # For guidelines, we're more permissive if they mention animals in the context of allergens
+                        if not inclusion_decision['include'] and inclusion_decision['overall_assessment'] != 'veterinary_focused':
+                            # Check if this might be a guideline about human allergies that mentions animal allergens
+                            title_lower = title_text.lower() if title_text else ""
+                            abstract_lower = abstract_text.lower() if abstract_text else ""
+                            
+                            # Look for human allergy indicators in guidelines
+                            human_allergy_terms = ['allergy', 'allergic', 'rhinitis', 'asthma', 'dermatitis', 'immunotherapy']
+                            guideline_terms = ['guideline', 'consensus', 'practice parameter', 'recommendation']
+                            
+                            has_human_allergy = any(term in title_lower or term in abstract_lower for term in human_allergy_terms)
+                            is_guideline = any(term in title_lower or term in abstract_lower for term in guideline_terms)
+                            
+                            if has_human_allergy and is_guideline:
+                                inclusion_decision['include'] = True
+                                inclusion_decision['reasoning'].append("Clinical guideline about human allergies")
+                                logger.info(f"Including clinical guideline with human allergy focus: '{title_text}'")
+                        
+                        if not inclusion_decision['include']:
+                            safe_title = str(title_text).replace('\n', ' ').replace('\r', ' ')
+                            logger.info(f"Excluding clinical guideline '{safe_title}': {'; '.join(inclusion_decision['reasoning'])}")
+                            continue
+                        
+                        pubmed_id = article.find(".//PMID")
+                        pubmed_id_text = pubmed_id.text if pubmed_id is not None else "N/A"
+                        
+                        url = f"https://pubmed.ncbi.nlm.nih.gov/{pubmed_id_text}/"
+                        
+                        authors = []
+                        author_list = article.findall(".//AuthorList/Author")
+                        for author in author_list:
+                            last_name = author.find("LastName")
+                            fore_name = author.find("ForeName")
+                            if last_name is not None and last_name.text:
+                                if fore_name is not None and fore_name.text:
+                                    authors.append(f"{fore_name.text} {last_name.text}")
+                                else:
+                                    authors.append(last_name.text)
+                        
+                        journal_name = article.find(".//Journal/Title")
+                        organization = journal_name.text if journal_name is not None else "Medical Journal"
+                        
+                        pub_date = article.find(".//PubDate/Year")
+                        year = pub_date.text if pub_date is not None else "N/A"
+                        
+                        is_guideline = False
+                        guideline_terms = ["guideline", "consensus", "practice parameter", "recommendation", "position statement"]
+                        
+                        title_lower = title_text.lower() if title_text else ""
+                        abstract_lower = abstract_text.lower() if abstract_text else ""
+                        
+                        for term in guideline_terms:
+                            if term in title_lower:
+                                is_guideline = True
+                                break
+                        
+                        if not is_guideline:
+                            for term in guideline_terms:
+                                if term in abstract_lower:
+                                    is_guideline = True
+                                    break
+                        
+                        if is_guideline:
+                            summary = abstract_text[:500] + "..." if len(abstract_text) > 500 else abstract_text
+                            
+                            # Enhanced relevance scoring for guidelines
+                            relevance_score = 95.0  # Base score for guidelines
+                            condition_words = condition.lower().split()
+                            title_matches = sum(1 for word in condition_words if word in title_lower)
+                            if title_matches == 0:
+                                relevance_score -= 20.0  # Penalize if title doesn't match diagnosis
+                                logger.debug(f"Guideline title '{title_text}' does not match condition '{condition}', reducing relevance score by 20")
+                            abstract_matches = sum(1 for word in condition_words if word in abstract_lower)
+                            if abstract_matches == 0:
+                                relevance_score -= 10.0  # Penalize if abstract doesn't match diagnosis
+                                logger.debug(f"Guideline abstract for '{title_text}' does not match condition '{condition}', reducing relevance score by 10")
+
+                            guideline = {
+                                "title": title_text,
+                                "summary": summary,
+                                "url": url,
+                                "source": organization,
+                                "authors": ", ".join(authors) if authors else "N/A",
+                                "year": year,
+                                "content_type": "Clinical Guideline",
+                                "relevance_tag": f"Clinical Practice Guideline for {condition}",
+                                "confidence": "Highly Recommended" if relevance_score > 70 else "Recommended",
+                                "relevance_score": f"{relevance_score:.1f}%",
+                                "raw_relevance_score": relevance_score,
+                                "inclusion_confidence": inclusion_decision['confidence']
+                            }
+                            
+                            guidelines.append(guideline)
+                            logger.debug(f"Found clinical guideline for '{condition}': {title_text}")
+                    except Exception as e:
+                        logger.error(f"Error processing clinical guideline article for condition {condition}: {str(e)}")
+                        continue
+                
+                logger.info(f"Fetched {len(guidelines)} clinical guidelines for condition: {condition} with search term '{search_term}'")
+                if guidelines:  # If we found guidelines, stop trying additional search terms
+                    return guidelines
+            
+            except Exception as e:
+                logger.error(f"Error querying clinical guidelines for condition {condition} after {max_attempts} attempts: {str(e)}")
+                return []
+
+        logger.warning(f"No clinical guidelines found for condition '{condition}' after trying all search terms: {search_terms}")
+        return guidelines
+
+# [Rest of your existing Flask routes and functions remain unchanged]
+
 @app.route('/api/transcribe-audio', methods=['POST'])
 def transcribe_audio():
     if 'audio' not in request.files:
@@ -962,7 +1835,7 @@ def transcribe_audio():
     audio_file = request.files['audio']
     email = request.form.get('email')
     tenant_id = request.form.get('tenantId', 'default_tenant')
-    tenant_id = validate_tenant_id(tenant_id, email)  # FIXED: Pass email parameter
+    tenant_id = validate_tenant_id(tenant_id, email)
 
     try:
         audio_key = f"audio/{tenant_id}/{datetime.now().isoformat()}_{audio_file.filename}"
@@ -1017,7 +1890,7 @@ def transcribe_audio():
 def create_patient():
     if request.method == 'OPTIONS':
         response = make_response()
-        response.headers.add("Access-Control-Allow-Origin", "https://medoramd.ai")
+        response.headers.add("Access-Control-Allow-Origin", "https://test.medoramd.ai")
         response.headers.add("Access-Control-Allow-Headers", "Content-Type")
         response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
         return response
@@ -1025,7 +1898,7 @@ def create_patient():
         data = request.get_json()
         email = data.get('email')
         tenant_id = data.get('tenantId', 'default_tenant')
-        tenant_id = validate_tenant_id(tenant_id, email)  # FIXED: Pass email parameter
+        tenant_id = validate_tenant_id(tenant_id, email)
         name = data.get('name')
         age = data.get('age')
         medical_history = data.get('medicalHistory', '')
@@ -1049,11 +1922,9 @@ def create_patient():
         logger.error(f'Error processing /api/create-patient request: {str(e)}')
         return jsonify({"success": False, "error": str(e)}), 500
 
-# Debug endpoint to check patients by tenant
 @app.route('/api/debug/patients', methods=['GET'])
 def debug_patients():
     try:
-        # List all patients with their tenantId
         all_patients = list(patients_collection.find({}, {"name": 1, "tenantId": 1}))
         result = []
         for patient in all_patients:
@@ -1063,14 +1934,13 @@ def debug_patients():
                 "tenantId": patient.get("tenantId", "MISSING")
             })
         
-        # Get total patients by tenant
         tenant_counts = {}
         for patient in result:
             tenant_id = patient.get("tenantId", "MISSING")
             tenant_counts[tenant_id] = tenant_counts.get(tenant_id, 0) + 1
         
         return jsonify({
-            "patients": result, 
+            "patients": result,
             "tenant_counts": tenant_counts,
             "total_patients": len(result)
         }), 200
@@ -1083,11 +1953,10 @@ def get_patients():
     try:
         email = request.args.get('email')
         tenant_id = request.args.get('tenantId', 'default_tenant')
-        tenant_id = validate_tenant_id(tenant_id, email)  # FIXED: Pass email parameter
+        tenant_id = validate_tenant_id(tenant_id, email)
         
         logger.info(f"Fetching patients for tenant_id: {tenant_id}")
         
-        # Find patients with exact match for this tenant
         patients = list(patients_collection.find({"tenantId": tenant_id}))
         
         logger.info(f"Found {len(patients)} patients for tenant {tenant_id}")
@@ -1114,7 +1983,7 @@ def get_patient_history():
     try:
         email = request.args.get('email')
         tenant_id = request.args.get('tenantId', 'default_tenant')
-        tenant_id = validate_tenant_id(tenant_id, email)  # FIXED: Pass email parameter
+        tenant_id = validate_tenant_id(tenant_id, email)
         patient_id = request.args.get('patientId')
 
         if not patient_id:
@@ -1136,13 +2005,12 @@ def start_visit():
     if request.method == 'OPTIONS':
         logger.info("Handling OPTIONS request for /api/visit/start")
         response = make_response()
-        response.headers.add("Access-Control-Allow-Origin", "https://medoramd.ai")
+        response.headers.add("Access-Control-Allow-Origin", "https://test.medoramd.ai")
         response.headers.add("Access-Control-Allow-Headers", "Content-Type")
         response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
         return response
     logger.info("Handling POST request for /api/visit/start")
     try:
-        # Log the incoming request
         logger.debug(f"Request headers: {request.headers}")
         logger.debug(f"Request JSON: {request.get_json()}")
 
@@ -1150,7 +2018,7 @@ def start_visit():
         patient_id = data.get('patientId')
         email = data.get('email')
         tenant_id = data.get('tenantId', 'default_tenant')
-        tenant_id = validate_tenant_id(tenant_id, email)  # FIXED: Pass email parameter
+        tenant_id = validate_tenant_id(tenant_id, email)
 
         logger.debug(f"Received data - patientId: {patient_id}, email: {email}, tenantId: {tenant_id}")
 
@@ -1211,7 +2079,7 @@ def start_visit():
 def delete_patient():
     if request.method == 'OPTIONS':
         response = make_response()
-        response.headers.add("Access-Control-Allow-Origin", "https://medoramd.ai")
+        response.headers.add("Access-Control-Allow-Origin", "https://test.medoramd.ai")
         response.headers.add("Access-Control-Allow-Headers", "Content-Type")
         response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
         return response
@@ -1220,7 +2088,7 @@ def delete_patient():
         patient_id = data.get('patientId')
         email = data.get('email')
         tenant_id = data.get('tenantId', 'default_tenant')
-        tenant_id = validate_tenant_id(tenant_id, email)  # FIXED: Pass email parameter
+        tenant_id = validate_tenant_id(tenant_id, email)
 
         if not patient_id:
             return jsonify({"success": False, "error": "Missing patientId"}), 400
@@ -1252,7 +2120,7 @@ def analyze_endpoint():
         visit_id = data.get('visitId')
         status = get_subscription_status(email)
         tenant_id = data.get('tenantId', 'default_tenant')
-        tenant_id = validate_tenant_id(tenant_id, email)  # FIXED: Pass email parameter
+        tenant_id = validate_tenant_id(tenant_id, email)
 
         tier = status["tier"]
         trial_end = status["trial_end"]
@@ -1280,8 +2148,6 @@ def analyze_endpoint():
 
         result = analyze_transcript(text, target_language)
 
-        # Prepare recommendations for the insights section
-        # First check if we have enhanced recommendations, otherwise use patient_education
         recommendations = result.get("enhanced_recommendations", result.get("patient_education", "N/A"))
         
         transcript_doc = {
@@ -1366,22 +2232,30 @@ def analyze_transcript_endpoint():
     if request.method == 'OPTIONS':
         logger.info("Handling OPTIONS request for /api/analyze-transcript")
         response = make_response()
-        response.headers.add("Access-Control-Allow-Origin", "https://medoramd.ai")
+        response.headers.add("Access-Control-Allow-Origin", "https://test.medoramd.ai")
         response.headers.add("Access-Control-Allow-Headers", "Content-Type")
         response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
         return response
 
     logger.info("Handling POST request for /api/analyze-transcript")
+    tenant_id = 'default_tenant'
+    patient_id = None
+    visit_id = None
+    email = None
+    transcript = None
+
     try:
         data = request.get_json()
-        # Extract data from request with both camelCase and snake_case support
+        if not data:
+            logger.error("No JSON data provided in the request")
+            return jsonify({"statusCode": 400, "error": "Request body must contain JSON data"}), 400
+
         patient_id = data.get('patientId') or data.get('patient_id')
         transcript = data.get('transcript')
         visit_id = data.get('visitId') or data.get('visit_id')
         email = data.get('email')
-        # Get tenant ID from any available source, prioritizing email
         tenant_id = data.get('tenantId') or data.get('tenant_id', 'default_tenant')
-        tenant_id = validate_tenant_id(tenant_id, email)  # FIXED: Pass email parameter
+        tenant_id = validate_tenant_id(tenant_id, email)
 
         logger.info(f"Processing transcript with data: patient_id={patient_id}, visit_id={visit_id}, tenant_id={tenant_id}, email={email}")
         
@@ -1389,15 +2263,12 @@ def analyze_transcript_endpoint():
             logger.error(f"Missing required fields: patient_id={patient_id}, transcript={'provided' if transcript else 'missing'}, visit_id={visit_id}")
             return jsonify({"statusCode": 400, "error": "patientId, transcript, and visitId are required"}), 400
 
-        # Step 1: Generate SOAP notes using xAI API
         logger.info("Generating SOAP notes via xAI API")
         soap_notes = analyze_transcript(transcript)
         logger.info(f"Generated SOAP notes: {json.dumps(soap_notes, indent=2)}")
 
-        # Check for enhanced recommendations
         recommendations = soap_notes.get("enhanced_recommendations", soap_notes.get("patient_education", "N/A"))
 
-        # Step 2: Store SOAP notes in MedoraSOAPNotes table - MODIFIED to include tenantID
         logger.info(f"Storing SOAP notes in MedoraSOAPNotes for patient_id: {patient_id}, visit_id: {visit_id}, tenant_id: {tenant_id}")
         try:
             dynamodb_response = dynamodb.put_item(
@@ -1407,18 +2278,17 @@ def analyze_transcript_endpoint():
                     'visit_id': {'S': visit_id},
                     'soap_notes': {'S': json.dumps(soap_notes)},
                     'ttl': {'N': str(int(datetime.now().timestamp()) + 30 * 24 * 60 * 60)},
-                    'tenantID': {'S': tenant_id}  # Use validated tenant_id
+                    'tenantID': {'S': tenant_id}
                 }
             )
             logger.info(f"Successfully stored SOAP notes in MedoraSOAPNotes for tenant {tenant_id}")
         except Exception as e:
             logger.error(f"Failed to store SOAP notes in MedoraSOAPNotes: {str(e)}")
             return jsonify({
-                "statusCode": 500, 
+                "statusCode": 500,
                 "error": f"Failed to store SOAP notes in DynamoDB: {str(e)}"
             }), 500
 
-        # Step 3: Store transcript in MongoDB
         transcript_doc = {
             "tenantId": tenant_id,
             "patientId": patient_id,
@@ -1439,7 +2309,7 @@ def analyze_transcript_endpoint():
         except Exception as e:
             logger.error(f"Failed to store transcript in MongoDB: {str(e)}")
             return jsonify({
-                "statusCode": 500, 
+                "statusCode": 500,
                 "error": f"Failed to store transcript in MongoDB: {str(e)}"
             }), 500
 
@@ -1448,14 +2318,14 @@ def analyze_transcript_endpoint():
             "body": {
                 "soap_notes": soap_notes,
                 "visit_id": visit_id,
-                "tenant_id": tenant_id  # Return the validated tenant_id
+                "tenant_id": tenant_id
             }
         }), 200
 
     except Exception as e:
         logger.error(f"Unexpected error in /api/analyze-transcript: {str(e)}")
         return jsonify({
-            "statusCode": 500, 
+            "statusCode": 500,
             "error": f"Unexpected error: {str(e)}"
         }), 500
 
@@ -1465,7 +2335,7 @@ def submit_transcript():
     if request.method == 'OPTIONS':
         logger.info("Handling OPTIONS request for /submit-transcript")
         response = make_response()
-        response.headers.add("Access-Control-Allow-Origin", "https://medoramd.ai")
+        response.headers.add("Access-Control-Allow-Origin", "https://test.medoramd.ai")
         response.headers.add("Access-Control-Allow-Headers", "Content-Type")
         response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
         return response
@@ -1478,7 +2348,7 @@ def submit_transcript():
         visit_id = data.get('visit_id')
         email = data.get('email')
         tenant_id = data.get('tenantId') or data.get('tenant_id', 'default_tenant')
-        tenant_id = validate_tenant_id(tenant_id, email)  # FIXED: Pass email parameter
+        tenant_id = validate_tenant_id(tenant_id, email)
 
         if not all([patient_id, transcript, visit_id]):
             logger.error(f"Missing required fields: patient_id={patient_id}, transcript={'provided' if transcript else 'missing'}, visit_id={visit_id}")
@@ -1486,15 +2356,12 @@ def submit_transcript():
 
         logger.info(f"Processing transcript for patient_id: {patient_id}, visit_id: {visit_id}, tenant_id: {tenant_id}")
 
-        # Step 1: Generate SOAP notes using xAI API
         logger.info("Generating SOAP notes via xAI API")
         soap_notes = analyze_transcript(transcript)
         logger.info(f"Generated SOAP notes: {json.dumps(soap_notes, indent=2)}")
 
-        # Check for enhanced recommendations
         recommendations = soap_notes.get("enhanced_recommendations", soap_notes.get("patient_education", "N/A"))
 
-        # Step 2: Store SOAP notes in MedoraSOAPNotes table - MODIFIED to include tenantID
         logger.info(f"Storing SOAP notes in MedoraSOAPNotes for patient_id: {patient_id}, visit_id: {visit_id}, tenant_id: {tenant_id}")
         try:
             dynamodb_response = dynamodb.put_item(
@@ -1504,7 +2371,7 @@ def submit_transcript():
                     'visit_id': {'S': visit_id},
                     'soap_notes': {'S': json.dumps(soap_notes)},
                     'ttl': {'N': str(int(datetime.now().timestamp()) + 30 * 24 * 60 * 60)},
-                    'tenantID': {'S': tenant_id}  # Use validated tenant_id
+                    'tenantID': {'S': tenant_id}
                 }
             )
             logger.info(f"Successfully stored SOAP notes in MedoraSOAPNotes for tenant {tenant_id}")
@@ -1512,7 +2379,6 @@ def submit_transcript():
             logger.error(f"Failed to store SOAP notes in MedoraSOAPNotes: {str(e)}")
             return jsonify({"error": f"Failed to store SOAP notes in DynamoDB: {str(e)}"}), 500
 
-        # Step 3: Store transcript in MongoDB
         transcript_doc = {
             "tenantId": tenant_id,
             "patientId": patient_id,
@@ -1539,7 +2405,7 @@ def submit_transcript():
             "body": {
                 "soap_notes": soap_notes,
                 "visit_id": visit_id,
-                "tenant_id": tenant_id  # Return the validated tenant_id
+                "tenant_id": tenant_id
             }
         }), 200
 
@@ -1547,441 +2413,99 @@ def submit_transcript():
         logger.error(f"Unexpected error in /submit-transcript: {str(e)}")
         return jsonify({"error": f"Unexpected error: {str(e)}"}), 500
 
-def query_pubmed(condition, retmax=1):
-    """
-    Query PubMed for articles related to the given condition.
-    Returns a list of insights with title, summary, PubMed ID, URL, confidence, relevance score, and relevance tag.
-    """
-    try:
-        # Step 1: Search PubMed for article IDs
-        search_url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi"
-        search_params = {
-            "db": "pubmed",
-            "term": f"{condition} treatment OR management",
-            "retmax": retmax,
-            "sort": "relevance",
-            "retmode": "json"
-        }
-        logger.debug(f"Sending PubMed search request for condition '{condition}' with params: {search_params}")
-        search_response = requests.get(search_url, params=search_params, timeout=10)
-        search_response.raise_for_status()
-        search_data = search_response.json()
-
-        id_list = search_data.get("esearchresult", {}).get("idlist", [])
-        logger.debug(f"PubMed returned article IDs for condition '{condition}': {id_list}")
-        if not id_list:
-            logger.warning(f"No PubMed articles found for condition: {condition}")
-            return []
-
-        # Step 2: Fetch article details
-        fetch_url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi"
-        fetch_params = {
-            "db": "pubmed",
-            "id": ",".join(id_list),
-            "retmode": "xml"
-        }
-        fetch_response = requests.get(fetch_url, params=fetch_params, timeout=10)
-        fetch_response.raise_for_status()
-
-        # Parse XML response
-        root = ET.fromstring(fetch_response.content)
-        insights = []
-
-        for article in root.findall(".//PubmedArticle"):
-            # Extract title
-            title = article.find(".//ArticleTitle")
-            title_text = title.text if title is not None else "N/A"
-            logger.debug(f"PubMed article title: {title_text}")
-
-            # Extract abstract (summary)
-            abstract = article.find(".//Abstract/AbstractText")
-            abstract_text = abstract.text if abstract is not None else "N/A"
-            logger.debug(f"PubMed article abstract: {abstract_text}")
-
-            # Extract PubMed ID
-            pubmed_id = article.find(".//PMID")
-            pubmed_id_text = pubmed_id.text if pubmed_id is not None else "N/A"
-
-            # Construct URL
-            url = f"https://pubmed.ncbi.nlm.nih.gov/{pubmed_id_text}/"
-
-            # Extract authors
-            authors = []
-            author_list = article.findall(".//AuthorList/Author")
-            for author in author_list:
-                last_name = author.find("LastName")
-                fore_name = author.find("ForeName")
-                if last_name is not None and last_name.text:
-                    if fore_name is not None and fore_name.text:
-                        authors.append(f"{fore_name.text} {last_name.text}")
-                    else:
-                        authors.append(last_name.text)
-            authors_text = ", ".join(authors) if authors else "N/A"
-            logger.debug(f"PubMed article authors: {authors_text}")
-
-            # Extract publication year
-            pub_date = article.find(".//PubDate/Year")
-            year = pub_date.text if pub_date is not None else "N/A"
-            logger.debug(f"PubMed article year: {year}")
-
-            # Compute relevance score with partial matching
-            relevance_score = 0.0
-            condition_words = condition.lower().split()
-            logger.debug(f"Condition words for matching: {condition_words}")
-            title_lower = title_text.lower()
-            abstract_lower = abstract_text.lower()
-
-            # Check for partial matches in title
-            title_matches = sum(1 for word in condition_words if word in title_lower)
-            if title_matches > 0:
-                title_weight = (title_matches / len(condition_words)) * 0.5  # Scale based on number of matching words
-                relevance_score += title_weight
-                logger.debug(f"PubMed title partial matches for '{condition}': {title_matches}/{len(condition_words)}. Added {title_weight:.2f} to relevance score")
-            else:
-                logger.debug(f"No title partial matches for '{condition}' in '{title_lower}'")
-
-            # Check for partial matches in abstract
-            abstract_matches = sum(1 for word in condition_words if word in abstract_lower)
-            if abstract_matches > 0:
-                abstract_weight = (abstract_matches / len(condition_words)) * 0.3  # Scale based on number of matching words
-                relevance_score += abstract_weight
-                logger.debug(f"PubMed abstract partial matches for '{condition}': {abstract_matches}/{len(condition_words)}. Added {abstract_weight:.2f} to relevance score")
-            else:
-                logger.debug(f"No abstract partial matches for '{condition}' in '{abstract_lower}'")
-
-            # Ensure a minimum score if the article was returned (since it's relevant by search)
-            if relevance_score == 0.0:
-                relevance_score = 10.0  # Minimum score to avoid 0.0%
-                logger.debug(f"No direct matches found, assigning minimum relevance score of 10.0")
-
-            # Normalize to 0-100
-            relevance_score = min(relevance_score * 100, 100)
-            logger.debug(f"PubMed final relevance score for '{condition}': {relevance_score}")
-
-            # Assign confidence (textual) based on relevance score
-            confidence = "Recommended"
-            if relevance_score > 70:
-                confidence = "Highly Recommended"
-            elif relevance_score > 40:
-                confidence = "Recommended"
-            else:
-                confidence = "Relevant"
-            logger.debug(f"PubMed confidence for '{condition}': {confidence}")
-
-            # Create relevance tag
-            relevance_tag = f"Relevant to {condition.lower()}"
-            logger.debug(f"PubMed relevance tag: {relevance_tag}")
-
-            insight = {
-                "title": title_text,
-                "summary": abstract_text,
-                "pubmed_id": pubmed_id_text,
-                "url": url,
-                "confidence": confidence,
-                "relevance_score": f"{relevance_score:.1f}%",
-                "relevance_tag": relevance_tag,
-                "source": "PubMed",
-                "authors": authors_text,
-                "year": year,
-                "raw_relevance_score": relevance_score  # Store raw score for sorting
-            }
-            insights.append(insight)
-            logger.debug(f"PubMed insight for condition '{condition}': {insight}")
-
-        logger.info(f"Fetched {len(insights)} insights from PubMed for condition: {condition}")
-        return insights
-
-    except Exception as e:
-        logger.error(f"Error querying PubMed for condition {condition}: {str(e)}")
-        return []
-
-def query_semantic_scholar(condition, retmax=1):
-    """
-    Query Semantic Scholar for articles related to the given condition.
-    Returns a list of insights with title, summary, URL, and relevance info.
-    """
-    try:
-        # Semantic Scholar API endpoint
-        api_url = "https://api.semanticscholar.org/graph/v1/paper/search"
-        
-        params = {
-            "query": f"{condition} treatment OR management",
-            "limit": retmax,
-            "fields": "title,abstract,url,year,authors,venue,citationCount"
-        }
-        
-        headers = {
-            # Optional API key if you have registered one
-            # "x-api-key": os.getenv('SEMANTIC_SCHOLAR_API_KEY')
-        }
-        
-        logger.debug(f"Sending Semantic Scholar request for condition '{condition}' with params: {params}")
-        response = requests.get(api_url, params=params, headers=headers, timeout=10)
-        response.raise_for_status()
-        results = response.json()
-        
-        insights = []
-        
-        if "data" in results:
-            for paper in results["data"]:
-                title_text = paper.get("title", "N/A")
-                abstract_text = paper.get("abstract", "N/A")
-                url = paper.get("url", "#")
-                year = paper.get("year", "N/A")
-                logger.debug(f"Semantic Scholar article title: {title_text}")
-                logger.debug(f"Semantic Scholar article abstract: {abstract_text}")
-                
-                # Format authors
-                authors = []
-                if "authors" in paper:
-                    authors = [author.get("name", "") for author in paper["authors"]]
-                authors_text = ", ".join(authors) if authors else "N/A"
-                logger.debug(f"Semantic Scholar article authors: {authors_text}")
-                
-                # Get citation count as a proxy for importance
-                citation_count = paper.get("citationCount", 0)
-                logger.debug(f"Semantic Scholar citation count: {citation_count}")
-                
-                # Compute relevance score with partial matching
-                relevance_score = 0.0
-                condition_words = condition.lower().split()
-                logger.debug(f"Condition words for matching: {condition_words}")
-                title_lower = title_text.lower()
-                abstract_lower = abstract_text.lower()
-
-                # Check for partial matches in title
-                title_matches = sum(1 for word in condition_words if word in title_lower)
-                if title_matches > 0:
-                    title_weight = (title_matches / len(condition_words)) * 0.4  # Scale based on number of matching words
-                    relevance_score += title_weight
-                    logger.debug(f"Semantic Scholar title partial matches for '{condition}': {title_matches}/{len(condition_words)}. Added {title_weight:.2f} to relevance score")
-                else:
-                    logger.debug(f"No title partial matches for '{condition}' in '{title_lower}'")
-
-                # Check for partial matches in abstract
-                abstract_matches = sum(1 for word in condition_words if word in abstract_lower)
-                if abstract_matches > 0:
-                    abstract_weight = (abstract_matches / len(condition_words)) * 0.3  # Scale based on number of matching words
-                    relevance_score += abstract_weight
-                    logger.debug(f"Semantic Scholar abstract partial matches for '{condition}': {abstract_matches}/{len(condition_words)}. Added {abstract_weight:.2f} to relevance score")
-                else:
-                    logger.debug(f"No abstract partial matches for '{condition}' in '{abstract_lower}'")
-
-                # Add weight for citation count (normalize to 0-0.3)
-                citation_weight = min(citation_count / 200, 0.3)  # Cap at 200 citations for max weight
-                relevance_score += citation_weight
-                logger.debug(f"Semantic Scholar citation weight for '{condition}' (citation_count={citation_count}): Added {citation_weight} to relevance score")
-
-                # Ensure a minimum score if the article was returned
-                if relevance_score == 0.0:
-                    relevance_score = 10.0  # Minimum score to avoid 0.0%
-                logger.debug(f"No direct matches found, assigning minimum relevance score of 10.0")
-
-                # Normalize to 0-100
-                relevance_score = min(relevance_score * 100, 100)
-                logger.debug(f"Semantic Scholar final relevance score for '{condition}': {relevance_score}")
-
-                # Determine confidence level based on relevance score
-                confidence = "Recommended"
-                if relevance_score > 70:
-                    confidence = "Highly Recommended"
-                elif relevance_score > 40:
-                    confidence = "Recommended"
-                else:
-                    confidence = "Relevant"
-                logger.debug(f"Semantic Scholar confidence for '{condition}': {confidence}")
-                
-                # Create relevance tag
-                relevance_tag = f"Relevant to {condition.lower()}"
-                logger.debug(f"Semantic Scholar relevance tag: {relevance_tag}")
-
-                insight = {
-                    "title": title_text,
-                    "summary": abstract_text,
-                    "url": url,
-                    "authors": authors_text,
-                    "year": year,
-                    "citation_count": citation_count,
-                    "source": "Semantic Scholar",
-                    "confidence": confidence,
-                    "relevance_score": f"{relevance_score:.1f}%",
-                    "relevance_tag": relevance_tag,
-                    "raw_relevance_score": relevance_score  # Store raw score for sorting
-                }
-                insights.append(insight)
-                logger.debug(f"Semantic Scholar insight for condition '{condition}': {insight}")
-        
-        logger.info(f"Fetched {len(insights)} insights from Semantic Scholar for condition: {condition}")
-        return insights
-        
-    except Exception as e:
-        logger.error(f"Error querying Semantic Scholar for condition {condition}: {str(e)}")
-        return []
-
-# Enhanced function to fetch related clinical guidelines
-def query_clinical_guidelines(condition, retmax=1):
-    """
-    Query for clinical guidelines related to the given condition.
-    Returns a list of guidelines with title, source, URL, and relevance info.
-    """
-    try:
-        # For demonstration, we're using PubMed to find guidelines
-        # In a production environment, you might want to use specialized API endpoints
-        search_url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi"
-        search_params = {
-            "db": "pubmed",
-            "term": f"{condition} clinical practice guideline OR consensus statement",
-            "retmax": retmax,
-            "sort": "relevance",
-            "retmode": "json"
-        }
-        
-        logger.debug(f"Sending guideline search request for condition '{condition}' with params: {search_params}")
-        search_response = requests.get(search_url, params=search_params, timeout=10)
-        search_response.raise_for_status()
-        search_data = search_response.json()
-
-        id_list = search_data.get("esearchresult", {}).get("idlist", [])
-        logger.debug(f"Clinical guideline search returned article IDs for condition '{condition}': {id_list}")
-        if not id_list:
-            logger.warning(f"No clinical guidelines found for condition: {condition}")
-            return []
-
-        # Fetch guideline details
-        fetch_url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi"
-        fetch_params = {
-            "db": "pubmed",
-            "id": ",".join(id_list),
-            "retmode": "xml"
-        }
-        fetch_response = requests.get(fetch_url, params=fetch_params, timeout=10)
-        fetch_response.raise_for_status()
-
-        # Parse XML response
-        root = ET.fromstring(fetch_response.content)
-        guidelines = []
-
-        for article in root.findall(".//PubmedArticle"):
-            # Extract title
-            title = article.find(".//ArticleTitle")
-            title_text = title.text if title is not None else "N/A"
-            
-            # Extract abstract
-            abstract = article.find(".//Abstract/AbstractText")
-            abstract_text = abstract.text if abstract is not None else "N/A"
-            
-            # Extract PubMed ID
-            pubmed_id = article.find(".//PMID")
-            pubmed_id_text = pubmed_id.text if pubmed_id is not None else "N/A"
-            
-            # Construct URL
-            url = f"https://pubmed.ncbi.nlm.nih.gov/{pubmed_id_text}/"
-            
-            # Extract authors and organizations
-            authors = []
-            author_list = article.findall(".//AuthorList/Author")
-            for author in author_list:
-                last_name = author.find("LastName")
-                fore_name = author.find("ForeName")
-                if last_name is not None and last_name.text:
-                    if fore_name is not None and fore_name.text:
-                        authors.append(f"{fore_name.text} {last_name.text}")
-                    else:
-                        authors.append(last_name.text)
-            
-            # Extract organization or society if available
-            journal_name = article.find(".//Journal/Title")
-            organization = journal_name.text if journal_name is not None else "Medical Journal"
-            
-            # Extract publication year
-            pub_date = article.find(".//PubDate/Year")
-            year = pub_date.text if pub_date is not None else "N/A"
-            
-            # Compute relevance and determine if it's a guideline
-            is_guideline = False
-            guideline_terms = ["guideline", "consensus", "practice parameter", "recommendation", "position statement"]
-            title_lower = title_text.lower()
-            
-            for term in guideline_terms:
-                if term in title_lower:
-                    is_guideline = True
-                    break
-            
-            if not is_guideline:
-                abstract_lower = abstract_text.lower()
-                for term in guideline_terms:
-                    if term in abstract_lower:
-                        is_guideline = True
-                        break
-            
-            # Only include if it appears to be a guideline
-            if is_guideline:
-                # Format a cleaner summary
-                summary = abstract_text[:500] + "..." if len(abstract_text) > 500 else abstract_text
-                
-                guideline = {
-                    "title": title_text,
-                    "summary": summary,
-                    "url": url,
-                    "source": organization,
-                    "authors": ", ".join(authors) if authors else "N/A",
-                    "year": year,
-                    "content_type": "Clinical Guideline",
-                    "relevance_tag": f"Clinical Practice Guideline for {condition}",
-                    "confidence": "Highly Recommended",
-                    "relevance_score": "95.0%",  # Guidelines are always highly relevant
-                    "raw_relevance_score": 95.0  # For sorting purposes
-                }
-                
-                guidelines.append(guideline)
-                logger.debug(f"Found clinical guideline for '{condition}': {title_text}")
-        
-        logger.info(f"Fetched {len(guidelines)} clinical guidelines for condition: {condition}")
-        return guidelines
-    
-    except Exception as e:
-        logger.error(f"Error querying clinical guidelines for condition {condition}: {str(e)}")
-        return []
-
 @app.route('/get-insights', methods=['GET', 'OPTIONS'])
 def get_insights():
-    logger.info("Received request for /get-insights")
-    if request.method == 'OPTIONS':
-        logger.info("Handling OPTIONS request for /get-insights")
-        response = make_response()
-        response.headers.add("Access-Control-Allow-Origin", "https://medoramd.ai")
-        response.headers.add("Access-Control-Allow-Headers", "Content-Type")
-        response.headers.add("Access-Control-Allow-Methods", "GET, OPTIONS")
-        return response
-
     logger.info("Handling GET request for /get-insights")
+    api_cache = {}  # Per-request cache
+    rate_limit_hit = {'pubmed_hits': 0, 'semantic_scholar': False, 'skip_guidelines': False}  # Reset rate limit tracker for this request
+
+    # Thread-safe timeout mechanism
+    from threading import Timer, Event
+    timeout_event = Event()
+    all_insights = []  # Collect insights incrementally
+
+    def timeout_callback():
+        timeout_event.set()
+        logger.warning("Timeout reached (45 seconds) for /get-insights. Returning partial results.")
+
+    # Set a 45-second timer
+    timer = Timer(45.0, timeout_callback)
+    timer.start()
+
     try:
+        if request.method == 'OPTIONS':
+            logger.info("Handling OPTIONS request for /get-insights")
+            response = make_response()
+            response.headers.add("Access-Control-Allow-Origin", "https://test.medoramd.ai")
+            response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+            response.headers.add("Access-Control-Allow-Methods", "GET, OPTIONS")
+            timer.cancel()  # Cancel the timer for OPTIONS requests
+            return response
+
+        logger.debug(f"Raw request arguments: {dict(request.args)}")
+
         patient_id = request.args.get('patient_id')
         visit_id = request.args.get('visit_id')
-        conditions = request.args.get('conditions', '')
-        email = request.args.get('email')
+        email = (request.args.get('email') or
+                 request.args.get('Email') or
+                 request.args.get('user_email') or
+                 request.args.get('userEmail'))
         tenant_id = request.args.get('tenantId', 'default_tenant')
-        tenant_id = validate_tenant_id(tenant_id, email)  # FIXED: Pass email parameter
 
-        logger.debug(f"Request parameters - patient_id: {patient_id}, visit_id: {visit_id}, conditions: {conditions}, tenant_id: {tenant_id}")
+        # Temporarily revert to fallback email while frontend team adds the email parameter
+        if not email:
+            logger.warning("Email parameter is required but was not provided in the request; using fallback email 'doctor@allergyaffiliates.com'. Expected parameters: 'email', 'Email', 'user_email', or 'userEmail'")
+            email = "doctor@allergyaffiliates.com"
+            # Uncomment the following lines once the frontend includes the email parameter
+            # logger.error("Email parameter is required but was not provided in the request. Expected parameters: 'email', 'Email', 'user_email', or 'userEmail'")
+            # return jsonify({"error": "Email parameter is required. Expected parameters: 'email', 'Email', 'user_email', or 'userEmail'"}), 400
+
+        logger.debug(f"Before validation - tenant_id: {tenant_id}, email: {email}")
+        try:
+            tenant_id = validate_tenant_id(tenant_id, email)
+        except Exception as e:
+            logger.error(f"Error validating tenant_id for email '{email}': {str(e)}")
+            timer.cancel()
+            return jsonify({"error": "Failed to validate tenant_id"}), 500
+        logger.debug(f"After validation - tenant_id: {tenant_id}")
+
+        logger.debug(f"Request parameters - patient_id: {patient_id}, visit_id: {visit_id}, tenant_id: {tenant_id}")
 
         if not patient_id or not visit_id:
             logger.error(f"Missing required parameters: patient_id={patient_id}, visit_id={visit_id}")
+            timer.cancel()
             return jsonify({"error": "patient_id and visit_id are required"}), 400
 
-        if not conditions:
-            logger.warning(f"No conditions provided for patient_id: {patient_id}, visit_id: {visit_id}")
+        try:
+            soap_notes = get_soap_notes(patient_id, visit_id, tenant_id)
+        except Exception as e:
+            logger.error(f"Error fetching SOAP notes for patient_id {patient_id}, visit_id {visit_id}: {str(e)}")
+            timer.cancel()
+            return jsonify({"error": "Failed to fetch SOAP notes"}), 500
+        if not soap_notes:
+            logger.warning(f"No SOAP notes found for patient_id: {patient_id}, visit_id: {visit_id}")
+            timer.cancel()
             return jsonify({
                 "patient_id": patient_id,
                 "visit_id": visit_id,
                 "insights": []
             }), 200
 
-        # Parse conditions into individual diagnoses
+        conditions = soap_notes.get("differential_diagnosis", "")
+        if not conditions or conditions == "No data available":
+            logger.warning(f"No differential diagnosis found for patient_id: {patient_id}, visit_id: {visit_id}")
+            timer.cancel()
+            return jsonify({
+                "patient_id": patient_id,
+                "visit_id": visit_id,
+                "insights": []
+            }), 200
+
         diagnoses = []
-        parts = conditions.split("Alternative diagnoses:")
+        parts = re.split(r"(?i)Alternative Diagnoses:", conditions)
         primary_part = parts[0].strip()
-        primary_diagnosis = primary_part.split('.')[0].replace("Primary diagnosis:", "").strip()
+        primary_diagnosis = re.sub(r"(?i)Primary Diagnosis:", "", primary_part).strip()
+        primary_diagnosis = primary_diagnosis.split('.')[0].strip()
         if primary_diagnosis:
             diagnoses.append(primary_diagnosis)
 
@@ -1992,51 +2516,150 @@ def get_insights():
                 alt = alt.strip()
                 if alt:
                     alt = alt.rstrip('.,').strip()
-                    diagnoses.append(alt)
+                    if alt:
+                        diagnoses.append(alt)
 
-        logger.info(f"Parsed diagnoses for patient_id {patient_id}: {diagnoses}")
+        diagnoses = [simplify_diagnosis(diag) for diag in diagnoses]
+        logger.info(f"Parsed and simplified diagnoses for patient_id {patient_id}: {diagnoses}")
 
         if not diagnoses:
             logger.warning(f"No diagnoses parsed for patient_id: {patient_id}, conditions: {conditions}")
+            timer.cancel()
             return jsonify({
                 "patient_id": patient_id,
                 "visit_id": visit_id,
                 "insights": []
             }), 200
 
-        # Query sources for each diagnosis
-        all_insights = []
+        # Collect insights for each diagnosis separately to ensure representation
+        insights_by_diagnosis = {diag: [] for diag in diagnoses}
         for diagnosis in diagnoses:
-            logger.debug(f"Querying references for diagnosis: {diagnosis}")
-            
-            # First try to get clinical guidelines (high priority)
-            guidelines = query_clinical_guidelines(diagnosis, retmax=1)
-            logger.debug(f"Clinical guidelines for '{diagnosis}': {guidelines}")
-            all_insights.extend(guidelines)
-            
-            # Then get PubMed articles
-            pubmed_insights = query_pubmed(diagnosis, retmax=2)
-            logger.debug(f"PubMed insights for '{diagnosis}': {pubmed_insights}")
-            all_insights.extend(pubmed_insights)
-            
-            # Finally get Semantic Scholar articles
-            semantic_insights = query_semantic_scholar(diagnosis, retmax=1)
-            logger.debug(f"Semantic Scholar insights for '{diagnosis}': {semantic_insights}")
-            all_insights.extend(semantic_insights)
+            if timeout_event.is_set():
+                logger.warning(f"Timeout reached while processing diagnosis '{diagnosis}'. Returning partial results.")
+                break
 
-        # Sort insights by raw relevance score and limit to top 3
+            logger.debug(f"Processing diagnosis: {diagnosis}")
+            try:
+                # Reset circuit breaker for this diagnosis
+                diagnosis_key = f"pubmed_hits_{diagnosis}"
+                rate_limit_hit[diagnosis_key] = 0
+                rate_limit_hit['skip_guidelines'] = False
+
+                # Query Semantic Scholar first (faster, less likely to hit rate limits)
+                cache_key_semantic = f"semantic_{diagnosis}"
+                cached_semantic = None
+                try:
+                    cached_semantic = get_cached_result(cache_key_semantic, ttl_minutes=120)
+                except Exception as e:
+                    logger.error(f"Error fetching cached Semantic Scholar insights for '{diagnosis}': {str(e)}")
+
+                if cached_semantic is not None:
+                    if not cached_semantic:  # Invalidate empty cache entries
+                        logger.debug(f"Invalidating empty cache for Semantic Scholar insights for '{diagnosis}'")
+                        cached_semantic = None
+                    else:
+                        logger.debug(f"Cache hit for Semantic Scholar insights for '{diagnosis}'")
+                        insights_by_diagnosis[diagnosis].extend(cached_semantic)
+                if cached_semantic is None:
+                    logger.debug(f"Cache miss or invalidated for Semantic Scholar insights for '{diagnosis}'")
+                    semantic_insights = query_semantic_scholar(diagnosis, retmax=2, timeout=3, rate_limit_hit=rate_limit_hit)
+                    insights_by_diagnosis[diagnosis].extend(semantic_insights)
+                    # Skip caching for now due to set_cached_result issue
+                    if timeout_event.is_set():
+                        logger.warning(f"Timeout reached after fetching Semantic Scholar insights for '{diagnosis}'. Returning partial results.")
+                        break
+
+                # Query PubMed
+                cache_key_pubmed = f"pubmed_{diagnosis}"
+                cached_pubmed = None
+                try:
+                    cached_pubmed = get_cached_result(cache_key_pubmed, ttl_minutes=120)
+                except Exception as e:
+                    logger.error(f"Error fetching cached PubMed insights for '{diagnosis}': {str(e)}")
+
+                if cached_pubmed is not None:
+                    if not cached_pubmed:  # Invalidate empty cache entries
+                        logger.debug(f"Invalidating empty cache for PubMed insights for '{diagnosis}'")
+                        cached_pubmed = None
+                    else:
+                        logger.debug(f"Cache hit for PubMed insights for '{diagnosis}'")
+                        insights_by_diagnosis[diagnosis].extend(cached_pubmed)
+                if cached_pubmed is None:
+                    logger.debug(f"Cache miss or invalidated for PubMed insights for '{diagnosis}'")
+                    pubmed_insights = query_pubmed(diagnosis, retmax=2, timeout=3, rate_limit_hit=rate_limit_hit)
+                    insights_by_diagnosis[diagnosis].extend(pubmed_insights)
+                    # Skip caching for now due to set_cached_result issue
+                    time.sleep(5)  # Increased delay to manage rate limits
+                    if timeout_event.is_set():
+                        logger.warning(f"Timeout reached after fetching PubMed insights for '{diagnosis}'. Returning partial results.")
+                        break
+
+                # Query clinical guidelines
+                cache_key_guidelines = f"guidelines_{diagnosis}"
+                cached_guidelines = None
+                try:
+                    cached_guidelines = get_cached_result(cache_key_guidelines, ttl_minutes=120)
+                except Exception as e:
+                    logger.error(f"Error fetching cached guidelines for '{diagnosis}': {str(e)}")
+
+                if cached_guidelines is not None:
+                    if not cached_guidelines:  # Invalidate empty cache entries
+                        logger.debug(f"Invalidating empty cache for clinical guidelines for '{diagnosis}'")
+                        cached_guidelines = None
+                    else:
+                        logger.debug(f"Cache hit for clinical guidelines for '{diagnosis}'")
+                        insights_by_diagnosis[diagnosis].extend(cached_guidelines)
+                if cached_guidelines is None:
+                    logger.debug(f"Cache miss or invalidated for clinical guidelines for '{diagnosis}'")
+                    guidelines = query_clinical_guidelines(diagnosis, retmax=1, timeout=3, rate_limit_hit=rate_limit_hit, skip_guidelines=rate_limit_hit.get('skip_guidelines', False))
+                    insights_by_diagnosis[diagnosis].extend(guidelines)
+                    # Skip caching for now due to set_cached_result issue
+                    time.sleep(5)  # Increased delay to manage rate limits
+                    if timeout_event.is_set():
+                        logger.warning(f"Timeout reached after fetching clinical guidelines for '{diagnosis}'. Returning partial results.")
+                        break
+
+            except Exception as e:
+                logger.error(f"Error processing diagnosis '{diagnosis}': {str(e)}. Continuing with next diagnosis.")
+                continue
+
+        # Select insights to ensure representation from each diagnosis
         def get_relevance_score(insight):
             return insight.get("raw_relevance_score", 0.0)
 
-        logger.debug(f"All insights before sorting: {all_insights}")
-        all_insights.sort(key=get_relevance_score, reverse=True)
-        # Remove the raw_relevance_score field from the final output
-        for insight in all_insights:
-            insight.pop("raw_relevance_score", None)
-        all_insights = all_insights[:3]  # Limit to top 3 insights
+        # Sort insights for each diagnosis by relevance score
+        for diagnosis in insights_by_diagnosis:
+            insights_by_diagnosis[diagnosis].sort(key=get_relevance_score, reverse=True)
 
-        if not all_insights:
+        # Ensure at least one insight per diagnosis, then fill remaining slots with highest-scoring insights
+        final_insights = []
+        max_insights = 3  # Total number of insights to return
+
+        # Step 1: Add the highest-scoring insight from each diagnosis
+        for diagnosis in diagnoses:
+            if insights_by_diagnosis[diagnosis]:
+                final_insights.append(insights_by_diagnosis[diagnosis][0])
+                logger.debug(f"Added top insight for '{diagnosis}' to final response: {insights_by_diagnosis[diagnosis][0]['title']}")
+
+        # Step 2: If fewer than max_insights, fill remaining slots with highest-scoring insights from all diagnoses
+        remaining_slots = max_insights - len(final_insights)
+        if remaining_slots > 0:
+            # Collect all remaining insights
+            all_remaining_insights = []
+            for diagnosis in diagnoses:
+                all_remaining_insights.extend(insights_by_diagnosis[diagnosis][1:])  # Skip the first one already added
+            all_remaining_insights.sort(key=get_relevance_score, reverse=True)
+            final_insights.extend(all_remaining_insights[:remaining_slots])
+            logger.debug(f"Filled remaining {remaining_slots} slots with highest-scoring insights")
+
+        # Remove raw_relevance_score from final insights
+        for insight in final_insights:
+            insight.pop("raw_relevance_score", None)
+            insight.pop("inclusion_confidence", None)  # Remove debugging field
+
+        if not final_insights:
             logger.warning(f"No insights found for patient_id: {patient_id}, visit_id: {visit_id}, diagnoses: {diagnoses}")
+            timer.cancel()
             return jsonify({
                 "patient_id": patient_id,
                 "visit_id": visit_id,
@@ -2046,68 +2669,68 @@ def get_insights():
         result = {
             "patient_id": patient_id,
             "visit_id": visit_id,
-            "insights": all_insights
+            "insights": final_insights
         }
         logger.info(f"Final response for patient_id {patient_id}: {json.dumps(result, indent=2)}")
         
-        # Store insights in MedoraReferences with tenantID
         try:
-            for insight in all_insights:
+            for insight in final_insights:
                 insight_id = str(uuid.uuid4())
                 dynamodb.put_item(
                     TableName='MedoraReferences',
                     Item={
                         'id': {'S': insight_id},
                         'patient_id': {'S': patient_id},
-                        'visit_id': {'S': visit_id}, 
+                        'visit_id': {'S': visit_id},
                         'references': {'S': json.dumps(insight)},
                         'ttl': {'N': str(int(datetime.now().timestamp()) + 30 * 24 * 60 * 60)},
-                        'tenantID': {'S': tenant_id}  # Added tenantID
+                        'tenantID': {'S': tenant_id}
                     }
                 )
                 logger.info(f"Stored reference {insight_id} for patient {patient_id}, tenant {tenant_id}")
         except Exception as e:
             logger.error(f"Error storing references in DynamoDB: {str(e)}")
-            # Continue with response even if storage fails
         
+        timer.cancel()  # Cancel the timer before returning
         return jsonify(result), 200
 
     except Exception as e:
+        timer.cancel()  # Cancel the timer on error
         logger.error(f"Unexpected error in /get-insights: {str(e)}")
-        return jsonify({"error": f"Unexpected error: {str(e)}"}), 500
+        return jsonify({
+            "patient_id": patient_id,
+            "visit_id": visit_id,
+            "insights": all_insights if 'all_insights' in locals() else [],
+            "error": f"Unexpected error: {str(e)}"
+        }), 500
 
-# Add a script to fix existing MongoDB patient records that might be missing tenantId
 @app.route('/api/admin/fix-patients', methods=['POST'])
 def fix_patient_tenant_ids():
     try:
-        # This endpoint should be protected in production!
         data = request.get_json()
         admin_key = data.get('admin_key')
-        if admin_key != "medora_admin_key_2025":  # Simple protection for demo purposes
+        if admin_key != "medora_admin_key_2025":
             return jsonify({"success": False, "error": "Unauthorized"}), 401
             
         default_tenant = data.get('default_tenant', 'doctor@allergyaffiliates.com')
         
-        # Update all patients without a tenantId
         result = patients_collection.update_many(
             {"tenantId": {"$exists": False}},
             {"$set": {"tenantId": default_tenant}}
         )
         
-        # Update all transcripts without a tenantId
         transcript_result = transcripts_collection.update_many(
             {"tenantId": {"$exists": False}},
             {"$set": {"tenantId": default_tenant}}
         )
         
-        # Update all visits without a tenantId
         visit_result = visits_collection.update_many(
             {"tenantId": {"$exists": False}},
             {"$set": {"tenantId": default_tenant}}
         )
         
         return jsonify({
-            "success": True, 
+            "success": True,
             "updated_patients": result.modified_count,
             "updated_transcripts": transcript_result.modified_count,
             "updated_visits": visit_result.modified_count
@@ -2132,7 +2755,6 @@ def get_allergeniq_profile():
         return response
         
     try:
-        # Get request details for debugging
         req_details = {
             "method": request.method,
             "url": request.url,
@@ -2146,7 +2768,7 @@ def get_allergeniq_profile():
         visit_id = request.args.get('visit_id')
         email = request.args.get('email')
         tenant_id = request.args.get('tenantId', 'default_tenant')
-        tenant_id = validate_tenant_id(tenant_id, email)  # Use validated tenant_id
+        tenant_id = validate_tenant_id(tenant_id, email)
         
         logger.info(f"ALLERGENIQ: Request params - patient_id: {patient_id}, visit_id: {visit_id}, tenant_id: {tenant_id}, email: {email}")
         
@@ -2157,11 +2779,9 @@ def get_allergeniq_profile():
                 "error": "patient_id and visit_id are required"
             }), 400
             
-        # Set a timeout for database operations
-        request_timeout = 5  # 5 second timeout
+        request_timeout = 5
         start_time = time.time()
             
-        # Get SOAP notes from DynamoDB with timeout
         soap_notes = None
         try:
             soap_notes = get_soap_notes(patient_id, visit_id, tenant_id)
@@ -2169,12 +2789,10 @@ def get_allergeniq_profile():
         except Exception as e:
             logger.error(f"ALLERGENIQ: Error retrieving SOAP notes: {str(e)}")
         
-        # Check timeout
         if time.time() - start_time > request_timeout:
             logger.warning(f"ALLERGENIQ: SOAP notes retrieval timeout exceeded")
             soap_notes = None
             
-        # If SOAP notes are not found, use a default structure
         if not soap_notes:
             logger.warning(f"ALLERGENIQ: SOAP notes not found or timed out for patient {patient_id}, visit {visit_id}")
             soap_notes = {
@@ -2187,7 +2805,6 @@ def get_allergeniq_profile():
             }
             logger.info("ALLERGENIQ: Using default SOAP notes structure")
             
-        # Get patient insights from DynamoDB with timeout check
         patient_insights = []
         if time.time() - start_time <= request_timeout:
             try:
@@ -2198,14 +2815,12 @@ def get_allergeniq_profile():
         else:
             logger.warning(f"ALLERGENIQ: Skipping patient insights due to timeout")
             
-        # Get transcript from MongoDB and process it for allergy data
         transcript_data = None
         if time.time() - start_time <= request_timeout:
             try:
-                # Verify MongoDB connection before querying
-                client.admin.command('ping')  # Test MongoDB connection
+                client.admin.command('ping')
                 transcript = transcripts_collection.find_one({
-                    "patientId": patient_id, 
+                    "patientId": patient_id,
                     "visitId": visit_id,
                     "tenantId": tenant_id
                 })
@@ -2226,16 +2841,13 @@ def get_allergeniq_profile():
         else:
             logger.warning(f"ALLERGENIQ: Skipping transcript processing due to timeout")
         
-        # Structure the AllergenIQ profile data
         profile_data = structure_allergeniq_data(soap_notes, patient_insights, transcript_data)
         
-        # Get patient name and age from MongoDB with timeout check
         patient_name = "Unknown Patient"
         patient_age = None
         if time.time() - start_time <= request_timeout:
             try:
-                # Verify MongoDB connection before querying
-                client.admin.command('ping')  # Test MongoDB connection
+                client.admin.command('ping')
                 patient_doc = patients_collection.find_one({"_id": ObjectId(patient_id), "tenantId": tenant_id})
                 if not patient_doc:
                     patient_doc = patients_collection.find_one({"name": patient_id, "tenantId": tenant_id})
@@ -2252,12 +2864,10 @@ def get_allergeniq_profile():
         else:
             logger.warning(f"ALLERGENIQ: Skipping patient details retrieval due to timeout")
         
-        # Get visit date from visits collection with timeout check
         visit_date = datetime.now().isoformat().split('T')[0]
         if time.time() - start_time <= request_timeout:
             try:
-                # Verify MongoDB connection before querying
-                client.admin.command('ping')  # Test MongoDB connection
+                client.admin.command('ping')
                 visit_doc = visits_collection.find_one({"visitId": visit_id, "tenantId": tenant_id})
                 if visit_doc and "startTime" in visit_doc:
                     visit_date = visit_doc["startTime"].split('T')[0]
@@ -2271,7 +2881,6 @@ def get_allergeniq_profile():
         else:
             logger.warning(f"ALLERGENIQ: Skipping visit date retrieval due to timeout")
         
-        # Return the response with full profile data
         result = {
             "success": True,
             "patient_id": patient_id,
@@ -2285,26 +2894,12 @@ def get_allergeniq_profile():
         logger.info("ALLERGENIQ: Successfully generated profile data")
         return jsonify(result), 200
     except Exception as e:
-        import traceback
         logger.error(f"ALLERGENIQ: Error generating AllergenIQ profile: {str(e)}")
         logger.error(f"ALLERGENIQ: Stack trace: {traceback.format_exc()}")
         return jsonify({
             "success": False,
             "error": f"Failed to generate AllergenIQ profile: {str(e)}"
         }), 500
-
-#### FHIR IMS Implementations Below
-
-# Add imports for JWT handling (PyJWT is already installed)
-import jwt
-import time
-import uuid
-
-# Environment variables for IMS FHIR integration
-IMS_FHIR_SERVER_URL = os.getenv('IMS_FHIR_SERVER_URL', 'https://meditabfhirsandbox.meditab.com/mps/fhir/R4')
-IMS_TOKEN_ENDPOINT = os.getenv('IMS_TOKEN_ENDPOINT', 'https://keycloak-qa.medpharmservices.com:8443/realms/fhir-0051185/protocol/openid-connect/token')
-IMS_CLIENT_ID = os.getenv('IMS_CLIENT_ID', '4ddd3a59-414c-405e-acc5-226c097a7060')
-PRIVATE_KEY_PATH = os.getenv('PRIVATE_KEY_PATH', '/var/www/medora-frontend/public/medora_private_key.pem')
 
 # Load the private key for JWT signing
 try:
@@ -2315,7 +2910,6 @@ except Exception as e:
     logger.error(f"Failed to load private key: {str(e)}")
     raise
 
-# Function to generate JWT assertion using RS384 for IMS authentication
 def generate_jwt_assertion():
     try:
         now = int(time.time())
@@ -2323,11 +2917,10 @@ def generate_jwt_assertion():
             "sub": IMS_CLIENT_ID,
             "aud": IMS_TOKEN_ENDPOINT,
             "iss": IMS_CLIENT_ID,
-            "exp": now + 300,  # 5 minutes from now
+            "exp": now + 300,
             "iat": now,
             "jti": str(uuid.uuid4())
         }
-        # Sign the JWT with the private key using RS384
         assertion = jwt.encode(payload, PRIVATE_KEY, algorithm="RS384")
         logger.debug(f"Generated JWT assertion: {assertion}")
         return assertion
@@ -2335,7 +2928,6 @@ def generate_jwt_assertion():
         logger.error(f"Failed to generate JWT assertion: {str(e)}")
         return None
 
-# Function to get OAuth2 access token from IMS
 def get_fhir_access_token():
     try:
         assertion = generate_jwt_assertion()
@@ -2360,14 +2952,12 @@ def get_fhir_access_token():
         logger.info("Successfully obtained IMS FHIR access token")
         return access_token
     except Exception as e:
-        # Log the response body if available
         if hasattr(e, 'response') and e.response is not None:
             logger.error(f"Failed to get IMS FHIR access token: {str(e)} - Response: {e.response.text}")
         else:
             logger.error(f"Failed to get IMS FHIR access token: {str(e)}")
         return None
 
-# Function to push data to IMS FHIR server
 def push_to_fhir_server(patient_id, visit_id, tenant_id):
     try:
         access_token = get_fhir_access_token()
@@ -2377,11 +2967,9 @@ def push_to_fhir_server(patient_id, visit_id, tenant_id):
             "Authorization": f"Bearer {access_token}",
             "Content-Type": "application/fhir+json"
         }
-        # Fetch patient data from MongoDB
         patient = patients_collection.find_one({"_id": ObjectId(patient_id), "tenantId": tenant_id})
         if not patient:
             raise ValueError(f"Patient {patient_id} not found")
-        # Map to FHIR Patient resource
         fhir_patient = {
             "resourceType": "Patient",
             "id": patient_id,
@@ -2389,7 +2977,6 @@ def push_to_fhir_server(patient_id, visit_id, tenant_id):
             "birthDate": None,
             "meta": {"tag": [{"system": "http://medora.ai/tenant", "code": tenant_id}]}
         }
-        # Push Patient to FHIR server
         response = requests.put(
             f"{IMS_FHIR_SERVER_URL}/Patient/{patient_id}",
             headers=headers,
@@ -2398,11 +2985,9 @@ def push_to_fhir_server(patient_id, visit_id, tenant_id):
         )
         response.raise_for_status()
         logger.info(f"Pushed Patient {patient_id} to IMS FHIR server")
-        # Fetch visit data
         visit = visits_collection.find_one({"visitId": visit_id, "tenantId": tenant_id})
         if not visit:
             raise ValueError(f"Visit {visit_id} not found")
-        # Map to FHIR Encounter resource
         fhir_encounter = {
             "resourceType": "Encounter",
             "id": visit_id,
@@ -2411,7 +2996,6 @@ def push_to_fhir_server(patient_id, visit_id, tenant_id):
             "period": {"start": visit.get("startTime")},
             "meta": {"tag": [{"system": "http://medora.ai/tenant", "code": tenant_id}]}
         }
-        # Push Encounter to FHIR server
         response = requests.put(
             f"{IMS_FHIR_SERVER_URL}/Encounter/{visit_id}",
             headers=headers,
@@ -2420,12 +3004,10 @@ def push_to_fhir_server(patient_id, visit_id, tenant_id):
         )
         response.raise_for_status()
         logger.info(f"Pushed Encounter {visit_id} to IMS FHIR server")
-        # Fetch SOAP notes from DynamoDB
         soap_notes = get_soap_notes(patient_id, visit_id, tenant_id)
         if not soap_notes:
             logger.warning(f"No SOAP notes found for patient {patient_id}, visit {visit_id}")
             return True
-        # Map SOAP notes to FHIR Observation
         fhir_observation = {
             "resourceType": "Observation",
             "id": f"{visit_id}-soap",
@@ -2436,7 +3018,6 @@ def push_to_fhir_server(patient_id, visit_id, tenant_id):
             "valueString": json.dumps(soap_notes),
             "meta": {"tag": [{"system": "http://medora.ai/tenant", "code": tenant_id}]}
         }
-        # Push Observation to FHIR server
         response = requests.put(
             f"{IMS_FHIR_SERVER_URL}/Observation/{visit_id}-soap",
             headers=headers,
@@ -2450,7 +3031,6 @@ def push_to_fhir_server(patient_id, visit_id, tenant_id):
         logger.error(f"Failed to push data to IMS FHIR server: {str(e)}")
         return False
 
-# Endpoint to manually push data to IMS FHIR server
 @app.route('/api/push-to-ims', methods=['POST', 'OPTIONS'])
 def push_to_ims():
     if request.method == 'OPTIONS':
@@ -2485,7 +3065,6 @@ def push_to_ims():
         return jsonify({"success": False, "error": str(e)}), 500
 
 if __name__ == '__main__':
-    # At startup, ensure MongoDB indexes exist
     try:
         patients_collection.create_index([("tenantId", 1)])
         transcripts_collection.create_index([("tenantId", 1), ("patientId", 1)])

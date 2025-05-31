@@ -1,180 +1,262 @@
-2025-05-21 15:45:35,307 [INFO] Logging setup complete. Logs will be written to /var/www/medora-web-backend/flask-app.log and console.
-2025-05-21 15:45:35,548 [INFO] Successfully initialized AWS clients
-2025-05-21 15:45:35,548 [ERROR] Failed to connect to MongoDB: [Errno 2] No such file or directory: '/var/www/backend/global-bundle.pem'
-2025-05-21 15:46:54,259 [INFO] Logging setup complete. Logs will be written to /var/www/medora-web-backend/flask-app.log and console.
-2025-05-21 15:46:54,379 [INFO] Successfully initialized AWS clients
-2025-05-21 15:46:54,380 [ERROR] Failed to connect to MongoDB: [Errno 2] No such file or directory: '/var/www/backend/global-bundle.pem'
-2025-05-21 15:53:00,100 [INFO] Logging setup complete. Logs will be written to /var/www/medora-web-backend/flask-app.log and console.
-2025-05-21 15:53:00,226 [INFO] Successfully initialized AWS clients
-2025-05-21 15:53:00,226 [ERROR] Failed to connect to MongoDB: [Errno 2] No such file or directory: '/var/www/backend/global-bundle.pem'
-2025-05-21 15:57:27,538 [INFO] Logging setup complete. Logs will be written to /var/www/medora-web-backend/flask-app.log and console.
-2025-05-21 15:57:27,659 [INFO] Successfully initialized AWS clients
-2025-05-21 15:57:27,660 [ERROR] Failed to connect to MongoDB: [Errno 2] No such file or directory: '/var/www/backend/global-bundle.pem'
-2025-05-21 15:57:28,201 [INFO] Logging setup complete. Logs will be written to /var/www/medora-web-backend/flask-app.log and console.
-2025-05-21 15:57:28,323 [INFO] Successfully initialized AWS clients
-2025-05-21 15:57:28,324 [ERROR] Failed to connect to MongoDB: [Errno 2] No such file or directory: '/var/www/backend/global-bundle.pem'
-2025-05-21 15:57:28,875 [INFO] Logging setup complete. Logs will be written to /var/www/medora-web-backend/flask-app.log and console.
-2025-05-21 15:57:29,003 [INFO] Successfully initialized AWS clients
-2025-05-21 15:57:29,003 [ERROR] Failed to connect to MongoDB: [Errno 2] No such file or directory: '/var/www/backend/global-bundle.pem'
-2025-05-21 15:57:29,555 [INFO] Logging setup complete. Logs will be written to /var/www/medora-web-backend/flask-app.log and console.
-2025-05-21 15:57:29,678 [INFO] Successfully initialized AWS clients
-2025-05-21 15:57:29,678 [ERROR] Failed to connect to MongoDB: [Errno 2] No such file or directory: '/var/www/backend/global-bundle.pem'
-2025-05-21 15:57:30,225 [INFO] Logging setup complete. Logs will be written to /var/www/medora-web-backend/flask-app.log and console.
-2025-05-21 15:57:30,348 [INFO] Successfully initialized AWS clients
-2025-05-21 15:57:30,349 [ERROR] Failed to connect to MongoDB: [Errno 2] No such file or directory: '/var/www/backend/global-bundle.pem'
-2025-05-21 15:57:30,890 [INFO] Logging setup complete. Logs will be written to /var/www/medora-web-backend/flask-app.log and console.
-2025-05-21 15:57:31,018 [INFO] Successfully initialized AWS clients
-2025-05-21 15:57:31,019 [ERROR] Failed to connect to MongoDB: [Errno 2] No such file or directory: '/var/www/backend/global-bundle.pem'
-2025-05-21 15:57:31,571 [INFO] Logging setup complete. Logs will be written to /var/www/medora-web-backend/flask-app.log and console.
-2025-05-21 15:57:31,696 [INFO] Successfully initialized AWS clients
-2025-05-21 15:57:31,696 [ERROR] Failed to connect to MongoDB: [Errno 2] No such file or directory: '/var/www/backend/global-bundle.pem'
-2025-05-21 15:57:32,236 [INFO] Logging setup complete. Logs will be written to /var/www/medora-web-backend/flask-app.log and console.
-2025-05-21 15:57:32,360 [INFO] Successfully initialized AWS clients
-2025-05-21 15:57:32,362 [ERROR] Failed to connect to MongoDB: [Errno 2] No such file or directory: '/var/www/backend/global-bundle.pem'
-2025-05-21 15:57:32,907 [INFO] Logging setup complete. Logs will be written to /var/www/medora-web-backend/flask-app.log and console.
-2025-05-21 15:57:33,033 [INFO] Successfully initialized AWS clients
-2025-05-21 15:57:33,033 [ERROR] Failed to connect to MongoDB: [Errno 2] No such file or directory: '/var/www/backend/global-bundle.pem'
-2025-05-21 15:57:33,576 [INFO] Logging setup complete. Logs will be written to /var/www/medora-web-backend/flask-app.log and console.
-2025-05-21 15:57:33,698 [INFO] Successfully initialized AWS clients
-2025-05-21 15:57:33,698 [ERROR] Failed to connect to MongoDB: [Errno 2] No such file or directory: '/var/www/backend/global-bundle.pem'
-2025-05-21 15:57:34,256 [INFO] Logging setup complete. Logs will be written to /var/www/medora-web-backend/flask-app.log and console.
-2025-05-21 15:57:34,378 [INFO] Successfully initialized AWS clients
-2025-05-21 15:57:34,379 [ERROR] Failed to connect to MongoDB: [Errno 2] No such file or directory: '/var/www/backend/global-bundle.pem'
-2025-05-21 15:57:34,918 [INFO] Logging setup complete. Logs will be written to /var/www/medora-web-backend/flask-app.log and console.
-2025-05-21 15:57:35,045 [INFO] Successfully initialized AWS clients
-2025-05-21 15:57:35,046 [ERROR] Failed to connect to MongoDB: [Errno 2] No such file or directory: '/var/www/backend/global-bundle.pem'
-2025-05-21 15:57:35,586 [INFO] Logging setup complete. Logs will be written to /var/www/medora-web-backend/flask-app.log and console.
-2025-05-21 15:57:35,711 [INFO] Successfully initialized AWS clients
-2025-05-21 15:57:35,712 [ERROR] Failed to connect to MongoDB: [Errno 2] No such file or directory: '/var/www/backend/global-bundle.pem'
-2025-05-21 15:57:36,254 [INFO] Logging setup complete. Logs will be written to /var/www/medora-web-backend/flask-app.log and console.
-2025-05-21 15:57:36,378 [INFO] Successfully initialized AWS clients
-2025-05-21 15:57:36,379 [ERROR] Failed to connect to MongoDB: [Errno 2] No such file or directory: '/var/www/backend/global-bundle.pem'
-2025-05-21 15:57:36,934 [INFO] Logging setup complete. Logs will be written to /var/www/medora-web-backend/flask-app.log and console.
-2025-05-21 15:57:37,057 [INFO] Successfully initialized AWS clients
-2025-05-21 15:57:37,058 [ERROR] Failed to connect to MongoDB: [Errno 2] No such file or directory: '/var/www/backend/global-bundle.pem'
-2025-05-21 15:57:37,593 [INFO] Logging setup complete. Logs will be written to /var/www/medora-web-backend/flask-app.log and console.
-2025-05-21 15:57:37,714 [INFO] Successfully initialized AWS clients
-2025-05-21 15:57:37,716 [ERROR] Failed to connect to MongoDB: [Errno 2] No such file or directory: '/var/www/backend/global-bundle.pem'
-2025-05-21 16:01:58,563 [INFO] Logging setup complete. Logs will be written to /var/www/medora-web-backend/flask-app.log and console.
-2025-05-21 16:01:58,687 [INFO] Successfully initialized AWS clients
-2025-05-21 16:01:58,797 [INFO] Created indexes on tenantId fields in MongoDB collections
-2025-05-21 16:01:58,797 [INFO] Successfully connected to MongoDB
-2025-05-21 16:01:58,845 [INFO] Successfully loaded private key for IMS FHIR authentication
-2025-05-21 16:01:58,854 [INFO] MongoDB indexes created successfully
-2025-05-21 16:02:14,117 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
-2025-05-21 16:02:14,121 [INFO] Found 0 patients for tenant doctor@allergyaffiliates.com
-2025-05-21 16:02:16,791 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
-2025-05-21 16:02:16,793 [INFO] Found 0 patients for tenant doctor@allergyaffiliates.com
-2025-05-21 16:02:33,965 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
-2025-05-21 16:02:33,967 [INFO] Found 0 patients for tenant doctor@allergyaffiliates.com
-2025-05-21 16:02:36,812 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
-2025-05-21 16:02:36,814 [INFO] Found 0 patients for tenant doctor@allergyaffiliates.com
-2025-05-21 16:03:00,367 [INFO] Fetching patients for tenant_id: siddharthc@meditab.com
-2025-05-21 16:03:00,370 [INFO] Found 0 patients for tenant siddharthc@meditab.com
-2025-05-21 16:03:03,014 [INFO] Fetching patients for tenant_id: siddharthc@meditab.com
-2025-05-21 16:03:03,016 [INFO] Found 0 patients for tenant siddharthc@meditab.com
-2025-05-21 16:03:11,783 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
-2025-05-21 16:03:11,786 [INFO] Found 0 patients for tenant doctor@allergyaffiliates.com
-2025-05-21 16:03:14,441 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
-2025-05-21 16:03:14,443 [INFO] Found 0 patients for tenant doctor@allergyaffiliates.com
-2025-05-21 16:03:17,827 [INFO] Handling POST request for /api/visit/start
-2025-05-21 16:03:17,830 [INFO] Patient TEST01 not found, creating new patient
-2025-05-21 16:03:17,836 [INFO] Created new patient with ID: 682df945cdc7223ac94f81e1
-2025-05-21 16:03:17,844 [INFO] Visit started: c264f461-3adf-445e-9d10-411c45b5bd5d for patient 682df945cdc7223ac94f81e1 by doctor@allergyaffiliates.com
-2025-05-21 16:03:19,159 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
-2025-05-21 16:03:19,161 [INFO] Found 1 patients for tenant doctor@allergyaffiliates.com
-2025-05-21 16:03:19,218 [INFO] Fetching history for patient 682df945cdc7223ac94f81e1 in tenant doctor@allergyaffiliates.com
-2025-05-21 16:03:19,220 [INFO] Retrieved 0 transcripts for patient 682df945cdc7223ac94f81e1 in tenant doctor@allergyaffiliates.com
-2025-05-21 16:03:46,160 [INFO] Received request for /api/analyze-transcript
-2025-05-21 16:03:46,161 [INFO] Handling POST request for /api/analyze-transcript
-2025-05-21 16:03:46,161 [INFO] Processing transcript with data: patient_id=682df945cdc7223ac94f81e1, visit_id=c264f461-3adf-445e-9d10-411c45b5bd5d, tenant_id=doctor@allergyaffiliates.com, email=doctor@allergyaffiliates.com
-2025-05-21 16:03:46,161 [INFO] Generating SOAP notes via xAI API
-2025-05-21 16:04:01,342 [INFO] Raw xAI response: ```json
-{
-    "patient_history": {
-        "chief_complaint": "Hives due to seafood and shellfish allergies, ongoing for an unspecified duration, severity not specified.",
-        "history_of_present_illness": "Pankaj reports experiencing hives, which he attributes to his known seafood and shellfish allergies. The onset, duration, and frequency of these episodes are not specified in the transcript. He does not mention specific triggers beyond seafood and shellfish, associated symptoms, or the impact on his daily life. Pankaj is currently undergoing allergy shots, but it is unclear if these are helping or if he has tried other treatments.",
-        "past_medical_history": "No specific past medical history, hospitalizations, surgeries, or chronic conditions mentioned. Prior allergy management includes ongoing allergy shots, but details such as duration and effectiveness are not provided.",
-        "allergies": "Seafood and shellfish allergies with hives as the reported reaction. Current management includes allergy shots, specifics unknown.",
-        "social_history": "No information provided on lifestyle factors, occupation, smoking/alcohol history, or environmental exposures.",
-        "review_of_systems": "No additional symptoms mentioned across other systems such as fatigue, fever, or weight changes."
-    },
-    "physical_examination": "Physical examination is needed to assess the presence and extent of hives, as well as any other signs of allergic reactions.",
-    "differential_diagnosis": "Primary Diagnosis: Allergic reaction to seafood and shellfish. Alternative Diagnoses: 1) Chronic urticaria unrelated to food allergies, 2) Contact dermatitis from other allergens.",
-    "diagnostic_workup": "1. Skin prick test to confirm seafood and shellfish allergies. 2. Complete blood count (CBC) with differential to rule out other causes of hives. 3. Serum tryptase level to assess for mast cell activation. Rationale: These tests will help confirm the allergic nature of the hives and rule out other potential causes.",
-    "plan_of_care": "In regards to Allergic reaction to seafood and shellfish:\n- Continue allergy shots if effective, with a review of their efficacy at the next visit.\n- Prescribe second-generation antihistamines such as cetirizine 10 mg daily for symptom control.\n- Educate on strict avoidance of seafood and shellfish.\nIn regards to Chronic urticaria:\n- Prescribe a trial of H1 and H2 antihistamine combination, e.g., cetirizine 10 mg and ranitidine 150 mg twice daily.\n- Consider referral to a dermatologist if symptoms persist.\nIn regards to Contact dermatitis:\n- Identify and avoid potential contact allergens.\n- Use topical corticosteroids such as hydrocortisone 1% cream as needed.\nIn regards to Follow-Up:\n- Schedule a follow-up appointment in 4 weeks to assess response to treatment and review allergy shot progress.\nIn regards to Emergency Management:\n- Prescribe an EpiPen (epinephrine auto-injector) and educate on its use for severe allergic reactions.",
-    "patient_education": "Educate Pankaj on the importance of avoiding seafood and shellfish, recognizing signs of an allergic reaction, and the proper use of an EpiPen. Discuss the importance of adhering to the prescribed medication regimen and the potential need for ongoing allergy shots.",
-    "follow_up_instructions": "Follow up in 4 weeks to review symptom control, effectiveness of allergy shots, and any side effects from medications. Bring a symptom diary to the appointment.",
-    "summary": "Pankaj presented with hives attributed to seafood and shellfish allergies. He is currently on allergy shots, but their effectiveness is unclear. A detailed diagnostic workup is planned, and a comprehensive treatment plan including medications and emergency management has been outlined. Follow-up in 4 weeks is scheduled.",
-    "enhanced_recommendations": "1. Medication Management:\n   - Cetirizine 10 mg orally once daily for hives. Rationale: Second-generation antihistamines are effective for allergic urticaria with minimal sedative effects.\n   - Ranitidine 150 mg orally twice daily if chronic urticaria is suspected. Rationale: H2 blockers can enhance the effect of H1 blockers in chronic urticaria.\n   - EpiPen (epinephrine auto-injector) 0.3 mg intramuscularly as needed for severe allergic reactions. Rationale: Essential for anaphylaxis management.\n   - Medication interactions: Cetirizine may interact with CNS depressants; monitor for increased sedation. Ranitidine may interact with certain antacids; avoid concurrent use.\n   - Adjustment protocol: Increase cetirizine to 20 mg daily if symptoms persist after 2 weeks. If no improvement, consider adding ranitidine.\n\n2. Lifestyle Modifications:\n   - Implement strict avoidance of seafood and shellfish in all forms, including cross-contamination risks in restaurants.\n   - Use hypoallergenic products to reduce the risk of contact dermatitis.\n   - Dietary adjustments: Avoid processed foods that may contain hidden seafood derivatives.\n   - Exercise: No specific restrictions, but monitor for exercise-induced urticaria.\n   - Stress management: Practice mindfulness or yoga to reduce stress, which can exacerbate hives.\n\n3. Monitoring Protocol:\n   - Monitor frequency and severity of hives daily using a symptom diary.\n   - Check for signs of anaphylaxis such as difficulty breathing or swelling.\n   - Contact healthcare provider if hives persist despite treatment or if new symptoms develop.\n   - Use a smartphone app like 'MySymptoms' for digital tracking.\n\n4. Emergency Action Plan:\n   - Use EpiPen if experiencing severe symptoms such as difficulty breathing, swelling of the face or throat, or severe hives.\n   - Call emergency services immediately after using the EpiPen.\n   - Caregivers should be trained on EpiPen use and emergency protocol.\n\n5. Long-term Management Strategy:\n   - Reassess treatment efficacy at 3 months, then every 6 months.\n   - Goal: Complete resolution of hives and no need for emergency interventions.\n   - Future options: Immunotherapy adjustments, biologics if refractory to current treatments.\n   - Success criteria: No hives for 6 months, no emergency interventions.\n   - Referral: Consider allergist or dermatologist referral if symptoms persist beyond 6 months.\n\n6. Patient Education Resources:\n   - 'Understanding Food Allergies' by the American Academy of Allergy, Asthma & Immunology.\n   - Food Allergy Research & Education (FARE) website: www.foodallergy.org.\n   - Support group: Local allergy support group, contact through the hospital's patient services.\n   - Mobile app: 'Allergy Alert' for managing food allergies.\n\n7. Follow-up Schedule:\n   - 4 weeks post-visit to review initial treatment response.\n   - 3 months for comprehensive review and potential adjustment of immunotherapy.\n   - Bring symptom diary and any new test results to follow-up appointments.\n   - Expectation: Significant reduction in hives frequency and severity by the 3-month follow-up."
-}
-```
-2025-05-21 16:04:01,343 [INFO] Parsed JSON: {'patient_history': {'chief_complaint': 'Hives due to seafood and shellfish allergies, ongoing for an unspecified duration, severity not specified.', 'history_of_present_illness': 'Pankaj reports experiencing hives, which he attributes to his known seafood and shellfish allergies. The onset, duration, and frequency of these episodes are not specified in the transcript. He does not mention specific triggers beyond seafood and shellfish, associated symptoms, or the impact on his daily life. Pankaj is currently undergoing allergy shots, but it is unclear if these are helping or if he has tried other treatments.', 'past_medical_history': 'No specific past medical history, hospitalizations, surgeries, or chronic conditions mentioned. Prior allergy management includes ongoing allergy shots, but details such as duration and effectiveness are not provided.', 'allergies': 'Seafood and shellfish allergies with hives as the reported reaction. Current management includes allergy shots, specifics unknown.', 'social_history': 'No information provided on lifestyle factors, occupation, smoking/alcohol history, or environmental exposures.', 'review_of_systems': 'No additional symptoms mentioned across other systems such as fatigue, fever, or weight changes.'}, 'physical_examination': 'Physical examination is needed to assess the presence and extent of hives, as well as any other signs of allergic reactions.', 'differential_diagnosis': 'Primary Diagnosis: Allergic reaction to seafood and shellfish. Alternative Diagnoses: 1) Chronic urticaria unrelated to food allergies, 2) Contact dermatitis from other allergens.', 'diagnostic_workup': '1. Skin prick test to confirm seafood and shellfish allergies. 2. Complete blood count (CBC) with differential to rule out other causes of hives. 3. Serum tryptase level to assess for mast cell activation. Rationale: These tests will help confirm the allergic nature of the hives and rule out other potential causes.', 'plan_of_care': 'In regards to Allergic reaction to seafood and shellfish:\n- Continue allergy shots if effective, with a review of their efficacy at the next visit.\n- Prescribe second-generation antihistamines such as cetirizine 10 mg daily for symptom control.\n- Educate on strict avoidance of seafood and shellfish.\nIn regards to Chronic urticaria:\n- Prescribe a trial of H1 and H2 antihistamine combination, e.g., cetirizine 10 mg and ranitidine 150 mg twice daily.\n- Consider referral to a dermatologist if symptoms persist.\nIn regards to Contact dermatitis:\n- Identify and avoid potential contact allergens.\n- Use topical corticosteroids such as hydrocortisone 1% cream as needed.\nIn regards to Follow-Up:\n- Schedule a follow-up appointment in 4 weeks to assess response to treatment and review allergy shot progress.\nIn regards to Emergency Management:\n- Prescribe an EpiPen (epinephrine auto-injector) and educate on its use for severe allergic reactions.', 'patient_education': 'Educate Pankaj on the importance of avoiding seafood and shellfish, recognizing signs of an allergic reaction, and the proper use of an EpiPen. Discuss the importance of adhering to the prescribed medication regimen and the potential need for ongoing allergy shots.', 'follow_up_instructions': 'Follow up in 4 weeks to review symptom control, effectiveness of allergy shots, and any side effects from medications. Bring a symptom diary to the appointment.', 'summary': 'Pankaj presented with hives attributed to seafood and shellfish allergies. He is currently on allergy shots, but their effectiveness is unclear. A detailed diagnostic workup is planned, and a comprehensive treatment plan including medications and emergency management has been outlined. Follow-up in 4 weeks is scheduled.', 'enhanced_recommendations': "1. Medication Management:\n   - Cetirizine 10 mg orally once daily for hives. Rationale: Second-generation antihistamines are effective for allergic urticaria with minimal sedative effects.\n   - Ranitidine 150 mg orally twice daily if chronic urticaria is suspected. Rationale: H2 blockers can enhance the effect of H1 blockers in chronic urticaria.\n   - EpiPen (epinephrine auto-injector) 0.3 mg intramuscularly as needed for severe allergic reactions. Rationale: Essential for anaphylaxis management.\n   - Medication interactions: Cetirizine may interact with CNS depressants; monitor for increased sedation. Ranitidine may interact with certain antacids; avoid concurrent use.\n   - Adjustment protocol: Increase cetirizine to 20 mg daily if symptoms persist after 2 weeks. If no improvement, consider adding ranitidine.\n\n2. Lifestyle Modifications:\n   - Implement strict avoidance of seafood and shellfish in all forms, including cross-contamination risks in restaurants.\n   - Use hypoallergenic products to reduce the risk of contact dermatitis.\n   - Dietary adjustments: Avoid processed foods that may contain hidden seafood derivatives.\n   - Exercise: No specific restrictions, but monitor for exercise-induced urticaria.\n   - Stress management: Practice mindfulness or yoga to reduce stress, which can exacerbate hives.\n\n3. Monitoring Protocol:\n   - Monitor frequency and severity of hives daily using a symptom diary.\n   - Check for signs of anaphylaxis such as difficulty breathing or swelling.\n   - Contact healthcare provider if hives persist despite treatment or if new symptoms develop.\n   - Use a smartphone app like 'MySymptoms' for digital tracking.\n\n4. Emergency Action Plan:\n   - Use EpiPen if experiencing severe symptoms such as difficulty breathing, swelling of the face or throat, or severe hives.\n   - Call emergency services immediately after using the EpiPen.\n   - Caregivers should be trained on EpiPen use and emergency protocol.\n\n5. Long-term Management Strategy:\n   - Reassess treatment efficacy at 3 months, then every 6 months.\n   - Goal: Complete resolution of hives and no need for emergency interventions.\n   - Future options: Immunotherapy adjustments, biologics if refractory to current treatments.\n   - Success criteria: No hives for 6 months, no emergency interventions.\n   - Referral: Consider allergist or dermatologist referral if symptoms persist beyond 6 months.\n\n6. Patient Education Resources:\n   - 'Understanding Food Allergies' by the American Academy of Allergy, Asthma & Immunology.\n   - Food Allergy Research & Education (FARE) website: www.foodallergy.org.\n   - Support group: Local allergy support group, contact through the hospital's patient services.\n   - Mobile app: 'Allergy Alert' for managing food allergies.\n\n7. Follow-up Schedule:\n   - 4 weeks post-visit to review initial treatment response.\n   - 3 months for comprehensive review and potential adjustment of immunotherapy.\n   - Bring symptom diary and any new test results to follow-up appointments.\n   - Expectation: Significant reduction in hives frequency and severity by the 3-month follow-up."}
-2025-05-21 16:04:01,343 [INFO] Generated SOAP notes: {
-  "patient_history": {
-    "chief_complaint": "Hives due to seafood and shellfish allergies, ongoing for an unspecified duration, severity not specified.",
-    "history_of_present_illness": "Pankaj reports experiencing hives, which he attributes to his known seafood and shellfish allergies. The onset, duration, and frequency of these episodes are not specified in the transcript. He does not mention specific triggers beyond seafood and shellfish, associated symptoms, or the impact on his daily life. Pankaj is currently undergoing allergy shots, but it is unclear if these are helping or if he has tried other treatments.",
-    "past_medical_history": "No specific past medical history, hospitalizations, surgeries, or chronic conditions mentioned. Prior allergy management includes ongoing allergy shots, but details such as duration and effectiveness are not provided.",
-    "allergies": "Seafood and shellfish allergies with hives as the reported reaction. Current management includes allergy shots, specifics unknown.",
-    "social_history": "No information provided on lifestyle factors, occupation, smoking/alcohol history, or environmental exposures.",
-    "review_of_systems": "No additional symptoms mentioned across other systems such as fatigue, fever, or weight changes."
-  },
-  "physical_examination": "Physical examination is needed to assess the presence and extent of hives, as well as any other signs of allergic reactions.",
-  "differential_diagnosis": "Primary Diagnosis: Allergic reaction to seafood and shellfish. Alternative Diagnoses: 1) Chronic urticaria unrelated to food allergies, 2) Contact dermatitis from other allergens.",
-  "diagnostic_workup": "1. Skin prick test to confirm seafood and shellfish allergies. 2. Complete blood count (CBC) with differential to rule out other causes of hives. 3. Serum tryptase level to assess for mast cell activation. Rationale: These tests will help confirm the allergic nature of the hives and rule out other potential causes.",
-  "plan_of_care": "In regards to Allergic reaction to seafood and shellfish:\n- Continue allergy shots if effective, with a review of their efficacy at the next visit.\n- Prescribe second-generation antihistamines such as cetirizine 10 mg daily for symptom control.\n- Educate on strict avoidance of seafood and shellfish.\nIn regards to Chronic urticaria:\n- Prescribe a trial of H1 and H2 antihistamine combination, e.g., cetirizine 10 mg and ranitidine 150 mg twice daily.\n- Consider referral to a dermatologist if symptoms persist.\nIn regards to Contact dermatitis:\n- Identify and avoid potential contact allergens.\n- Use topical corticosteroids such as hydrocortisone 1% cream as needed.\nIn regards to Follow-Up:\n- Schedule a follow-up appointment in 4 weeks to assess response to treatment and review allergy shot progress.\nIn regards to Emergency Management:\n- Prescribe an EpiPen (epinephrine auto-injector) and educate on its use for severe allergic reactions.",
-  "patient_education": "Educate Pankaj on the importance of avoiding seafood and shellfish, recognizing signs of an allergic reaction, and the proper use of an EpiPen. Discuss the importance of adhering to the prescribed medication regimen and the potential need for ongoing allergy shots.",
-  "follow_up_instructions": "Follow up in 4 weeks to review symptom control, effectiveness of allergy shots, and any side effects from medications. Bring a symptom diary to the appointment.",
-  "summary": "Pankaj presented with hives attributed to seafood and shellfish allergies. He is currently on allergy shots, but their effectiveness is unclear. A detailed diagnostic workup is planned, and a comprehensive treatment plan including medications and emergency management has been outlined. Follow-up in 4 weeks is scheduled.",
-  "enhanced_recommendations": "1. Medication Management:\n   - Cetirizine 10 mg orally once daily for hives. Rationale: Second-generation antihistamines are effective for allergic urticaria with minimal sedative effects.\n   - Ranitidine 150 mg orally twice daily if chronic urticaria is suspected. Rationale: H2 blockers can enhance the effect of H1 blockers in chronic urticaria.\n   - EpiPen (epinephrine auto-injector) 0.3 mg intramuscularly as needed for severe allergic reactions. Rationale: Essential for anaphylaxis management.\n   - Medication interactions: Cetirizine may interact with CNS depressants; monitor for increased sedation. Ranitidine may interact with certain antacids; avoid concurrent use.\n   - Adjustment protocol: Increase cetirizine to 20 mg daily if symptoms persist after 2 weeks. If no improvement, consider adding ranitidine.\n\n2. Lifestyle Modifications:\n   - Implement strict avoidance of seafood and shellfish in all forms, including cross-contamination risks in restaurants.\n   - Use hypoallergenic products to reduce the risk of contact dermatitis.\n   - Dietary adjustments: Avoid processed foods that may contain hidden seafood derivatives.\n   - Exercise: No specific restrictions, but monitor for exercise-induced urticaria.\n   - Stress management: Practice mindfulness or yoga to reduce stress, which can exacerbate hives.\n\n3. Monitoring Protocol:\n   - Monitor frequency and severity of hives daily using a symptom diary.\n   - Check for signs of anaphylaxis such as difficulty breathing or swelling.\n   - Contact healthcare provider if hives persist despite treatment or if new symptoms develop.\n   - Use a smartphone app like 'MySymptoms' for digital tracking.\n\n4. Emergency Action Plan:\n   - Use EpiPen if experiencing severe symptoms such as difficulty breathing, swelling of the face or throat, or severe hives.\n   - Call emergency services immediately after using the EpiPen.\n   - Caregivers should be trained on EpiPen use and emergency protocol.\n\n5. Long-term Management Strategy:\n   - Reassess treatment efficacy at 3 months, then every 6 months.\n   - Goal: Complete resolution of hives and no need for emergency interventions.\n   - Future options: Immunotherapy adjustments, biologics if refractory to current treatments.\n   - Success criteria: No hives for 6 months, no emergency interventions.\n   - Referral: Consider allergist or dermatologist referral if symptoms persist beyond 6 months.\n\n6. Patient Education Resources:\n   - 'Understanding Food Allergies' by the American Academy of Allergy, Asthma & Immunology.\n   - Food Allergy Research & Education (FARE) website: www.foodallergy.org.\n   - Support group: Local allergy support group, contact through the hospital's patient services.\n   - Mobile app: 'Allergy Alert' for managing food allergies.\n\n7. Follow-up Schedule:\n   - 4 weeks post-visit to review initial treatment response.\n   - 3 months for comprehensive review and potential adjustment of immunotherapy.\n   - Bring symptom diary and any new test results to follow-up appointments.\n   - Expectation: Significant reduction in hives frequency and severity by the 3-month follow-up.",
-  "recommendations": "1. Medication Management:\n   - Cetirizine 10 mg orally once daily for hives. Rationale: Second-generation antihistamines are effective for allergic urticaria with minimal sedative effects.\n   - Ranitidine 150 mg orally twice daily if chronic urticaria is suspected. Rationale: H2 blockers can enhance the effect of H1 blockers in chronic urticaria.\n   - EpiPen (epinephrine auto-injector) 0.3 mg intramuscularly as needed for severe allergic reactions. Rationale: Essential for anaphylaxis management.\n   - Medication interactions: Cetirizine may interact with CNS depressants; monitor for increased sedation. Ranitidine may interact with certain antacids; avoid concurrent use.\n   - Adjustment protocol: Increase cetirizine to 20 mg daily if symptoms persist after 2 weeks. If no improvement, consider adding ranitidine.\n\n2. Lifestyle Modifications:\n   - Implement strict avoidance of seafood and shellfish in all forms, including cross-contamination risks in restaurants.\n   - Use hypoallergenic products to reduce the risk of contact dermatitis.\n   - Dietary adjustments: Avoid processed foods that may contain hidden seafood derivatives.\n   - Exercise: No specific restrictions, but monitor for exercise-induced urticaria.\n   - Stress management: Practice mindfulness or yoga to reduce stress, which can exacerbate hives.\n\n3. Monitoring Protocol:\n   - Monitor frequency and severity of hives daily using a symptom diary.\n   - Check for signs of anaphylaxis such as difficulty breathing or swelling.\n   - Contact healthcare provider if hives persist despite treatment or if new symptoms develop.\n   - Use a smartphone app like 'MySymptoms' for digital tracking.\n\n4. Emergency Action Plan:\n   - Use EpiPen if experiencing severe symptoms such as difficulty breathing, swelling of the face or throat, or severe hives.\n   - Call emergency services immediately after using the EpiPen.\n   - Caregivers should be trained on EpiPen use and emergency protocol.\n\n5. Long-term Management Strategy:\n   - Reassess treatment efficacy at 3 months, then every 6 months.\n   - Goal: Complete resolution of hives and no need for emergency interventions.\n   - Future options: Immunotherapy adjustments, biologics if refractory to current treatments.\n   - Success criteria: No hives for 6 months, no emergency interventions.\n   - Referral: Consider allergist or dermatologist referral if symptoms persist beyond 6 months.\n\n6. Patient Education Resources:\n   - 'Understanding Food Allergies' by the American Academy of Allergy, Asthma & Immunology.\n   - Food Allergy Research & Education (FARE) website: www.foodallergy.org.\n   - Support group: Local allergy support group, contact through the hospital's patient services.\n   - Mobile app: 'Allergy Alert' for managing food allergies.\n\n7. Follow-up Schedule:\n   - 4 weeks post-visit to review initial treatment response.\n   - 3 months for comprehensive review and potential adjustment of immunotherapy.\n   - Bring symptom diary and any new test results to follow-up appointments.\n   - Expectation: Significant reduction in hives frequency and severity by the 3-month follow-up."
-}
-2025-05-21 16:04:01,344 [INFO] Storing SOAP notes in MedoraSOAPNotes for patient_id: 682df945cdc7223ac94f81e1, visit_id: c264f461-3adf-445e-9d10-411c45b5bd5d, tenant_id: doctor@allergyaffiliates.com
-2025-05-21 16:04:01,404 [INFO] Successfully stored SOAP notes in MedoraSOAPNotes for tenant doctor@allergyaffiliates.com
-2025-05-21 16:04:01,405 [INFO] Preparing to save transcript for patient 682df945cdc7223ac94f81e1 with tenant doctor@allergyaffiliates.com
-2025-05-21 16:04:01,446 [INFO] Stored transcript for patient 682df945cdc7223ac94f81e1, tenant doctor@allergyaffiliates.com: Inserted ID 682df971cdc7223ac94f81e3
-2025-05-21 16:04:01,509 [INFO] Fetching history for patient 682df945cdc7223ac94f81e1 in tenant doctor@allergyaffiliates.com
-2025-05-21 16:04:01,511 [INFO] Retrieved 1 transcripts for patient 682df945cdc7223ac94f81e1 in tenant doctor@allergyaffiliates.com
-2025-05-21 16:04:01,569 [INFO] ALLERGENIQ: API endpoint called
-2025-05-21 16:04:01,570 [INFO] ALLERGENIQ: Request details: {'method': 'GET', 'url': 'http://medoramd.ai/api/allergeniq-profile?patient_id=682df945cdc7223ac94f81e1&visit_id=c264f461-3adf-445e-9d10-411c45b5bd5d&email=doctor@allergyaffiliates.com&tenantID=allergyaffiliates', 'headers': {'Host': 'medoramd.ai', 'X-Real-Ip': '108.191.130.223', 'X-Forwarded-For': '108.191.130.223', 'X-Forwarded-Proto': 'https', 'Connection': 'close', 'Sec-Ch-Ua-Platform': '"macOS"', 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36', 'Sec-Ch-Ua': '"Chromium";v="136", "Google Chrome";v="136", "Not.A/Brand";v="99"', 'Content-Type': 'application/json', 'Sec-Ch-Ua-Mobile': '?0', 'Accept': '*/*', 'Sec-Fetch-Site': 'same-origin', 'Sec-Fetch-Mode': 'cors', 'Sec-Fetch-Dest': 'empty', 'Referer': 'https://medoramd.ai/index.html', 'Accept-Encoding': 'gzip, deflate, br, zstd', 'Accept-Language': 'en-US,en;q=0.9', 'Cookie': '_tccl_visitor=0c2d81c9-9198-4dff-975d-d52b1b60d377'}, 'args': {'patient_id': '682df945cdc7223ac94f81e1', 'visit_id': 'c264f461-3adf-445e-9d10-411c45b5bd5d', 'email': 'doctor@allergyaffiliates.com', 'tenantID': 'allergyaffiliates'}, 'remote_addr': '127.0.0.1'}
-2025-05-21 16:04:01,570 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
-2025-05-21 16:04:01,570 [INFO] ALLERGENIQ: Request params - patient_id: 682df945cdc7223ac94f81e1, visit_id: c264f461-3adf-445e-9d10-411c45b5bd5d, tenant_id: doctor@allergyaffiliates.com, email: doctor@allergyaffiliates.com
-2025-05-21 16:04:01,577 [INFO] ALLERGENIQ: SOAP notes retrieval result: True
-2025-05-21 16:04:01,585 [INFO] Found 0 insights for patient 682df945cdc7223ac94f81e1 using GSI
-2025-05-21 16:04:01,586 [INFO] ALLERGENIQ: Retrieved 0 patient insights
-2025-05-21 16:04:01,589 [INFO] ALLERGENIQ: Processing transcript for allergy data
-2025-05-21 16:04:01,590 [INFO] ALLERGENIQ: Successfully processed transcript for allergen data
-2025-05-21 16:04:01,590 [INFO] ALLERGENIQ: Structuring profile data
-2025-05-21 16:04:01,593 [INFO] ALLERGENIQ: Found patient: TEST01, age: None
-2025-05-21 16:04:01,596 [INFO] ALLERGENIQ: Found visit date: 2025-05-21
-2025-05-21 16:04:01,596 [INFO] ALLERGENIQ: Successfully generated profile data
-2025-05-21 16:04:01,649 [INFO] Received request for /get-insights
-2025-05-21 16:04:01,650 [INFO] Handling GET request for /get-insights
-2025-05-21 16:04:01,650 [INFO] Parsed diagnoses for patient_id 682df945cdc7223ac94f81e1: ['Primary Diagnosis: Allergic reaction to seafood and shellfish']
-2025-05-21 16:04:02,078 [INFO] Fetched 1 clinical guidelines for condition: Primary Diagnosis: Allergic reaction to seafood and shellfish
-2025-05-21 16:04:02,771 [ERROR] Error querying PubMed for condition Primary Diagnosis: Allergic reaction to seafood and shellfish: 'NoneType' object has no attribute 'lower'
-2025-05-21 16:04:03,061 [ERROR] Error querying Semantic Scholar for condition Primary Diagnosis: Allergic reaction to seafood and shellfish: 'NoneType' object has no attribute 'lower'
-2025-05-21 16:04:03,062 [INFO] Final response for patient_id 682df945cdc7223ac94f81e1: {
-  "patient_id": "682df945cdc7223ac94f81e1",
-  "visit_id": "c264f461-3adf-445e-9d10-411c45b5bd5d",
+2025-05-31 18:03:57,541 [INFO] Logging setup complete. Logs will be written to /var/www/medora-web-backend/flask-app.log and console.
+2025-05-31 18:03:57,661 [INFO] Successfully initialized AWS clients
+2025-05-31 18:03:57,722 [INFO] Created indexes on tenantId fields in MongoDB collections
+2025-05-31 18:03:57,722 [INFO] Successfully connected to MongoDB
+2025-05-31 18:03:57,727 [INFO] Successfully loaded private key for IMS FHIR authentication
+2025-05-31 18:03:57,734 [INFO] MongoDB indexes created successfully
+2025-05-31 18:04:19,550 [INFO] Fetching history for patient 6839aacf6740a51452fc7c46 in tenant doctor@allergyaffiliates.com
+2025-05-31 18:04:19,553 [INFO] Retrieved 1 transcripts for patient 6839aacf6740a51452fc7c46 in tenant doctor@allergyaffiliates.com
+2025-05-31 18:04:19,659 [INFO] ALLERGENIQ: API endpoint called
+2025-05-31 18:04:19,660 [INFO] ALLERGENIQ: Request details: {'method': 'GET', 'url': 'http://medoramd.ai/api/allergeniq-profile?patient_id=6839aacf6740a51452fc7c46&visit_id=a84b3d1b-8116-432d-8e27-80090214a5d8&email=doctor@allergyaffiliates.com&tenantID=allergyaffiliates', 'headers': {'Host': 'medoramd.ai', 'X-Real-Ip': '108.191.130.223', 'X-Forwarded-For': '108.191.130.223', 'X-Forwarded-Proto': 'https', 'Connection': 'close', 'Sec-Ch-Ua-Platform': '"macOS"', 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36', 'Sec-Ch-Ua': '"Chromium";v="136", "Google Chrome";v="136", "Not.A/Brand";v="99"', 'Content-Type': 'application/json', 'Sec-Ch-Ua-Mobile': '?0', 'Accept': '*/*', 'Sec-Fetch-Site': 'same-origin', 'Sec-Fetch-Mode': 'cors', 'Sec-Fetch-Dest': 'empty', 'Referer': 'https://medoramd.ai/index.html', 'Accept-Encoding': 'gzip, deflate, br, zstd', 'Accept-Language': 'en-US,en;q=0.9', 'Cookie': '_tccl_visitor=0c2d81c9-9198-4dff-975d-d52b1b60d377'}, 'args': {'patient_id': '6839aacf6740a51452fc7c46', 'visit_id': 'a84b3d1b-8116-432d-8e27-80090214a5d8', 'email': 'doctor@allergyaffiliates.com', 'tenantID': 'allergyaffiliates'}, 'remote_addr': '127.0.0.1'}
+2025-05-31 18:04:19,660 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-05-31 18:04:19,660 [INFO] ALLERGENIQ: Request params - patient_id: 6839aacf6740a51452fc7c46, visit_id: a84b3d1b-8116-432d-8e27-80090214a5d8, tenant_id: doctor@allergyaffiliates.com, email: doctor@allergyaffiliates.com
+2025-05-31 18:04:19,721 [INFO] ALLERGENIQ: SOAP notes retrieval result: True
+2025-05-31 18:04:19,729 [INFO] Found 0 insights for patient 6839aacf6740a51452fc7c46 using GSI
+2025-05-31 18:04:19,729 [INFO] ALLERGENIQ: Retrieved 0 patient insights
+2025-05-31 18:04:19,748 [INFO] ALLERGENIQ: Processing transcript for allergy data
+2025-05-31 18:04:19,749 [INFO] ALLERGENIQ: Successfully processed transcript for allergen data
+2025-05-31 18:04:19,749 [INFO] ALLERGENIQ: Structuring profile data
+2025-05-31 18:04:19,757 [INFO] ALLERGENIQ: Found patient: test30, age: None
+2025-05-31 18:04:19,761 [INFO] ALLERGENIQ: Found visit date: 2025-05-30
+2025-05-31 18:04:19,762 [INFO] ALLERGENIQ: Successfully generated profile data
+2025-05-31 18:04:19,773 [INFO] Handling GET request for /get-insights
+2025-05-31 18:04:19,774 [WARNING] Email parameter is required but was not provided in the request; using fallback email 'doctor@allergyaffiliates.com'. Expected parameters: 'email', 'Email', 'user_email', or 'userEmail'
+2025-05-31 18:04:19,774 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-05-31 18:04:19,778 [INFO] Parsed and simplified diagnoses for patient_id 6839aacf6740a51452fc7c46: ['Atopic Dermatitis (Eczema)', 'Food Allergy', 'Contact Dermatitis due to dust mite exposure']
+2025-05-31 18:04:20,041 [INFO] Skipping Semantic Scholar article 'DISEASES IN COMPANON ANIMALS' due to veterinary content. Veterinary keywords: ['animal'], Acceptable veterinary keywords: [], Human keywords: []
+2025-05-31 18:04:20,041 [INFO] Fetched 1 insights from Semantic Scholar for condition: Atopic Dermatitis (Eczema)
+2025-05-31 18:04:20,570 [INFO] Fetched 2 insights from PubMed for condition: Atopic Dermatitis (Eczema) with search term 'Atopic Dermatitis (Eczema)'
+2025-05-31 18:04:26,274 [INFO] Fetched 1 clinical guidelines for condition: Atopic Dermatitis (Eczema) with search term 'Atopic Dermatitis (Eczema)'
+2025-05-31 18:04:31,600 [INFO] Skipping Semantic Scholar article 'Determination of Heavy Metal Contamination in Premium and Supermarket Brands of Extruded Feline and Canine Food in the South African Market' due to veterinary content. Veterinary keywords: ['dog', 'cat', 'animal', 'pet', 'canine', 'feline', 'rat', 'fish'], Acceptable veterinary keywords: [], Human keywords: ['study']
+2025-05-31 18:04:31,600 [INFO] Skipping Semantic Scholar article 'In vitro digestion and fermentation of animal-derived fermentable substrates using canine and feline faecal inoculum' due to veterinary content. Veterinary keywords: ['dog', 'cat', 'animal', 'pet', 'canine', 'feline', 'rat', 'animal-derived'], Acceptable veterinary keywords: [], Human keywords: ['study']
+2025-05-31 18:04:31,601 [INFO] Fetched 0 insights from Semantic Scholar for condition: Food Allergy
+2025-05-31 18:04:31,942 [INFO] Fetched 2 insights from PubMed for condition: Food Allergy with search term 'Food Allergy'
+2025-05-31 18:04:37,680 [INFO] Skipping clinical guideline 'International consensus statement on allergy and rhinology: Allergic rhinitis - 2023.' due to veterinary content. Veterinary keywords: ['cat', 'rat'], Acceptable veterinary keywords: [], Human keywords: []
+2025-05-31 18:04:37,681 [INFO] Fetched 0 clinical guidelines for condition: Food Allergy with search term 'Food Allergy'
+2025-05-31 18:04:37,698 [ERROR] Error querying clinical guidelines for condition Food Allergy: 429 Client Error: Too Many Requests for url: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=Food+Allergy+%28clinical+practice+guideline+OR+consensus+statement%29+-veterinary+-dog+-cat+-animal+-pet+-canine+-feline&retmax=1&sort=relevance&retmode=json
+2025-05-31 18:04:43,454 [INFO] Fetched 2 insights from Semantic Scholar for condition: Contact Dermatitis due to dust mite exposure
+2025-05-31 18:04:43,892 [INFO] Fetched 1 insights from PubMed for condition: Contact Dermatitis due to dust mite exposure with search term 'Contact Dermatitis due to dust mite exposure'
+2025-05-31 18:04:49,323 [WARNING] No clinical guidelines found for condition: Contact Dermatitis due to dust mite exposure
+2025-05-31 18:04:49,602 [ERROR] Error querying clinical guidelines (broad search) for condition Contact Dermatitis due to dust mite exposure: 429 Client Error: Too Many Requests for url: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=Contact+Dermatitis+due+to+dust+mite+exposure+%28clinical+practice+guideline+OR+consensus+statement%29&retmax=1&sort=relevance&retmode=json
+2025-05-31 18:04:54,603 [INFO] Final response for patient_id 6839aacf6740a51452fc7c46: {
+  "patient_id": "6839aacf6740a51452fc7c46",
+  "visit_id": "a84b3d1b-8116-432d-8e27-80090214a5d8",
   "insights": [
     {
-      "title": "ACVIM consensus statement: Guidelines for the identification, evaluation, and management of systemic hypertension in dogs and cats.",
-      "summary": "An update to the 2007 American College of Veterinary Internal Medicine (ACVIM) consensus statement on the identification, evaluation, and management of systemic hypertension in dogs and cats was presented at the 2017 ACVIM Forum in National Harbor, MD. The updated consensus statement is presented here. The consensus statement aims to provide guidance on appropriate diagnosis and treatment of hypertension in dogs and cats.",
-      "url": "https://pubmed.ncbi.nlm.nih.gov/30353952/",
-      "source": "Journal of veterinary internal medicine",
-      "authors": "Mark J Acierno, Scott Brown, Amanda E Coleman, Rosanne E Jepson, Mark Papich, Rebecca L Stepien, Harriet M Syme",
-      "year": "2018",
-      "content_type": "Clinical Guideline",
-      "relevance_tag": "Clinical Practice Guideline for Primary Diagnosis: Allergic reaction to seafood and shellfish",
+      "title": "Clinical Signs and Diagnosis in Small Animal Practice",
+      "summary": null,
+      "url": "https://www.semanticscholar.org/paper/2322784c089a0d7cbd981848ac1f2a89f7914289",
+      "authors": "R. Ford",
+      "year": 1988,
+      "citation_count": 4,
+      "source": "Semantic Scholar",
       "confidence": "Highly Recommended",
-      "relevance_score": "95.0%"
+      "relevance_score": "100.0%",
+      "relevance_tag": "Relevant to atopic dermatitis (eczema)"
+    },
+    {
+      "title": "Microbiota and probiotics in canine and feline welfare.",
+      "summary": "Dogs and cats have been cohabiting with us for thousands of years. They are the major human companions. Today, dogs and cats live in urban areas. Cats and most dogs are on high carbohydrate diets and face similar life-style challenges as the human beings. The health and well-being of companion animals, just as their owners, depends on the gut microbes. Providing a proper care and nutritionally balanced diet to companion animals is recognised as a part of our responsibility to maintain the health and well being of our pet. However, as microbiota differences may facilitate exposure to pathogens and harmful environmental influences, it is prudent to search for novel tools to protect dogs and cats and at the same time the human owners from pathogens. Specific probiotic strains and/or their defined combinations may be useful in the canine and feline nutrition, therapy, and care. Probiotic supplementations have been successful in the prevention and treatment of acute gastroenteritis, treatment of IBD, and prevention of allergy in companion animals. New challenges for probiotic applications include maintenance of obesity and overweight, urogenital tract infections, Helicobacter gastritis and parasitic infections. The probiotics of human origin appear to be among the new promising tools for the maintenance of pets' health. However, the host-derived microorganisms might be the most appropriate probiotic source. Therefore, more controlled trials are needed to characterise new and safe probiotic preparations with an impact on general health and well being as well as health maintenance in dogs and cats.",
+      "pubmed_id": "25863311",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/25863311/",
+      "confidence": "Highly Recommended",
+      "relevance_score": "100.0%",
+      "relevance_tag": "Relevant to food allergy",
+      "source": "PubMed",
+      "authors": "\u0141ukasz Grze\u015bkowiak, Akihito Endo, Shea Beasley, Seppo Salminen",
+      "year": "2015"
+    },
+    {
+      "title": "House dust mite allergy \u2013 Management",
+      "summary": "\n Allergen vulnerability is highly individual specific. House dust mites (HDMs) are major sources of airborne allergens, found not only in houses but also detected in workplaces and most schools. The two most common HDM species from the Pyroglyphidae family, namely Dermatophagoides pteronyssinus and Dermatophagoides farinae are responsible for 90% of sensitization and allergic symptoms. Clinical conditions due to HDM allergen are rhinitis, conjunctivitis, asthma and/or atopic dermatitis (AD), and rare severe systemic reaction. Accurate diagnosis by skin prick test, specific immunoglobulin E (extract and component-based), or nasal provocation test with standardized HDM extract in contest with clinically relevant exposure to dust mites is fundamental for successful treatment. Allergen immunotherapy (AIT) is the only treatment providing sustained efficacy for moderate-to-severe allergic rhinitis, allergic asthma, and AD. This review will mainly focus on the description of HDM allergens, immunology, efficacy, and HDM-AIT (subcutaneous immunotherapy and sublingual immunotherapy).",
+      "url": "https://www.semanticscholar.org/paper/f09f707bafcfca2ba67ba8e0c5a6cde210d9340e",
+      "authors": "P. Kathuria, M. Rai",
+      "year": 2024,
+      "citation_count": 0,
+      "source": "Semantic Scholar",
+      "confidence": "Highly Recommended",
+      "relevance_score": "100.0%",
+      "relevance_tag": "Relevant to contact dermatitis due to dust mite exposure"
     }
   ]
 }
-2025-05-21 16:04:03,074 [INFO] Stored reference e8f52656-8be3-4098-83e0-51ec34d3d24a for patient 682df945cdc7223ac94f81e1, tenant default_tenant
-2025-05-21 16:04:15,583 [INFO] Deleted patient 682df945cdc7223ac94f81e1 and associated data in tenant doctor@allergyaffiliates.com
-2025-05-21 16:07:06,901 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
-2025-05-21 16:07:06,909 [INFO] Found 0 patients for tenant doctor@allergyaffiliates.com
-2025-05-21 16:07:09,534 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
-2025-05-21 16:07:09,536 [INFO] Found 0 patients for tenant doctor@allergyaffiliates.com
+2025-05-31 18:04:54,615 [INFO] Stored reference 170ff1fa-0bf5-40a2-99ac-d57649af8029 for patient 6839aacf6740a51452fc7c46, tenant doctor@allergyaffiliates.com
+2025-05-31 18:04:54,620 [INFO] Stored reference 0e6571df-f0b7-4256-a30d-560fd8f8fc35 for patient 6839aacf6740a51452fc7c46, tenant doctor@allergyaffiliates.com
+2025-05-31 18:04:54,626 [INFO] Stored reference 72ac281a-0694-4590-bf96-277e4a1eb062 for patient 6839aacf6740a51452fc7c46, tenant doctor@allergyaffiliates.com
+2025-05-31 18:26:12,039 [INFO] Logging setup complete. Logs will be written to /var/www/medora-web-backend/flask-app.log and console.
+2025-05-31 18:26:12,158 [INFO] Successfully initialized AWS clients
+2025-05-31 18:26:12,222 [INFO] Created indexes on tenantId fields in MongoDB collections
+2025-05-31 18:26:12,222 [INFO] Successfully connected to MongoDB
+2025-05-31 18:26:12,228 [INFO] Successfully loaded private key for IMS FHIR authentication
+2025-05-31 18:26:12,235 [INFO] MongoDB indexes created successfully
+2025-05-31 18:26:36,981 [INFO] Fetching history for patient 6839ad736740a51452fc7c49 in tenant doctor@allergyaffiliates.com
+2025-05-31 18:26:36,983 [INFO] Retrieved 1 transcripts for patient 6839ad736740a51452fc7c49 in tenant doctor@allergyaffiliates.com
+2025-05-31 18:26:37,105 [INFO] ALLERGENIQ: API endpoint called
+2025-05-31 18:26:37,106 [INFO] ALLERGENIQ: Request details: {'method': 'GET', 'url': 'http://medoramd.ai/api/allergeniq-profile?patient_id=6839ad736740a51452fc7c49&visit_id=d72817cf-38f9-4849-ab64-dded46e76003&email=doctor@allergyaffiliates.com&tenantID=allergyaffiliates', 'headers': {'Host': 'medoramd.ai', 'X-Real-Ip': '108.191.130.223', 'X-Forwarded-For': '108.191.130.223', 'X-Forwarded-Proto': 'https', 'Connection': 'close', 'Sec-Ch-Ua-Platform': '"macOS"', 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36', 'Sec-Ch-Ua': '"Chromium";v="136", "Google Chrome";v="136", "Not.A/Brand";v="99"', 'Content-Type': 'application/json', 'Sec-Ch-Ua-Mobile': '?0', 'Accept': '*/*', 'Sec-Fetch-Site': 'same-origin', 'Sec-Fetch-Mode': 'cors', 'Sec-Fetch-Dest': 'empty', 'Referer': 'https://medoramd.ai/index.html', 'Accept-Encoding': 'gzip, deflate, br, zstd', 'Accept-Language': 'en-US,en;q=0.9', 'Cookie': '_tccl_visitor=0c2d81c9-9198-4dff-975d-d52b1b60d377'}, 'args': {'patient_id': '6839ad736740a51452fc7c49', 'visit_id': 'd72817cf-38f9-4849-ab64-dded46e76003', 'email': 'doctor@allergyaffiliates.com', 'tenantID': 'allergyaffiliates'}, 'remote_addr': '127.0.0.1'}
+2025-05-31 18:26:37,106 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-05-31 18:26:37,107 [INFO] ALLERGENIQ: Request params - patient_id: 6839ad736740a51452fc7c49, visit_id: d72817cf-38f9-4849-ab64-dded46e76003, tenant_id: doctor@allergyaffiliates.com, email: doctor@allergyaffiliates.com
+2025-05-31 18:26:37,170 [INFO] ALLERGENIQ: SOAP notes retrieval result: True
+2025-05-31 18:26:37,177 [INFO] Found 0 insights for patient 6839ad736740a51452fc7c49 using GSI
+2025-05-31 18:26:37,177 [INFO] ALLERGENIQ: Retrieved 0 patient insights
+2025-05-31 18:26:37,181 [INFO] ALLERGENIQ: Processing transcript for allergy data
+2025-05-31 18:26:37,181 [INFO] ALLERGENIQ: Successfully processed transcript for allergen data
+2025-05-31 18:26:37,182 [INFO] ALLERGENIQ: Structuring profile data
+2025-05-31 18:26:37,184 [INFO] ALLERGENIQ: Found patient: test31, age: None
+2025-05-31 18:26:37,186 [INFO] ALLERGENIQ: Found visit date: 2025-05-30
+2025-05-31 18:26:37,186 [INFO] ALLERGENIQ: Successfully generated profile data
+2025-05-31 18:26:37,224 [INFO] Handling GET request for /get-insights
+2025-05-31 18:26:37,226 [WARNING] Email parameter is required but was not provided in the request; using fallback email 'doctor@allergyaffiliates.com'. Expected parameters: 'email', 'Email', 'user_email', or 'userEmail'
+2025-05-31 18:26:37,226 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-05-31 18:26:37,233 [INFO] Parsed and simplified diagnoses for patient_id 6839ad736740a51452fc7c49: ['Seasonal Allergic Rhinitis', 'Perennial Allergic Rhinitis', 'Allergic Conjunctivitis']
+2025-05-31 18:26:37,813 [INFO] Including Semantic Scholar article 'Omalizumab is effective in the preseasonal treatment of seasonal allergic rhinitis' (confidence: 0.90): Most veterinary mentions (2/2) are human-allergy relevant
+2025-05-31 18:26:37,814 [INFO] Including Semantic Scholar article '@IT2020: An innovative algorithm for allergen immunotherapy prescription in seasonal allergic rhinitis' (confidence: 0.95): Contains strong human medical indicators: ['immunotherapy']
+2025-05-31 18:26:37,814 [INFO] Fetched 2 insights from Semantic Scholar for condition: Seasonal Allergic Rhinitis
+2025-05-31 18:26:38,115 [INFO] Including PubMed article 'Seasonal allergic rhinitis and the role of apitherapy.' (confidence: 0.90): Most veterinary mentions (1/1) are human-allergy relevant
+2025-05-31 18:26:38,116 [INFO] Including PubMed article 'Allergic rhinitis.' (confidence: 0.95): Contains strong human medical indicators: ['immunotherapy']
+2025-05-31 18:26:38,116 [INFO] Fetched 2 insights from PubMed for condition: Seasonal Allergic Rhinitis with search term 'Seasonal Allergic Rhinitis'
+2025-05-31 18:26:43,569 [INFO] Fetched 1 clinical guidelines for condition: Seasonal Allergic Rhinitis with search term 'Seasonal Allergic Rhinitis'
+2025-05-31 18:26:49,142 [INFO] Including Semantic Scholar article 'Effectiveness of intranasal steroids on rhinitis symptoms, sleep quality, and quality of life in patients with perennial allergic rhinitis' (confidence: 0.80): No veterinary keywords found
+2025-05-31 18:26:49,143 [INFO] Including Semantic Scholar article 'Efficacy of acupuncture at three nasal acupoints plus acupoint application for perennial allergic rhinitis: A multicenter, randomized controlled trial protocol' (confidence: 0.90): Most veterinary mentions (4/3) are human-allergy relevant
+2025-05-31 18:26:49,144 [INFO] Fetched 2 insights from Semantic Scholar for condition: Perennial Allergic Rhinitis
+2025-05-31 18:26:49,422 [INFO] Including PubMed article 'Allergic rhinitis.' (confidence: 0.95): Contains strong human medical indicators: ['immunotherapy']
+2025-05-31 18:26:49,423 [INFO] Including PubMed article 'Allergic Rhinitis and its Impact on Asthma (ARIA) 2008 update (in collaboration with the World Health Organization, GA(2)LEN and AllerGen).' (confidence: 0.90): Most veterinary mentions (2/1) are human-allergy relevant
+2025-05-31 18:26:49,423 [INFO] Fetched 2 insights from PubMed for condition: Perennial Allergic Rhinitis with search term 'Perennial Allergic Rhinitis'
+2025-05-31 18:26:54,854 [INFO] Fetched 1 clinical guidelines for condition: Perennial Allergic Rhinitis with search term 'Perennial Allergic Rhinitis'
+2025-05-31 18:27:00,656 [INFO] Including Semantic Scholar article 'Clarifying the effect of gut microbiota on allergic conjunctivitis risk is instrumental for predictive, preventive, and personalized medicine: a Mendelian randomization analysis' (confidence: 0.95): Contains strong human medical indicators: ['allergic disease']
+2025-05-31 18:27:00,657 [INFO] Including Semantic Scholar article 'Increased dendritic cell density and altered morphology in allergic conjunctivitis' (confidence: 0.90): Most veterinary mentions (2/2) are human-allergy relevant
+2025-05-31 18:27:00,658 [INFO] Fetched 2 insights from Semantic Scholar for condition: Allergic Conjunctivitis
+2025-05-31 18:27:00,917 [INFO] Including PubMed article 'Current Knowledge in Allergic Conjunctivitis.' (confidence: 0.90): Most veterinary mentions (1/1) are human-allergy relevant
+2025-05-31 18:27:00,918 [INFO] Including PubMed article 'Allergic Conjunctivitis: An Update.' (confidence: 0.90): Most veterinary mentions (3/3) are human-allergy relevant
+2025-05-31 18:27:00,919 [INFO] Fetched 2 insights from PubMed for condition: Allergic Conjunctivitis with search term 'Allergic Conjunctivitis'
+2025-05-31 18:27:06,330 [INFO] Fetched 1 clinical guidelines for condition: Allergic Conjunctivitis with search term 'Allergic Conjunctivitis'
+2025-05-31 18:27:11,331 [INFO] Final response for patient_id 6839ad736740a51452fc7c49: {
+  "patient_id": "6839ad736740a51452fc7c49",
+  "visit_id": "d72817cf-38f9-4849-ab64-dded46e76003",
+  "insights": [
+    {
+      "title": "Omalizumab is effective in the preseasonal treatment of seasonal allergic rhinitis",
+      "summary": "Abstract Background To date no study has evaluated the efficacy of preseasonal omalizumab therapy with cost effective dose and at appropriate time point compared with standard medication in seasonal allergic rhinitis (SAR) patients. Methods This was a prospective randomized controlled open\u2010label single\u2010centre trial. 32 SAR patients were randomized to receive a single injection of omalizumab 300\u2010mg approximately two weeks before start of the pollen period (PP) or medication therapy. All patients completed daily questionnaires; recording symptoms, medication use and quality of life (QoL) throughout the observation period. The primary efficacy parameter was the mean daily Combined Symptom and Medication Score (CSMS). Results Preseasonal omalizumab significantly reduced the changes of mean daily CSMS of nose during the PP (p < 0.001), peak pollen period (PPP) and PP after PPP (PPP\u2010PP) (p = 0.002) and Post\u2010PP (p = 0.009) compared to standard medication. The proportion of allergy symptoms\u2010relieving medication\u2010free days during PPP\u2010PP was also significantly higher in preseasonal omalizumab\u2010treated group (76.2(16.7\u201098.8))% than in medication\u2010treated group (19.0(0\u201071.4))% (p = 0.030). Omalizumab could achieve the same nasal symptom control during the entire pollen season and better eye symptoms relieving results in PP (p = 0.046) and PPP\u2010PP (p = 0.004) than medication treatment. Significantly greater improvement in QoL was also obtained with omalizumab\u2010pretreatment during the PP (p = 0.037) and PPP\u2010PP (p = 0.004). Conclusions Administration of a single injection of 300 mg omalizumab two weeks before start of the pollen season achieves better overall control of symptoms and QoL, with significantly reduced allergy symptoms\u2010relieving medication usage, compared with standard pharmacotherapy in SAR patients.",
+      "url": "https://www.semanticscholar.org/paper/517928bf04d3631db2ac9d8bdc09cc063fc4bf07",
+      "authors": "Yuan Zhang, L. Xi, Yunbo Gao, Yanran Huang, F. Cao, W. Xiong, Chengshuo Wang, Luo Zhang",
+      "year": 2022,
+      "citation_count": 20,
+      "source": "Semantic Scholar",
+      "confidence": "Highly Recommended",
+      "relevance_score": "100.0%",
+      "relevance_tag": "Relevant to seasonal allergic rhinitis"
+    },
+    {
+      "title": "Effectiveness of intranasal steroids on rhinitis symptoms, sleep quality, and quality of life in patients with perennial allergic rhinitis",
+      "summary": null,
+      "url": "https://www.semanticscholar.org/paper/a40d26de54ef0d550e79784a2c187fc3ef8691a5",
+      "authors": "Marwa Abdelhafeez",
+      "year": 2021,
+      "citation_count": 9,
+      "source": "Semantic Scholar",
+      "confidence": "Highly Recommended",
+      "relevance_score": "100.0%",
+      "relevance_tag": "Relevant to perennial allergic rhinitis"
+    },
+    {
+      "title": "Clarifying the effect of gut microbiota on allergic conjunctivitis risk is instrumental for predictive, preventive, and personalized medicine: a Mendelian randomization analysis",
+      "summary": "Background Allergic conjunctivitis is an ocular immune disease which affects the conjunctiva, eyelids, and cornea. Growing evidence implicates the gut microbiota in balancing and modulating immunity response, and in the pathogenesis of allergic disease. As a result, gut microbial imbalance could be a useful indicator for allergic conjunctivitis. From the perspective of predictive, preventive, and personalized medicine (PPPM), clarifying the role of gut microbial imbalance in the development of allergic conjunctivitis could provide a window of opportunity for primary prediction, targeted prevention, and personalized treatment of the disease. Working hypothesis and methodology In our study, we hypothesized that individuals with microbial dysbiosis may be more susceptible to allergic conjunctivitis due to an increased inflammatory response. To verify the working hypothesis, our analysis selected genetic variants linked with gut microbiota features ( N = 18,340) and allergic conjunctivitis (4513 cases, 649,376 controls) from genome-wide association studies. The inverse-variance weighted (IVW) estimate, Mendelian randomization (MR)-Egger, weighted median estimator, maximum likelihood estimator (MLE), and MR robust adjusted profile score (MR.RAPS) were employed to analyze the impact of gut microbiota on the risk of allergic conjunctivitis and identify allergic conjunctivitis-related gut microbes. Ultimately, these findings may enable the identification of individuals at risk of allergic conjunctivitis through screening of gut microbial imbalances, and allow for new targeted prevention and personalized treatment strategies. Results Genetic liability to Ruminococcaceae_UCG_002 (OR, 0.83; 95% CI, 0.70\u20130.99; P = 4.04\u00d710^\u22122), Holdemanella (OR, 0.78; 95% CI, 0.64\u20130.96; P = 2.04\u00d710^\u22122), Catenibacterium (OR, 0.69; 95% CI, 0.56\u20130.86; P = 1.09\u00d710^\u22123), Senegalimassilia (OR, 0.71; 95% CI, 0.55\u20130.93; P = 1.23\u00d710^\u22122) genus were associated with a low risk of allergic conjunctivitis with IVW. Besides, we found suggestive associations of a genetic-driven increase in the Oscillospira (OR, 1.41; 95% CI, 1.00\u20132.00; P = 4.63\u00d710^\u22122) genus with a higher risk of allergic conjunctivitis. Moreover, MLE and MR.RAPS show consistent results with IVW after further validation and strengthened confidence in the true causal associations. No heterogeneity and pleiotropy was detected. Conclusions Our study suggests that gut microbiota may play a causal role in the development of allergic conjunctivitis and provides new insights into the microbiota-mediated mechanism of the disease. Gut microbiota may serve as a target for future predictive diagnostics, targeted prevention, and individualized therapy in allergic conjunctivitis, facilitating the transition from reactive medical services to PPPM in the management of the disease.",
+      "url": "https://www.semanticscholar.org/paper/3ca5141f60ce2e2997d41dab07f321200b36086a",
+      "authors": "Kangcheng Liu, Yingjun Cai, Kun Song, R. Yuan, Jing Zou",
+      "year": 2023,
+      "citation_count": 18,
+      "source": "Semantic Scholar",
+      "confidence": "Highly Recommended",
+      "relevance_score": "99.0%",
+      "relevance_tag": "Relevant to allergic conjunctivitis"
+    }
+  ]
+}
+2025-05-31 18:27:11,343 [INFO] Stored reference 7aa19f0d-4db6-4712-a8e7-2ffa676eb135 for patient 6839ad736740a51452fc7c49, tenant doctor@allergyaffiliates.com
+2025-05-31 18:27:11,349 [INFO] Stored reference cf0d0d59-530b-4d0d-a376-fad7e911d235 for patient 6839ad736740a51452fc7c49, tenant doctor@allergyaffiliates.com
+2025-05-31 18:27:11,354 [INFO] Stored reference caf5da5e-336a-437e-a462-3602f6958a66 for patient 6839ad736740a51452fc7c49, tenant doctor@allergyaffiliates.com
+2025-05-31 18:27:35,224 [INFO] Fetching history for patient 6839aacf6740a51452fc7c46 in tenant doctor@allergyaffiliates.com
+2025-05-31 18:27:35,227 [INFO] Retrieved 1 transcripts for patient 6839aacf6740a51452fc7c46 in tenant doctor@allergyaffiliates.com
+2025-05-31 18:27:35,345 [INFO] Handling GET request for /get-insights
+2025-05-31 18:27:35,346 [WARNING] Email parameter is required but was not provided in the request; using fallback email 'doctor@allergyaffiliates.com'. Expected parameters: 'email', 'Email', 'user_email', or 'userEmail'
+2025-05-31 18:27:35,346 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-05-31 18:27:35,346 [INFO] ALLERGENIQ: API endpoint called
+2025-05-31 18:27:35,348 [INFO] ALLERGENIQ: Request details: {'method': 'GET', 'url': 'http://medoramd.ai/api/allergeniq-profile?patient_id=6839aacf6740a51452fc7c46&visit_id=a84b3d1b-8116-432d-8e27-80090214a5d8&email=doctor@allergyaffiliates.com&tenantID=allergyaffiliates', 'headers': {'Host': 'medoramd.ai', 'X-Real-Ip': '108.191.130.223', 'X-Forwarded-For': '108.191.130.223', 'X-Forwarded-Proto': 'https', 'Connection': 'close', 'Sec-Ch-Ua-Platform': '"macOS"', 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36', 'Sec-Ch-Ua': '"Chromium";v="136", "Google Chrome";v="136", "Not.A/Brand";v="99"', 'Content-Type': 'application/json', 'Sec-Ch-Ua-Mobile': '?0', 'Accept': '*/*', 'Sec-Fetch-Site': 'same-origin', 'Sec-Fetch-Mode': 'cors', 'Sec-Fetch-Dest': 'empty', 'Referer': 'https://medoramd.ai/index.html', 'Accept-Encoding': 'gzip, deflate, br, zstd', 'Accept-Language': 'en-US,en;q=0.9', 'Cookie': '_tccl_visitor=0c2d81c9-9198-4dff-975d-d52b1b60d377'}, 'args': {'patient_id': '6839aacf6740a51452fc7c46', 'visit_id': 'a84b3d1b-8116-432d-8e27-80090214a5d8', 'email': 'doctor@allergyaffiliates.com', 'tenantID': 'allergyaffiliates'}, 'remote_addr': '127.0.0.1'}
+2025-05-31 18:27:35,349 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-05-31 18:27:35,349 [INFO] ALLERGENIQ: Request params - patient_id: 6839aacf6740a51452fc7c46, visit_id: a84b3d1b-8116-432d-8e27-80090214a5d8, tenant_id: doctor@allergyaffiliates.com, email: doctor@allergyaffiliates.com
+2025-05-31 18:27:35,355 [INFO] Parsed and simplified diagnoses for patient_id 6839aacf6740a51452fc7c46: ['Atopic Dermatitis (Eczema)', 'Food Allergy', 'Contact Dermatitis due to dust mite exposure']
+2025-05-31 18:27:35,412 [INFO] ALLERGENIQ: SOAP notes retrieval result: True
+2025-05-31 18:27:35,420 [INFO] Found 0 insights for patient 6839aacf6740a51452fc7c46 using GSI
+2025-05-31 18:27:35,420 [INFO] ALLERGENIQ: Retrieved 0 patient insights
+2025-05-31 18:27:35,424 [INFO] ALLERGENIQ: Processing transcript for allergy data
+2025-05-31 18:27:35,425 [INFO] ALLERGENIQ: Successfully processed transcript for allergen data
+2025-05-31 18:27:35,425 [INFO] ALLERGENIQ: Structuring profile data
+2025-05-31 18:27:35,428 [INFO] ALLERGENIQ: Found patient: test30, age: None
+2025-05-31 18:27:35,430 [INFO] ALLERGENIQ: Found visit date: 2025-05-30
+2025-05-31 18:27:35,430 [INFO] ALLERGENIQ: Successfully generated profile data
+2025-05-31 18:27:38,369 [ERROR] Timeout querying Semantic Scholar for condition Atopic Dermatitis (Eczema) after 3 seconds
+2025-05-31 18:27:38,646 [INFO] Including PubMed article 'Atopic Dermatitis (Eczema).' (confidence: 0.80): No veterinary keywords found
+2025-05-31 18:27:38,646 [INFO] Including PubMed article 'Atopic dermatitis/atopic eczema.' (confidence: 0.80): No veterinary keywords found
+2025-05-31 18:27:38,647 [INFO] Fetched 2 insights from PubMed for condition: Atopic Dermatitis (Eczema) with search term 'Atopic Dermatitis (Eczema)'
+2025-05-31 18:27:43,945 [INFO] Fetched 1 clinical guidelines for condition: Atopic Dermatitis (Eczema) with search term 'Atopic Dermatitis (Eczema)'
+2025-05-31 18:27:49,530 [INFO] Including Semantic Scholar article 'EAACI guidelines on the diagnosis of IgE‐mediated food allergy' (confidence: 0.80): No veterinary keywords found
+2025-05-31 18:27:49,532 [INFO] Including Semantic Scholar article 'Systematic review and meta‐analyses on the accuracy of diagnostic tests for IgE‐mediated food allergy' (confidence: 0.90): Most veterinary mentions (3/3) are human-allergy relevant
+2025-05-31 18:27:49,532 [INFO] Fetched 2 insights from Semantic Scholar for condition: Food Allergy
+2025-05-31 18:27:49,851 [INFO] Including PubMed article 'Update on food allergy.' (confidence: 0.95): Contains strong human medical indicators: ['clinical practice', 'immunotherapy']
+2025-05-31 18:27:49,852 [INFO] Including PubMed article 'Food allergy: immune mechanisms, diagnosis and immunotherapy.' (confidence: 0.95): Contains strong human medical indicators: ['immunotherapy']
+2025-05-31 18:27:49,852 [INFO] Fetched 2 insights from PubMed for condition: Food Allergy with search term 'Food Allergy'
+2025-05-31 18:27:55,428 [INFO] Fetched 1 clinical guidelines for condition: Food Allergy with search term 'Food Allergy'
+2025-05-31 18:28:00,869 [INFO] Including Semantic Scholar article 'House dust mite allergy – Management' (confidence: 0.95): Contains strong human medical indicators: ['immunotherapy']
+2025-05-31 18:28:00,870 [INFO] Including Semantic Scholar article 'Cheese Itch: Contact Dermatitis due to Mite-infested Cheese Dust' (confidence: 0.80): No veterinary keywords found
+2025-05-31 18:28:00,870 [INFO] Fetched 2 insights from Semantic Scholar for condition: Contact Dermatitis due to dust mite exposure
+2025-05-31 18:28:01,155 [INFO] Including PubMed article 'Sensitization to allergens of house-dust mite in adults with atopic dermatitis in a cold temperature region.' (confidence: 0.90): Most veterinary mentions (3/2) are human-allergy relevant
+2025-05-31 18:28:01,156 [INFO] Excluding PubMed article 'Animal exposure, sensitization, and allergic symptoms in first-year veterinary medicine students.': Contains strong veterinary indicators: ['veterinary medicine']
+2025-05-31 18:28:01,157 [INFO] Fetched 1 insights from PubMed for condition: Contact Dermatitis due to dust mite exposure with search term 'Contact Dermatitis due to dust mite exposure'
+2025-05-31 18:28:06,344 [WARNING] No clinical guidelines found for condition: Contact Dermatitis due to dust mite exposure
+2025-05-31 18:28:06,532 [WARNING] No clinical guidelines found for condition: Contact Dermatitis due to dust mite exposure
+2025-05-31 18:28:06,724 [WARNING] No clinical guidelines found for condition: Contact Dermatitis due to dust mite exposure
+2025-05-31 18:28:06,744 [ERROR] Error querying clinical guidelines for condition Contact Dermatitis due to dust mite exposure: 429 Client Error: Too Many Requests for url: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=Contact+Dermatitis+due+to+dust+mite+exposure+%28clinical+practice+guideline+OR+consensus+statement%29&retmax=1&sort=relevance&retmode=json
+2025-05-31 18:28:11,746 [INFO] Final response for patient_id 6839aacf6740a51452fc7c46: {
+  "patient_id": "6839aacf6740a51452fc7c46",
+  "visit_id": "a84b3d1b-8116-432d-8e27-80090214a5d8",
+  "insights": [
+    {
+      "title": "Atopic Dermatitis (Eczema).",
+      "summary": "N/A",
+      "pubmed_id": "36648466",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/36648466/",
+      "confidence": "Highly Recommended",
+      "relevance_score": "100.0%",
+      "relevance_tag": "Relevant to atopic dermatitis (eczema)",
+      "source": "PubMed",
+      "authors": "Raj Chovatiya",
+      "year": "2023"
+    },
+    {
+      "title": "EAACI guidelines on the diagnosis of IgE\u2010mediated food allergy",
+      "summary": "This European Academy of Allergy and Clinical Immunology guideline provides recommendations for diagnosing IgE\u2010mediated food allergy and was developed using the Grading of Recommendations, Assessment, Development and Evaluations (GRADE) approach. Food allergy diagnosis starts with an allergy\u2010focused clinical history followed by tests to determine IgE sensitization, such as serum allergen\u2010specific IgE (sIgE) and skin prick test (SPT), and the basophil activation test (BAT), if available. Evidence for IgE sensitization should be sought for any suspected foods. The diagnosis of allergy to some foods, such as peanut and cashew nut, is well supported by SPT and serum sIgE, whereas there are less data and the performance of these tests is poorer for other foods, such as wheat and soya. The measurement of sIgE to allergen components such as Ara h 2 from peanut, Cor a 14 from hazelnut and Ana o 3 from cashew can be useful to further support the diagnosis, especially in pollen\u2010sensitized individuals. BAT to peanut and sesame can be used additionally. The reference standard for food allergy diagnosis is the oral food challenge (OFC). OFC should be performed in equivocal cases. For practical reasons, open challenges are suitable in most cases. Reassessment of food allergic children with allergy tests and/or OFCs periodically over time will enable reintroduction of food into the diet in the case of spontaneous acquisition of oral tolerance.",
+      "url": "https://www.semanticscholar.org/paper/156013d1f077a99550e0266e8f069189d7d353a6",
+      "authors": "Alexandra F. Santos, C. Riggioni, I. Agache, C. Akdis, M. Akdi\u015f, A. \u00c1lvarez-Perea, M. \u00c1lvaro-Lozano, B. Ballmer-Weber, S. Barni, Kirsten Beyer, Carsten Bindslev-Jensen, H. Brough, B. Buyuktiryaki, Derek K Chu, S. D. Del Giacco, Audrey Dunn-Galvin, B. Eberlein, M. Ebisawa, P. Eigenmann, T. Eiwegger, Mary Feeney, MM Fernandez\u2010Rivas, Helen R Fisher, David Fleischer, M. Giovannini, C. Gray, K. Hoffmann\u2010Sommergruber, S. Halken, J. Hourihane, Christina J. Jones, M. Jutel, E. Knol, G. Konstantinou, G. Lack, Susanne Lau, A. Marques Mejias, M. Marchisotto, R. Meyer, C. Mortz, Beatriz Moya, A. Muraro, Caroline Nilsson, L. C. Lopes de Oliveira, Liam O'Mahony, Nikolaos G. Papadopoulos, Kirsten P. Perrett, Rachel L. Peters, Marcia Podest\u00e0, L. Poulsen, Graham Roberts, Hugh A Sampson, Jurgen Schwarze, Peter Smith, E. Tham, E. Untersmayr, R. van Ree, C. Venter, B. Vickery, B. Vlieg\u2010Boerstra, Thomas Werfel, M. Worm, G. du Toit, I. Skypala",
+      "year": 2023,
+      "citation_count": 113,
+      "source": "Semantic Scholar",
+      "confidence": "Highly Recommended",
+      "relevance_score": "100.0%",
+      "relevance_tag": "Relevant to food allergy"
+    },
+    {
+      "title": "Cheese Itch: Contact Dermatitis due to Mite-infested Cheese Dust",
+      "summary": null,
+      "url": "https://www.semanticscholar.org/paper/1aeac0234a2519b11d81534062648f6f4f4ce037",
+      "authors": "G. B. Dowling, E. Thomas",
+      "year": 1942,
+      "citation_count": 8,
+      "source": "Semantic Scholar",
+      "confidence": "Highly Recommended",
+      "relevance_score": "100.0%",
+      "relevance_tag": "Relevant to contact dermatitis due to dust mite exposure"
+    }
+  ]
+}
+2025-05-31 18:28:11,757 [INFO] Stored reference 23aa4811-258f-444c-a35d-6a3ba36e9594 for patient 6839aacf6740a51452fc7c46, tenant doctor@allergyaffiliates.com
+2025-05-31 18:28:11,763 [INFO] Stored reference 2f14c8c3-e937-48d4-a9dd-ca7faba6909a for patient 6839aacf6740a51452fc7c46, tenant doctor@allergyaffiliates.com
+2025-05-31 18:28:11,768 [INFO] Stored reference 611784c4-be0c-4bd0-8953-524185e097d0 for patient 6839aacf6740a51452fc7c46, tenant doctor@allergyaffiliates.com
