@@ -1,5 +1,7 @@
 console.log('patient-management.js loaded');
-console.log('patient-management.js version: 4.1.0 - Complete Enhanced Card-Based Recommendations with Collapsible Functionality');
+console.log('patient-management.js version: 3.0.0 - Freed-Style Narrative Plan Generation');
+
+// Add this to your patient-management.js file (replace or add to existing functions)
 
 // Enhanced Freed-Style Plan Parser with better pattern matching
 class EnhancedFreedStylePlanParser {
@@ -212,6 +214,125 @@ function parseFreedStylePlanEnhanced(soapNotes) {
     
     console.log('Enhanced Freed-Style Plan Parsed:', planSections);
     return planSections;
+}
+
+// Updated selectPatient function with enhanced Freed-style rendering
+async function selectPatientWithFreedStyle(patient) {
+    console.log('Selecting patient with Enhanced Freed-style plan rendering');
+    currentPatientId = patient.patientId;
+    currentPatient = patient;
+    
+    // ... (keep all your existing patient selection code until the plan rendering part)
+    
+    // Enhanced plan rendering section
+    data.transcripts.forEach(async transcript => {
+        if (transcript.soapNotes) {
+            latestAnalysis = { soapNotes: transcript.soapNotes, insights: transcript.insights || {} };
+            
+            // ... (keep all existing subjective, objective, assessment rendering code)
+            
+            // ENHANCED PLAN RENDERING - FREED STYLE
+            const planContainer = document.getElementById('plan-content-container');
+            if (planContainer) {
+                console.log('Rendering Enhanced Freed-style plan...');
+
+                // Parse the plan using the enhanced Freed-style parser
+                const planSections = parseFreedStylePlanEnhanced(transcript.soapNotes);
+                console.log('Parsed Enhanced Freed-style plan sections:', planSections);
+
+                // Clear the container
+                planContainer.innerHTML = '';
+
+                // Render each section in enhanced Freed style
+                planSections.forEach((section, index) => {
+                    const sectionDiv = document.createElement('div');
+                    sectionDiv.className = 'freed-plan-section';
+                    sectionDiv.style.marginBottom = '25px';
+                    sectionDiv.style.border = '1px solid #e0e0e0';
+                    sectionDiv.style.borderRadius = '8px';
+                    sectionDiv.style.padding = '15px';
+                    sectionDiv.style.backgroundColor = '#fafafa';
+
+                    // Create section header
+                    const headerDiv = document.createElement('div');
+                    headerDiv.className = 'freed-plan-header';
+                    headerDiv.style.fontWeight = 'bold';
+                    headerDiv.style.marginBottom = '12px';
+                    headerDiv.style.color = '#1e40af';
+                    headerDiv.style.fontSize = '16px';
+                    headerDiv.style.borderBottom = '2px solid #3b82f6';
+                    headerDiv.style.paddingBottom = '5px';
+                    
+                    if (section.type === 'condition') {
+                        headerDiv.textContent = `In regards to ${section.title}:`;
+                    } else {
+                        headerDiv.textContent = `${section.title}:`;
+                    }
+
+                    // Create content area
+                    const contentDiv = document.createElement('div');
+                    contentDiv.className = 'freed-plan-content';
+                    contentDiv.style.lineHeight = '1.7';
+                    contentDiv.style.marginLeft = '10px';
+
+                    // Render bullet points as detailed narrative paragraphs
+                    section.content.forEach((item, itemIndex) => {
+                        const bulletDiv = document.createElement('div');
+                        bulletDiv.className = 'freed-plan-item';
+                        bulletDiv.style.marginBottom = '10px';
+                        bulletDiv.style.position = 'relative';
+                        bulletDiv.style.paddingLeft = '20px';
+                        bulletDiv.style.color = '#374151';
+                        bulletDiv.style.fontSize = '14px';
+                        
+                        // Use asterisk bullet style like Freed with better formatting
+                        bulletDiv.innerHTML = `
+                            <span style="
+                                position: absolute; 
+                                left: 0; 
+                                top: 0; 
+                                font-weight: bold; 
+                                color: #3b82f6;
+                                font-size: 16px;
+                            ">*</span>
+                            <span style="text-align: justify;">${item}</span>
+                        `;
+                        
+                        contentDiv.appendChild(bulletDiv);
+                    });
+
+                    sectionDiv.appendChild(headerDiv);
+                    sectionDiv.appendChild(contentDiv);
+                    planContainer.appendChild(sectionDiv);
+                });
+
+                planContainer.style.display = 'block';
+                console.log('Enhanced Freed-style plan rendered successfully');
+            } else {
+                console.error('Plan container element not found in DOM');
+            }
+            
+            // ... (keep rest of existing code)
+        }
+    });
+}
+
+// Expose enhanced functions to global scope
+window.parseFreedStylePlanEnhanced = parseFreedStylePlanEnhanced;
+window.submitTranscriptFreedStyle = submitTranscriptFreedStyle;
+window.selectPatientWithFreedStyle = selectPatientWithFreedStyle;
+window.EnhancedFreedStylePlanParser = EnhancedFreedStylePlanParser;
+
+// Backward compatibility wrapper
+function parseGeneralAllergyPlan(transcriptText, soapNotes = null) {
+    // If we have SOAP notes, use them directly (Freed-style format)
+    if (soapNotes) {
+        return parseFreedStylePlanEnhanced(soapNotes);
+    }
+    
+    // Otherwise, create a basic structure
+    console.log('No SOAP notes available, creating basic plan structure');
+    return new EnhancedFreedStylePlanParser().createDefaultPlan();
 }
 
 // Initialize user data on page load to ensure correct tenantID
@@ -681,36 +802,7 @@ async function proceedWithVisit(patientId) {
     }
 }
 
-// Toggle function for collapsible recommendation categories (FIXED)
-window.toggleRecommendationCategory = function(categoryId) {
-    console.log('🎯 TOGGLE: Toggling category:', categoryId);
-    const content = document.getElementById(categoryId + '-content');
-    const toggle = document.getElementById(categoryId + '-toggle');
-    
-    if (content && toggle) {
-        const isCollapsed = content.style.maxHeight === '0px' || content.style.maxHeight === '';
-        
-        if (isCollapsed) {
-            // Expand
-            content.style.maxHeight = '2000px';
-            content.style.opacity = '1';
-            content.style.padding = '16px';
-            toggle.textContent = '[-]';
-            console.log('🎯 TOGGLE: Expanded category:', categoryId);
-        } else {
-            // Collapse
-            content.style.maxHeight = '0px';
-            content.style.opacity = '0';
-            content.style.padding = '0';
-            toggle.textContent = '[+]';
-            console.log('🎯 TOGGLE: Collapsed category:', categoryId);
-        }
-    } else {
-        console.error('🎯 TOGGLE: Could not find elements for category:', categoryId);
-    }
-};
-
-// Select a patient with enhanced card-based recommendations (FIXED WITH COLLAPSIBLE FUNCTIONALITY)
+// Select a patient with Freed-style plan rendering
 async function selectPatient(patient) {
     console.log('Before setting patient in selectPatient: currentPatientId:', currentPatientId);
     currentPatientId = patient.patientId;
@@ -936,7 +1028,7 @@ async function selectPatient(patient) {
                     `;
                 }
                 
-                // ENHANCED PLAN RENDERING - FREED STYLE
+                // UPDATED PLAN RENDERING - FREED STYLE
                 const planContainer = document.getElementById('plan-content-container');
                 if (planContainer) {
                     console.log('Rendering Freed-style plan...');
@@ -998,7 +1090,6 @@ async function selectPatient(patient) {
                     console.error('Plan container element not found in DOM');
                 }
 
-                // COMPREHENSIVE ENHANCED CARD-BASED RECOMMENDATIONS DISPLAY WITH FIXED COLLAPSIBLE FUNCTIONALITY
                 const insightsAllergyTriggers = document.getElementById('insights-allergy-triggers');
                 const insightsCondition = document.getElementById('insights-condition');
                 const insightsRecommendations = document.getElementById('insights-recommendations');
@@ -1006,412 +1097,39 @@ async function selectPatient(patient) {
                     insightsAllergyTriggers.innerHTML = `<p>${transcript.insights?.allergy_triggers || 'Not specified'}</p>`;
                     insightsCondition.innerHTML = `<p>${transcript.insights?.condition || 'Not specified'}</p>`;
                     
-                    console.log('🎯 COMPREHENSIVE: Creating ALL possible categories');
-                    console.log('🎯 COMPREHENSIVE: Full SOAP notes:', transcript.soapNotes);
-                    console.log('🎯 COMPREHENSIVE: Full insights:', transcript.insights);
-                    
-                    // Start with ALL possible categories
-                    const allCategories = {
-                        'EMERGENCY ACTION PLAN': [],
-                        'MEDICATION MANAGEMENT': [],
-                        'PATIENT EDUCATION RESOURCES': [],
-                        'PATIENT EDUCATION': [],
-                        'FOLLOW-UP CARE': [],
-                        'DIAGNOSTIC TESTS': [],
-                        'MONITORING': [],
-                        'LIFESTYLE MODIFICATIONS': [],
-                        'REFERRALS': [],
-                        'PREVENTIVE MEASURES': [],
-                        'ALLERGY MANAGEMENT': [],
-                        'ENVIRONMENTAL CONTROL': [],
-                        'DIETARY RECOMMENDATIONS': [],
-                        'IMMUNOTHERAPY': [],
-                        'TRIGGER AVOIDANCE': [],
-                        'SYMPTOM TRACKING': [],
-                        'LABORATORY TESTS': [],
-                        'SPECIALIST REFERRAL': [],
-                        'EMERGENCY PREPAREDNESS': []
-                    };
-                    
-                    // Get base recommendations and merge them
-                    const baseRecommendations = transcript.insights?.recommendations || transcript.soapNotes?.enhanced_recommendations || {};
-                    Object.keys(baseRecommendations).forEach(category => {
-                        if (allCategories.hasOwnProperty(category)) {
-                            allCategories[category] = baseRecommendations[category];
-                        }
-                    });
-                    
-                    // Extract from DIAGNOSTIC WORKUP
-                    if (transcript.soapNotes?.diagnostic_workup) {
-                        const diagnosticWorkup = transcript.soapNotes.diagnostic_workup;
-                        
-                        // Laboratory Tests
-                        if (diagnosticWorkup.laboratory_tests || diagnosticWorkup.blood_tests) {
-                            const labTests = [];
-                            if (Array.isArray(diagnosticWorkup.laboratory_tests)) {
-                                labTests.push(...diagnosticWorkup.laboratory_tests);
-                            }
-                            if (typeof diagnosticWorkup.blood_tests === 'string') {
-                                labTests.push(diagnosticWorkup.blood_tests);
-                            }
-                            if (labTests.length > 0) {
-                                allCategories['LABORATORY TESTS'] = labTests;
-                                allCategories['DIAGNOSTIC TESTS'] = [...allCategories['DIAGNOSTIC TESTS'], ...labTests];
+                    let recommendationsItems = [];
+                    const recommendations = transcript.insights?.recommendations || '';
+                    if (typeof recommendations === 'string') {
+                        recommendationsItems = recommendations.split('\n').filter(item => item.trim());
+                    } else if (typeof recommendations === 'object' && recommendations !== null) {
+                        for (const [category, details] of Object.entries(recommendations)) {
+                            recommendationsItems.push(`${category}:`);
+                            for (const [key, value] of Object.entries(details)) {
+                                if (Array.isArray(value)) {
+                                    recommendationsItems.push(`${key}:`);
+                                    recommendationsItems.push(...value.map(item => `- ${item}`));
+                                } else {
+                                    recommendationsItems.push(`${key}: ${value}`);
+                                }
                             }
                         }
-                        
-                        // Skin Tests
-                        if (diagnosticWorkup.skin_tests) {
-                            allCategories['DIAGNOSTIC TESTS'].push(diagnosticWorkup.skin_tests);
-                        }
-                        
-                        // Imaging
-                        if (diagnosticWorkup.imaging && diagnosticWorkup.imaging !== "None indicated at this time.") {
-                            allCategories['DIAGNOSTIC TESTS'].push(diagnosticWorkup.imaging);
-                        }
-                        
-                        // Other diagnostic procedures
-                        if (diagnosticWorkup.other) {
-                            allCategories['DIAGNOSTIC TESTS'].push(diagnosticWorkup.other);
-                        }
+                    }
+                    if (recommendationsItems.length === 0) {
+                        recommendationsItems = ['No recommendations available'];
                     }
                     
-                    // Extract from FOLLOW-UP INSTRUCTIONS
-                    if (transcript.soapNotes?.follow_up_instructions && Array.isArray(transcript.soapNotes.follow_up_instructions)) {
-                        allCategories['FOLLOW-UP CARE'] = transcript.soapNotes.follow_up_instructions;
-                        
-                        // Check for monitoring-related instructions
-                        const monitoringItems = transcript.soapNotes.follow_up_instructions.filter(item => 
-                            item.toLowerCase().includes('monitor') || 
-                            item.toLowerCase().includes('track') || 
-                            item.toLowerCase().includes('watch') ||
-                            item.toLowerCase().includes('observe')
-                        );
-                        if (monitoringItems.length > 0) {
-                            allCategories['MONITORING'] = monitoringItems;
-                        }
-                        
-                        // Check for specialist referrals
-                        const referralItems = transcript.soapNotes.follow_up_instructions.filter(item => 
-                            item.toLowerCase().includes('refer') || 
-                            item.toLowerCase().includes('specialist') || 
-                            item.toLowerCase().includes('consult')
-                        );
-                        if (referralItems.length > 0) {
-                            allCategories['SPECIALIST REFERRAL'] = referralItems;
-                            allCategories['REFERRALS'] = referralItems;
-                        }
-                        
-                        // Check for immunotherapy mentions
-                        const immunotherapyItems = transcript.soapNotes.follow_up_instructions.filter(item => 
-                            item.toLowerCase().includes('allergy shot') || 
-                            item.toLowerCase().includes('immunotherapy') || 
-                            item.toLowerCase().includes('desensitization')
-                        );
-                        if (immunotherapyItems.length > 0) {
-                            allCategories['IMMUNOTHERAPY'] = immunotherapyItems;
-                        }
-                    }
+                    insightsRecommendations.innerHTML = `
+                        <ul>
+                            ${recommendationsItems.map(item => `<li>${item.trim()}</li>`).join('')}
+                        </ul>
+                    `;
+                    insightsRecommendations.dataset.originalItems = JSON.stringify(recommendationsItems);
+                    insightsRecommendations.classList.add('bulleted');
                     
-                    // Extract from PATIENT EDUCATION
-                    if (transcript.soapNotes?.patient_education && Array.isArray(transcript.soapNotes.patient_education)) {
-                        allCategories['PATIENT EDUCATION'] = transcript.soapNotes.patient_education;
-                        
-                        // Check for trigger avoidance
-                        const triggerItems = transcript.soapNotes.patient_education.filter(item => 
-                            item.toLowerCase().includes('avoid') || 
-                            item.toLowerCase().includes('prevent') || 
-                            item.toLowerCase().includes('trigger')
-                        );
-                        if (triggerItems.length > 0) {
-                            allCategories['TRIGGER AVOIDANCE'] = triggerItems;
-                            allCategories['PREVENTIVE MEASURES'] = [...allCategories['PREVENTIVE MEASURES'], ...triggerItems];
-                        }
-                        
-                        // Check for environmental control
-                        const environmentalItems = transcript.soapNotes.patient_education.filter(item => 
-                            item.toLowerCase().includes('outdoor') || 
-                            item.toLowerCase().includes('yard') || 
-                            item.toLowerCase().includes('environment') ||
-                            item.toLowerCase().includes('shoe') ||
-                            item.toLowerCase().includes('clothing')
-                        );
-                        if (environmentalItems.length > 0) {
-                            allCategories['ENVIRONMENTAL CONTROL'] = environmentalItems;
-                        }
-                        
-                        // Check for lifestyle modifications
-                        const lifestyleItems = transcript.soapNotes.patient_education.filter(item => 
-                            item.toLowerCase().includes('wear') || 
-                            item.toLowerCase().includes('lifestyle') || 
-                            item.toLowerCase().includes('habit') ||
-                            item.toLowerCase().includes('routine')
-                        );
-                        if (lifestyleItems.length > 0) {
-                            allCategories['LIFESTYLE MODIFICATIONS'] = lifestyleItems;
-                        }
-                    }
-                    
-                    // Extract allergy management from various sources
-                    const allergyManagementItems = [];
-                    if (transcript.soapNotes?.plan_of_care) {
-                        const planText = transcript.soapNotes.plan_of_care.toLowerCase();
-                        if (planText.includes('allergy') || planText.includes('allergic reaction')) {
-                            allergyManagementItems.push('Comprehensive allergy management plan established');
-                        }
-                        if (planText.includes('epipen') || planText.includes('epinephrine')) {
-                            allergyManagementItems.push('EpiPen prescribed for emergency management');
-                            allCategories['EMERGENCY PREPAREDNESS'].push('Carry EpiPen at all times for severe allergic reactions');
-                        }
-                        if (planText.includes('antihistamine') || planText.includes('zyrtec') || planText.includes('benadryl')) {
-                            allergyManagementItems.push('Antihistamine therapy for symptom control');
-                        }
-                    }
-                    if (allergyManagementItems.length > 0) {
-                        allCategories['ALLERGY MANAGEMENT'] = allergyManagementItems;
-                    }
-                    
-                    // Add symptom tracking if mentioned
-                    if (transcript.soapNotes?.follow_up_instructions) {
-                        const trackingItems = transcript.soapNotes.follow_up_instructions.filter(item => 
-                            item.toLowerCase().includes('track') || 
-                            item.toLowerCase().includes('record') || 
-                            item.toLowerCase().includes('diary') ||
-                            item.toLowerCase().includes('log')
-                        );
-                        if (trackingItems.length > 0) {
-                            allCategories['SYMPTOM TRACKING'] = trackingItems;
-                        }
-                    }
-                    
-                    // Enhanced category icons mapping
-                    const categoryIcons = {
-                        'EMERGENCY ACTION PLAN': '🚨',
-                        'MEDICATION MANAGEMENT': '💊',
-                        'PATIENT EDUCATION RESOURCES': '📚',
-                        'PATIENT EDUCATION': '📖',
-                        'FOLLOW-UP CARE': '📅',
-                        'DIAGNOSTIC TESTS': '🔬',
-                        'MONITORING': '📊',
-                        'LIFESTYLE MODIFICATIONS': '🏃',
-                        'REFERRALS': '👨‍⚕️',
-                        'PREVENTIVE MEASURES': '🛡️',
-                        'ALLERGY MANAGEMENT': '🤧',
-                        'ENVIRONMENTAL CONTROL': '🌿',
-                        'DIETARY RECOMMENDATIONS': '🥗',
-                        'IMMUNOTHERAPY': '💉',
-                        'TRIGGER AVOIDANCE': '⚠️',
-                        'SYMPTOM TRACKING': '📝',
-                        'LABORATORY TESTS': '🧪',
-                        'SPECIALIST REFERRAL': '🏥',
-                        'EMERGENCY PREPAREDNESS': '🆘'
-                    };
-                    
-                    console.log('🎯 COMPREHENSIVE: Final all categories:', allCategories);
-                    
-                    // Filter to only show categories that have content
-                    const recommendations = {};
-                    Object.keys(allCategories).forEach(category => {
-                        if (allCategories[category].length > 0) {
-                            recommendations[category] = allCategories[category];
-                        }
-                    });
-                    
-                    console.log('🎯 COMPREHENSIVE: Filtered recommendations with content:', recommendations);
-                    console.log('🎯 COMPREHENSIVE: Total categories with content:', Object.keys(recommendations).length);
-                    
-                    if (typeof recommendations === 'object' && recommendations !== null && Object.keys(recommendations).length > 0) {
-                        
-                        // Create the card-based HTML structure with PROPER COLLAPSIBLE FUNCTIONALITY
-                        let cardHTML = `
-                            <div id="recommendations-card-container" style="
-                                background: white;
-                                border-radius: 12px;
-                                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-                                overflow: hidden;
-                                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-                            ">
-                                <div style="
-                                    background: #f8f9fa;
-                                    padding: 16px 20px;
-                                    border-bottom: 1px solid #e9ecef;
-                                ">
-                                    <h2 style="
-                                        margin: 0;
-                                        font-size: 18px;
-                                        font-weight: 600;
-                                        color: #2c3e50;
-                                        letter-spacing: 0.5px;
-                                    ">RECOMMENDATIONS</h2>
-                                </div>
-                                
-                                <div style="padding: 20px;">
-                                    <h3 style="
-                                        margin: 0 0 16px 0;
-                                        font-size: 16px;
-                                        font-weight: 600;
-                                        color: #495057;
-                                        text-transform: uppercase;
-                                        letter-spacing: 0.3px;
-                                    ">CLINICAL RECOMMENDATIONS</h3>
-                        `;
-                        
-                        // Process each category in a specific order
-                        const categoryOrder = [
-                            'EMERGENCY ACTION PLAN',
-                            'EMERGENCY PREPAREDNESS', 
-                            'MEDICATION MANAGEMENT',
-                            'ALLERGY MANAGEMENT',
-                            'DIAGNOSTIC TESTS',
-                            'LABORATORY TESTS',
-                            'MONITORING',
-                            'FOLLOW-UP CARE',
-                            'PATIENT EDUCATION RESOURCES',
-                            'PATIENT EDUCATION',
-                            'TRIGGER AVOIDANCE',
-                            'PREVENTIVE MEASURES',
-                            'ENVIRONMENTAL CONTROL',
-                            'LIFESTYLE MODIFICATIONS',
-                            'IMMUNOTHERAPY',
-                            'SYMPTOM TRACKING',
-                            'DIETARY RECOMMENDATIONS',
-                            'REFERRALS',
-                            'SPECIALIST REFERRAL'
-                        ];
-                        
-                        categoryOrder.forEach(category => {
-                            if (recommendations[category] && Array.isArray(recommendations[category]) && recommendations[category].length > 0) {
-                                const items = recommendations[category];
-                                const categoryKey = category.toUpperCase().replace(/[^A-Z\s]/g, '').trim();
-                                const icon = categoryIcons[categoryKey] || '📋';
-                                const itemCount = items.length;
-                                const categoryId = `category-${categoryKey.replace(/\s+/g, '-').toLowerCase()}`;
-                                
-                                console.log(`🎯 COMPREHENSIVE: Processing category: ${category} with ${itemCount} items`);
-                                
-                                cardHTML += `
-                                    <div style="
-                                        border: 1px solid #e9ecef;
-                                        border-radius: 8px;
-                                        margin-bottom: 12px;
-                                        overflow: hidden;
-                                        transition: all 0.2s ease;
-                                    " onmouseover="this.style.boxShadow='0 2px 8px rgba(0,0,0,0.1)'" onmouseout="this.style.boxShadow='none'">
-                                        
-                                        <div style="
-                                            background: #ffffff;
-                                            padding: 12px 16px;
-                                            cursor: pointer;
-                                            display: flex;
-                                            align-items: center;
-                                            justify-content: space-between;
-                                            border-bottom: 1px solid #f1f3f4;
-                                            user-select: none;
-                                        " onclick="toggleRecommendationCategory('${categoryId}')">
-                                            
-                                            <div style="display: flex; align-items: center; gap: 12px;">
-                                                <span style="
-                                                    font-size: 20px;
-                                                    width: 24px;
-                                                    height: 24px;
-                                                    display: flex;
-                                                    align-items: center;
-                                                    justify-content: center;
-                                                ">${icon}</span>
-                                                
-                                                <span style="
-                                                    font-weight: 600;
-                                                    color: #007bff;
-                                                    font-size: 14px;
-                                                    text-transform: uppercase;
-                                                    letter-spacing: 0.3px;
-                                                ">${category}</span>
-                                            </div>
-                                            
-                                            <div style="display: flex; align-items: center; gap: 8px;">
-                                                <span style="
-                                                    background: #007bff;
-                                                    color: white;
-                                                    padding: 2px 8px;
-                                                    border-radius: 12px;
-                                                    font-size: 12px;
-                                                    font-weight: 600;
-                                                    min-width: 20px;
-                                                    text-align: center;
-                                                ">${itemCount}</span>
-                                                
-                                                <span id="${categoryId}-toggle" style="
-                                                    font-size: 12px;
-                                                    color: #6c757d;
-                                                    transition: transform 0.2s ease;
-                                                    font-weight: bold;
-                                                ">[+]</span>
-                                            </div>
-                                        </div>
-                                        
-                                        <div id="${categoryId}-content" style="
-                                            background: #fafbfc;
-                                            max-height: 0px;
-                                            overflow: hidden;
-                                            opacity: 0;
-                                            transition: all 0.3s ease;
-                                            padding: 0;
-                                        ">
-                                            <ul style="
-                                                margin: 0;
-                                                padding: 0 0 0 20px;
-                                                list-style-type: disc;
-                                                color: #495057;
-                                            ">
-                                `;
-                                
-                                // Add each recommendation item
-                                items.forEach(item => {
-                                    cardHTML += `
-                                        <li style="
-                                            margin-bottom: 8px;
-                                            line-height: 1.5;
-                                            font-size: 14px;
-                                        ">${item}</li>
-                                    `;
-                                });
-                                
-                                cardHTML += `
-                                            </ul>
-                                        </div>
-                                    </div>
-                                `;
-                            }
-                        });
-                        
-                        cardHTML += `
-                                </div>
-                            </div>
-                        `;
-                        
-                        // Set the HTML content
-                        insightsRecommendations.innerHTML = cardHTML;
-                        
-                        // Remove any conflicting classes
-                        insightsRecommendations.classList.remove('bulleted');
-                        insightsRecommendations.removeAttribute('data-original-items');
-                        
-                        console.log('🎯 COMPREHENSIVE: Enhanced card-based recommendations display created with ALL categories (COLLAPSED by default)');
-                        console.log('🎯 COMPREHENSIVE: Total categories displayed:', Object.keys(recommendations).length);
-                        
+                    if (typeof window.initRecommendationsDisplay === 'function') {
+                        window.initRecommendationsDisplay();
                     } else {
-                        insightsRecommendations.innerHTML = `
-                            <div style="
-                                background: white;
-                                border-radius: 12px;
-                                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-                                padding: 20px;
-                                text-align: center;
-                                color: #6c757d;
-                            ">
-                                <p>No structured recommendations available</p>
-                            </div>
-                        `;
+                        console.error('initRecommendationsDisplay function not found');
                     }
                 }
                 const notesSection = document.getElementById('notes-section');
@@ -1555,50 +1273,6 @@ function logout() {
     window.location.href = '/login.html';
 }
 
-// Function to ensure all categories start expanded (for debugging)
-window.expandAllRecommendations = function() {
-    const categoryContents = document.querySelectorAll('[id$="-content"]');
-    const categoryToggles = document.querySelectorAll('[id$="-toggle"]');
-    
-    categoryContents.forEach(content => {
-        if (content.id.includes('category-')) {
-            content.style.maxHeight = '2000px';
-            content.style.opacity = '1';
-            content.style.padding = '16px';
-        }
-    });
-    
-    categoryToggles.forEach(toggle => {
-        if (toggle.id.includes('category-')) {
-            toggle.textContent = '[-]';
-        }
-    });
-    
-    console.log('🎯 Forced all recommendation categories to expand');
-};
-
-// Function to ensure all categories start collapsed (default behavior)
-window.collapseAllRecommendations = function() {
-    const categoryContents = document.querySelectorAll('[id$="-content"]');
-    const categoryToggles = document.querySelectorAll('[id$="-toggle"]');
-    
-    categoryContents.forEach(content => {
-        if (content.id.includes('category-')) {
-            content.style.maxHeight = '0px';
-            content.style.opacity = '0';
-            content.style.padding = '0';
-        }
-    });
-    
-    categoryToggles.forEach(toggle => {
-        if (toggle.id.includes('category-')) {
-            toggle.textContent = '[+]';
-        }
-    });
-    
-    console.log('🎯 Forced all recommendation categories to collapse');
-};
-
 // Install an initialization function that runs on page load
 window.addEventListener('DOMContentLoaded', async () => {
     console.log('DOM loaded, initializing user data...');
@@ -1629,14 +1303,3 @@ window.deletePatient = deletePatient;
 window.logout = logout;
 window.parseGeneralAllergyPlan = parseGeneralAllergyPlan;
 
-// Backward compatibility wrapper
-function parseGeneralAllergyPlan(transcriptText, soapNotes = null) {
-    // If we have SOAP notes, use them directly (Freed-style format)
-    if (soapNotes) {
-        return parseFreedStylePlanEnhanced(soapNotes);
-    }
-    
-    // Otherwise, create a basic structure
-    console.log('No SOAP notes available, creating basic plan structure');
-    return new EnhancedFreedStylePlanParser().createDefaultPlan();
-}

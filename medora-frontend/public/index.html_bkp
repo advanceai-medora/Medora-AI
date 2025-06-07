@@ -52,8 +52,7 @@
                 <p><strong>Last Visit:</strong> <span id="patient-details-last-visit"></span></p>
                 <p><strong>Current Visit:</strong> <span id="patient-details-current-visit"></span></p>
                 <p><strong>Visit History:</strong></p>
-                <!-- FIXED: Changed from visit-history to patient-details-visit-history -->
-                <div id="patient-details-visit-history">No visit history available.</div>
+                <div id="visit-history">No visit history available.</div>
             </div>
 
             <!-- Transcript Section -->
