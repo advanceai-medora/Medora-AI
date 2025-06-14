@@ -1,689 +1,665 @@
 (function () {
-    function debugLog(message, data) {
-        console.log(`[DEBUG] ${message}`, data || '');
-    }
-
-    function errorLog(message, error) {
-        console.error(`[ERROR] ${message}`, error);
-    }
+    console.log('🧬 AllergenIQ Profile module initializing...');
 
     let lastPatientId = null;
     let lastVisitId = null;
     let currentPatientId = null;
     let currentVisitId = null;
+    let currentProfileData = null;
 
-    // Heat Map Helper Functions
-    function getHeatMapColor(severity) {
-        if (severity >= 8) return '#dc2626'; // Red - Severe
-        if (severity >= 6) return '#ea580c'; // Orange - Moderate-Severe  
-        if (severity >= 4) return '#eab308'; // Yellow - Moderate
-        if (severity >= 2) return '#65a30d'; // Green - Mild
-        return '#10b981'; // Light Green - Very Mild/Controlled
+    // Debugging helpers
+    function debugLog(message, data) {
+        console.log(`[AllergenIQ] ${message}`, data || '');
     }
 
-    function getOpacity(frequency) {
-        switch(frequency?.toLowerCase()) {
-            case 'daily': return 1.0;
-            case 'frequent': return 0.9;
-            case 'occasional': return 0.7;
-            case 'controlled': return 0.5;
-            case 'rare': return 0.3;
-            case 'not specified': return 0.6;
-            case 'unknown': return 0.6;
-            default: return 0.8;
-        }
+    function errorLog(message, error) {
+        console.error(`[AllergenIQ ERROR] ${message}`, error);
     }
 
-    function getFrequencyIcon(frequency) {
-        switch(frequency?.toLowerCase()) {
-            case 'daily': return '🔥';
-            case 'frequent': return '⚡';
-            case 'occasional': return '⚪';
-            case 'controlled': return '✅';
-            case 'rare': return '💤';
-            case 'worse with triggers': return '⚠️';
-            case 'not specified': return '❓';
-            case 'unknown': return '❓';
-            default: return '❓';
-        }
-    }
-
-    function generateSymptomHeatMap(symptoms) {
-        if (!symptoms || symptoms.length === 0) {
-            return `
-                <div class="symptom-heat-map" style="margin-bottom: 20px;">
-                    <div style="display: flex; align-items: center; margin-bottom: 15px; gap: 10px;">
-                        <h4 style="margin: 0; color: #374151;">🎯 Symptom Heat Map</h4>
-                        <span style="font-size: 12px; color: #6b7280;">
-                            Interactive severity visualization
-                        </span>
-                    </div>
-                    <div style="
-                        padding: 25px;
-                        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-                        border-radius: 12px;
-                        border: 1px solid #e5e7eb;
-                        text-align: center;
-                        color: #9ca3af;
-                        font-style: italic;
-                    ">
-                        No symptom data available for heat map visualization
-                    </div>
-                </div>
-            `;
-        }
-
-        const heatMapItems = symptoms.map((symptom, index) => {
-            const severity = parseInt(symptom.severity, 10) || 0;
-            const frequency = symptom.frequency || 'unknown';
-            const color = getHeatMapColor(severity);
-            const opacity = getOpacity(frequency);
-            const size = Math.max(30, severity * 10);
-            const frequencyIcon = getFrequencyIcon(frequency);
-
-            return `
-                <div 
-                    class="heat-map-item"
-                    style="
-                        background-color: ${color};
-                        width: ${size}px;
-                        height: ${size}px;
-                        border-radius: 50%;
-                        display: flex;
-                        flex-direction: column;
-                        align-items: center;
-                        justify-content: center;
-                        color: white;
-                        font-weight: bold;
-                        font-size: ${size > 50 ? '11px' : '9px'};
-                        text-align: center;
-                        cursor: pointer;
-                        transition: all 0.3s ease;
-                        position: relative;
-                        opacity: ${opacity};
-                        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-                        border: 2px solid rgba(255,255,255,0.3);
-                    "
-                    title="${symptom.name}&#10;Severity: ${severity}/10&#10;Frequency: ${frequency}"
-                    onmouseover="this.style.transform='scale(1.15)'; this.style.boxShadow='0 6px 12px rgba(0,0,0,0.3)'; this.style.zIndex='10';"
-                    onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 4px 8px rgba(0,0,0,0.2)'; this.style.zIndex='1';"
-                >
-                    <div style="font-size: ${size > 50 ? '10px' : '8px'}; line-height: 1;">
-                        ${symptom.name.split(' ')[0]}
-                    </div>
-                    <div style="font-size: 12px; margin-top: 2px;">
-                        ${frequencyIcon}
-                    </div>
-                    <div style="
-                        position: absolute; 
-                        bottom: -2px; 
-                        right: -2px; 
-                        background-color: rgba(0,0,0,0.7); 
-                        border-radius: 50%;
-                        width: 16px;
-                        height: 16px;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        font-size: 8px;
-                        font-weight: bold;
-                    ">
-                        ${severity}
-                    </div>
-                </div>
-            `;
-        }).join('');
-
-        return `
-            <div class="symptom-heat-map" style="margin-bottom: 20px;">
-                <div style="display: flex; align-items: center; margin-bottom: 15px; gap: 10px;">
-                    <h4 style="margin: 0; color: #374151;">🎯 Symptom Heat Map</h4>
-                    <span style="font-size: 12px; color: #6b7280;">
-                        Interactive severity visualization
-                    </span>
-                </div>
-
-                <div style="
-                    display: flex;
-                    flex-wrap: wrap;
-                    gap: 15px;
-                    padding: 25px;
-                    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-                    border-radius: 12px;
-                    border: 1px solid #e5e7eb;
-                    min-height: 120px;
-                    align-items: center;
-                    justify-content: center;
-                ">
-                    ${heatMapItems}
-                </div>
-
-                <!-- SINGLE COMPREHENSIVE SPECTRUM LEGEND -->
-                <div style="
-                    margin-top: 15px; 
-                    padding: 15px;
-                    background-color: #f9fafb;
-                    border-radius: 8px;
-                    border: 1px solid #e5e7eb;
-                ">
-                    <!-- Severity Spectrum -->
-                    <div style="margin-bottom: 12px;">
-                        <div style="font-size: 11px; font-weight: 600; margin-bottom: 8px; color: #374151;">
-                            Severity Scale:
-                        </div>
-                        <div style="position: relative; height: 20px; border-radius: 10px; background: linear-gradient(to right, #10b981 0%, #65a30d 25%, #eab308 50%, #ea580c 75%, #dc2626 100%); border: 1px solid #d1d5db;">
-                        </div>
-                        <div style="display: flex; justify-content: space-between; margin-top: 5px; font-size: 9px; color: #6b7280;">
-                            <span>0 - Minimal</span>
-                            <span>2 - Mild</span>
-                            <span>4 - Moderate</span>
-                            <span>6 - Severe</span>
-                            <span>8 - Critical</span>
-                            <span>10 - Extreme</span>
-                        </div>
-                    </div>
-
-                    <!-- Frequency Spectrum -->
-                    <div style="margin-bottom: 8px;">
-                        <div style="font-size: 11px; font-weight: 600; margin-bottom: 8px; color: #374151;">
-                            Frequency Indicators:
-                        </div>
-                        <div style="display: flex; flex-wrap: wrap; gap: 12px; font-size: 10px; color: #6b7280;">
-                            <div style="display: flex; align-items: center; gap: 4px;">
-                                <span style="font-size: 12px;">🔥</span>
-                                <span>Daily</span>
-                            </div>
-                            <div style="display: flex; align-items: center; gap: 4px;">
-                                <span style="font-size: 12px;">⚡</span>
-                                <span>Frequent</span>
-                            </div>
-                            <div style="display: flex; align-items: center; gap: 4px;">
-                                <span style="font-size: 12px;">⚪</span>
-                                <span>Occasional</span>
-                            </div>
-                            <div style="display: flex; align-items: center; gap: 4px;">
-                                <span style="font-size: 12px;">✅</span>
-                                <span>Controlled</span>
-                            </div>
-                            <div style="display: flex; align-items: center; gap: 4px;">
-                                <span style="font-size: 12px;">⚠️</span>
-                                <span>Triggered</span>
-                            </div>
-                            <div style="display: flex; align-items: center; gap: 4px;">
-                                <span style="font-size: 12px;">💤</span>
-                                <span>Rare</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Size Guide -->
-                    <div>
-                        <div style="font-size: 11px; font-weight: 600; margin-bottom: 8px; color: #374151;">
-                            Circle Size Guide:
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 12px; font-size: 10px; color: #6b7280;">
-                            <div style="display: flex; align-items: center; gap: 6px;">
-                                <div style="width: 25px; height: 25px; background-color: #10b981; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 8px; font-weight: bold;">2</div>
-                                <span>Mild</span>
-                            </div>
-                            <div style="display: flex; align-items: center; gap: 6px;">
-                                <div style="width: 40px; height: 40px; background-color: #eab308; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 9px; font-weight: bold;">5</div>
-                                <span>Moderate</span>
-                            </div>
-                            <div style="display: flex; align-items: center; gap: 6px;">
-                                <div style="width: 60px; height: 60px; background-color: #dc2626; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 10px; font-weight: bold;">8</div>
-                                <span>Severe</span>
-                            </div>
-                            <div style="margin-left: 15px; font-style: italic; color: #9ca3af;">
-                                Larger circles = Higher severity
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-    }
-
+    // API Communication
     async function fetchAllergeniqProfile(patientId, visitId) {
         const email = localStorage.getItem('currentEmail');
         const tenantID = localStorage.getItem('tenantID');
+        
         if (!email || !tenantID) {
-            console.error('Missing email or tenantID in localStorage');
-            return { success: false, error: 'Authentication error: Missing email or tenantID' };
+            throw new Error('Missing authentication credentials');
         }
+
         const url = `https://medoramd.ai/api/allergeniq-profile?patient_id=${patientId}&visit_id=${visitId}&email=${email}&tenantID=${tenantID}`;
-        debugLog('Fetching AllergenIQ profile data', { url });
+        debugLog('Fetching profile data', { url, patientId, visitId });
 
         try {
-            const response = await fetch(url, { method: 'GET', headers: { 'Content-Type': 'application/json' } });
-            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+
             const data = await response.json();
-            if (!data.success) throw new Error(data.error || 'Failed to fetch AllergenIQ profile');
-            debugLog('API response data', data);
+            
+            if (!data.success) {
+                throw new Error(data.error || 'API returned error');
+            }
+
+            debugLog('✅ Profile data fetched successfully', {
+                patient: data.patient_name,
+                hasProfile: !!data.profile,
+                itemCount: data.debug_info?.total_extracted_items || 0
+            });
+
             return data;
         } catch (error) {
-            errorLog('Error fetching AllergenIQ profile', error);
+            errorLog('Failed to fetch profile data', error);
             throw error;
         }
     }
 
-    function showToast(message) {
-        // Create toast element
-        const toast = document.createElement('div');
-        toast.className = 'allergeniq-toast';
-        toast.textContent = message;
+    // Collapsed Card Management
+    function updateCollapsedCard(profileData) {
+        debugLog('Updating collapsed card', profileData);
 
-        // Append to body
-        let toastContainer = document.getElementById('allergeniq-toast-container');
-        if (!toastContainer) {
-            toastContainer = document.createElement('div');
-            toastContainer.id = 'allergeniq-toast-container';
-            document.body.appendChild(toastContainer);
-        }
-        toastContainer.appendChild(toast);
+        // Update counts
+        const allergenCount = document.getElementById('allergen-count');
+        const symptomCount = document.getElementById('symptom-count');
+        const medicationCount = document.getElementById('medication-count');
+        const alertsContainer = document.getElementById('allergeniq-alerts');
 
-        // Show toast
-        setTimeout(() => {
-            toast.classList.add('show');
-        }, 100);
-
-        // Remove toast after 3 seconds
-        setTimeout(() => {
-            toast.classList.remove('show');
-            setTimeout(() => {
-                toast.remove();
-            }, 300);
-        }, 3000);
-    }
-
-    function copyReport() {
-        const container = document.getElementById('allergeniq-profile-container');
-        if (!container) {
-            errorLog('AllergenIQ container not found for copying');
+        if (!profileData || !profileData.profile) {
+            // Show loading or error state
+            if (allergenCount) allergenCount.textContent = '-';
+            if (symptomCount) symptomCount.textContent = '-';
+            if (medicationCount) medicationCount.textContent = '-';
+            if (alertsContainer) {
+                alertsContainer.innerHTML = '<span class="alert-text">No data available</span>';
+            }
             return;
         }
 
-        // Extract text content, preserving structure
-        let text = '';
-        const sections = container.querySelectorAll('.category-block');
-        sections.forEach(section => {
-            const heading = section.querySelector('h3')?.textContent || '';
-            text += `${heading}\n`;
+        const profile = profileData.profile;
+        
+        // Update counts
+        const allergens = profile.allergenData?.length || 0;
+        const symptoms = profile.symptomData?.length || 0;
+        const medications = profile.medicationHistory?.length || 0;
 
-            const paragraphs = section.querySelectorAll('p');
-            paragraphs.forEach(p => {
-                text += `${p.textContent}\n`;
-            });
+        if (allergenCount) allergenCount.textContent = allergens;
+        if (symptomCount) symptomCount.textContent = symptoms;
+        if (medicationCount) medicationCount.textContent = medications;
 
-            const lists = section.querySelectorAll('ul');
-            lists.forEach(ul => {
-                const items = ul.querySelectorAll('li');
-                items.forEach(li => {
-                    text += `- ${li.textContent}\n`;
-                });
-            });
+        // Update alerts
+        if (alertsContainer) {
+            const alerts = generateAlerts(profile);
+            alertsContainer.innerHTML = alerts;
+        }
+    }
 
-            // Handle table for Symptoms
-            const table = section.querySelector('.symptom-heatmap');
-            if (table) {
-                const rows = table.querySelectorAll('tr');
-                rows.forEach((row, index) => {
-                    if (index === 0) return; // Skip header row
-                    const cells = row.querySelectorAll('td');
-                    if (cells.length === 3) {
-                        text += `- ${cells[0].textContent}: Severity ${cells[1].textContent}, Frequency ${cells[2].textContent}\n`;
-                    }
-                });
+    function generateAlerts(profile) {
+        const alerts = [];
+        let severityDots = '';
+
+        // Check for high severity symptoms
+        if (profile.symptomData?.length > 0) {
+            const highSeverityCount = profile.symptomData.filter(s => parseInt(s.severity) >= 7).length;
+            const mediumSeverityCount = profile.symptomData.filter(s => parseInt(s.severity) >= 4 && parseInt(s.severity) < 7).length;
+            const lowSeverityCount = profile.symptomData.filter(s => parseInt(s.severity) < 4).length;
+
+            // Add severity dots
+            for (let i = 0; i < highSeverityCount; i++) {
+                severityDots += '<div class="severity-dot severity-high"></div>';
+            }
+            for (let i = 0; i < mediumSeverityCount; i++) {
+                severityDots += '<div class="severity-dot severity-medium"></div>';
+            }
+            for (let i = 0; i < lowSeverityCount; i++) {
+                severityDots += '<div class="severity-dot severity-low"></div>';
             }
 
-            text += '\n';
-        });
-
-        // Copy to clipboard
-        navigator.clipboard.writeText(text.trim()).then(() => {
-            showToast('AllergenIQ Profile copied to clipboard!');
-        }).catch(err => {
-            errorLog('Failed to copy AllergenIQ Profile to clipboard', err);
-            showToast('Failed to copy profile. Please try again.');
-        });
-    }
-
-    function downloadPDF() {
-        // Placeholder for PDF generation
-        // To implement this fully, you would need to include a library like jsPDF in index.html
-        debugLog('Download PDF clicked - placeholder function');
-        showToast('PDF generation not implemented. Add jsPDF library to enable this feature.');
-
-        // Example implementation with jsPDF (commented out since library isn't included):
-        /*
-        if (typeof window.jspdf === 'undefined') {
-            errorLog('jsPDF library not found');
-            showToast('PDF generation not available. Missing jsPDF library.');
-            return;
-        }
-
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
-        const container = document.getElementById('allergeniq-profile-container');
-        if (!container) {
-            errorLog('AllergenIQ container not found for PDF generation');
-            return;
-        }
-
-        let yOffset = 10;
-        const sections = container.querySelectorAll('.category-block');
-        sections.forEach(section => {
-            const heading = section.querySelector('h3')?.textContent || '';
-            doc.setFontSize(14);
-            doc.setTextColor(26, 60, 94); // #1a3c5e
-            doc.text(heading, 10, yOffset);
-            yOffset += 10;
-
-            const paragraphs = section.querySelectorAll('p');
-            paragraphs.forEach(p => {
-                doc.setFontSize(12);
-                doc.setTextColor(75, 85, 99); // #4b5563
-                doc.text(p.textContent, 10, yOffset);
-                yOffset += 7;
-            });
-
-            const lists = section.querySelectorAll('ul');
-            lists.forEach(ul => {
-                const items = ul.querySelectorAll('li');
-                items.forEach(li => {
-                    doc.setFontSize(12);
-                    doc.setTextColor(75, 85, 99);
-                    doc.text(`- ${li.textContent}`, 15, yOffset);
-                    yOffset += 7;
-                });
-            });
-
-            const table = section.querySelector('.symptom-heatmap');
-            if (table) {
-                const rows = table.querySelectorAll('tr');
-                rows.forEach((row, index) => {
-                    if (index === 0) return; // Skip header row
-                    const cells = row.querySelectorAll('td');
-                    if (cells.length === 3) {
-                        doc.setFontSize(12);
-                        doc.setTextColor(75, 85, 99);
-                        doc.text(`- ${cells[0].textContent}: Severity ${cells[1].textContent}, Frequency ${cells[2].textContent}`, 15, yOffset);
-                        yOffset += 7;
-                    }
-                });
+            if (highSeverityCount > 0) {
+                alerts.push(`High severity: ${highSeverityCount} symptoms`);
             }
+        }
 
-            yOffset += 5;
-        });
+        // Check for allergen risks
+        if (profile.allergenData?.length > 0) {
+            const systemicRisk = profile.allergenData.some(a => 
+                a.reaction?.toLowerCase().includes('systemic') || 
+                a.reaction?.toLowerCase().includes('anaphylaxis')
+            );
+            
+            if (systemicRisk) {
+                alerts.push('Anaphylaxis risk');
+            }
+        }
 
-        doc.save(`AllergenIQ_Profile_${currentPatientId || 'Patient'}.pdf`);
-        showToast('AllergenIQ Profile downloaded as PDF!');
-        */
+        // Check diagnosis for high-risk conditions
+        const diagnosis = profile.summary?.primaryDiagnosis?.toLowerCase() || '';
+        if (diagnosis.includes('anaphylaxis')) {
+            alerts.push('Anaphylaxis history');
+        }
+
+        const alertText = alerts.length > 0 ? alerts.join(' • ') : 'Profile available';
+
+        return `
+            ${severityDots}
+            <span class="alert-text ${alerts.length > 0 ? 'has-alerts' : ''}">${alertText}</span>
+        `;
     }
 
-    function renderAllergeniqProfile(data) {
-        const container = document.getElementById('allergeniq-profile-container');
-        if (!container) {
-            errorLog('AllergenIQ container not found in DOM');
+    // Modal Management
+    function updateModalContent(profileData) {
+        debugLog('🔄 Updating modal content', profileData);
+
+        if (!profileData || !profileData.profile) {
+            showModalError('No profile data available');
             return;
         }
 
-        // Check if profile data exists
-        const profile = data.profile || {};
-        if (!profile.allergenData && !profile.medicationHistory && !profile.summary && !profile.symptomData) {
-            debugLog('No profile data found in API response', data);
-            container.innerHTML = '<p>No profile data available.</p>';
+        const profile = profileData.profile;
+
+        // Update diagnosis section
+        updateDiagnosisSection(profile.summary);
+
+        // Update allergens section
+        updateAllergensSection(profile.allergenData);
+
+        // Update symptoms section
+        updateSymptomsSection(profile.symptomData);
+
+        // Update medications section
+        updateMedicationsSection(profile.medicationHistory);
+
+        debugLog('✅ Modal content updated successfully');
+    }
+
+    function updateDiagnosisSection(summary) {
+        const container = document.getElementById('modal-diagnosis-content');
+        if (!container) return;
+
+        if (!summary) {
+            container.innerHTML = '<div class="loading-message">No diagnosis information available</div>';
             return;
         }
 
-        // Build HTML content with categorized sections
-        let html = '<div class="profile-block">';
+        // Use REAL data from the API instead of hardcoded
+        const primaryDiagnosis = summary.primaryDiagnosis || 'No primary diagnosis available';
+        const secondaryDiagnosis = summary.secondaryDiagnosis || summary.alternativeDiagnoses?.[0] || 'No secondary diagnosis';
+        const crossReactivity = summary.crossReactivity || (summary.alternativeDiagnoses?.length > 1 ? summary.alternativeDiagnoses.slice(1).join(', ') : 'None identified');
 
-        // Diagnosis Section
-        if (profile.summary) {
-            html += `
-                <div class="category-block">
-                    <h3>Diagnosis</h3>
-                    <p><strong>Primary Diagnosis:</strong> ${profile.summary.primaryDiagnosis || 'Not specified'}</p>
-                    <p><strong>Alternative Diagnoses:</strong></p>
-                    <ul>
-                        ${(profile.summary.alternativeDiagnoses || []).map(diag => `<li>${diag}</li>`).join('') || '<li>None specified</li>'}
-                    </ul>
+        const html = `
+            <div class="diagnosis-card">
+                <div class="diagnosis-primary-title">${primaryDiagnosis}</div>
+                ${secondaryDiagnosis !== 'No secondary diagnosis' ? `
+                    <div class="diagnosis-secondary-info">
+                        <strong>Secondary:</strong> ${secondaryDiagnosis}
+                    </div>
+                ` : ''}
+            </div>
+            ${crossReactivity !== 'None identified' ? `
+                <div class="cross-reactivity-section">
+                    <div class="cross-reactivity-label">Cross-reactivity identified:</div>
+                    <div class="cross-reactivity-value">${crossReactivity}</div>
                 </div>
-            `;
-        } else {
-            html += `
-                <div class="category-block">
-                    <h3>Diagnosis</h3>
-                    <p>No diagnosis data available.</p>
-                </div>
-            `;
+            ` : ''}
+        `;
+
+        container.innerHTML = html;
+    }
+
+    function updateAllergensSection(allergens) {
+        const container = document.getElementById('modal-allergens-content');
+        if (!container) return;
+
+        if (!allergens || allergens.length === 0) {
+            container.innerHTML = '<div class="loading-message">No allergen data available</div>';
+            return;
         }
 
-        // Allergen Data Section
-        if (profile.allergenData && profile.allergenData.length > 0) {
-            html += `
-                <div class="category-block">
-                    <h3>Allergens</h3>
-                    <ul>
-                        ${profile.allergenData.map(allergen => `
-                            <li>${allergen.name}: ${allergen.reaction}</li>
-                        `).join('')}
-                    </ul>
-                </div>
-            `;
-        } else {
-            html += `
-                <div class="category-block">
-                    <h3>Allergens</h3>
-                    <p>No allergen data available.</p>
-                </div>
-            `;
-        }
+        // Use REAL allergen data from API
+        const hasSystemicRisk = allergens.some(a => 
+            a.reaction?.toLowerCase().includes('systemic') || 
+            a.reaction?.toLowerCase().includes('anaphylaxis')
+        );
 
-        // ENHANCED Symptom Data Section with Heat Map and Color Spectrum Table (NO DUPLICATE SPECTRUM)
-        if (profile.symptomData && profile.symptomData.length > 0) {
+        // Determine allergen category based on actual data
+        const foodAllergens = allergens.filter(a => 
+            a.category?.toLowerCase().includes('food') || 
+            a.type?.toLowerCase().includes('food') ||
+            ['peanut', 'tree nut', 'cashew', 'walnut', 'almond', 'milk', 'egg', 'soy', 'wheat', 'fish', 'shellfish'].some(food => 
+                a.name?.toLowerCase().includes(food)
+            )
+        );
+
+        const categoryName = foodAllergens.length > 0 ? 'Food Allergens' : 'Allergens';
+
+        let html = `<div class="allergen-category-tag">${categoryName}</div>`;
+
+        // Show individual allergens
+        allergens.forEach(allergen => {
             html += `
-                <div class="category-block">
-                    <h3>Symptoms</h3>
-                    
-                    <!-- HEAT MAP VISUALIZATION -->
-                    ${generateSymptomHeatMap(profile.symptomData)}
-                    
-                    <!-- TABLE WITH COLOR SPECTRUM (NO DUPLICATE SPECTRUM BELOW) -->
-                    <div style="margin-top: 20px;">
-                        <h4 style="color: #374151; margin-bottom: 10px;">Detailed Symptom Table</h4>
-                        <table class="symptom-heatmap" style="width: 100%; border-collapse: collapse; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-                            <thead>
-                                <tr style="background-color: #f8f9fa;">
-                                    <th style="padding: 12px; text-align: left; border-bottom: 2px solid #e5e7eb; color: #374151; font-weight: 600;">Name</th>
-                                    <th style="padding: 12px; text-align: left; border-bottom: 2px solid #e5e7eb; color: #374151; font-weight: 600;">Severity (0-10)</th>
-                                    <th style="padding: 12px; text-align: left; border-bottom: 2px solid #e5e7eb; color: #374151; font-weight: 600;">Frequency</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${profile.symptomData.map((symptom, index) => {
-                                    const severity = parseInt(symptom.severity, 10) || 0;
-                                    const frequency = symptom.frequency === 'Unknown' ? 'Not specified' : symptom.frequency;
-                                    const frequencyIcon = getFrequencyIcon(frequency);
-                                    
-                                    // Get the EXACT color for this severity level
-                                    const severityColor = getHeatMapColor(severity);
-                                    
-                                    // Calculate percentage for bar width
-                                    const percentage = Math.max(15, (severity / 10) * 100); // Minimum 15% for visibility
-                                    
-                                    // Determine text color based on severity
-                                    const textColor = severity > 5 ? '#ffffff' : '#000000';
-                                    const textShadow = severity > 5 ? '0 1px 2px rgba(0,0,0,0.7)' : 'none';
-                                    
-                                    return `
-                                        <tr style="border-bottom: 1px solid #e5e7eb; ${index % 2 === 0 ? 'background-color: #f9fafb;' : 'background-color: white;'}">
-                                            <td style="padding: 12px; color: #374151; font-weight: 500;">
-                                                ${symptom.name}
-                                            </td>
-                                            <td style="padding: 12px; position: relative;">
-                                                <!-- Severity Color Bar -->
-                                                <div style="
-                                                    position: relative;
-                                                    background-color: #f3f4f6;
-                                                    border-radius: 20px;
-                                                    height: 28px;
-                                                    border: 1px solid #e5e7eb;
-                                                    overflow: hidden;
-                                                    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
-                                                ">
-                                                    <!-- Actual color fill based on exact severity -->
-                                                    <div style="
-                                                        position: absolute;
-                                                        top: 0;
-                                                        left: 0;
-                                                        height: 100%;
-                                                        width: ${percentage}%;
-                                                        background-color: ${severityColor};
-                                                        border-radius: 20px;
-                                                        transition: all 0.4s ease;
-                                                        box-shadow: inset 0 1px 2px rgba(255,255,255,0.2);
-                                                    "></div>
-                                                    
-                                                    <!-- Severity text overlay -->
-                                                    <div style="
-                                                        position: absolute;
-                                                        top: 0;
-                                                        left: 0;
-                                                        right: 0;
-                                                        bottom: 0;
-                                                        display: flex;
-                                                        align-items: center;
-                                                        justify-content: center;
-                                                        color: ${textColor};
-                                                        font-weight: bold;
-                                                        font-size: 13px;
-                                                        text-shadow: ${textShadow};
-                                                        z-index: 2;
-                                                    ">
-                                                        ${severity}/10
-                                                    </div>
-                                                    
-                                                    <!-- Severity level indicator -->
-                                                    <div style="
-                                                        position: absolute;
-                                                        top: -8px;
-                                                        right: 8px;
-                                                        background-color: ${severityColor};
-                                                        color: white;
-                                                        font-size: 8px;
-                                                        font-weight: bold;
-                                                        padding: 2px 6px;
-                                                        border-radius: 10px;
-                                                        text-shadow: 0 1px 2px rgba(0,0,0,0.5);
-                                                        z-index: 3;
-                                                    ">
-                                                        ${severity >= 8 ? 'SEVERE' : severity >= 6 ? 'HIGH' : severity >= 4 ? 'MOD' : severity >= 2 ? 'MILD' : 'LOW'}
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td style="padding: 12px; color: #6b7280;">
-                                                <div style="display: flex; align-items: center; gap: 6px;">
-                                                    <span style="font-size: 16px;">${frequencyIcon}</span>
-                                                    <span style="font-weight: 500;">${frequency}</span>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    `;
-                                }).join('')}
-                            </tbody>
-                        </table>
+                <div style="background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 6px; padding: 8px 12px; margin-bottom: 8px;">
+                    <strong>${allergen.name}</strong><br>
+                    <small style="color: #856404;">${allergen.reaction || allergen.description || 'Reaction details not specified'}</small>
+                </div>
+            `;
+        });
+
+        // Show risk warning if applicable
+        if (hasSystemicRisk) {
+            html += `
+                <div class="systemic-risk-box">
+                    <div class="systemic-risk-title">⚠️ SYSTEMIC REACTION RISK</div>
+                    <div class="systemic-risk-description">
+                        Potential for severe systemic reactions. Requires immediate medical attention if exposed.
                     </div>
                 </div>
             `;
-        } else {
-            html += `
-                <div class="category-block">
-                    <h3>Symptoms</h3>
-                    ${generateSymptomHeatMap([])}
-                    <p>No symptom data available.</p>
-                </div>
-            `;
         }
-
-        // Medication History Section
-        if (profile.medicationHistory && profile.medicationHistory.length > 0) {
-            html += `
-                <div class="category-block">
-                    <h3>Medication History</h3>
-                    <ul>
-                        ${profile.medicationHistory.map(med => `
-                            <li>${med.name} (${med.dosage}) - Status: ${med.status}</li>
-                        `).join('')}
-                    </ul>
-                </div>
-            `;
-        } else {
-            html += `
-                <div class="category-block">
-                    <h3>Medication History</h3>
-                    <p>No medication history available.</p>
-                </div>
-            `;
-        }
-
-        html += '</div>';
 
         container.innerHTML = html;
-        debugLog('Displaying AllergenIQ profile data with heat map and NO duplicate spectrum', data);
     }
 
-    async function updateProfileWithVisitId(patientId, visitId) {
+    // FIXED: Use REAL symptom data instead of hardcoded
+    function updateSymptomsSection(symptoms) {
+        const container = document.getElementById('modal-symptoms-content');
+        if (!container) return;
+
+        if (!symptoms || symptoms.length === 0) {
+            container.innerHTML = '<div class="loading-message">No symptom data available</div>';
+            return;
+        }
+
+        // Use REAL symptom data from the API
+        const html = `
+            <div class="symptoms-grid-full">
+                ${symptoms.map(symptom => {
+                    const severity = parseInt(symptom.severity) || 0;
+                    const severityColor = getSeverityColor(severity);
+                    const frequency = symptom.frequency || 'Unknown';
+                    const frequencyIcon = getFrequencyIcon(frequency);
+                    
+                    return `
+                        <div class="symptom-card-full">
+                            <div class="symptom-name-full">${symptom.name || symptom.symptom || 'Unknown symptom'}</div>
+                            <div class="symptom-severity-circle-full" style="background-color: ${severityColor};">
+                                ${severity}/10
+                            </div>
+                            <div class="symptom-frequency-full">
+                                ${frequencyIcon} ${frequency}
+                            </div>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+            <div class="severity-legend-full">
+                <div class="legend-item-full">
+                    <div class="legend-dot-full mild"></div>
+                    <span>MILD (1-3)</span>
+                </div>
+                <div class="legend-item-full">
+                    <div class="legend-dot-full moderate"></div>
+                    <span>MODERATE (4-6)</span>
+                </div>
+                <div class="legend-item-full">
+                    <div class="legend-dot-full severe"></div>
+                    <span>SEVERE (7-10)</span>
+                </div>
+            </div>
+        `;
+
+        container.innerHTML = html;
+    }
+
+    // FIXED: Use REAL medication data instead of hardcoded
+    function updateMedicationsSection(medications) {
+        const container = document.getElementById('modal-medications-content');
+        if (!container) return;
+
+        if (!medications || medications.length === 0) {
+            container.innerHTML = '<div class="loading-message">No medication data available</div>';
+            return;
+        }
+
+        // Use REAL medication data from the API
+        const html = medications.map(medication => {
+            const name = medication.name || medication.medication || 'Unknown medication';
+            const dosage = medication.dosage || medication.dose || 'Dosage not specified';
+            const status = medication.status || medication.frequency || 'As needed';
+            
+            // Get first letter for the medication initial
+            const initial = name.charAt(0).toUpperCase();
+            
+            return `
+                <div class="medication-card-full">
+                    <div class="medication-initial-full">${initial}</div>
+                    <div class="medication-details-full">
+                        <div class="medication-name-full">${name}</div>
+                        <div class="medication-dosage-full">${dosage}</div>
+                    </div>
+                    <div class="medication-status-full">${status}</div>
+                </div>
+            `;
+        }).join('');
+
+        container.innerHTML = html;
+    }
+
+    function showModalError(message) {
+        const sections = [
+            'modal-diagnosis-content',
+            'modal-allergens-content', 
+            'modal-symptoms-content',
+            'modal-medications-content'
+        ];
+
+        sections.forEach(id => {
+            const container = document.getElementById(id);
+            if (container) {
+                container.innerHTML = `<div class="loading-message">${message}</div>`;
+            }
+        });
+    }
+
+    // Utility Functions
+    function getSeverityColor(severity) {
+        const sev = parseInt(severity) || 0;
+        if (sev >= 8) return '#dc2626'; // Red - Severe
+        if (sev >= 6) return '#ea580c'; // Orange - Moderate-Severe  
+        if (sev >= 4) return '#eab308'; // Yellow - Moderate
+        if (sev >= 2) return '#65a30d'; // Green - Mild
+        return '#10b981'; // Light Green - Very Mild
+    }
+
+    function getFrequencyIcon(frequency) {
+        const freq = (frequency || '').toLowerCase();
+        switch(freq) {
+            case 'daily':
+            case 'every day': 
+                return '🔥';
+            case 'frequent':
+            case 'often':
+                return '⚡';
+            case 'occasional':
+            case 'sometimes':
+            case 'weekly':
+                return '⚪';
+            case 'controlled':
+            case 'stable':
+                return '✅';
+            case 'rare':
+            case 'seldom':
+            case 'monthly':
+                return '💤';
+            case 'unknown':
+            case '':
+                return '❓';
+            default: 
+                return '⚪'; // Default to occasional
+        }
+    }
+
+    // Toast Notifications
+    function showToast(message, type = 'success') {
+        const toast = document.createElement('div');
+        toast.className = `toast allergeniq-toast ${type}`;
+        toast.textContent = message;
+
+        // Add to container
+        let container = document.getElementById('allergeniq-toast-container');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'allergeniq-toast-container';
+            container.style.cssText = 'position: fixed; bottom: 20px; right: 20px; z-index: 9999;';
+            document.body.appendChild(container);
+        }
+        
+        container.appendChild(toast);
+
+        // Show toast
+        setTimeout(() => toast.classList.add('show'), 100);
+
+        // Remove toast
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
+
+    // Action Functions (called from HTML)
+    window.downloadAllergenIQPDF = function() {
+        debugLog('Download PDF requested');
+        
+        if (!currentProfileData) {
+            showToast('No profile data available to download', 'error');
+            return;
+        }
+
+        // Create text content for download
+        let content = 'AllergenIQ Profile Report\n';
+        content += '========================\n\n';
+
+        const profile = currentProfileData.profile;
+        
+        if (profile.summary) {
+            content += 'DIAGNOSIS:\n';
+            content += `Primary: ${profile.summary.primaryDiagnosis}\n`;
+            if (profile.summary.alternativeDiagnoses?.length > 0) {
+                content += `Alternative: ${profile.summary.alternativeDiagnoses.join(', ')}\n`;
+            }
+            content += '\n';
+        }
+
+        if (profile.allergenData?.length > 0) {
+            content += 'ALLERGENS:\n';
+            profile.allergenData.forEach(allergen => {
+                content += `- ${allergen.name}: ${allergen.reaction}\n`;
+            });
+            content += '\n';
+        }
+
+        if (profile.symptomData?.length > 0) {
+            content += 'SYMPTOMS:\n';
+            profile.symptomData.forEach(symptom => {
+                content += `- ${symptom.name}: Severity ${symptom.severity}/10, ${symptom.frequency}\n`;
+            });
+            content += '\n';
+        }
+
+        if (profile.medicationHistory?.length > 0) {
+            content += 'MEDICATIONS:\n';
+            profile.medicationHistory.forEach(med => {
+                content += `- ${med.name} (${med.dosage}) - ${med.status}\n`;
+            });
+        }
+
+        // Create and download file
+        const blob = new Blob([content], { type: 'text/plain' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `AllergenIQ_Profile_${currentPatientId || 'Patient'}.txt`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+
+        showToast('AllergenIQ Profile downloaded successfully!');
+    };
+
+    window.copyAllergenIQReport = function() {
+        debugLog('Copy report requested');
+        
+        if (!currentProfileData) {
+            showToast('No profile data available to copy', 'error');
+            return;
+        }
+
+        const profile = currentProfileData.profile;
+        let text = 'AllergenIQ Profile Summary\n\n';
+
+        if (profile.summary) {
+            text += `Diagnosis: ${profile.summary.primaryDiagnosis}\n`;
+        }
+
+        if (profile.allergenData?.length > 0) {
+            text += `Allergens: ${profile.allergenData.length} identified\n`;
+        }
+
+        if (profile.symptomData?.length > 0) {
+            text += `Symptoms: ${profile.symptomData.length} tracked\n`;
+            const highSeverity = profile.symptomData.filter(s => parseInt(s.severity) >= 7).length;
+            if (highSeverity > 0) {
+                text += `High severity symptoms: ${highSeverity}\n`;
+            }
+        }
+
+        if (profile.medicationHistory?.length > 0) {
+            text += `Medications: ${profile.medicationHistory.length} listed\n`;
+        }
+
+        navigator.clipboard.writeText(text).then(() => {
+            showToast('AllergenIQ Profile copied to clipboard!');
+        }).catch(err => {
+            errorLog('Failed to copy to clipboard', err);
+            showToast('Failed to copy profile. Please try again.', 'error');
+        });
+    };
+
+    window.sendToPatient = function() {
+        debugLog('Send to patient requested');
+        showToast('Send to patient feature coming soon!', 'info');
+    };
+
+    // Main Update Function
+    async function updateProfileWithVisitId(patientId, visitId, forceModalUpdate = false) {
+        debugLog('🔄 Update requested', { patientId, visitId, forceModalUpdate });
+
         if (!patientId || !visitId) {
-            errorLog('Missing patientId or visitId for AllergenIQ profile');
+            errorLog('Missing patientId or visitId');
             return;
         }
 
-        if (lastPatientId === patientId && lastVisitId === visitId) {
-            debugLog('Same patient and visit, skipping update');
+        // Skip if same data and not forcing modal update
+        if (!forceModalUpdate && lastPatientId === patientId && lastVisitId === visitId) {
+            debugLog('Same patient/visit, skipping update');
+            // But if we have cached data and this is a modal request, update the modal
+            if (forceModalUpdate && currentProfileData) {
+                debugLog('🔄 Using cached data for modal update');
+                updateModalContent(currentProfileData);
+            }
             return;
         }
 
+        // Update tracking variables
         lastPatientId = patientId;
         lastVisitId = visitId;
         currentPatientId = patientId;
         currentVisitId = visitId;
 
         try {
+            // Show loading states
+            updateCollapsedCard(null);
+            if (forceModalUpdate) {
+                showModalError('Loading detailed analysis...');
+            }
+
+            // Fetch fresh data
             const data = await fetchAllergeniqProfile(patientId, visitId);
-            renderAllergeniqProfile(data);
+            currentProfileData = data;
+
+            // Update both views
+            updateCollapsedCard(data);
+            
+            if (forceModalUpdate) {
+                debugLog('🔄 Updating modal with fresh data');
+                updateModalContent(data);
+            }
+
+            debugLog('✅ Profile updated successfully');
+
         } catch (error) {
-            const container = document.getElementById('allergeniq-profile-container');
-            if (container) {
-                container.innerHTML = '<p class="error-message">Failed to load AllergenIQ profile.</p>';
+            errorLog('Failed to update profile', error);
+            
+            // Show error states
+            const errorMessage = error.message.includes('HTTP 404') 
+                ? 'No profile data found for this visit'
+                : 'Failed to load profile data';
+                
+            updateCollapsedCard(null);
+            if (forceModalUpdate) {
+                showModalError(errorMessage);
             }
         }
     }
 
-    // Set up event listeners for the buttons
-    function setupEventListeners() {
-        const copyBtn = document.getElementById('allergeniq-copy-btn');
-        const downloadBtn = document.getElementById('allergeniq-download-btn');
-
-        if (copyBtn) {
-            copyBtn.addEventListener('click', copyReport);
-        } else {
-            errorLog('Copy button not found in DOM');
+    // Enhanced modal open function
+    window.openAllergenIQModal = function() {
+        debugLog('🔄 Opening AllergenIQ modal');
+        
+        // Show the modal
+        const modalOverlay = document.getElementById('allergeniq-modal-overlay');
+        if (modalOverlay) {
+            modalOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
         }
-
-        if (downloadBtn) {
-            downloadBtn.addEventListener('click', downloadPDF);
+        
+        // Trigger detailed data load if we have current patient/visit
+        if (window.currentPatientId && window.currentVisitId) {
+            debugLog('🔄 Loading data for modal', { 
+                patientId: window.currentPatientId, 
+                visitId: window.currentVisitId 
+            });
+            updateProfileWithVisitId(window.currentPatientId, window.currentVisitId, true);
+        } else if (currentProfileData) {
+            // Use cached data if available
+            debugLog('🔄 Using cached data for modal');
+            updateModalContent(currentProfileData);
         } else {
-            errorLog('Download button not found in DOM');
+            debugLog('⚠️ No patient/visit data available for modal');
+            showModalError('Please select a patient first');
         }
+    };
+
+    // Auto-update when patient/visit changes
+    function setupAutoUpdate() {
+        // Listen for patient/visit changes from other modules
+        const originalUpdateFunction = window.updateProfileWithVisitId;
+        
+        window.updateProfileWithVisitId = function(patientId, visitId, forceModal) {
+            debugLog('🔄 Global update triggered', { patientId, visitId, forceModal });
+            updateProfileWithVisitId(patientId, visitId, forceModal);
+            
+            // Call original function if it exists
+            if (originalUpdateFunction && typeof originalUpdateFunction === 'function') {
+                originalUpdateFunction(patientId, visitId, forceModal);
+            }
+        };
+    }
+
+    // Initialize when DOM is ready
+    function initialize() {
+        debugLog('🚀 Initializing AllergenIQ Profile module');
+        
+        // Setup auto-update system
+        setupAutoUpdate();
+
+        // Expose global update function
+        window.updateAllergenIQProfile = updateProfileWithVisitId;
+
+        // Override the openAllergenIQ function with our enhanced version
+        window.openAllergenIQ = window.openAllergenIQModal;
+
+        debugLog('✅ AllergenIQ Profile module ready');
     }
 
     // Initialize on DOM load
-    document.addEventListener('DOMContentLoaded', () => {
-        setupEventListeners();
-    });
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initialize);
+    } else {
+        initialize();
+    }
 
-    debugLog('AllergenIQ Profile module loaded with heat map and single spectrum legend');
-    window.updateProfileWithVisitId = updateProfileWithVisitId;
+    console.log('🧬 AllergenIQ Profile module loaded successfully');
 })();

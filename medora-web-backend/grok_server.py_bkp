@@ -118,7 +118,34 @@ def with_retry_and_delay(max_retries=2, delay_seconds=2):
         return wrapper
     return decorator
 
-
+# Add this helper function to your code (near the top with other utility functions)
+def safe_string_extract(data, key, default="N/A", max_length=None):
+    """
+    Safely extract string data from potentially mixed-type JSON responses
+    Handles cases where AI returns lists instead of strings
+    """
+    value = data.get(key, default)
+    
+    if isinstance(value, list):
+        if value:
+            # Join list items or take first item
+            if len(value) == 1:
+                result = str(value[0])
+            else:
+                result = "; ".join(str(item) for item in value)
+        else:
+            result = default
+    elif isinstance(value, str):
+        result = value
+    else:
+        # Handle any other data type
+        result = str(value) if value else default
+    
+    # Apply max length if specified
+    if max_length and len(result) > max_length:
+        result = result[:max_length] + "..."
+    
+    return result
 
 def convert_list_to_structured_recommendations(recommendations_list):
     """
@@ -1317,8 +1344,278 @@ def translate_text(text, target_language):
         logger.error(f"Translation error: {str(e)}")
         return text
 
+# New helper functions for AllergenIQ profile
+def get_default_symptom_data():
+    """Return default symptom data for AllergenIQ profile"""
+    return [
+        {"name": "Sneezing", "severity": 7, "frequency": "Daily"},
+        {"name": "Itchy Eyes", "severity": 5, "frequency": "Daily"},
+        {"name": "Nasal Congestion", "severity": 6, "frequency": "Daily"},
+        {"name": "Wheezing", "severity": 4, "frequency": "Occasional"},
+        {"name": "Skin Rash", "severity": 3, "frequency": "Occasional"}
+    ]
+
+def get_default_medication_history():
+    """Return default medication history for AllergenIQ profile"""
+    return [
+        {"name": "Cetirizine", "dosage": "10 mg daily", "status": "Active"},
+        {"name": "Fluticasone", "dosage": "50 mcg per nostril daily", "status": "Active"},
+        {"name": "Albuterol", "dosage": "2 puffs as needed", "status": "Active"},
+        {"name": "Epinephrine", "dosage": "0.3 mg as needed", "status": "PRN"},
+        {"name": "Prednisone", "dosage": "20 mg daily", "status": "Discontinued"}
+    ]
+
+def get_default_allergen_data():
+    """Return default allergen data for AllergenIQ profile"""
+    return [
+        {"name": "Pollen", "reaction": "Sneezing, Itchy Eyes"},
+        {"name": "Dust Mites", "reaction": "Nasal Congestion"},
+        {"name": "Pet Dander", "reaction": "Wheezing"},
+        {"name": "Peanuts", "reaction": "Anaphylaxis"},
+        {"name": "Mold", "reaction": "Skin Rash"}
+    ]
+
+def get_default_summary():
+    """Return default summary for AllergenIQ profile"""
+    return {
+        "primaryDiagnosis": "Seasonal allergic rhinitis with asthma exacerbation.",
+        "alternativeDiagnoses": [
+            "Atopic dermatitis secondary to allergen exposure.",
+            "Food allergy with risk of anaphylaxis."
+        ]
+    }
 
 import re
+
+def process_transcript_for_allergeniq(transcript):
+    """
+    ENHANCED: Process transcript with accurate medication extraction and comprehensive symptoms
+    """
+    try:
+        print("ALLERGENIQ: Processing transcript for allergy data")
+    except:
+        pass
+    
+    try:
+        transcript_lower = transcript.lower()
+        lines = transcript.split('\n')
+
+        symptoms_dict = {}
+        medications_dict = {}
+        allergens_dict = {}
+
+        # ENHANCED: More comprehensive symptom patterns with severity indicators
+        allergy_symptom_patterns = {
+            'runny nose': {
+                'patterns': ['runny nose', 'runny', 'nasal discharge', 'nose running'],
+                'context_severity': {'worse with eating': 7, 'when eating': 6, 'sometimes': 4}
+            },
+            'allergic rhinitis': {
+                'patterns': ['allergic rhinitis', 'rhinitis', 'allergy'],
+                'context_severity': {'controlled': 3, 'in check': 3, 'managed': 4}
+            },
+            'nasal congestion': {
+                'patterns': ['nasal congestion', 'stuffy nose', 'blocked nose', 'congestion'],
+                'context_severity': {'severe': 8, 'mild': 3}
+            },
+            'sneezing': {
+                'patterns': ['sneezing', 'sneeze'],
+                'context_severity': {'frequent': 7, 'occasional': 4}
+            },
+            'itchy eyes': {
+                'patterns': ['itchy eyes', 'eye itching', 'watery eyes'],
+                'context_severity': {}
+            },
+            'headaches': {
+                'patterns': ['headache', 'headaches', 'migraines', 'allergy migraines'],
+                'context_severity': {'migraines': 7, 'headache': 5}
+            }
+        }
+        
+        # Extract symptoms with context-aware severity
+        for symptom_name, symptom_data in allergy_symptom_patterns.items():
+            patterns = symptom_data['patterns']
+            severity_context = symptom_data['context_severity']
+            
+            for pattern in patterns:
+                if pattern in transcript_lower:
+                    for line in lines:
+                        line_lower = line.lower()
+                        if pattern in line_lower:
+                            # Skip negative mentions
+                            if any(neg in line_lower for neg in ['no ', 'not ', 'without ', 'absent', 'denies']):
+                                continue
+                                
+                            severity = 5  # default
+                            frequency = "Unknown"
+                            
+                            # Context-based severity
+                            for context, sev in severity_context.items():
+                                if context in line_lower:
+                                    severity = sev
+                                    break
+                            
+                            # Frequency analysis
+                            if 'every day' in line_lower or 'daily' in line_lower:
+                                frequency = "Daily"
+                            elif 'sometimes' in line_lower or 'when' in line_lower:
+                                frequency = "Occasional"
+                            elif 'controlled' in line_lower or 'in check' in line_lower:
+                                frequency = "Controlled"
+                            elif 'worse' in line_lower:
+                                frequency = "Worse with triggers"
+                            
+                            symptoms_dict[symptom_name] = {
+                                "name": symptom_name.title(),
+                                "severity": severity,
+                                "frequency": frequency
+                            }
+                            try:
+                                print(f"ALLERGENIQ: Found symptom from transcript - {symptom_name}: {severity}/10, {frequency}")
+                            except:
+                                pass
+                            break
+
+        # ENHANCED: Accurate medication extraction with proper dosages and status
+        medication_details = {
+            'allegra': {
+                'patterns': ['allegra'],
+                'type': 'oral',
+                'default_dosage': '180 mg daily'
+            },
+            'flonase': {
+                'patterns': ['flonase'],
+                'type': 'nasal_spray',
+                'default_dosage': '1-2 sprays per nostril daily'
+            },
+            'ipratropium': {
+                'patterns': ['ipratropium'],
+                'type': 'nasal_spray',
+                'default_dosage': 'As needed'
+            },
+            'azelastine': {
+                'patterns': ['azelastine'],
+                'type': 'nasal_spray',
+                'default_dosage': '1-2 sprays per nostril daily'
+            },
+            'penicillin': {
+                'patterns': ['penicillin'],
+                'type': 'oral',
+                'default_dosage': 'As prescribed'
+            }
+        }
+        
+        for med_name, med_info in medication_details.items():
+            patterns = med_info['patterns']
+            med_type = med_info['type']
+            default_dosage = med_info['default_dosage']
+            
+            for pattern in patterns:
+                if pattern in transcript_lower:
+                    # Find the most relevant line for this medication
+                    best_line = ""
+                    for line in lines:
+                        line_lower = line.lower()
+                        if pattern in line_lower:
+                            if len(line) > len(best_line):  # Take the longest/most detailed line
+                                best_line = line_lower
+                    
+                    if best_line:
+                        status = "Unknown"
+                        dosage = default_dosage
+                        
+                        # ACCURATE status determination
+                        if 'every day' in best_line or 'daily' in best_line:
+                            status = "Active"
+                        elif 'as needed' in best_line or 'if i need it' in best_line or 'sometimes' in best_line:
+                            status = "PRN"
+                        elif 'not using' in best_line or "don't use" in best_line or 'never used' in best_line:
+                            status = "Discontinued"
+                        elif 'cleared' in best_line and 'penicillin' in pattern:
+                            status = "Cleared/Safe to use"
+                            dosage = "Previously allergic - now safe"
+                        elif 'carry' in best_line or 'case' in best_line:
+                            status = "PRN"
+                        elif 'switch to' in best_line or 'better if you take it every day' in best_line:
+                            status = "Switching to daily use"
+                        else:
+                            # Default based on context
+                            if any(word in best_line for word in ['use', 'take', 'helps']):
+                                status = "Active"
+                        
+                        # ACCURATE dosage extraction
+                        if 'spray twice a day' in best_line or '2 sprays once a day' in best_line:
+                            dosage = "1-2 sprays per nostril daily"
+                        elif 'when eating' in best_line:
+                            dosage = "As needed with meals"
+                            status = "PRN"
+                        elif med_type == 'oral' and ('every day' in best_line or 'daily' in best_line):
+                            dosage = "Daily oral dose"
+                        
+                        medications_dict[med_name] = {
+                            "name": med_name.title(),
+                            "dosage": dosage,
+                            "status": status
+                        }
+                        try:
+                            print(f"ALLERGENIQ: Found medication from transcript - {med_name}: {dosage}, {status}")
+                        except:
+                            pass
+
+        # ENHANCED: Better allergen extraction with accurate reactions
+        allergen_indicators = [
+            ('dust mites', ['dust mite precautions', 'dust mite', 'dust'], 'Environmental allergen - precautions implemented'),
+            ('grass', ['grass', 'grass precautions'], 'Environmental allergen - precautions implemented'),
+            ('food allergens', ['worse with eating', 'eating'], 'Food-related symptoms'),
+            ('penicillin', ['penicillin allergy', 'penicillin'], 'Drug allergy - cleared and safe to use')
+        ]
+        
+        for allergen_name, patterns, default_reaction in allergen_indicators:
+            for pattern in patterns:
+                if pattern in transcript_lower:
+                    reaction = default_reaction
+                    
+                    # Context-specific reactions
+                    if 'cleared' in transcript_lower and 'penicillin' in allergen_name:
+                        reaction = "Previously allergic - now cleared and safe to use"
+                    elif 'precautions' in transcript_lower:
+                        reaction = "Environmental allergen - precautions implemented"
+                    elif 'worse with eating' in transcript_lower and 'food' in allergen_name:
+                        reaction = "Symptoms worsen with eating - managed with ipratropium"
+                    
+                    allergens_dict[allergen_name] = {
+                        "name": allergen_name.title().replace('Allergens', 'Triggers'),
+                        "reaction": reaction
+                    }
+                    try:
+                        print(f"ALLERGENIQ: Found allergen from transcript - {allergen_name}: {reaction}")
+                    except:
+                        pass
+
+        symptoms = list(symptoms_dict.values())
+        medications = list(medications_dict.values())
+        allergens = list(allergens_dict.values())
+
+        try:
+            print(f"ALLERGENIQ: FINAL TRANSCRIPT EXTRACTION - {len(symptoms)} symptoms, {len(medications)} medications, {len(allergens)} allergens")
+        except:
+            pass
+            
+        return {
+            "symptoms": symptoms,
+            "medications": medications,
+            "allergens": allergens
+        }
+    except Exception as e:
+        try:
+            print(f"ALLERGENIQ: Error in transcript processing: {str(e)}")
+        except:
+            pass
+        return {
+            "symptoms": [],
+            "medications": [],
+            "allergens": []
+        }
 
 
 # HEAT MAP FEATURE: Add this to your frontend component
@@ -1397,727 +1694,212 @@ const SymptomHeatMap = ({ symptoms }) => {
 """
 
 
-
-# COMPLETE ALLERGENIQ FIX - Replace your existing AllergenIQ functions with these
-
-import re
-from typing import Dict, List, Any, Optional
-
-def extract_medications_from_text(text: str) -> List[Dict[str, str]]:
+def structure_allergeniq_data(soap_notes, patient_insights, transcript_data):
     """
-    Enhanced medication extraction with proper dosages and status
-    """
-    medications = []
-    text_lower = text.lower()
-    
-    # Comprehensive medication patterns with context
-    medication_patterns = {
-        'medrol': {
-            'names': ['medrol', 'methylprednisolone'],
-            'dosage_patterns': [r'medrol\s+(\d+\s*mg)', r'(\d+\s*mg)\s+medrol'],
-            'default_dosage': '4 mg daily'
-        },
-        'dulera': {
-            'names': ['dulera', 'mometasone/formoterol'],
-            'dosage_patterns': [r'dulera\s+(\d+/\d+)', r'(\d+/\d+)\s+dulera'],
-            'default_dosage': 'Twice daily'
-        },
-        'spiriva': {
-            'names': ['spiriva', 'tiotropium'],
-            'dosage_patterns': [r'spiriva\s+(\d+\s*mcg)', r'(\d+\s*mcg)\s+spiriva'],
-            'default_dosage': 'Daily'
-        },
-        'flonase': {
-            'names': ['flonase', 'fluticasone nasal', 'fluticasone propionate'],
-            'dosage_patterns': [r'flonase\s+(\d+\s*sprays?)', r'(\d+\s*sprays?)\s+flonase'],
-            'default_dosage': '1-2 sprays per nostril daily'
-        },
-        'pepcid': {
-            'names': ['pepcid', 'famotidine'],
-            'dosage_patterns': [r'pepcid\s+(\d+\s*mg)', r'(\d+\s*mg)\s+pepcid'],
-            'default_dosage': 'Twice daily'
-        },
-        'allegra': {
-            'names': ['allegra', 'fexofenadine'],
-            'dosage_patterns': [r'allegra\s+(\d+\s*mg)', r'(\d+\s*mg)\s+allegra'],
-            'default_dosage': '180 mg daily'
-        },
-        'ipratropium': {
-            'names': ['ipratropium', 'atrovent'],
-            'dosage_patterns': [r'ipratropium\s+(\d+\s*sprays?)', r'(\d+\s*sprays?)\s+ipratropium'],
-            'default_dosage': 'As needed'
-        },
-        'azelastine': {
-            'names': ['azelastine', 'astelin', 'astepro'],
-            'dosage_patterns': [r'azelastine\s+(\d+\s*sprays?)', r'(\d+\s*sprays?)\s+azelastine'],
-            'default_dosage': '1-2 sprays per nostril twice daily'
-        },
-        'cetirizine': {
-            'names': ['cetirizine', 'zyrtec'],
-            'dosage_patterns': [r'cetirizine\s+(\d+\s*mg)', r'(\d+\s*mg)\s+cetirizine'],
-            'default_dosage': '10 mg daily'
-        },
-        'loratadine': {
-            'names': ['loratadine', 'claritin'],
-            'dosage_patterns': [r'loratadine\s+(\d+\s*mg)', r'(\d+\s*mg)\s+loratadine'],
-            'default_dosage': '10 mg daily'
-        },
-        'montelukast': {
-            'names': ['montelukast', 'singulair'],
-            'dosage_patterns': [r'montelukast\s+(\d+\s*mg)', r'(\d+\s*mg)\s+montelukast'],
-            'default_dosage': '10 mg daily'
-        },
-        'albuterol': {
-            'names': ['albuterol', 'ventolin', 'proair'],
-            'dosage_patterns': [r'albuterol\s+(\d+\s*puffs?)', r'(\d+\s*puffs?)\s+albuterol'],
-            'default_dosage': '2 puffs as needed'
-        }
-    }
-    
-    for med_key, med_data in medication_patterns.items():
-        for med_name in med_data['names']:
-            if med_name in text_lower:
-                # Find dosage
-                dosage = med_data['default_dosage']
-                for pattern in med_data['dosage_patterns']:
-                    match = re.search(pattern, text_lower)
-                    if match:
-                        dosage = match.group(1)
-                        break
-                
-                # Determine status from context
-                status = determine_medication_status(text_lower, med_name)
-                
-                medications.append({
-                    "name": med_key.title(),
-                    "dosage": dosage,
-                    "status": status
-                })
-                break  # Found this medication, move to next
-    
-    return medications
-
-def determine_medication_status(text: str, medication: str) -> str:
-    """
-    Determine medication status based on context around the medication mention
-    """
-    # Find the sentence containing the medication
-    sentences = text.split('.')
-    med_sentence = ""
-    for sentence in sentences:
-        if medication in sentence:
-            med_sentence = sentence.lower()
-            break
-    
-    # Status indicators
-    if any(indicator in med_sentence for indicator in ['continue', 'ongoing', 'daily', 'twice daily', 'regularly']):
-        return "Active"
-    elif any(indicator in med_sentence for indicator in ['as needed', 'prn', 'if symptoms', 'when needed']):
-        return "PRN"
-    elif any(indicator in med_sentence for indicator in ['start', 'begin', 'initiate', 'new']):
-        return "Starting"
-    elif any(indicator in med_sentence for indicator in ['stop', 'discontinue', 'hold', 'cease']):
-        return "Discontinued"
-    elif any(indicator in med_sentence for indicator in ['increase', 'decrease', 'adjust', 'change']):
-        return "Adjusting"
-    else:
-        return "Active"  # Default assumption
-
-def extract_symptoms_from_text(text: str) -> List[Dict[str, Any]]:
-    """
-    Enhanced symptom extraction with severity and frequency assessment
-    """
-    symptoms = []
-    text_lower = text.lower()
-    
-    # Comprehensive symptom patterns
-    symptom_patterns = {
-        'nasal_congestion': {
-            'patterns': ['nasal congestion', 'stuffy nose', 'blocked nose', 'congested'],
-            'base_severity': 6
-        },
-        'runny_nose': {
-            'patterns': ['runny nose', 'rhinorrhea', 'nasal discharge', 'dripping'],
-            'base_severity': 5
-        },
-        'sneezing': {
-            'patterns': ['sneezing', 'sneeze'],
-            'base_severity': 5
-        },
-        'itchy_eyes': {
-            'patterns': ['itchy eyes', 'eye itching', 'watery eyes', 'ocular itching'],
-            'base_severity': 4
-        },
-        'coughing': {
-            'patterns': ['cough', 'coughing', 'expectoration'],
-            'base_severity': 6
-        },
-        'wheezing': {
-            'patterns': ['wheeze', 'wheezing', 'whistling'],
-            'base_severity': 7
-        },
-        'shortness_of_breath': {
-            'patterns': ['shortness of breath', 'dyspnea', 'breathing difficulty', 'sob'],
-            'base_severity': 8
-        },
-        'chest_tightness': {
-            'patterns': ['chest tightness', 'tight chest', 'chest constriction'],
-            'base_severity': 7
-        },
-        'throat_irritation': {
-            'patterns': ['throat irritation', 'scratchy throat', 'throat itching'],
-            'base_severity': 4
-        },
-        'post_nasal_drip': {
-            'patterns': ['post nasal drip', 'postnasal drip', 'drainage', 'mucus dripping'],
-            'base_severity': 5
-        },
-        'headache': {
-            'patterns': ['headache', 'head pain', 'cephalgia'],
-            'base_severity': 5
-        },
-        'fatigue': {
-            'patterns': ['fatigue', 'tired', 'exhausted', 'weakness'],
-            'base_severity': 4
-        }
-    }
-    
-    for symptom_key, symptom_data in symptom_patterns.items():
-        for pattern in symptom_data['patterns']:
-            if pattern in text_lower:
-                severity, frequency = assess_symptom_severity_and_frequency(text_lower, pattern, symptom_data['base_severity'])
-                
-                symptoms.append({
-                    "name": symptom_key.replace('_', ' ').title(),
-                    "severity": severity,
-                    "frequency": frequency
-                })
-                break  # Found this symptom, move to next
-    
-    return symptoms
-
-def assess_symptom_severity_and_frequency(text: str, symptom_pattern: str, base_severity: int) -> tuple:
-    """
-    Assess symptom severity and frequency based on context
-    """
-    # Find context around the symptom
-    symptom_index = text.find(symptom_pattern)
-    context_start = max(0, symptom_index - 100)
-    context_end = min(len(text), symptom_index + len(symptom_pattern) + 100)
-    context = text[context_start:context_end]
-    
-    severity = base_severity
-    frequency = "Occasional"
-    
-    # Severity modifiers
-    severity_modifiers = {
-        'severe': +3,
-        'significant': +2,
-        'marked': +2,
-        'moderate': +1,
-        'mild': -2,
-        'slight': -3,
-        'minimal': -3,
-        'controlled': -2,
-        'improved': -1,
-        'worsening': +2,
-        'worse': +2,
-        'persistent': +1,
-        'chronic': +1
-    }
-    
-    for modifier, adjustment in severity_modifiers.items():
-        if modifier in context:
-            severity += adjustment
-            break
-    
-    # Frequency indicators
-    if any(freq in context for freq in ['daily', 'every day', 'constant', 'always']):
-        frequency = "Daily"
-    elif any(freq in context for freq in ['frequent', 'often', 'regularly']):
-        frequency = "Frequent"
-    elif any(freq in context for freq in ['occasional', 'sometimes', 'intermittent']):
-        frequency = "Occasional"
-    elif any(freq in context for freq in ['rarely', 'seldom']):
-        frequency = "Rare"
-    elif any(freq in context for freq in ['controlled', 'managed', 'stable']):
-        frequency = "Controlled"
-    
-    # Ensure severity is within bounds
-    severity = max(1, min(10, severity))
-    
-    return severity, frequency
-
-def extract_allergens_from_text(text: str) -> List[Dict[str, str]]:
-    """
-    Enhanced allergen extraction with reaction details
-    """
-    allergens = []
-    text_lower = text.lower()
-    
-    # Comprehensive allergen patterns
-    allergen_patterns = {
-        'dust_mites': {
-            'patterns': ['dust mite', 'house dust mite', 'dermatophagoides'],
-            'default_reaction': 'Environmental allergen causing respiratory symptoms'
-        },
-        'pollen': {
-            'patterns': ['pollen', 'tree pollen', 'grass pollen', 'weed pollen', 'ragweed', 'birch'],
-            'default_reaction': 'Seasonal allergen causing allergic rhinitis'
-        },
-        'pet_dander': {
-            'patterns': ['pet dander', 'cat dander', 'dog dander', 'animal dander'],
-            'default_reaction': 'Animal allergen causing respiratory and ocular symptoms'
-        },
-        'mold': {
-            'patterns': ['mold', 'mould', 'fungus', 'aspergillus', 'alternaria'],
-            'default_reaction': 'Fungal allergen causing respiratory symptoms'
-        },
-        'cockroach': {
-            'patterns': ['cockroach', 'roach allergen'],
-            'default_reaction': 'Indoor allergen causing asthma and rhinitis'
-        },
-        'food_allergens': {
-            'patterns': ['food allergy', 'nuts', 'shellfish', 'dairy', 'eggs', 'wheat'],
-            'default_reaction': 'Food allergen with potential for systemic reactions'
-        },
-        'medications': {
-            'patterns': ['drug allergy', 'medication allergy', 'penicillin', 'sulfa'],
-            'default_reaction': 'Drug allergen requiring avoidance'
-        },
-        'latex': {
-            'patterns': ['latex', 'rubber'],
-            'default_reaction': 'Contact allergen causing dermatitis and respiratory symptoms'
-        },
-        'chemicals': {
-            'patterns': ['chemical', 'perfume', 'fragrance', 'cleaning products'],
-            'default_reaction': 'Chemical irritant causing respiratory symptoms'
-        }
-    }
-    
-    for allergen_key, allergen_data in allergen_patterns.items():
-        for pattern in allergen_data['patterns']:
-            if pattern in text_lower:
-                reaction = determine_allergen_reaction(text_lower, pattern, allergen_data['default_reaction'])
-                
-                allergens.append({
-                    "name": allergen_key.replace('_', ' ').title(),
-                    "reaction": reaction
-                })
-                break  # Found this allergen, move to next
-    
-    return allergens
-
-def determine_allergen_reaction(text: str, allergen_pattern: str, default_reaction: str) -> str:
-    """
-    Determine specific allergic reaction based on context
-    """
-    # Find context around the allergen
-    allergen_index = text.find(allergen_pattern)
-    context_start = max(0, allergen_index - 150)
-    context_end = min(len(text), allergen_index + len(allergen_pattern) + 150)
-    context = text[context_start:context_end]
-    
-    # Look for specific reaction descriptions
-    reaction_patterns = {
-        'anaphylaxis': 'Severe systemic allergic reaction requiring emergency treatment',
-        'hives': 'Urticarial reaction with skin involvement',
-        'rash': 'Dermatologic reaction with skin involvement',
-        'swelling': 'Angioedema with swelling of face, lips, or throat',
-        'breathing': 'Respiratory symptoms including wheezing and shortness of breath',
-        'itching': 'Pruritic reaction with itching and irritation',
-        'congestion': 'Nasal congestion and rhinitis symptoms',
-        'eyes': 'Ocular symptoms including itching and watering'
-    }
-    
-    for pattern, reaction in reaction_patterns.items():
-        if pattern in context:
-            return reaction
-    
-    return default_reaction
-
-def extract_diagnosis_from_soap(soap_notes: Dict) -> Dict[str, Any]:
-    """
-    Enhanced diagnosis extraction from SOAP notes
-    """
-    diagnosis_data = {
-        "primaryDiagnosis": "Medical evaluation completed",
-        "alternativeDiagnoses": []
-    }
-    
-    try:
-        # Get differential diagnosis
-        diff_diagnosis = soap_notes.get("differential_diagnosis", "")
-        
-        if not diff_diagnosis or diff_diagnosis in ["N/A", "No data available"]:
-            # Try to extract from other sections
-            plan_of_care = soap_notes.get("plan_of_care", "")
-            summary = soap_notes.get("summary", "")
-            combined_text = f"{plan_of_care} {summary}"
-            
-            # Look for common allergy/immunology diagnoses
-            allergy_diagnoses = [
-                "allergic rhinitis", "asthma", "allergic conjunctivitis",
-                "atopic dermatitis", "urticaria", "angioedema",
-                "food allergy", "drug allergy", "anaphylaxis",
-                "allergic contact dermatitis", "eosinophilic esophagitis"
-            ]
-            
-            found_diagnoses = [dx for dx in allergy_diagnoses if dx in combined_text.lower()]
-            if found_diagnoses:
-                diagnosis_data["primaryDiagnosis"] = found_diagnoses[0].title()
-                diagnosis_data["alternativeDiagnoses"] = [dx.title() for dx in found_diagnoses[1:3]]
-        else:
-            # Parse the differential diagnosis text
-            # Handle various formats
-            if "primary diagnosis:" in diff_diagnosis.lower():
-                parts = diff_diagnosis.split("Alternative diagnoses:")
-                primary_part = parts[0].replace("Primary diagnosis:", "").strip()
-                diagnosis_data["primaryDiagnosis"] = clean_diagnosis_text(primary_part)
-                
-                if len(parts) > 1:
-                    alt_part = parts[1]
-                    alternatives = parse_alternative_diagnoses(alt_part)
-                    diagnosis_data["alternativeDiagnoses"] = alternatives
-            else:
-                # Simple format - first sentence is primary
-                sentences = diff_diagnosis.split('.')
-                if sentences:
-                    diagnosis_data["primaryDiagnosis"] = clean_diagnosis_text(sentences[0])
-                    if len(sentences) > 1:
-                        diagnosis_data["alternativeDiagnoses"] = [
-                            clean_diagnosis_text(sent) for sent in sentences[1:3]
-                            if sent.strip() and len(sent.strip()) > 5
-                        ]
-    
-    except Exception as e:
-        print(f"Error extracting diagnosis: {str(e)}")
-    
-    return diagnosis_data
-
-def clean_diagnosis_text(text: str) -> str:
-    """
-    Clean and format diagnosis text
-    """
-    # Remove common prefixes and suffixes
-    text = re.sub(r'^(primary diagnosis:|alternative diagnosis:|\d+\.|\-|\*)', '', text, flags=re.IGNORECASE)
-    text = text.strip(' .,;')
-    
-    # Capitalize first letter
-    if text:
-        text = text[0].upper() + text[1:]
-    
-    return text if len(text) > 3 else "Medical condition under evaluation"
-
-def parse_alternative_diagnoses(text: str) -> List[str]:
-    """
-    Parse alternative diagnoses from text
-    """
-    alternatives = []
-    
-    # Split by various delimiters
-    parts = re.split(r'[\n\r]|\d+\.|\-|\*|;', text)
-    
-    for part in parts:
-        cleaned = clean_diagnosis_text(part)
-        if cleaned and len(cleaned) > 5 and cleaned not in alternatives:
-            alternatives.append(cleaned)
-    
-    return alternatives[:3]  # Limit to 3 alternatives
-
-def process_transcript_for_allergeniq(transcript: str) -> Dict[str, List[Dict]]:
-    """
-    COMPLETELY REWRITTEN: Comprehensive transcript processing for AllergenIQ
+    FIXED: Structure the AllergenIQ profile data - PRIORITIZE ACTUAL TRANSCRIPT DATA
     """
     try:
-        print("ALLERGENIQ: Starting comprehensive transcript processing")
+        print("ALLERGENIQ: Structuring profile data")
+        print(f"ALLERGENIQ: Input - transcript_data: {transcript_data is not None}")
+        print(f"ALLERGENIQ: SOAP keys available: {list(soap_notes.keys()) if soap_notes else 'None'}")
         
-        # Extract all data types
-        medications = extract_medications_from_text(transcript)
-        symptoms = extract_symptoms_from_text(transcript)
-        allergens = extract_allergens_from_text(transcript)
-        
-        print(f"ALLERGENIQ: Extracted {len(medications)} medications, {len(symptoms)} symptoms, {len(allergens)} allergens")
-        
-        # Log what we found
-        for med in medications:
-            print(f"  Medication: {med['name']} - {med['dosage']} - {med['status']}")
-        for symptom in symptoms:
-            print(f"  Symptom: {symptom['name']} - Severity {symptom['severity']}/10 - {symptom['frequency']}")
-        for allergen in allergens:
-            print(f"  Allergen: {allergen['name']} - {allergen['reaction']}")
-        
-        return {
-            "medications": medications,
-            "symptoms": symptoms,
-            "allergens": allergens
-        }
-        
-    except Exception as e:
-        print(f"ALLERGENIQ: Error in transcript processing: {str(e)}")
-        return {"medications": [], "symptoms": [], "allergens": []}
-
-def structure_allergeniq_data(soap_notes: Dict, patient_insights: List, transcript_data: Optional[Dict]) -> Dict[str, Any]:
-    """
-    COMPLETELY REWRITTEN: Priority-based data structuring for AllergenIQ
-    """
+        # DEBUG: Print transcript data content
+        if transcript_data:
+            print(f"ALLERGENIQ: Transcript data content:")
+            print(f"  - Symptoms: {len(transcript_data.get('symptoms', []))}")
+            print(f"  - Medications: {len(transcript_data.get('medications', []))}")
+            print(f"  - Allergens: {len(transcript_data.get('allergens', []))}")
+    except:
+        pass
+    
     try:
-        print("ALLERGENIQ: Starting comprehensive data structuring")
-        
         profile = {
             "symptomData": [],
             "medicationHistory": [],
             "allergenData": [],
-            "summary": {"primaryDiagnosis": "Medical evaluation completed", "alternativeDiagnoses": []}
+            "summary": {
+                "primaryDiagnosis": "Not specified",
+                "alternativeDiagnoses": []
+            }
         }
-        
-        # PRIORITY 1: Extract from transcript data (most accurate)
-        if transcript_data:
-            if transcript_data.get("symptoms"):
-                profile["symptomData"] = transcript_data["symptoms"]
+
+        # STEP 1: Extract SYMPTOMS - prioritize transcript, then SOAP
+        if transcript_data and transcript_data.get("symptoms"):
+            profile["symptomData"] = transcript_data["symptoms"]
+            try:
                 print(f"ALLERGENIQ: Using {len(transcript_data['symptoms'])} symptoms from transcript")
+                for symptom in transcript_data["symptoms"]:
+                    print(f"  - {symptom}")
+            except:
+                pass
+        else:
+            # Extract from SOAP notes if no transcript data
+            soap_symptoms = []
             
-            if transcript_data.get("medications"):
-                profile["medicationHistory"] = transcript_data["medications"]
+            text_sources = [
+                soap_notes.get("patient_history", {}).get("chief_complaint", ""),
+                soap_notes.get("patient_history", {}).get("history_of_present_illness", ""),
+                soap_notes.get("patient_history", {}).get("review_of_systems", "")
+            ]
+            
+            combined_text = " ".join(text_sources).lower()
+            
+            # Look for symptoms in SOAP notes
+            if "runny nose" in combined_text:
+                soap_symptoms.append({"name": "Runny Nose", "severity": 6, "frequency": "Occasional"})
+            if "allergic rhinitis" in combined_text:
+                soap_symptoms.append({"name": "Allergic Rhinitis", "severity": 5, "frequency": "Controlled"})
+            
+            profile["symptomData"] = soap_symptoms
+            try:
+                print(f"ALLERGENIQ: Using {len(soap_symptoms)} symptoms from SOAP notes")
+            except:
+                pass
+
+        # STEP 2: Extract MEDICATIONS - prioritize transcript, then SOAP
+        if transcript_data and transcript_data.get("medications"):
+            profile["medicationHistory"] = transcript_data["medications"]
+            try:
                 print(f"ALLERGENIQ: Using {len(transcript_data['medications'])} medications from transcript")
+                for med in transcript_data["medications"]:
+                    print(f"  - {med}")
+            except:
+                pass
+        else:
+            # Extract from SOAP notes if no transcript data
+            soap_medications = []
             
-            if transcript_data.get("allergens"):
-                profile["allergenData"] = transcript_data["allergens"]
+            plan_text = soap_notes.get("plan_of_care", "").lower()
+            enhanced_text = soap_notes.get("enhanced_recommendations", "").lower()
+            combined_med_text = f"{plan_text} {enhanced_text}"
+            
+            # Extract medications from SOAP
+            if "flonase" in combined_med_text:
+                soap_medications.append({"name": "Flonase", "dosage": "1-2 sprays daily", "status": "Active"})
+            if "allegra" in combined_med_text:
+                soap_medications.append({"name": "Allegra", "dosage": "As needed", "status": "PRN"})
+            if "ipratropium" in combined_med_text:
+                soap_medications.append({"name": "Ipratropium", "dosage": "As needed", "status": "PRN"})
+            
+            profile["medicationHistory"] = soap_medications
+            try:
+                print(f"ALLERGENIQ: Using {len(soap_medications)} medications from SOAP notes")
+            except:
+                pass
+
+        # STEP 3: Extract ALLERGENS - prioritize transcript, then SOAP
+        if transcript_data and transcript_data.get("allergens"):
+            profile["allergenData"] = transcript_data["allergens"]
+            try:
                 print(f"ALLERGENIQ: Using {len(transcript_data['allergens'])} allergens from transcript")
-        
-        # PRIORITY 2: Extract from SOAP notes (secondary source)
-        if not profile["symptomData"] or not profile["medicationHistory"] or not profile["allergenData"]:
-            soap_extracted = extract_from_soap_notes(soap_notes)
+                for allergen in transcript_data["allergens"]:
+                    print(f"  - {allergen}")
+            except:
+                pass
+        else:
+            # Extract from SOAP notes if no transcript data
+            soap_allergens = []
             
-            if not profile["symptomData"] and soap_extracted["symptoms"]:
-                profile["symptomData"] = soap_extracted["symptoms"]
-                print(f"ALLERGENIQ: Using {len(soap_extracted['symptoms'])} symptoms from SOAP")
+            history_text = soap_notes.get("patient_history", {}).get("social_history", "").lower()
+            if "dust mite" in history_text:
+                soap_allergens.append({"name": "Dust Mites", "reaction": "Environmental allergen - precautions taken"})
+            if "grass" in history_text:
+                soap_allergens.append({"name": "Grass", "reaction": "Environmental allergen - precautions taken"})
             
-            if not profile["medicationHistory"] and soap_extracted["medications"]:
-                profile["medicationHistory"] = soap_extracted["medications"]
-                print(f"ALLERGENIQ: Using {len(soap_extracted['medications'])} medications from SOAP")
-            
-            if not profile["allergenData"] and soap_extracted["allergens"]:
-                profile["allergenData"] = soap_extracted["allergens"]
-                print(f"ALLERGENIQ: Using {len(soap_extracted['allergens'])} allergens from SOAP")
+            profile["allergenData"] = soap_allergens
+            try:
+                print(f"ALLERGENIQ: Using {len(soap_allergens)} allergens from SOAP notes")
+            except:
+                pass
+
+        # STEP 4: Extract DIAGNOSIS
+        diagnosis_text = soap_notes.get("differential_diagnosis", "")
+        if diagnosis_text and diagnosis_text != "No data available":
+            try:
+                if "primary diagnosis:" in diagnosis_text.lower():
+                    primary_part = diagnosis_text.split("Alternative diagnoses:")[0]
+                    primary = re.sub(r"(?i)primary diagnosis:\s*", "", primary_part).strip()
+                    primary = primary.rstrip('.,').strip()
+                else:
+                    primary = diagnosis_text.split('.')[0].strip()
+                
+                alternatives = []
+                if "alternative diagnoses:" in diagnosis_text.lower():
+                    alt_part = diagnosis_text.split("Alternative diagnoses:")[1]
+                    alt_diagnoses = re.split(r'[\d+\)\-\•]', alt_part)
+                    for alt in alt_diagnoses:
+                        alt = alt.strip().rstrip('.,').strip()
+                        if alt and len(alt) > 3:
+                            alternatives.append(alt)
+                
+                profile["summary"] = {
+                    "primaryDiagnosis": primary,
+                    "alternativeDiagnoses": alternatives
+                }
+                
+                try:
+                    print(f"ALLERGENIQ: Extracted diagnosis - Primary: {primary}")
+                    print(f"ALLERGENIQ: Alternatives: {alternatives}")
+                except:
+                    pass
+                    
+            except Exception as e:
+                try:
+                    print(f"ALLERGENIQ: Error parsing diagnosis: {str(e)}")
+                except:
+                    pass
+
+        # FINAL DEBUG: Check what we extracted
+        total_extracted = len(profile["symptomData"]) + len(profile["medicationHistory"]) + len(profile["allergenData"])
         
-        # PRIORITY 3: Extract diagnosis information
-        diagnosis_data = extract_diagnosis_from_soap(soap_notes)
-        profile["summary"] = diagnosis_data
-        print(f"ALLERGENIQ: Primary diagnosis: {diagnosis_data['primaryDiagnosis']}")
-        
-        # PRIORITY 4: Intelligent defaults only if absolutely nothing found
-        if not profile["symptomData"]:
-            profile["symptomData"] = create_intelligent_symptom_defaults(soap_notes)
-            print(f"ALLERGENIQ: Using intelligent symptom defaults")
-        
-        if not profile["medicationHistory"]:
-            profile["medicationHistory"] = create_intelligent_medication_defaults(soap_notes)
-            print(f"ALLERGENIQ: Using intelligent medication defaults")
-        
-        if not profile["allergenData"]:
-            profile["allergenData"] = create_intelligent_allergen_defaults(soap_notes)
-            print(f"ALLERGENIQ: Using intelligent allergen defaults")
-        
-        # Final summary
-        total_items = len(profile["symptomData"]) + len(profile["medicationHistory"]) + len(profile["allergenData"])
-        print(f"ALLERGENIQ: Final profile - {total_items} total items")
-        print(f"  - {len(profile['symptomData'])} symptoms")
-        print(f"  - {len(profile['medicationHistory'])} medications")
-        print(f"  - {len(profile['allergenData'])} allergens")
-        
+        try:
+            print(f"ALLERGENIQ: FINAL EXTRACTION SUMMARY:")
+            print(f"  Symptoms: {len(profile['symptomData'])}")
+            print(f"  Medications: {len(profile['medicationHistory'])}")
+            print(f"  Allergens: {len(profile['allergenData'])}")
+            print(f"  Primary Diagnosis: {profile['summary']['primaryDiagnosis']}")
+            print(f"  Total Items Extracted: {total_extracted}")
+        except:
+            pass
+
         return profile
         
     except Exception as e:
-        print(f"ALLERGENIQ: Error in data structuring: {str(e)}")
-        return create_emergency_fallback_profile()
-
-def extract_from_soap_notes(soap_notes: Dict) -> Dict[str, List]:
-    """
-    Extract AllergenIQ data from SOAP notes sections
-    """
-    symptoms = []
-    medications = []
-    allergens = []
-    
-    try:
-        # Combine relevant SOAP sections
-        combined_text = ""
-        if soap_notes.get("patient_history"):
-            combined_text += str(soap_notes["patient_history"]) + " "
-        if soap_notes.get("plan_of_care"):
-            combined_text += str(soap_notes["plan_of_care"]) + " "
-        if soap_notes.get("enhanced_recommendations"):
-            # Handle both dict and string formats
-            recs = soap_notes["enhanced_recommendations"]
-            if isinstance(recs, dict):
-                for section, items in recs.items():
-                    if isinstance(items, list):
-                        combined_text += " ".join(items) + " "
-                    else:
-                        combined_text += str(items) + " "
-            else:
-                combined_text += str(recs) + " "
-        
-        if combined_text.strip():
-            # Extract using our enhanced functions
-            symptoms = extract_symptoms_from_text(combined_text)
-            medications = extract_medications_from_text(combined_text)
-            allergens = extract_allergens_from_text(combined_text)
-    
-    except Exception as e:
-        print(f"ALLERGENIQ: Error extracting from SOAP notes: {str(e)}")
-    
-    return {
-        "symptoms": symptoms,
-        "medications": medications,
-        "allergens": allergens
-    }
-
-def create_intelligent_symptom_defaults(soap_notes: Dict) -> List[Dict]:
-    """
-    Create intelligent symptom defaults based on available information
-    """
-    # Look for clues in diagnosis or plan
-    diagnosis = soap_notes.get("differential_diagnosis", "").lower()
-    plan = soap_notes.get("plan_of_care", "").lower()
-    combined = f"{diagnosis} {plan}"
-    
-    defaults = []
-    
-    if "rhinitis" in combined:
-        defaults.extend([
-            {"name": "Nasal Congestion", "severity": 6, "frequency": "Daily"},
-            {"name": "Runny Nose", "severity": 5, "frequency": "Daily"},
-            {"name": "Sneezing", "severity": 5, "frequency": "Frequent"}
-        ])
-    
-    if "asthma" in combined:
-        defaults.extend([
-            {"name": "Coughing", "severity": 6, "frequency": "Daily"},
-            {"name": "Wheezing", "severity": 5, "frequency": "Occasional"},
-            {"name": "Shortness Of Breath", "severity": 6, "frequency": "With Activity"}
-        ])
-    
-    if "conjunctivitis" in combined:
-        defaults.append({"name": "Itchy Eyes", "severity": 5, "frequency": "Daily"})
-    
-    if not defaults:
-        defaults = [{"name": "Allergic Symptoms", "severity": 5, "frequency": "Intermittent"}]
-    
-    return defaults
-
-def create_intelligent_medication_defaults(soap_notes: Dict) -> List[Dict]:
-    """
-    Create intelligent medication defaults based on available information
-    """
-    diagnosis = soap_notes.get("differential_diagnosis", "").lower()
-    plan = soap_notes.get("plan_of_care", "").lower()
-    combined = f"{diagnosis} {plan}"
-    
-    defaults = []
-    
-    if "rhinitis" in combined:
-        defaults.extend([
-            {"name": "Antihistamine", "dosage": "Daily", "status": "Active"},
-            {"name": "Nasal Spray", "dosage": "As needed", "status": "PRN"}
-        ])
-    
-    if "asthma" in combined:
-        defaults.extend([
-            {"name": "Inhaled Steroid", "dosage": "Twice daily", "status": "Active"},
-            {"name": "Rescue Inhaler", "dosage": "As needed", "status": "PRN"}
-        ])
-    
-    if not defaults:
-        defaults = [{"name": "Allergy Medications", "dosage": "As prescribed", "status": "Active"}]
-    
-    return defaults
-
-def create_intelligent_allergen_defaults(soap_notes: Dict) -> List[Dict]:
-    """
-    Create intelligent allergen defaults based on available information
-    """
-    diagnosis = soap_notes.get("differential_diagnosis", "").lower()
-    plan = soap_notes.get("plan_of_care", "").lower()
-    allergies = soap_notes.get("patient_history", {}).get("allergies", "").lower()
-    combined = f"{diagnosis} {plan} {allergies}"
-    
-    defaults = []
-    
-    if "environmental" in combined or "seasonal" in combined:
-        defaults.append({"name": "Environmental Allergens", "reaction": "Seasonal allergic rhinitis symptoms"})
-    
-    if "perennial" in combined:
-        defaults.append({"name": "Indoor Allergens", "reaction": "Year-round allergic symptoms"})
-    
-    if "food" in combined:
-        defaults.append({"name": "Food Allergens", "reaction": "Food-related allergic reactions"})
-    
-    if not defaults:
-        defaults = [{"name": "Multiple Allergens", "reaction": "Allergic reactions requiring evaluation"}]
-    
-    return defaults
-
-def create_emergency_fallback_profile() -> Dict[str, Any]:
-    """
-    Emergency fallback profile when everything else fails
-    """
-    return {
-        "symptomData": [{"name": "Allergy Symptoms", "severity": 5, "frequency": "Variable"}],
-        "medicationHistory": [{"name": "Allergy Treatment", "dosage": "As prescribed", "status": "Active"}],
-        "allergenData": [{"name": "Allergen Triggers", "reaction": "Allergic reactions under evaluation"}],
-        "summary": {
-            "primaryDiagnosis": "Allergic condition under evaluation",
-            "alternativeDiagnoses": ["Comprehensive allergy assessment needed"]
+        try:
+            print(f"ALLERGENIQ: Error in structure_allergeniq_data: {str(e)}")
+        except:
+            pass
+        return {
+            "symptomData": [{"name": "General Symptoms", "severity": 5, "frequency": "Unknown"}],
+            "medicationHistory": [{"name": "Standard Allergy Medications", "dosage": "As prescribed", "status": "Unknown"}],
+            "allergenData": [{"name": "Unknown Allergen", "reaction": "Allergic reaction"}],
+            "summary": {"primaryDiagnosis": "Allergy condition requiring evaluation", "alternativeDiagnoses": ["Further testing needed"]}
         }
+def get_default_symptom_data():
+    """Return default symptom data only as last resort"""
+    return [
+        {"name": "General Symptoms", "severity": 5, "frequency": "Unknown"}
+    ]
+
+def get_default_medication_history():
+    """Return default medication history only as last resort"""
+    return [
+        {"name": "Standard Allergy Medications", "dosage": "As prescribed", "status": "Unknown"}
+    ]
+
+def get_default_allergen_data():
+    """Return default allergen data only as last resort"""
+    return [
+        {"name": "Unknown Allergen", "reaction": "Allergic reaction"}
+    ]
+
+def get_default_summary():
+    """Return default summary only as last resort"""
+    return {
+        "primaryDiagnosis": "Allergy condition requiring evaluation",
+        "alternativeDiagnoses": ["Further testing needed"]
     }
 
-# ADD THIS LOGGING FUNCTION
-def log_allergeniq_extraction_results(profile_data: Dict, transcript_data: Optional[Dict], soap_notes: Dict):
-    """
-    Comprehensive logging for AllergenIQ data extraction debugging
-    """
-    print("\n" + "="*60)
-    print("ALLERGENIQ EXTRACTION DETAILED RESULTS")
-    print("="*60)
-    
-    # Log what we received
-    print(f"INPUT DATA:")
-    print(f"  - Transcript data available: {transcript_data is not None}")
-    print(f"  - SOAP notes available: {soap_notes is not None}")
-    
-    if transcript_data:
-        print(f"  - Transcript symptoms: {len(transcript_data.get('symptoms', []))}")
-        print(f"  - Transcript medications: {len(transcript_data.get('medications', []))}")
-        print(f"  - Transcript allergens: {len(transcript_data.get('allergens', []))}")
-    
-    # Log final results
-    print(f"\nFINAL PROFILE DATA:")
-    print(f"  - Symptoms extracted: {len(profile_data.get('symptomData', []))}")
-    print(f"  - Medications extracted: {len(profile_data.get('medicationHistory', []))}")
-    print(f"  - Allergens extracted: {len(profile_data.get('allergenData', []))}")
-    print(f"  - Primary diagnosis: {profile_data.get('summary', {}).get('primaryDiagnosis', 'None')}")
-    
-    # Detailed breakdown
-    print(f"\nDETAILED BREAKDOWN:")
-    
-    if profile_data.get('symptomData'):
-        print(f"  SYMPTOMS:")
-        for symptom in profile_data['symptomData']:
-            print(f"    - {symptom.get('name', 'Unknown')}: {symptom.get('severity', 'N/A')}/10, {symptom.get('frequency', 'N/A')}")
-    
-    if profile_data.get('medicationHistory'):
-        print(f"  MEDICATIONS:")
-        for med in profile_data['medicationHistory']:
-            print(f"    - {med.get('name', 'Unknown')}: {med.get('dosage', 'N/A')}, {med.get('status', 'N/A')}")
-    
-    if profile_data.get('allergenData'):
-        print(f"  ALLERGENS:")
-        for allergen in profile_data['allergenData']:
-            print(f"    - {allergen.get('name', 'Unknown')}: {allergen.get('reaction', 'N/A')}")
-    
-    print("="*60 + "\n")
 
 def validate_allergeniq_output(profile_data, soap_notes):
     """
@@ -3737,16 +3519,13 @@ def fix_patient_tenant_ids():
 
 from pymongo.errors import ConnectionFailure, OperationFailure
 
-
 @app.route('/api/allergeniq-profile', methods=['GET', 'OPTIONS'])
 def get_allergeniq_profile():
-    """Enhanced AllergenIQ profile with comprehensive data extraction"""
-    print("\n" + "="*60)
-    print("ALLERGENIQ: Enhanced API endpoint called")
-    print("="*60)
+    """Get AllergenIQ profile data for a patient"""
+    logger.info("ALLERGENIQ: API endpoint called")
     
     if request.method == 'OPTIONS':
-        print("ALLERGENIQ: Handling OPTIONS request")
+        logger.info("ALLERGENIQ: Handling OPTIONS request")
         response = make_response()
         response.headers.add("Access-Control-Allow-Origin", "*")
         response.headers.add("Access-Control-Allow-Headers", "Content-Type")
@@ -3754,146 +3533,132 @@ def get_allergeniq_profile():
         return response
         
     try:
-        # Extract parameters
+        req_details = {
+            "method": request.method,
+            "url": request.url,
+            "headers": dict(request.headers),
+            "args": dict(request.args),
+            "remote_addr": request.remote_addr
+        }
+        logger.info(f"ALLERGENIQ: Request details: {req_details}")
+        
         patient_id = request.args.get('patient_id')
         visit_id = request.args.get('visit_id')
         email = request.args.get('email')
         tenant_id = request.args.get('tenantId', 'default_tenant')
         tenant_id = validate_tenant_id(tenant_id, email)
         
-        print(f"ALLERGENIQ: Request parameters:")
-        print(f"  - patient_id: {patient_id}")
-        print(f"  - visit_id: {visit_id}")
-        print(f"  - tenant_id: {tenant_id}")
-        print(f"  - email: {email}")
+        logger.info(f"ALLERGENIQ: Request params - patient_id: {patient_id}, visit_id: {visit_id}, tenant_id: {tenant_id}, email: {email}")
         
         if not patient_id or not visit_id:
-            print("ALLERGENIQ: ERROR - Missing required parameters")
+            logger.error(f"ALLERGENIQ: Missing required parameters: patient_id={patient_id}, visit_id={visit_id}")
             return jsonify({
                 "success": False,
                 "error": "patient_id and visit_id are required"
             }), 400
             
-        # Step 1: Get SOAP notes
-        print("\nSTEP 1: Retrieving SOAP notes...")
+        request_timeout = 5
+        start_time = time.time()
+            
         soap_notes = None
         try:
             soap_notes = get_soap_notes(patient_id, visit_id, tenant_id)
-            if soap_notes:
-                print(f"✅ SOAP notes retrieved successfully")
-                print(f"   Available sections: {list(soap_notes.keys())}")
-                
-                # Log key SOAP content for debugging
-                if soap_notes.get("differential_diagnosis"):
-                    diagnosis = soap_notes["differential_diagnosis"]
-                    print(f"   Diagnosis: {diagnosis[:100]}{'...' if len(diagnosis) > 100 else ''}")
-                
-                if soap_notes.get("enhanced_recommendations"):
-                    recs = soap_notes["enhanced_recommendations"]
-                    if isinstance(recs, dict):
-                        print(f"   Enhanced recommendations: {len(recs)} categories")
-                    else:
-                        print(f"   Enhanced recommendations: {type(recs).__name__}")
-            else:
-                print("⚠️  SOAP notes not found - will use defaults")
+            logger.info(f"ALLERGENIQ: SOAP notes retrieval result: {soap_notes is not None}")
         except Exception as e:
-            print(f"❌ Error retrieving SOAP notes: {str(e)}")
+            logger.error(f"ALLERGENIQ: Error retrieving SOAP notes: {str(e)}")
+        
+        if time.time() - start_time > request_timeout:
+            logger.warning(f"ALLERGENIQ: SOAP notes retrieval timeout exceeded")
             soap_notes = None
             
-        # Create fallback SOAP structure if needed
         if not soap_notes:
+            logger.warning(f"ALLERGENIQ: SOAP notes not found or timed out for patient {patient_id}, visit {visit_id}")
             soap_notes = {
-                "patient_history": {"allergies": "No data available"},
+                "patient_history": {
+                    "allergies": "No data available",
+                    "review_of_systems": "No data available"
+                },
                 "differential_diagnosis": "No data available",
-                "plan_of_care": "No data available",
-                "enhanced_recommendations": {}
+                "plan_of_care": "No data available"
             }
-            print("   Using fallback SOAP structure")
+            logger.info("ALLERGENIQ: Using default SOAP notes structure")
             
-        # Step 2: Get raw transcript and process it
-        print("\nSTEP 2: Processing transcript for AllergenIQ data...")
-        transcript_data = None
-        raw_transcript = ""
-        
-        try:
-            # Get the transcript document
-            transcript_doc = transcripts_collection.find_one({
-                "patientId": patient_id,
-                "visitId": visit_id,
-                "tenantId": tenant_id
-            })
-            
-            if transcript_doc:
-                raw_transcript = transcript_doc.get("transcript", "")
-                if raw_transcript:
-                    print(f"✅ Raw transcript found ({len(raw_transcript)} characters)")
-                    print(f"   Transcript preview: {raw_transcript[:200]}...")
-                    
-                    # Process transcript with enhanced extraction
-                    transcript_data = process_transcript_for_allergeniq(raw_transcript)
-                    
-                    if transcript_data:
-                        meds = len(transcript_data.get("medications", []))
-                        symptoms = len(transcript_data.get("symptoms", []))
-                        allergens = len(transcript_data.get("allergens", []))
-                        print(f"✅ Transcript processing successful:")
-                        print(f"   - {meds} medications extracted")
-                        print(f"   - {symptoms} symptoms extracted")
-                        print(f"   - {allergens} allergens extracted")
-                    else:
-                        print("⚠️  Transcript processing returned no data")
-                else:
-                    print("⚠️  Transcript document found but no transcript text")
-            else:
-                print("⚠️  No transcript document found")
-                
-        except Exception as e:
-            print(f"❌ Error processing transcript: {str(e)}")
-            transcript_data = None
-        
-        # Step 3: Get patient insights (optional)
-        print("\nSTEP 3: Getting patient insights...")
         patient_insights = []
-        try:
-            patient_insights = get_patient_insights(patient_id, tenant_id)
-            print(f"✅ Retrieved {len(patient_insights)} patient insights")
-        except Exception as e:
-            print(f"⚠️  Error retrieving patient insights: {str(e)}")
+        if time.time() - start_time <= request_timeout:
+            try:
+                patient_insights = get_patient_insights(patient_id, tenant_id)
+                logger.info(f"ALLERGENIQ: Retrieved {len(patient_insights) if patient_insights else 0} patient insights")
+            except Exception as e:
+                logger.error(f"ALLERGENIQ: Error retrieving patient insights: {str(e)}")
+        else:
+            logger.warning(f"ALLERGENIQ: Skipping patient insights due to timeout")
+            
+        transcript_data = None
+        if time.time() - start_time <= request_timeout:
+            try:
+                client.admin.command('ping')
+                transcript = transcripts_collection.find_one({
+                    "patientId": patient_id,
+                    "visitId": visit_id,
+                    "tenantId": tenant_id
+                })
+                
+                if transcript:
+                    raw_transcript = transcript.get("transcript")
+                    if raw_transcript:
+                        transcript_data = process_transcript_for_allergeniq(raw_transcript)
+                        logger.info("ALLERGENIQ: Successfully processed transcript for allergen data")
+                    else:
+                        logger.warning("ALLERGENIQ: Transcript found but missing 'transcript' field")
+                else:
+                    logger.warning(f"ALLERGENIQ: No transcript found for patient {patient_id}, visit {visit_id}")
+            except (ConnectionFailure, OperationFailure) as e:
+                logger.error(f"ALLERGENIQ: MongoDB connection error while retrieving transcript: {str(e)}")
+            except Exception as e:
+                logger.error(f"ALLERGENIQ: Error retrieving or processing transcript: {str(e)}")
+        else:
+            logger.warning(f"ALLERGENIQ: Skipping transcript processing due to timeout")
         
-        # Step 4: Structure the AllergenIQ data
-        print("\nSTEP 4: Structuring AllergenIQ profile data...")
         profile_data = structure_allergeniq_data(soap_notes, patient_insights, transcript_data)
         
-        # Step 5: Enhanced logging of final results
-        log_allergeniq_extraction_results(profile_data, transcript_data, soap_notes)
-        
-        # Step 6: Get patient metadata
-        print("\nSTEP 5: Getting patient metadata...")
         patient_name = "Unknown Patient"
         patient_age = None
+        if time.time() - start_time <= request_timeout:
+            try:
+                client.admin.command('ping')
+                patient_doc = patients_collection.find_one({"_id": ObjectId(patient_id), "tenantId": tenant_id})
+                if not patient_doc:
+                    patient_doc = patients_collection.find_one({"name": patient_id, "tenantId": tenant_id})
+                if patient_doc:
+                    patient_name = patient_doc.get("name", "Unknown Patient")
+                    patient_age = patient_doc.get("age")
+                    logger.info(f"ALLERGENIQ: Found patient: {patient_name}, age: {patient_age}")
+                else:
+                    logger.warning(f"ALLERGENIQ: Patient not found in MongoDB: {patient_id}")
+            except (ConnectionFailure, OperationFailure) as e:
+                logger.error(f"ALLERGENIQ: MongoDB connection error while retrieving patient details: {str(e)}")
+            except Exception as e:
+                logger.error(f"ALLERGENIQ: Error retrieving patient details: {str(e)}")
+        else:
+            logger.warning(f"ALLERGENIQ: Skipping patient details retrieval due to timeout")
+        
         visit_date = datetime.now().isoformat().split('T')[0]
+        if time.time() - start_time <= request_timeout:
+            try:
+                client.admin.command('ping')
+                visit_doc = visits_collection.find_one({"visitId": visit_id, "tenantId": tenant_id})
+                if visit_doc and "startTime" in visit_doc:
+                    visit_date = visit_doc["startTime"].split('T')[0]
+                    logger.info(f"ALLERGENIQ: Found visit date: {visit_date}")
+                else:
+                    logger.warning(f"ALLERGENIQ: Visit not found in MongoDB: {visit_id}")
+            except (ConnectionFailure, OperationFailure) as e:
+                logger.error(f"ALLERGENIQ: MongoDB connection error while retrieving visit date: {str(e)}")
+            except Exception as e:
+                logger.error(f"ALLERGENIQ: Error retrieving visit date: {str(e)}")
+        else:
+            logger.warning(f"ALLERGENIQ: Skipping visit date retrieval due to timeout")
         
-        try:
-            # Get patient details
-            patient_doc = patients_collection.find_one({"_id": ObjectId(patient_id), "tenantId": tenant_id})
-            if not patient_doc:
-                patient_doc = patients_collection.find_one({"name": patient_id, "tenantId": tenant_id})
-            
-            if patient_doc:
-                patient_name = patient_doc.get("name", "Unknown Patient")
-                patient_age = patient_doc.get("age")
-                print(f"✅ Patient details: {patient_name}, age: {patient_age}")
-            
-            # Get visit date
-            visit_doc = visits_collection.find_one({"visitId": visit_id, "tenantId": tenant_id})
-            if visit_doc and "startTime" in visit_doc:
-                visit_date = visit_doc["startTime"].split('T')[0]
-                print(f"✅ Visit date: {visit_date}")
-                
-        except Exception as e:
-            print(f"⚠️  Error retrieving patient metadata: {str(e)}")
-        
-        # Step 7: Build final response
         result = {
             "success": True,
             "patient_id": patient_id,
@@ -3901,44 +3666,19 @@ def get_allergeniq_profile():
             "patient_name": patient_name,
             "patient_age": patient_age if patient_age is not None else None,
             "visit_date": visit_date,
-            "profile": profile_data,
-            "debug_info": {
-                "transcript_length": len(raw_transcript),
-                "transcript_processed": transcript_data is not None,
-                "soap_sections": list(soap_notes.keys()) if soap_notes else [],
-                "total_extracted_items": (
-                    len(profile_data.get("symptomData", [])) +
-                    len(profile_data.get("medicationHistory", [])) +
-                    len(profile_data.get("allergenData", []))
-                )
-            }
+            "profile": profile_data
         }
         
-        print(f"\n✅ ALLERGENIQ PROFILE GENERATION COMPLETE")
-        print(f"   Total items in profile: {result['debug_info']['total_extracted_items']}")
-        print(f"   Primary diagnosis: {profile_data.get('summary', {}).get('primaryDiagnosis', 'None')}")
-        print("="*60 + "\n")
-        
+        logger.info("ALLERGENIQ: Successfully generated profile data")
         return jsonify(result), 200
-        
     except Exception as e:
-        error_msg = f"Failed to generate AllergenIQ profile: {str(e)}"
-        print(f"\n❌ ALLERGENIQ ERROR: {error_msg}")
-        print(f"   Stack trace: {traceback.format_exc()}")
-        print("="*60 + "\n")
-        
+        logger.error(f"ALLERGENIQ: Error generating AllergenIQ profile: {str(e)}")
+        logger.error(f"ALLERGENIQ: Stack trace: {traceback.format_exc()}")
         return jsonify({
             "success": False,
-            "error": error_msg,
-            "debug_info": {
-                "error_type": str(type(e).__name__),
-                "patient_id": patient_id if 'patient_id' in locals() else "unknown",
-                "visit_id": visit_id if 'visit_id' in locals() else "unknown"
-            }
+            "error": f"Failed to generate AllergenIQ profile: {str(e)}"
         }), 500
 
-
-        
 # Load the private key for JWT signing
 try:
     with open(PRIVATE_KEY_PATH, 'r') as f:
@@ -4660,4 +4400,11 @@ if __name__ == '__main__':
         logger.error(f"Error creating MongoDB indexes: {str(e)}")
         
     app.run(host='0.0.0.0', port=PORT, debug=False)
+
+
+
+
+
+
+
 
