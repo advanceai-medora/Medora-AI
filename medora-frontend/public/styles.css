@@ -10,14 +10,14 @@
     font-synthesis: none; /* Prevent font weight synthesis */
 }
 
-/* Body and layout */
+/* Body and layout - FIXED SCROLLING ISSUE */
 body {
     background-color: #f8fafd; /* Updated from #f5f7fa for better contrast */
     color: #333;
     line-height: 1.6;
     margin: 0;
     height: 100vh;
-    overflow: hidden;
+    overflow-x: hidden; /* FIXED: Only prevent horizontal scroll */
 }
 
 /* Header - Updated with light blue background */
@@ -125,7 +125,7 @@ header {
     gap: 0 20px; /* Set horizontal gap to 0 for the first column */
 }
 
-/* Patient Sidebar - Enhanced with card design */
+/* Patient Sidebar - Enhanced with card design - FIXED SCROLLING */
 #patient-sidebar {
     grid-column: 1;
     grid-row: 1 / 3;
@@ -133,8 +133,9 @@ header {
     border-radius: 8px; /* Increased from 6px */
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08); /* Enhanced shadow */
     padding: 20px; /* Increased from 16px */
-    max-height: 100%;
-    overflow-y: auto;
+    height: 100%; /* FIXED: Ensure full height */
+    overflow-y: auto; /* FIXED: Enable vertical scrolling */
+    overflow-x: hidden; /* FIXED: Prevent horizontal scroll */
     border: none; /* Removed border in favor of shadow */
     transition: all 0.3s ease; /* Smooth transition for collapsing */
     position: relative; /* For positioning the loading text */
@@ -288,7 +289,7 @@ header {
     color: #dc2626;
 }
 
-/* Main Content Area - Enhanced with better shadows and spacing */
+/* Main Content Area - Enhanced with better shadows and spacing - FIXED SCROLLING */
 #main-content {
     grid-column: 2;
     grid-row: 2 / 3;
@@ -296,8 +297,9 @@ header {
     border-radius: 8px; /* Increased from 6px */
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08); /* Enhanced shadow */
     padding: 20px; /* Increased from 16px */
-    max-height: 100%;
-    overflow-y: auto;
+    height: 100%; /* FIXED: Ensure full height */
+    overflow-y: auto; /* FIXED: Enable vertical scrolling */
+    overflow-x: hidden; /* FIXED: Prevent horizontal scroll */
     border: none; /* Removed border in favor of shadow */
     transition: all 0.3s ease; /* Smooth transition when sidebar collapses */
     position: relative; /* For positioning the loading text */
@@ -862,7 +864,7 @@ button.active-stop {
     margin-bottom: 8px; /* Increased from 4px */
 }
 
-/* AI Insights Section - Enhanced with better spacing and shadows */
+/* AI Insights Section - Enhanced with better spacing and shadows - FIXED SCROLLING */
 #ai-insights {
     grid-column: 3;
     grid-row: 1 / 3;
@@ -870,9 +872,9 @@ button.active-stop {
     border-radius: 8px; /* Increased from 6px */
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08); /* Enhanced shadow */
     padding: 20px; /* Increased from 16px */
-    max-height: 100%;
-    overflow-x: auto;
-    overflow-y: auto;
+    height: 100%; /* FIXED: Ensure full height */
+    overflow-y: auto; /* FIXED: Enable vertical scrolling */
+    overflow-x: hidden; /* FIXED: Prevent horizontal scroll */
     border: none; /* Removed border in favor of shadow */
 }
 
@@ -2144,7 +2146,7 @@ select:focus {
     box-shadow: 0 0 0 3px rgba(58, 91, 169, 0.3) !important;
 }
 
-/* Responsive Adjustments */
+/* FIXED RESPONSIVE ADJUSTMENTS FOR SCROLLING */
 @media (max-width: 1200px) {
     .container {
         grid-template-columns: 220px minmax(0, 3fr) minmax(300px, 1.2fr);
@@ -2173,6 +2175,68 @@ select:focus {
 
     #patient-sidebar, #main-content, #ai-insights {
         padding: 16px;
+    }
+}
+
+/* CRITICAL MOBILE SCROLLING FIXES */
+@media (max-width: 1024px) {
+    body {
+        overflow-y: auto; /* FIXED: Re-enable body scroll on mobile */
+        overflow-x: hidden;
+    }
+    
+    .container {
+        height: auto; /* FIXED: Let container grow naturally */
+        min-height: calc(100vh - 64px);
+        display: flex;
+        flex-direction: column;
+    }
+    
+    #patient-sidebar,
+    #main-content,
+    #ai-insights {
+        overflow-y: visible; /* FIXED: Let natural document flow handle scrolling */
+        overflow-x: hidden;
+        height: auto;
+        flex: none;
+    }
+    
+    #patient-sidebar {
+        order: 1;
+        max-height: 300px;
+        overflow-y: auto; /* Keep scrolling for patient list */
+    }
+    
+    #main-content {
+        order: 2;
+    }
+    
+    #ai-insights {
+        order: 3;
+    }
+}
+
+@media (max-width: 768px) {
+    header {
+        padding: 0 15px;
+    }
+    
+    .container {
+        padding: 15px;
+        gap: 15px;
+    }
+    
+    #main-content,
+    #ai-insights {
+        padding: 15px;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+    }
+    
+    .action-buttons button {
+        width: 100%;
     }
 }
 
@@ -2249,4 +2313,11 @@ select:focus {
 
 .menu-item.logout-item a:hover {
     background-color: #fff5f5;
+}
+
+/* EMERGENCY FIX - add this to the end of styles.css */
+#main-content {
+    overflow-y: scroll !important;
+    height: calc(100vh - 150px) !important;
+    max-height: calc(100vh - 150px) !important;
 }

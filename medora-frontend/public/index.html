@@ -28,7 +28,7 @@
     </header>
     <div class="container">
         <!-- Patient Sidebar -->
-        <div id="patient-sidebar">
+        <div id="patient-sidebar" class="scroll-area">
             <div class="sidebar-header">
                 <h2>Patients</h2>
                 <select id="patient-filter">
@@ -41,7 +41,7 @@
         </div>
 
         <!-- Main Content Area -->
-        <div id="main-content">
+        <div id="main-content" class="scroll-area">
             <div id="patient-details" style="display: none;">
                 <div class="patient-details-header">
                     <h3>Patient Details</h3>
@@ -52,7 +52,6 @@
                 <p><strong>Last Visit:</strong> <span id="patient-details-last-visit"></span></p>
                 <p><strong>Current Visit:</strong> <span id="patient-details-current-visit"></span></p>
                 <p><strong>Visit History:</strong></p>
-                <!-- FIXED: Changed from visit-history to patient-details-visit-history -->
                 <div id="patient-details-visit-history">No visit history available.</div>
             </div>
 
@@ -112,7 +111,7 @@
         </div>
 
         <!-- AI Insights Section -->
-        <div id="ai-insights">
+        <div id="ai-insights" class="scroll-area">
             <h2>AI Insights</h2>
             <div class="insights-section">
                 <h3>Allergy Triggers</h3>
@@ -293,15 +292,12 @@
     <!-- NEW: Updated AllergenIQ Profile JavaScript -->
     <script src="allergeniq-profile.js" onerror="console.error('Failed to load allergeniq-profile.js');"></script>
     
-    <!-- Optional debugging scripts -->
-    <!-- <script src="recommendations-troubleshooting.js" onerror="console.error('Failed to load recommendations-troubleshooting.js');"></script> -->
-    <!-- <script src="medora-integration.js" onerror="console.error('Failed to load medora-integration.js');"></script> -->
-    
     <!-- Load menu.js before script-core.js to ensure logout-btn is set up -->
     <script src="menu.js" onerror="console.error('Failed to load menu.js');"></script>
     <script src="script-core.js" onerror="console.error('Failed to load script-core.js');"></script>
+    
+    <!-- AllergenIQ Modal Functions -->
     <script>
-        // AllergenIQ Modal Functions
         function openAllergenIQ() {
             console.log('Opening AllergenIQ modal');
             document.getElementById('allergeniq-modal-overlay').classList.add('active');
@@ -318,24 +314,21 @@
         function closeAllergenIQ() {
             console.log('Closing AllergenIQ modal');
             document.getElementById('allergeniq-modal-overlay').classList.remove('active');
-            document.body.style.overflow = 'auto';
+            document.body.style.overflow = '';
         }
 
         function downloadAllergenIQPDF() {
             console.log('Download AllergenIQ PDF');
-            // Implement PDF download functionality
             alert('PDF download functionality will be implemented');
         }
 
         function copyAllergenIQReport() {
             console.log('Copy AllergenIQ Report');
-            // Implement copy functionality
             alert('Copy report functionality will be implemented');
         }
 
         function sendToPatient() {
             console.log('Send to Patient');
-            // Implement send to patient functionality
             alert('Send to patient functionality will be implemented');
         }
 
@@ -345,16 +338,17 @@
                 closeAllergenIQ();
             }
         });
-
+    </script>
+    
+    <!-- Authentication Functions -->
+    <script>
         // Sign out a user (for use in menu.js)
         function logout() {
             console.log('User signed out');
             localStorage.removeItem('currentEmail');
-            // Redirect to the test login page after sign-out with a delay
             setTimeout(() => {
                 window.location.href = 'https://medoramd.ai/login.html';
-            }, 1000); // 1-second delay for better UX
-            // Reset any menu state if necessary
+            }, 1000);
             const userMenu = document.getElementById('user-menu-container');
             if (userMenu) {
                 userMenu.style.display = 'none';
@@ -367,7 +361,6 @@
             const email = localStorage.getItem('currentEmail');
             console.log('Retrieved email from localStorage:', email);
 
-            // Prevent redirect if already on login page
             if (window.location.pathname.includes('login.html')) {
                 console.log('Already on login page, skipping redirect');
                 return false;
@@ -380,7 +373,7 @@
                 console.log('No user signed in, redirecting to login page');
                 setTimeout(() => {
                     window.location.href = 'https://medoramd.ai/login.html';
-                }, 1000); // 1-second delay for better UX
+                }, 1000);
                 return false;
             }
         }
@@ -405,10 +398,10 @@
                     console.log('currentEmail cleared, redirecting to login page with delay');
                     setTimeout(() => {
                         window.location.href = 'https://medoramd.ai/login.html';
-                    }, 1000); // 1-second delay for better UX
+                    }, 1000);
                 }
             }
-        }, 1000); // Check every second
+        }, 1000);
 
         // Check authentication state on page load with a delay and error handling
         document.addEventListener('DOMContentLoaded', () => {
@@ -422,7 +415,7 @@
                         console.log('Authentication failed, redirecting to login page');
                         setTimeout(() => {
                             window.location.href = 'https://medoramd.ai/login.html';
-                        }, 1000); // 1-second delay for better UX
+                        }, 1000);
                     } else {
                         console.log('Authentication successful, proceeding to load dashboard');
                     }
@@ -430,9 +423,33 @@
                     console.error('Error checking authentication state:', error);
                     setTimeout(() => {
                         window.location.href = 'https://medoramd.ai/login.html';
-                    }, 1000); // 1-second delay for better UX
+                    }, 1000);
                 }
-            }, 100); // 100ms delay to ensure localStorage is updated
+            }, 100);
+        });
+    </script>
+    
+    <!-- CLEAN BLUE SCROLLING SETUP -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('✅ Blue scrolling initialized');
+            
+            // Get all scrollable areas
+            const scrollAreas = ['main-content', 'patient-sidebar', 'ai-insights'];
+            
+            scrollAreas.forEach(areaId => {
+                const area = document.getElementById(areaId);
+                if (area) {
+                    // Enable smooth blue scrolling
+                    area.style.overflowY = 'scroll';
+                    area.style.overflowX = 'hidden';
+                    area.style.height = 'calc(100vh - 120px)';
+                    area.style.maxHeight = 'calc(100vh - 120px)';
+                    area.style.position = 'relative';
+                    area.style.zIndex = '1';
+                    area.style.pointerEvents = 'auto';
+                }
+            });
         });
     </script>
 </body>

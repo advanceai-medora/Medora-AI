@@ -1,5 +1,5 @@
 /* ===== REFINED MEDICAL WHITE + BLUE GLOW THEME ===== */
-/* Only interactive elements get hover effects to prevent "dancing" */
+/* OPTIMIZED FOR DRAGGABLE BLUE SCROLLBARS */
 
 /* CSS Variables for Clean Medical Design */
 :root {
@@ -41,311 +41,558 @@
 /* Clean medical white background */
 body {
     background: var(--medical-white) !important;
+    font-family: 'Inter', 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
 }
 
-/* ===== STATIC CONTAINER STYLING (NO HOVER EFFECTS) ===== */
+/* ===== SCROLLING AREAS - NO INTERFERENCE WITH SCROLLBARS ===== */
 
-/* Clean Header - Static, no hover dancing */
+/* Main scrollable areas - ENSURE SCROLLBAR INTERACTION */
+.scroll-area,
+#main-content,
+#patient-sidebar,
+#ai-insights {
+    /* CORE FUNCTIONAL SCROLLING */
+    overflow-y: scroll !important;
+    overflow-x: hidden !important;
+    scroll-behavior: smooth !important;
+    
+    /* ENSURE SCROLLBAR FUNCTIONALITY */
+    position: relative !important;
+    z-index: 1 !important;
+    
+    /* CRITICAL: DON'T BLOCK SCROLLBAR INTERACTION */
+    pointer-events: auto !important;
+    
+    /* NO TRANSFORMS OR EFFECTS THAT BREAK SCROLLBARS */
+    transform: none !important;
+    will-change: auto !important;
+    backface-visibility: visible !important;
+    contain: none !important;
+    
+    /* STYLING */
+    background: var(--medical-white) !important;
+    border: 1px solid rgba(14, 165, 233, 0.2) !important;
+    box-shadow: 0 2px 8px rgba(14, 165, 233, 0.1) !important;
+    border-radius: 8px;
+    padding: 20px;
+    
+    /* COMPATIBILITY */
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior: auto !important;
+    
+    /* ENSURE CONTENT DOESN'T BLOCK SCROLLBAR */
+    padding-right: 20px !important; /* Space for scrollbar */
+}
+
+/* ===== CONTAINER LAYOUT ===== */
+
+.container {
+    display: grid;
+    grid-template-columns: 300px 1fr 350px;
+    gap: 20px;
+    height: calc(100vh - 80px);
+    padding: 20px;
+    max-width: 100%;
+    overflow: hidden; /* Prevent container scroll */
+}
+
+/* Header styling */
 header {
     background: var(--medical-white) !important;
     box-shadow: var(--shadow-soft) !important;
     border-bottom: var(--border-light);
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 50px;
 }
 
-/* Clean Patient Sidebar - Static */
+/* ===== BASIC HEIGHT CONSTRAINTS ===== */
+
 #patient-sidebar {
-    background: var(--medical-white) !important;
-    box-shadow: var(--shadow-soft) !important;
-    border: var(--border-light);
+    height: calc(100vh - 120px) !important;
+    max-height: calc(100vh - 120px) !important;
+    min-height: 300px !important;
 }
 
-/* Clean Main Content - Static */
 #main-content {
-    background: var(--medical-white) !important;
-    box-shadow: var(--shadow-soft) !important;
-    border: var(--border-light);
+    height: calc(100vh - 120px) !important;
+    max-height: calc(100vh - 120px) !important;
+    min-height: 400px !important;
 }
 
-/* Clean AI Insights - Static */
 #ai-insights {
-    background: var(--medical-white) !important;
-    box-shadow: var(--shadow-soft) !important;
-    border: var(--border-light);
+    height: calc(100vh - 120px) !important;
+    max-height: calc(100vh - 120px) !important;
+    min-height: 300px !important;
 }
 
-/* Clean SOAP sections - Static containers */
-.soap-section {
-    background: var(--medical-white) !important;
-    box-shadow: var(--shadow-subtle) !important;
-    border: var(--border-light) !important;
+/* ===== INTERACTIVE BLUE SCROLLBARS - DRAGGABLE ===== */
+
+/* Webkit browsers (Chrome, Safari, Edge) - FULLY INTERACTIVE */
+.scroll-area::-webkit-scrollbar,
+#main-content::-webkit-scrollbar,
+#patient-sidebar::-webkit-scrollbar,
+#ai-insights::-webkit-scrollbar {
+    width: 14px !important;
+    background: rgba(14, 165, 233, 0.1) !important;
+    border-radius: 7px !important;
+    /* ENSURE INTERACTIVITY */
+    cursor: pointer !important;
+    pointer-events: auto !important;
 }
 
-/* Clean Insights sections - Static containers */
-.insights-section {
-    background: var(--medical-white) !important;
-    box-shadow: var(--shadow-subtle) !important;
-    border: var(--border-light) !important;
+.scroll-area::-webkit-scrollbar-track,
+#main-content::-webkit-scrollbar-track,
+#patient-sidebar::-webkit-scrollbar-track,
+#ai-insights::-webkit-scrollbar-track {
+    background: rgba(14, 165, 233, 0.05) !important;
+    border-radius: 7px !important;
+    /* TRACK MUST BE INTERACTIVE */
+    cursor: pointer !important;
+    pointer-events: auto !important;
 }
 
-/* Alternating subtle background for insights */
-.insights-section:nth-child(even) {
-    background: var(--medical-light) !important;
+.scroll-area::-webkit-scrollbar-thumb,
+#main-content::-webkit-scrollbar-thumb,
+#patient-sidebar::-webkit-scrollbar-thumb,
+#ai-insights::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-light) 100%) !important;
+    border-radius: 7px !important;
+    border: 2px solid rgba(255, 255, 255, 0.3) !important;
+    min-height: 30px !important;
+    
+    /* CRITICAL FOR DRAGGING */
+    cursor: grab !important;
+    pointer-events: auto !important;
+    
+    /* VISUAL FEEDBACK */
+    transition: all 0.2s ease !important;
 }
 
-/* Clean patient details - Static */
-#patient-details {
-    background: var(--medical-white) !important;
-    box-shadow: var(--shadow-subtle) !important;
-    border: var(--border-light) !important;
+.scroll-area::-webkit-scrollbar-thumb:hover,
+#main-content::-webkit-scrollbar-thumb:hover,
+#patient-sidebar::-webkit-scrollbar-thumb:hover,
+#ai-insights::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, var(--primary-blue-dark) 0%, var(--primary-blue) 100%) !important;
+    border: 2px solid rgba(255, 255, 255, 0.5) !important;
+    cursor: grab !important;
+    transform: scale(1.05) !important;
 }
 
-/* ===== SELECTIVE INTERACTIVE HOVER EFFECTS ===== */
+.scroll-area::-webkit-scrollbar-thumb:active,
+#main-content::-webkit-scrollbar-thumb:active,
+#patient-sidebar::-webkit-scrollbar-thumb:active,
+#ai-insights::-webkit-scrollbar-thumb:active {
+    background: var(--primary-blue-dark) !important;
+    cursor: grabbing !important;
+    transform: scale(1.1) !important;
+}
 
-/* 1. LOGO - Subtle glow on hover */
+/* Firefox - Make draggable */
+.scroll-area,
+#main-content,
+#patient-sidebar,
+#ai-insights {
+    scrollbar-width: auto !important;
+    scrollbar-color: var(--primary-blue) rgba(14, 165, 233, 0.1) !important;
+}
+
+/* ===== INTERACTIVE ELEMENTS WITH BLUE GLOW ===== */
+
+/* Logo hover effect */
+.logo-image {
+    transition: all 0.3s ease;
+}
+
 .logo-image:hover {
     box-shadow: var(--blue-glow-subtle);
     transform: scale(1.05);
-    transition: all 0.3s ease;
 }
 
-/* 2. AI INSIGHTS SECTIONS - Subtle interactive glow */
-.insights-section:hover {
-    box-shadow: var(--blue-glow-subtle), var(--shadow-medium) !important;
-    border: var(--border-blue-light) !important;
-    transform: translateY(-1px);
+/* Button hover effects */
+button {
     transition: all 0.3s ease;
+    background: var(--medical-white);
+    border: var(--border-medium);
+    border-radius: 6px;
+    padding: 8px 16px;
+    cursor: pointer;
 }
 
-/* 3. ALLERGENIQ SPECIAL SECTION - Enhanced glow for premium feature */
-.allergeniq-section:hover {
-    box-shadow: var(--blue-glow), var(--shadow-strong) !important;
-    border: var(--border-blue-medium) !important;
-    transform: translateY(-2px);
-    transition: all 0.3s ease;
-}
-
-/* 4. REFERENCES TABLE CONTAINER - Subtle glow */
-#references-table:hover {
-    box-shadow: var(--blue-glow-subtle);
-    transition: all 0.3s ease;
-}
-
-/* 5. MENU BUTTON - Enhanced glow */
-#logout-btn:hover {
-    box-shadow: var(--blue-glow);
-    background: rgba(14, 165, 233, 0.1) !important;
-    border: var(--border-blue-medium) !important;
-    transition: all 0.3s ease;
-}
-
-/* 6. PATIENT LIST ITEMS - These are clickable, so they should glow */
-.patient-item:hover {
-    box-shadow: var(--blue-glow-subtle) !important;
-    border-left: 4px solid var(--primary-blue) !important;
-    background: rgba(14, 165, 233, 0.02) !important;
-    transform: translateX(3px);
-    transition: all 0.3s ease;
-}
-
-/* 7. BUTTONS - All interactive buttons get glow */
 button:hover {
     box-shadow: var(--blue-glow-subtle);
     transform: translateY(-1px);
-    transition: all 0.3s ease;
-    background: rgba(14, 165, 233, 0.05) !important;
+    background: rgba(14, 165, 233, 0.05);
+    border: var(--border-blue-light);
 }
 
-/* 8. PRIMARY ACTION BUTTONS - Stronger glow */
+/* Primary buttons - stronger effects */
+#start-visit-btn,
+#submit-transcript-btn,
+#copy-soap-btn {
+    background: var(--primary-blue);
+    color: white;
+    border: 2px solid var(--primary-blue);
+}
+
 #start-visit-btn:hover,
 #submit-transcript-btn:hover,
 #copy-soap-btn:hover {
     box-shadow: var(--blue-glow-strong);
     transform: translateY(-2px) scale(1.03);
-    transition: all 0.3s ease;
+    background: var(--primary-blue-dark);
 }
 
-/* 9. SMART LEARNING BADGE - Special effect */
-#smart-learning-badge:hover {
-    box-shadow: var(--blue-glow-ultra);
-    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-light) 100%) !important;
-    color: white !important;
-    transform: scale(1.05);
+/* Patient list items */
+.patient-item {
     transition: all 0.3s ease;
+    padding: 15px;
+    margin: 10px 0;
+    border: var(--border-light);
+    border-radius: 8px;
+    cursor: pointer;
 }
 
-/* 10. ACTION BUTTONS (Copy/Edit) within sections */
-.copy-section-btn:hover,
-.edit-section-btn:hover,
-.insights-actions button:hover {
+.patient-item:hover {
+    box-shadow: var(--blue-glow-subtle);
+    border-left: 4px solid var(--primary-blue);
+    background: rgba(14, 165, 233, 0.02);
+    transform: translateX(3px);
+}
+
+.patient-item.selected {
+    border-left: 4px solid var(--primary-blue);
+    background: rgba(14, 165, 233, 0.08);
     box-shadow: var(--blue-glow);
-    background-color: var(--primary-blue) !important;
-    color: white !important;
+}
+
+/* Menu button */
+#logout-btn:hover {
+    box-shadow: var(--blue-glow);
+    background: rgba(14, 165, 233, 0.1);
+    border: var(--border-blue-medium);
+}
+
+/* ===== SOAP AND INSIGHTS SECTIONS ===== */
+
+.soap-section,
+.insights-section {
+    background: var(--medical-white);
+    border: var(--border-light);
+    border-radius: 8px;
+    padding: 20px;
+    margin: 15px 0;
+    box-shadow: var(--shadow-subtle);
+    transition: all 0.3s ease;
+}
+
+.soap-section:hover,
+.insights-section:hover {
+    box-shadow: var(--blue-glow-subtle), var(--shadow-medium);
+    border: var(--border-blue-light);
     transform: translateY(-1px);
+}
+
+/* AllergenIQ special styling */
+.allergeniq-section {
+    background: var(--medical-white);
+    border: var(--border-blue-light);
+    border-radius: 8px;
+    padding: 20px;
+    margin: 15px 0;
+    box-shadow: var(--shadow-soft);
     transition: all 0.3s ease;
 }
 
-/* 11. ALLERGENIQ SPECIAL BUTTONS */
-#allergeniq-download-btn:hover,
-#allergeniq-copy-btn:hover {
-    box-shadow: var(--blue-glow);
-    transform: translateY(-1px) scale(1.03);
+.allergeniq-section:hover {
+    box-shadow: var(--blue-glow), var(--shadow-strong);
+    border: var(--border-blue-medium);
+    transform: translateY(-2px);
+}
+
+/* ===== INPUT FIELDS ===== */
+
+input,
+textarea,
+select {
+    background: var(--medical-white);
+    border: var(--border-medium);
+    border-radius: 6px;
+    padding: 10px;
+    width: 100%;
+    box-sizing: border-box;
     transition: all 0.3s ease;
+    position: relative; /* Don't interfere with scroll area */
+    z-index: 1; /* Stay above scroll area */
 }
 
-/* 12. TABLE ROWS - Only individual rows, not the whole table */
-#references-table tbody tr:hover {
-    background-color: rgba(14, 165, 233, 0.02) !important;
-    transition: all 0.3s ease;
-}
-
-#references-table tbody tr:hover td {
-    background-color: rgba(14, 165, 233, 0.02) !important;
-    border-color: rgba(14, 165, 233, 0.2) !important;
-}
-
-/* ===== INPUT FIELD EFFECTS (FOCUS ONLY, NOT HOVER) ===== */
-
-/* Clean input styling - NO hover effects, only focus */
-input, textarea, select {
-    background: var(--medical-white) !important;
-    border: var(--border-medium) !important;
-    box-shadow: var(--shadow-subtle) !important;
-    transition: all 0.3s ease;
-}
-
-/* Input Focus Effects - Only when actively focused */
 input:focus,
 textarea:focus,
 select:focus {
-    background: var(--medical-white) !important;
-    box-shadow: var(--blue-glow-subtle), var(--shadow-medium) !important;
-    border: var(--border-blue-strong) !important;
+    background: var(--medical-white);
+    box-shadow: var(--blue-glow-subtle), var(--shadow-medium);
+    border: var(--border-blue-strong);
     outline: none;
-    transition: all 0.3s ease;
+    z-index: 2; /* Higher when focused but still allow scroll area clicks */
 }
 
-/* ===== PATIENT ID INPUT - Special attention effect ===== */
+/* Special patient ID input */
 #patient-id:focus {
-    box-shadow: var(--blue-glow-strong), var(--shadow-medium) !important;
-    border: var(--border-blue-strong) !important;
+    box-shadow: var(--blue-glow-strong), var(--shadow-medium);
     transform: scale(1.02);
-    transition: all 0.3s ease;
 }
 
-/* ===== CLEAN TABLES ===== */
+/* Ensure input containers don't block scroll area clicks */
+#transcript-section,
+#patient-details {
+    position: relative;
+    pointer-events: auto; /* Allow clicks to pass through to scroll area */
+}
 
-/* Clean table styling - Static */
+/* Input field containers should not prevent scroll area interaction */
+label {
+    pointer-events: none; /* Labels don't interfere */
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: #1a365d;
+}
+
+/* ===== TABLES ===== */
+
+#references-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--medical-white);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: var(--shadow-subtle);
+}
+
 #references-table th {
-    background: var(--medical-light) !important;
-    border: var(--border-light) !important;
+    background: var(--medical-light);
+    border: var(--border-light);
+    padding: 12px;
+    text-align: left;
+    font-weight: 600;
 }
 
 #references-table td {
-    background: var(--medical-white) !important;
-    border: var(--border-light) !important;
+    background: var(--medical-white);
+    border: var(--border-light);
+    padding: 10px;
 }
 
 #references-table tbody tr:nth-child(even) td {
-    background: var(--medical-subtle) !important;
+    background: var(--medical-subtle);
 }
 
-/* ===== CLEAN TYPOGRAPHY ===== */
+#references-table tbody tr:hover td {
+    background: rgba(14, 165, 233, 0.02);
+    border-color: rgba(14, 165, 233, 0.2);
+}
+
+/* ===== CONTENT SPACING FOR SMOOTH SCROLLING ===== */
+
+.scroll-area > *:not(:last-child),
+#main-content > *:not(:last-child),
+#patient-sidebar > *:not(:last-child),
+#ai-insights > *:not(:last-child) {
+    margin-bottom: 20px;
+}
+
+/* Extra space at bottom for comfortable scrolling */
+.scroll-area > *:last-child,
+#main-content > *:last-child,
+#patient-sidebar > *:last-child,
+#ai-insights > *:last-child {
+    margin-bottom: 40px;
+}
+
+/* ===== MOBILE RESPONSIVE ===== */
+
+@media (max-width: 1024px) {
+    .container {
+        grid-template-columns: 250px 1fr 300px;
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+    
+    .container {
+        display: flex;
+        flex-direction: column;
+        height: auto;
+        gap: 15px;
+        padding: 15px;
+    }
+    
+    #patient-sidebar {
+        order: 1;
+        height: 250px !important;
+        max-height: 250px !important;
+        min-height: 200px;
+    }
+    
+    #main-content {
+        order: 2;
+        height: 60vh !important;
+        max-height: 60vh !important;
+        min-height: 400px;
+    }
+    
+    #ai-insights {
+        order: 3;
+        height: 50vh !important;
+        max-height: 50vh !important;
+        min-height: 300px;
+    }
+}
+
+@media (max-width: 480px) {
+    #patient-sidebar {
+        height: 200px;
+        max-height: 200px;
+    }
+    
+    #main-content {
+        height: 55vh;
+        max-height: 55vh;
+        min-height: 350px;
+    }
+    
+    #ai-insights {
+        height: 45vh;
+        max-height: 45vh;
+        min-height: 250px;
+    }
+}
+
+/* ===== TYPOGRAPHY ===== */
 
 .soap-section h3,
 .insights-section h3,
 #ai-insights h2 {
-    color: #1a365d !important;
-    font-weight: 600 !important;
-    letter-spacing: 0.3px !important;
+    color: #1a365d;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    margin-top: 0;
+    margin-bottom: 15px;
 }
 
-/* ===== ENHANCED FOCUS STATES ===== */
+/* ===== MODALS ===== */
 
-/* Clean focus rings for accessibility */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.modal-overlay.active {
+    display: flex;
+    opacity: 1;
+    align-items: center;
+    justify-content: center;
+}
+
+#smart-learning-modal,
+#separate-modal {
+    background: var(--medical-white);
+    box-shadow: var(--shadow-strong);
+    border: var(--border-medium);
+    border-radius: 12px;
+}
+
+/* ===== ALLERGENIQ MODAL STYLING ===== */
+
+.allergeniq-modal {
+    background: var(--medical-white);
+    border-radius: 12px;
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: var(--blue-glow), var(--shadow-strong);
+    border: var(--border-blue-medium);
+}
+
+.allergeniq-collapsed {
+    background: var(--medical-white);
+    border: var(--border-blue-light);
+    border-radius: 8px;
+    padding: 15px;
+    margin: 15px 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.allergeniq-collapsed:hover {
+    box-shadow: var(--blue-glow-subtle);
+    border: var(--border-blue-medium);
+    transform: translateY(-1px);
+}
+
+/* ===== FOCUS STATES FOR ACCESSIBILITY ===== */
+
 *:focus-visible {
     outline: 2px solid rgba(14, 165, 233, 0.5);
     outline-offset: 2px;
     border-radius: 4px;
 }
 
-/* Enhanced active states for buttons */
-button:active {
-    transform: translateY(0) scale(0.98);
-    transition: all 0.1s ease;
+/* ===== PERFORMANCE OPTIMIZATIONS ===== */
+
+/* Smooth animations */
+* {
+    transition: none; /* Reset all transitions */
 }
 
-/* ===== MODAL CLEAN STYLING ===== */
-
-/* Clean modals - Static */
-#smart-learning-modal,
-#separate-modal {
-    background: var(--medical-white) !important;
-    box-shadow: var(--shadow-strong) !important;
-    border: var(--border-medium) !important;
-}
-
-/* ===== ALLERGENIQ CLEAN STYLING ===== */
-
-.allergeniq-section {
-    background: var(--medical-white) !important;
-}
-
-#allergeniq-profile-container {
-    background: var(--medical-white) !important;
-    border: var(--border-light) !important;
-}
-
-.category-block {
-    background: var(--medical-light) !important;
-    border: var(--border-light) !important;
-}
-
-.symptom-heatmap th {
-    background: var(--medical-subtle) !important;
-}
-
-.symptom-heatmap td {
-    background: var(--medical-white) !important;
-}
-
-.symptom-heatmap tr:nth-child(even) td {
-    background: var(--medical-light) !important;
-}
-
-/* ===== CLEAN SCROLLBAR ===== */
-
-::-webkit-scrollbar-track {
-    background: var(--medical-light) !important;
-}
-
-::-webkit-scrollbar-thumb {
-    background: var(--medical-border) !important;
-    border: var(--border-light) !important;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: var(--medical-subtle) !important;
-}
-
-/* ===== REDUCED TRANSITION EFFECTS ===== */
-
-/* Only specific elements get transitions to prevent over-animation */
+/* Only apply transitions to elements that need them */
 button,
 .patient-item,
-.logo-image,
-#logout-btn,
+.soap-section,
+.insights-section,
+.allergeniq-section,
 input:focus,
 textarea:focus,
 select:focus {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Remove global transitions that cause dancing */
-* {
-    transition: none;
+/* ===== UTILITY CLASSES ===== */
+
+.hidden {
+    display: none !important;
 }
 
-/* Add back transitions only for color and opacity changes */
-*:focus {
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.mb-20 {
+    margin-bottom: 20px;
+}
+
+.p-20 {
+    padding: 20px;
 }
