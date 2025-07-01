@@ -5892,3 +5892,1940 @@ In regards to Food Allergy Anxiety:
 2025-06-29 17:33:49,726 [INFO] Fetched 1 insights from Semantic Scholar for condition: Contact dermatitis
 2025-06-29 17:33:53,953 [INFO] Fetched 1 insights from PubMed for condition: Contact dermatitis
 2025-06-29 17:33:55,953 [INFO] Returning 4 insights for patient 685eb09408703b6bd3e97be9
+2025-06-29 18:10:38,286 [INFO] Logging setup complete. Logs will be written to /var/www/medora-web-backend/flask-app.log and console.
+2025-06-29 18:10:38,439 [INFO] Successfully initialized AWS clients
+2025-06-29 18:10:38,503 [INFO] Created indexes on tenantId fields in MongoDB collections
+2025-06-29 18:10:38,503 [INFO] Successfully connected to MongoDB
+2025-06-29 18:10:38,511 [INFO] Successfully loaded private key for IMS FHIR authentication
+2025-06-29 18:10:38,519 [INFO] MongoDB indexes created successfully
+2025-06-29 18:12:39,170 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-29 18:12:39,176 [INFO] Found 124 patients for tenant doctor@allergyaffiliates.com
+2025-06-29 18:12:41,692 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-29 18:12:41,696 [INFO] Found 124 patients for tenant doctor@allergyaffiliates.com
+2025-06-29 18:12:47,294 [INFO] Handling POST request for /api/visit/start
+2025-06-29 18:12:47,297 [INFO] Patient TEST123456 not found, creating new patient
+2025-06-29 18:12:47,300 [INFO] Created new patient with ID: 6861821f26c12e8c4a686dd1
+2025-06-29 18:12:47,303 [INFO] Visit started: d5d69f6a-9c95-47f5-862c-8b6aebe89f51 for patient 6861821f26c12e8c4a686dd1 by doctor@allergyaffiliates.com
+2025-06-29 18:12:48,630 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-29 18:12:48,633 [INFO] Found 125 patients for tenant doctor@allergyaffiliates.com
+2025-06-29 18:12:48,750 [INFO] Fetching history for patient 6861821f26c12e8c4a686dd1 in tenant doctor@allergyaffiliates.com
+2025-06-29 18:12:48,755 [INFO] Retrieved 0 transcripts for patient 6861821f26c12e8c4a686dd1 in tenant doctor@allergyaffiliates.com
+2025-06-29 18:13:34,506 [INFO] Deleted patient 6861821f26c12e8c4a686dd1 and associated data in tenant doctor@allergyaffiliates.com
+2025-06-29 18:13:41,132 [INFO] Handling POST request for /api/visit/start
+2025-06-29 18:13:41,135 [INFO] Patient TSTWNSNSN not found, creating new patient
+2025-06-29 18:13:41,138 [INFO] Created new patient with ID: 6861825526c12e8c4a686dd3
+2025-06-29 18:13:41,141 [INFO] Visit started: 66ad23a7-16fc-4b6e-9ed1-33638bc2652b for patient 6861825526c12e8c4a686dd3 by doctor@allergyaffiliates.com
+2025-06-29 18:13:42,515 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-29 18:13:42,518 [INFO] Found 125 patients for tenant doctor@allergyaffiliates.com
+2025-06-29 18:13:42,642 [INFO] Fetching history for patient 6861825526c12e8c4a686dd3 in tenant doctor@allergyaffiliates.com
+2025-06-29 18:13:42,644 [INFO] Retrieved 0 transcripts for patient 6861825526c12e8c4a686dd3 in tenant doctor@allergyaffiliates.com
+2025-06-29 18:14:02,807 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-29 18:14:02,810 [INFO] Found 125 patients for tenant doctor@allergyaffiliates.com
+2025-06-29 18:14:04,963 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-29 18:14:04,966 [INFO] Found 125 patients for tenant doctor@allergyaffiliates.com
+2025-06-29 18:14:10,244 [INFO] Deleted patient 6861825526c12e8c4a686dd3 and associated data in tenant doctor@allergyaffiliates.com
+2025-06-29 18:14:15,534 [INFO] Handling POST request for /api/visit/start
+2025-06-29 18:14:15,536 [INFO] Patient TSTWNSNSN not found, creating new patient
+2025-06-29 18:14:15,540 [INFO] Created new patient with ID: 6861827726c12e8c4a686dd5
+2025-06-29 18:14:15,543 [INFO] Visit started: d28d9f40-d178-46d8-909d-f2a8145503fb for patient 6861827726c12e8c4a686dd5 by doctor@allergyaffiliates.com
+2025-06-29 18:14:17,383 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-29 18:14:17,385 [INFO] Found 125 patients for tenant doctor@allergyaffiliates.com
+2025-06-29 18:14:17,502 [INFO] Fetching history for patient 6861827726c12e8c4a686dd5 in tenant doctor@allergyaffiliates.com
+2025-06-29 18:14:17,504 [INFO] Retrieved 0 transcripts for patient 6861827726c12e8c4a686dd5 in tenant doctor@allergyaffiliates.com
+2025-06-29 18:16:00,876 [INFO] Deleted patient 6861827726c12e8c4a686dd5 and associated data in tenant doctor@allergyaffiliates.com
+2025-06-29 18:16:20,954 [INFO] Handling POST request for /api/visit/start
+2025-06-29 18:16:20,956 [INFO] Patient kjiukjj not found, creating new patient
+2025-06-29 18:16:20,959 [INFO] Created new patient with ID: 686182f426c12e8c4a686dd7
+2025-06-29 18:16:20,963 [INFO] Visit started: 2209f1cd-012a-4b6a-9472-e4a6cf703cd5 for patient 686182f426c12e8c4a686dd7 by doctor@allergyaffiliates.com
+2025-06-29 18:16:22,552 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-29 18:16:22,555 [INFO] Found 125 patients for tenant doctor@allergyaffiliates.com
+2025-06-29 18:16:22,673 [INFO] Fetching history for patient 686182f426c12e8c4a686dd7 in tenant doctor@allergyaffiliates.com
+2025-06-29 18:16:22,675 [INFO] Retrieved 0 transcripts for patient 686182f426c12e8c4a686dd7 in tenant doctor@allergyaffiliates.com
+2025-06-29 18:16:46,922 [INFO] Deleted patient 686182f426c12e8c4a686dd7 and associated data in tenant doctor@allergyaffiliates.com
+2025-06-29 18:17:01,977 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-29 18:17:01,982 [INFO] Found 124 patients for tenant doctor@allergyaffiliates.com
+2025-06-29 18:17:04,497 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-29 18:17:04,500 [INFO] Found 124 patients for tenant doctor@allergyaffiliates.com
+2025-06-29 18:17:05,899 [INFO] Fetching history for patient 685ec49008703b6bd3e97bef in tenant doctor@allergyaffiliates.com
+2025-06-29 18:17:05,901 [INFO] Retrieved 0 transcripts for patient 685ec49008703b6bd3e97bef in tenant doctor@allergyaffiliates.com
+2025-06-29 18:17:18,262 [INFO] Fetching history for patient 685eb77e08703b6bd3e97bec in tenant doctor@allergyaffiliates.com
+2025-06-29 18:17:18,264 [INFO] Retrieved 1 transcripts for patient 685eb77e08703b6bd3e97bec in tenant doctor@allergyaffiliates.com
+2025-06-29 18:17:22,499 [INFO] Fetching history for patient 685e9b1b08703b6bd3e97be6 in tenant doctor@allergyaffiliates.com
+2025-06-29 18:17:22,501 [INFO] Retrieved 1 transcripts for patient 685e9b1b08703b6bd3e97be6 in tenant doctor@allergyaffiliates.com
+2025-06-29 18:17:25,318 [INFO] Fetching history for patient 685eb09408703b6bd3e97be9 in tenant doctor@allergyaffiliates.com
+2025-06-29 18:17:25,319 [INFO] Retrieved 1 transcripts for patient 685eb09408703b6bd3e97be9 in tenant doctor@allergyaffiliates.com
+2025-06-29 18:17:25,385 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-29 18:17:25,451 [INFO] Found 0 insights for patient 685eb09408703b6bd3e97be9 using GSI
+2025-06-29 18:17:25,482 [INFO] Handling GET request for /get-insights
+2025-06-29 18:17:25,483 [WARNING] Email parameter missing, using fallback
+2025-06-29 18:17:25,483 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-29 18:17:25,487 [INFO] Simplified diagnoses for searching: ['Atopic dermatitis', 'Contact dermatitis', 'Seborrheic dermatitis']
+2025-06-29 18:17:25,488 [INFO] Processing diagnosis: Atopic dermatitis
+2025-06-29 18:17:27,615 [INFO] Fetched 1 insights from Semantic Scholar for condition: Atopic dermatitis
+2025-06-29 18:17:31,894 [INFO] Fetched 1 insights from PubMed for condition: Atopic dermatitis
+2025-06-29 18:17:33,894 [INFO] Processing diagnosis: Contact dermatitis
+2025-06-29 18:17:35,502 [INFO] Fetched 1 insights from Semantic Scholar for condition: Contact dermatitis
+2025-06-29 18:17:35,819 [INFO] Fetching history for patient 685eb09408703b6bd3e97be9 in tenant doctor@allergyaffiliates.com
+2025-06-29 18:17:35,822 [INFO] Retrieved 1 transcripts for patient 685eb09408703b6bd3e97be9 in tenant doctor@allergyaffiliates.com
+2025-06-29 18:17:39,798 [INFO] Fetched 1 insights from PubMed for condition: Contact dermatitis
+2025-06-29 18:17:41,799 [INFO] Returning 4 insights for patient 685eb09408703b6bd3e97be9
+2025-06-29 18:17:41,884 [INFO] Handling GET request for /get-insights
+2025-06-29 18:17:41,884 [WARNING] Email parameter missing, using fallback
+2025-06-29 18:17:41,884 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-29 18:17:41,889 [INFO] Simplified diagnoses for searching: ['Atopic dermatitis', 'Contact dermatitis', 'Seborrheic dermatitis']
+2025-06-29 18:17:41,889 [INFO] Processing diagnosis: Atopic dermatitis
+2025-06-29 18:17:43,571 [INFO] Fetched 1 insights from Semantic Scholar for condition: Atopic dermatitis
+2025-06-29 18:17:47,849 [INFO] Fetched 1 insights from PubMed for condition: Atopic dermatitis
+2025-06-29 18:17:49,849 [INFO] Processing diagnosis: Contact dermatitis
+2025-06-29 18:17:51,412 [INFO] Fetched 1 insights from Semantic Scholar for condition: Contact dermatitis
+2025-06-29 18:17:56,086 [INFO] Fetched 1 insights from PubMed for condition: Contact dermatitis
+2025-06-29 18:17:58,087 [INFO] Returning 4 insights for patient 685eb09408703b6bd3e97be9
+2025-06-29 18:18:21,823 [INFO] Fetching history for patient 685eb09408703b6bd3e97be9 in tenant doctor@allergyaffiliates.com
+2025-06-29 18:18:21,825 [INFO] Retrieved 1 transcripts for patient 685eb09408703b6bd3e97be9 in tenant doctor@allergyaffiliates.com
+2025-06-29 18:18:21,884 [INFO] Handling GET request for /get-insights
+2025-06-29 18:18:21,884 [WARNING] Email parameter missing, using fallback
+2025-06-29 18:18:21,885 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-29 18:18:21,889 [INFO] Simplified diagnoses for searching: ['Atopic dermatitis', 'Contact dermatitis', 'Seborrheic dermatitis']
+2025-06-29 18:18:21,890 [INFO] Processing diagnosis: Atopic dermatitis
+2025-06-29 18:18:23,729 [INFO] Fetched 1 insights from Semantic Scholar for condition: Atopic dermatitis
+2025-06-29 18:18:28,003 [INFO] Fetched 1 insights from PubMed for condition: Atopic dermatitis
+2025-06-29 18:18:30,004 [INFO] Processing diagnosis: Contact dermatitis
+2025-06-29 18:18:31,702 [INFO] Fetched 1 insights from Semantic Scholar for condition: Contact dermatitis
+2025-06-29 18:18:36,449 [INFO] Fetched 1 insights from PubMed for condition: Contact dermatitis
+2025-06-29 18:18:38,450 [INFO] Returning 4 insights for patient 685eb09408703b6bd3e97be9
+2025-06-29 18:20:09,197 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-29 18:20:09,200 [INFO] Found 124 patients for tenant doctor@allergyaffiliates.com
+2025-06-29 18:20:11,849 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-29 18:20:11,852 [INFO] Found 124 patients for tenant doctor@allergyaffiliates.com
+2025-06-29 18:20:13,089 [INFO] Handling POST request for /api/visit/start
+2025-06-29 18:20:13,092 [INFO] Patient as not found, creating new patient
+2025-06-29 18:20:13,096 [INFO] Created new patient with ID: 686183dd26c12e8c4a686dd9
+2025-06-29 18:20:13,099 [INFO] Visit started: 811b8799-45ab-4e64-8272-fc49e14f5bed for patient 686183dd26c12e8c4a686dd9 by doctor@allergyaffiliates.com
+2025-06-29 18:20:14,989 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-29 18:20:14,993 [INFO] Found 125 patients for tenant doctor@allergyaffiliates.com
+2025-06-29 18:20:15,107 [INFO] Fetching history for patient 686183dd26c12e8c4a686dd9 in tenant doctor@allergyaffiliates.com
+2025-06-29 18:20:15,109 [INFO] Retrieved 0 transcripts for patient 686183dd26c12e8c4a686dd9 in tenant doctor@allergyaffiliates.com
+2025-06-29 18:24:13,501 [INFO] 🔄 Processing Freed-style transcript analysis
+2025-06-29 18:24:13,912 [INFO] Extracted conditions: ['nut allergy', 'egg allergy']
+2025-06-29 18:24:16,101 [INFO] Generated Freed-style plan: In regards to nut allergy:
+* Patient needs to come for 4 different appointments for oral food challenges with almonds, cashews, walnuts, and peanuts.
+* For almonds, patient will bring Barney's almond butter.
+* For cashews, patient will bring Sunshine cashews.
+* Walnuts will be provided by the office.
+* After passing the cashew challenge, patient can try pistachio at home.
+* After passing the walnut challenge, patient can try pecans at home.
+* After completing all nut challenges, patient will be cleared of nut allergies.
+* Patient needs to make appointments and can reschedule if needed.
+
+In regards to egg allergy:
+* Patient should avoid fresh egg if it causes itching and continue with baked egg in cookies and cake.
+* In 6 months, patient will come for an egg challenge in the office.
+* If mom is okay with giving half an egg and there is no reaction, patient can continue to do that.
+* Patient will repeat the test orally to see what happens.
+2025-06-29 18:24:24,016 [INFO] 🔄 Generating structured recommendations...
+2025-06-29 18:24:24,016 [INFO] 🔧 FORCE CREATING structured recommendations
+2025-06-29 18:24:24,016 [INFO] ✅ Generated 2 recommendation categories
+2025-06-29 18:24:24,016 [INFO] ✅ Categories: ['EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES']
+2025-06-29 18:24:24,016 [INFO] 🐛 BACKEND DEBUG: structured_recommendations type: <class 'dict'>
+2025-06-29 18:24:24,016 [INFO] 🐛 BACKEND DEBUG: structured_recommendations content: {'EMERGENCY ACTION PLAN': ['Contact clinic if symptoms worsen before follow-up appointment'], 'PATIENT EDUCATION RESOURCES': ['Educate patient on signs and symptoms of drug allergies', 'Discuss importance of medication adherence and monitoring', 'Provide instructions on proper skin care routine']}
+2025-06-29 18:24:24,016 [INFO] 🐛 BACKEND DEBUG: Is it a dict? True
+2025-06-29 18:24:24,016 [INFO] 🐛 BACKEND DEBUG: Keys: ['EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES']
+2025-06-29 18:24:24,016 [INFO] ✅ Added 2 structured recommendation categories
+2025-06-29 18:24:24,016 [INFO] ✅ Categories: ['EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES']
+2025-06-29 18:24:24,068 [INFO] ✅ Successfully stored Freed-style SOAP notes with structured recommendations
+2025-06-29 18:24:24,073 [INFO] ✅ Stored Freed-style transcript with structured recommendations: 686184d826c12e8c4a686ddb
+2025-06-29 18:24:24,219 [INFO] Fetching history for patient 686183dd26c12e8c4a686dd9 in tenant doctor@allergyaffiliates.com
+2025-06-29 18:24:24,220 [INFO] Retrieved 1 transcripts for patient 686183dd26c12e8c4a686dd9 in tenant doctor@allergyaffiliates.com
+2025-06-29 18:24:24,287 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-29 18:24:24,299 [INFO] Found 0 insights for patient 686183dd26c12e8c4a686dd9 using GSI
+2025-06-29 18:24:24,360 [INFO] Handling GET request for /get-insights
+2025-06-29 18:24:24,360 [WARNING] Email parameter missing, using fallback
+2025-06-29 18:24:24,360 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-29 18:24:24,364 [INFO] Simplified diagnoses for searching: ['Food allergies to peanuts']
+2025-06-29 18:24:24,364 [INFO] Processing diagnosis: Food allergies to peanuts
+2025-06-29 18:24:26,658 [INFO] Fetched 1 insights from Semantic Scholar for condition: Food allergies to peanuts
+2025-06-29 18:24:30,923 [INFO] Fetched 1 insights from PubMed for condition: Food allergies to peanuts
+2025-06-29 18:24:32,924 [INFO] Returning 2 insights for patient 686183dd26c12e8c4a686dd9
+2025-06-29 18:24:54,380 [INFO] Fetching history for patient 686183dd26c12e8c4a686dd9 in tenant doctor@allergyaffiliates.com
+2025-06-29 18:24:54,382 [INFO] Retrieved 1 transcripts for patient 686183dd26c12e8c4a686dd9 in tenant doctor@allergyaffiliates.com
+2025-06-29 18:24:54,438 [INFO] Handling GET request for /get-insights
+2025-06-29 18:24:54,438 [WARNING] Email parameter missing, using fallback
+2025-06-29 18:24:54,439 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-29 18:24:54,443 [INFO] Simplified diagnoses for searching: ['Food allergies to peanuts']
+2025-06-29 18:24:54,443 [INFO] Processing diagnosis: Food allergies to peanuts
+2025-06-29 18:24:56,208 [INFO] Fetched 1 insights from Semantic Scholar for condition: Food allergies to peanuts
+2025-06-29 18:25:00,534 [INFO] Fetched 1 insights from PubMed for condition: Food allergies to peanuts
+2025-06-29 18:25:02,535 [INFO] Returning 2 insights for patient 686183dd26c12e8c4a686dd9
+2025-06-29 18:39:07,086 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-29 18:39:07,091 [INFO] Found 125 patients for tenant doctor@allergyaffiliates.com
+2025-06-29 18:39:09,744 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-29 18:39:09,748 [INFO] Found 125 patients for tenant doctor@allergyaffiliates.com
+2025-06-29 18:39:13,352 [INFO] Handling POST request for /api/visit/start
+2025-06-29 18:39:13,354 [INFO] Patient sd not found, creating new patient
+2025-06-29 18:39:13,357 [INFO] Created new patient with ID: 6861885126c12e8c4a686ddc
+2025-06-29 18:39:13,361 [INFO] Visit started: 34b47ba5-a53b-4820-ae4a-411b3671356d for patient 6861885126c12e8c4a686ddc by doctor@allergyaffiliates.com
+2025-06-29 18:39:15,909 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-29 18:39:15,912 [INFO] Found 126 patients for tenant doctor@allergyaffiliates.com
+2025-06-29 18:39:16,020 [INFO] Fetching history for patient 6861885126c12e8c4a686ddc in tenant doctor@allergyaffiliates.com
+2025-06-29 18:39:16,021 [INFO] Retrieved 0 transcripts for patient 6861885126c12e8c4a686ddc in tenant doctor@allergyaffiliates.com
+2025-06-29 18:47:27,019 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-29 18:47:27,027 [INFO] Found 126 patients for tenant doctor@allergyaffiliates.com
+2025-06-29 18:47:29,671 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-29 18:47:29,673 [INFO] Found 126 patients for tenant doctor@allergyaffiliates.com
+2025-06-29 18:47:31,399 [INFO] Deleted patient 6861885126c12e8c4a686ddc and associated data in tenant doctor@allergyaffiliates.com
+2025-06-29 18:47:36,819 [INFO] Handling POST request for /api/visit/start
+2025-06-29 18:47:36,821 [INFO] Patient sd not found, creating new patient
+2025-06-29 18:47:36,824 [INFO] Created new patient with ID: 68618a4826c12e8c4a686dde
+2025-06-29 18:47:36,827 [INFO] Visit started: a80a9aa8-65a4-4c85-8089-c81d68ed467b for patient 68618a4826c12e8c4a686dde by doctor@allergyaffiliates.com
+2025-06-29 18:47:38,254 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-29 18:47:38,258 [INFO] Found 126 patients for tenant doctor@allergyaffiliates.com
+2025-06-29 18:47:38,374 [INFO] Fetching history for patient 68618a4826c12e8c4a686dde in tenant doctor@allergyaffiliates.com
+2025-06-29 18:47:38,376 [INFO] Retrieved 0 transcripts for patient 68618a4826c12e8c4a686dde in tenant doctor@allergyaffiliates.com
+2025-06-29 18:48:17,348 [INFO] 🔄 Processing Freed-style transcript analysis
+2025-06-29 18:48:17,758 [INFO] Extracted conditions: ['allergies', 'diverticulosis']
+2025-06-29 18:48:18,571 [INFO] Generated Freed-style plan: In regards to allergies:
+* Discussed - plan to be determined
+* Allergy testing to be conducted to determine if symptoms are due to allergies
+* Patient has tried Flonase in the past for red coffee-like symptoms under the eyes
+
+In regards to diverticulosis:
+* Discussed - plan to be determined
+2025-06-29 18:48:28,529 [INFO] 🔄 Generating structured recommendations...
+2025-06-29 18:48:28,529 [INFO] 🔧 FORCE CREATING structured recommendations
+2025-06-29 18:48:28,529 [INFO] ✅ Generated 2 recommendation categories
+2025-06-29 18:48:28,529 [INFO] ✅ Categories: ['EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES']
+2025-06-29 18:48:28,529 [INFO] 🐛 BACKEND DEBUG: structured_recommendations type: <class 'dict'>
+2025-06-29 18:48:28,529 [INFO] 🐛 BACKEND DEBUG: structured_recommendations content: {'EMERGENCY ACTION PLAN': ['Contact clinic if symptoms worsen before follow-up appointment'], 'PATIENT EDUCATION RESOURCES': ['Educate patient on signs and symptoms of drug allergies', 'Discuss importance of medication adherence and monitoring', 'Provide instructions on proper skin care routine']}
+2025-06-29 18:48:28,529 [INFO] 🐛 BACKEND DEBUG: Is it a dict? True
+2025-06-29 18:48:28,529 [INFO] 🐛 BACKEND DEBUG: Keys: ['EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES']
+2025-06-29 18:48:28,529 [INFO] ✅ Added 2 structured recommendation categories
+2025-06-29 18:48:28,529 [INFO] ✅ Categories: ['EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES']
+2025-06-29 18:48:28,579 [INFO] ✅ Successfully stored Freed-style SOAP notes with structured recommendations
+2025-06-29 18:48:28,585 [INFO] ✅ Stored Freed-style transcript with structured recommendations: 68618a7c26c12e8c4a686de0
+2025-06-29 18:48:28,656 [INFO] Fetching history for patient 68618a4826c12e8c4a686dde in tenant doctor@allergyaffiliates.com
+2025-06-29 18:48:28,658 [INFO] Retrieved 1 transcripts for patient 68618a4826c12e8c4a686dde in tenant doctor@allergyaffiliates.com
+2025-06-29 18:48:52,645 [INFO] Fetching history for patient 68618a4826c12e8c4a686dde in tenant doctor@allergyaffiliates.com
+2025-06-29 18:48:52,650 [INFO] Retrieved 1 transcripts for patient 68618a4826c12e8c4a686dde in tenant doctor@allergyaffiliates.com
+2025-06-29 18:48:57,912 [INFO] Deleted patient 68618a4826c12e8c4a686dde and associated data in tenant doctor@allergyaffiliates.com
+2025-06-29 18:49:05,673 [INFO] Handling POST request for /api/visit/start
+2025-06-29 18:49:05,676 [INFO] Patient sf not found, creating new patient
+2025-06-29 18:49:05,679 [INFO] Created new patient with ID: 68618aa126c12e8c4a686de1
+2025-06-29 18:49:05,682 [INFO] Visit started: ad60c8f4-9bbd-428f-8921-b002bcd84871 for patient 68618aa126c12e8c4a686de1 by doctor@allergyaffiliates.com
+2025-06-29 18:49:06,895 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-29 18:49:06,899 [INFO] Found 126 patients for tenant doctor@allergyaffiliates.com
+2025-06-29 18:49:07,029 [INFO] Fetching history for patient 68618aa126c12e8c4a686de1 in tenant doctor@allergyaffiliates.com
+2025-06-29 18:49:07,030 [INFO] Retrieved 0 transcripts for patient 68618aa126c12e8c4a686de1 in tenant doctor@allergyaffiliates.com
+2025-06-29 18:49:20,292 [INFO] 🔄 Processing Freed-style transcript analysis
+2025-06-29 18:49:20,835 [INFO] Extracted conditions: ['allergies', 'diverticulosis']
+2025-06-29 18:49:21,626 [INFO] Generated Freed-style plan: In regards to allergies:
+* Discussed - plan to be determined
+* Allergy testing to be performed to determine if symptoms are due to allergies
+* Patient has tried Flonase in the past for red eyes
+
+In regards to diverticulosis:
+* Discussed - plan to be determined
+2025-06-29 18:49:31,697 [INFO] 🔄 Generating structured recommendations...
+2025-06-29 18:49:31,697 [INFO] 🔧 FORCE CREATING structured recommendations
+2025-06-29 18:49:31,697 [INFO] ✅ Generated 2 recommendation categories
+2025-06-29 18:49:31,697 [INFO] ✅ Categories: ['EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES']
+2025-06-29 18:49:31,697 [INFO] 🐛 BACKEND DEBUG: structured_recommendations type: <class 'dict'>
+2025-06-29 18:49:31,697 [INFO] 🐛 BACKEND DEBUG: structured_recommendations content: {'EMERGENCY ACTION PLAN': ['Contact clinic if symptoms worsen before follow-up appointment'], 'PATIENT EDUCATION RESOURCES': ['Educate patient on signs and symptoms of drug allergies', 'Discuss importance of medication adherence and monitoring', 'Provide instructions on proper skin care routine']}
+2025-06-29 18:49:31,697 [INFO] 🐛 BACKEND DEBUG: Is it a dict? True
+2025-06-29 18:49:31,697 [INFO] 🐛 BACKEND DEBUG: Keys: ['EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES']
+2025-06-29 18:49:31,697 [INFO] ✅ Added 2 structured recommendation categories
+2025-06-29 18:49:31,697 [INFO] ✅ Categories: ['EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES']
+2025-06-29 18:49:31,704 [INFO] ✅ Successfully stored Freed-style SOAP notes with structured recommendations
+2025-06-29 18:49:31,708 [INFO] ✅ Stored Freed-style transcript with structured recommendations: 68618abb26c12e8c4a686de3
+2025-06-29 18:49:31,760 [INFO] Fetching history for patient 68618aa126c12e8c4a686de1 in tenant doctor@allergyaffiliates.com
+2025-06-29 18:49:31,762 [INFO] Retrieved 1 transcripts for patient 68618aa126c12e8c4a686de1 in tenant doctor@allergyaffiliates.com
+2025-06-29 18:54:05,621 [INFO] Handling POST request for /api/visit/start
+2025-06-29 18:54:05,623 [INFO] Patient fgg not found, creating new patient
+2025-06-29 18:54:05,626 [INFO] Created new patient with ID: 68618bcd26c12e8c4a686de4
+2025-06-29 18:54:05,630 [INFO] Visit started: 0b021fff-beed-4041-8a60-0160ad90b3c7 for patient 68618bcd26c12e8c4a686de4 by doctor@allergyaffiliates.com
+2025-06-29 18:54:07,033 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-29 18:54:07,037 [INFO] Found 127 patients for tenant doctor@allergyaffiliates.com
+2025-06-29 18:54:07,149 [INFO] Fetching history for patient 68618bcd26c12e8c4a686de4 in tenant doctor@allergyaffiliates.com
+2025-06-29 18:54:07,151 [INFO] Retrieved 0 transcripts for patient 68618bcd26c12e8c4a686de4 in tenant doctor@allergyaffiliates.com
+2025-06-29 18:54:18,874 [INFO] Deleted patient 68618bcd26c12e8c4a686de4 and associated data in tenant doctor@allergyaffiliates.com
+2025-06-29 18:55:13,905 [INFO] Handling POST request for /api/visit/start
+2025-06-29 18:55:13,906 [INFO] Patient po not found, creating new patient
+2025-06-29 18:55:13,910 [INFO] Created new patient with ID: 68618c1126c12e8c4a686de6
+2025-06-29 18:55:13,912 [INFO] Visit started: 042db685-53f2-4d79-8ab9-2bb74caa0f59 for patient 68618c1126c12e8c4a686de6 by doctor@allergyaffiliates.com
+2025-06-29 18:55:15,120 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-29 18:55:15,124 [INFO] Found 127 patients for tenant doctor@allergyaffiliates.com
+2025-06-29 18:55:15,240 [INFO] Fetching history for patient 68618c1126c12e8c4a686de6 in tenant doctor@allergyaffiliates.com
+2025-06-29 18:55:15,242 [INFO] Retrieved 0 transcripts for patient 68618c1126c12e8c4a686de6 in tenant doctor@allergyaffiliates.com
+2025-06-29 18:56:04,776 [INFO] Deleted patient 68618c1126c12e8c4a686de6 and associated data in tenant doctor@allergyaffiliates.com
+2025-06-29 18:56:22,416 [INFO] Handling POST request for /api/visit/start
+2025-06-29 18:56:22,418 [INFO] Patient gh not found, creating new patient
+2025-06-29 18:56:22,422 [INFO] Created new patient with ID: 68618c5626c12e8c4a686de8
+2025-06-29 18:56:22,425 [INFO] Visit started: b2d8a68c-785c-40b6-98e2-cb6512ec4f37 for patient 68618c5626c12e8c4a686de8 by doctor@allergyaffiliates.com
+2025-06-29 18:56:23,628 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-29 18:56:23,632 [INFO] Found 127 patients for tenant doctor@allergyaffiliates.com
+2025-06-29 18:56:23,749 [INFO] Fetching history for patient 68618c5626c12e8c4a686de8 in tenant doctor@allergyaffiliates.com
+2025-06-29 18:56:23,755 [INFO] Retrieved 0 transcripts for patient 68618c5626c12e8c4a686de8 in tenant doctor@allergyaffiliates.com
+2025-06-29 19:01:34,364 [INFO] 🔄 Processing Freed-style transcript analysis
+2025-06-29 19:01:35,057 [INFO] Extracted conditions: ['allergies', 'diverticulosis']
+2025-06-29 19:01:35,881 [INFO] Generated Freed-style plan: In regards to allergies:
+* Discussed - plan to be determined
+* Allergy testing to be conducted to determine if symptoms are due to allergies
+* Patient has tried Flonase in the past for red coffee-like symptoms under the eyes
+
+In regards to diverticulosis:
+* Discussed - plan to be determined
+2025-06-29 19:01:44,178 [INFO] 🔄 Generating structured recommendations...
+2025-06-29 19:01:44,178 [INFO] 🔧 FORCE CREATING structured recommendations
+2025-06-29 19:01:44,178 [INFO] ✅ Generated 2 recommendation categories
+2025-06-29 19:01:44,178 [INFO] ✅ Categories: ['EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES']
+2025-06-29 19:01:44,178 [INFO] 🐛 BACKEND DEBUG: structured_recommendations type: <class 'dict'>
+2025-06-29 19:01:44,178 [INFO] 🐛 BACKEND DEBUG: structured_recommendations content: {'EMERGENCY ACTION PLAN': ['Contact clinic if symptoms worsen before follow-up appointment'], 'PATIENT EDUCATION RESOURCES': ['Educate patient on signs and symptoms of drug allergies', 'Discuss importance of medication adherence and monitoring', 'Provide instructions on proper skin care routine']}
+2025-06-29 19:01:44,178 [INFO] 🐛 BACKEND DEBUG: Is it a dict? True
+2025-06-29 19:01:44,178 [INFO] 🐛 BACKEND DEBUG: Keys: ['EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES']
+2025-06-29 19:01:44,178 [INFO] ✅ Added 2 structured recommendation categories
+2025-06-29 19:01:44,178 [INFO] ✅ Categories: ['EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES']
+2025-06-29 19:01:44,227 [INFO] ✅ Successfully stored Freed-style SOAP notes with structured recommendations
+2025-06-29 19:01:44,232 [INFO] ✅ Stored Freed-style transcript with structured recommendations: 68618d9826c12e8c4a686dea
+2025-06-29 19:01:44,290 [INFO] Fetching history for patient 68618c5626c12e8c4a686de8 in tenant doctor@allergyaffiliates.com
+2025-06-29 19:01:44,292 [INFO] Retrieved 1 transcripts for patient 68618c5626c12e8c4a686de8 in tenant doctor@allergyaffiliates.com
+2025-06-29 19:03:24,257 [INFO] Deleted patient 68618c5626c12e8c4a686de8 and associated data in tenant doctor@allergyaffiliates.com
+2025-06-29 19:03:28,495 [INFO] Deleted patient 68618aa126c12e8c4a686de1 and associated data in tenant doctor@allergyaffiliates.com
+2025-06-29 19:03:40,310 [INFO] Handling POST request for /api/visit/start
+2025-06-29 19:03:40,312 [INFO] Patient ht not found, creating new patient
+2025-06-29 19:03:40,315 [INFO] Created new patient with ID: 68618e0c26c12e8c4a686deb
+2025-06-29 19:03:40,318 [INFO] Visit started: 7734eb51-3aae-4ec7-911c-1b755f402a29 for patient 68618e0c26c12e8c4a686deb by doctor@allergyaffiliates.com
+2025-06-29 19:03:42,730 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-29 19:03:42,733 [INFO] Found 126 patients for tenant doctor@allergyaffiliates.com
+2025-06-29 19:03:42,849 [INFO] Fetching history for patient 68618e0c26c12e8c4a686deb in tenant doctor@allergyaffiliates.com
+2025-06-29 19:03:42,851 [INFO] Retrieved 0 transcripts for patient 68618e0c26c12e8c4a686deb in tenant doctor@allergyaffiliates.com
+2025-06-29 19:04:01,684 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-29 19:04:01,694 [INFO] Found 126 patients for tenant doctor@allergyaffiliates.com
+2025-06-29 19:04:04,952 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-29 19:04:04,953 [INFO] Deleted patient 68618e0c26c12e8c4a686deb and associated data in tenant doctor@allergyaffiliates.com
+2025-06-29 19:04:04,964 [INFO] Found 125 patients for tenant doctor@allergyaffiliates.com
+2025-06-29 19:04:08,778 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-29 19:04:08,781 [INFO] Found 125 patients for tenant doctor@allergyaffiliates.com
+2025-06-29 19:04:11,425 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-29 19:04:11,428 [INFO] Found 125 patients for tenant doctor@allergyaffiliates.com
+2025-06-29 19:04:37,023 [INFO] Handling POST request for /api/visit/start
+2025-06-29 19:04:37,030 [INFO] Patient vv not found, creating new patient
+2025-06-29 19:04:37,033 [INFO] Created new patient with ID: 68618e4526c12e8c4a686ded
+2025-06-29 19:04:37,039 [INFO] Visit started: e709b87b-88d6-4b34-8a74-d9259946b7d6 for patient 68618e4526c12e8c4a686ded by doctor@allergyaffiliates.com
+2025-06-29 19:04:38,362 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-29 19:04:38,365 [INFO] Found 126 patients for tenant doctor@allergyaffiliates.com
+2025-06-29 19:04:38,479 [INFO] Fetching history for patient 68618e4526c12e8c4a686ded in tenant doctor@allergyaffiliates.com
+2025-06-29 19:04:38,481 [INFO] Retrieved 0 transcripts for patient 68618e4526c12e8c4a686ded in tenant doctor@allergyaffiliates.com
+2025-06-29 19:08:36,271 [INFO] 🔄 Processing Freed-style transcript analysis
+2025-06-29 19:08:36,682 [INFO] Extracted conditions: ['allergies', 'diverticulosis']
+2025-06-29 19:08:37,509 [INFO] Generated Freed-style plan: In regards to allergies:
+* Discussed - plan to be determined
+* Allergy testing to be performed to determine if symptoms are due to allergies
+* Patient has tried Flonase in the past for red eyes
+
+In regards to diverticulosis:
+* Discussed - plan to be determined
+2025-06-29 19:08:48,117 [INFO] 🔄 Generating structured recommendations...
+2025-06-29 19:08:48,117 [INFO] 🔧 FORCE CREATING structured recommendations
+2025-06-29 19:08:48,117 [INFO] ✅ Generated 2 recommendation categories
+2025-06-29 19:08:48,117 [INFO] ✅ Categories: ['EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES']
+2025-06-29 19:08:48,117 [INFO] 🐛 BACKEND DEBUG: structured_recommendations type: <class 'dict'>
+2025-06-29 19:08:48,117 [INFO] 🐛 BACKEND DEBUG: structured_recommendations content: {'EMERGENCY ACTION PLAN': ['Contact clinic if symptoms worsen before follow-up appointment'], 'PATIENT EDUCATION RESOURCES': ['Educate patient on signs and symptoms of drug allergies', 'Discuss importance of medication adherence and monitoring', 'Provide instructions on proper skin care routine']}
+2025-06-29 19:08:48,117 [INFO] 🐛 BACKEND DEBUG: Is it a dict? True
+2025-06-29 19:08:48,117 [INFO] 🐛 BACKEND DEBUG: Keys: ['EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES']
+2025-06-29 19:08:48,117 [INFO] ✅ Added 2 structured recommendation categories
+2025-06-29 19:08:48,117 [INFO] ✅ Categories: ['EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES']
+2025-06-29 19:08:48,172 [INFO] ✅ Successfully stored Freed-style SOAP notes with structured recommendations
+2025-06-29 19:08:48,177 [INFO] ✅ Stored Freed-style transcript with structured recommendations: 68618f4026c12e8c4a686def
+2025-06-29 19:08:48,240 [INFO] Fetching history for patient 68618e4526c12e8c4a686ded in tenant doctor@allergyaffiliates.com
+2025-06-29 19:08:48,243 [INFO] Retrieved 1 transcripts for patient 68618e4526c12e8c4a686ded in tenant doctor@allergyaffiliates.com
+2025-06-29 19:09:03,374 [INFO] Deleted patient 68618e4526c12e8c4a686ded and associated data in tenant doctor@allergyaffiliates.com
+2025-06-29 19:09:21,606 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-29 19:09:21,609 [INFO] Found 125 patients for tenant doctor@allergyaffiliates.com
+2025-06-29 19:09:24,270 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-29 19:09:24,273 [INFO] Found 125 patients for tenant doctor@allergyaffiliates.com
+2025-06-29 19:10:48,432 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-29 19:10:48,437 [INFO] Found 125 patients for tenant doctor@allergyaffiliates.com
+2025-06-29 19:10:51,088 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-29 19:10:51,092 [INFO] Found 125 patients for tenant doctor@allergyaffiliates.com
+2025-06-29 19:11:48,731 [INFO] Handling POST request for /api/visit/start
+2025-06-29 19:11:48,733 [INFO] Patient df not found, creating new patient
+2025-06-29 19:11:48,738 [INFO] Created new patient with ID: 68618ff426c12e8c4a686df0
+2025-06-29 19:11:48,743 [INFO] Visit started: 161751a7-8d2a-4927-87aa-c66154315c74 for patient 68618ff426c12e8c4a686df0 by doctor@allergyaffiliates.com
+2025-06-29 19:11:50,014 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-29 19:11:50,016 [INFO] Found 126 patients for tenant doctor@allergyaffiliates.com
+2025-06-29 19:11:50,138 [INFO] Fetching history for patient 68618ff426c12e8c4a686df0 in tenant doctor@allergyaffiliates.com
+2025-06-29 19:11:50,140 [INFO] Retrieved 0 transcripts for patient 68618ff426c12e8c4a686df0 in tenant doctor@allergyaffiliates.com
+2025-06-29 20:58:07,646 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-29 20:58:07,648 [INFO] Found 126 patients for tenant doctor@allergyaffiliates.com
+2025-06-29 20:58:10,591 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-29 20:58:10,593 [INFO] Found 126 patients for tenant doctor@allergyaffiliates.com
+2025-06-29 20:58:26,054 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-29 20:58:26,056 [INFO] Found 126 patients for tenant doctor@allergyaffiliates.com
+2025-06-29 20:58:28,120 [INFO] Fetching history for patient 68618ff426c12e8c4a686df0 in tenant doctor@allergyaffiliates.com
+2025-06-29 20:58:28,122 [INFO] Retrieved 0 transcripts for patient 68618ff426c12e8c4a686df0 in tenant doctor@allergyaffiliates.com
+2025-06-29 20:58:28,746 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-29 20:58:28,753 [INFO] Found 126 patients for tenant doctor@allergyaffiliates.com
+2025-06-29 20:58:33,352 [INFO] Deleted patient 68618ff426c12e8c4a686df0 and associated data in tenant doctor@allergyaffiliates.com
+2025-06-29 20:58:36,256 [INFO] Fetching history for patient 686183dd26c12e8c4a686dd9 in tenant doctor@allergyaffiliates.com
+2025-06-29 20:58:36,259 [INFO] Retrieved 1 transcripts for patient 686183dd26c12e8c4a686dd9 in tenant doctor@allergyaffiliates.com
+2025-06-29 20:58:36,315 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-29 20:58:36,319 [INFO] Handling GET request for /get-insights
+2025-06-29 20:58:36,320 [WARNING] Email parameter missing, using fallback
+2025-06-29 20:58:36,320 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-29 20:58:36,388 [INFO] Simplified diagnoses for searching: ['Food allergies to peanuts']
+2025-06-29 20:58:36,390 [INFO] Processing diagnosis: Food allergies to peanuts
+2025-06-29 20:58:36,396 [INFO] Found 0 insights for patient 686183dd26c12e8c4a686dd9 using GSI
+2025-06-29 20:58:38,101 [INFO] Fetched 1 insights from Semantic Scholar for condition: Food allergies to peanuts
+2025-06-29 20:58:42,359 [INFO] Fetched 1 insights from PubMed for condition: Food allergies to peanuts
+2025-06-29 20:58:43,060 [INFO] Fetching history for patient 685ec49008703b6bd3e97bef in tenant doctor@allergyaffiliates.com
+2025-06-29 20:58:43,061 [INFO] Retrieved 0 transcripts for patient 685ec49008703b6bd3e97bef in tenant doctor@allergyaffiliates.com
+2025-06-29 20:58:44,360 [INFO] Returning 2 insights for patient 686183dd26c12e8c4a686dd9
+2025-06-29 20:58:45,935 [INFO] Fetching history for patient 685eb09408703b6bd3e97be9 in tenant doctor@allergyaffiliates.com
+2025-06-29 20:58:45,937 [INFO] Retrieved 1 transcripts for patient 685eb09408703b6bd3e97be9 in tenant doctor@allergyaffiliates.com
+2025-06-29 20:58:45,989 [INFO] Handling GET request for /get-insights
+2025-06-29 20:58:45,990 [WARNING] Email parameter missing, using fallback
+2025-06-29 20:58:45,990 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-29 20:58:45,990 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-29 20:58:45,995 [INFO] Simplified diagnoses for searching: ['Atopic dermatitis', 'Contact dermatitis', 'Seborrheic dermatitis']
+2025-06-29 20:58:45,995 [INFO] Processing diagnosis: Atopic dermatitis
+2025-06-29 20:58:46,001 [INFO] Found 0 insights for patient 685eb09408703b6bd3e97be9 using GSI
+2025-06-29 20:58:47,541 [INFO] Fetched 1 insights from Semantic Scholar for condition: Atopic dermatitis
+2025-06-29 20:58:51,792 [INFO] Fetched 1 insights from PubMed for condition: Atopic dermatitis
+2025-06-29 20:58:53,793 [INFO] Processing diagnosis: Contact dermatitis
+2025-06-29 20:58:55,360 [INFO] Fetched 1 insights from Semantic Scholar for condition: Contact dermatitis
+2025-06-29 20:58:55,566 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-29 20:58:55,570 [INFO] Found 125 patients for tenant doctor@allergyaffiliates.com
+2025-06-29 20:58:58,099 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-29 20:58:58,102 [INFO] Found 125 patients for tenant doctor@allergyaffiliates.com
+2025-06-29 20:58:59,944 [INFO] Handling POST request for /api/visit/start
+2025-06-29 20:58:59,947 [INFO] Patient sdcz not found, creating new patient
+2025-06-29 20:58:59,951 [INFO] Created new patient with ID: 6861a91326c12e8c4a686df2
+2025-06-29 20:58:59,954 [INFO] Visit started: 1b094b16-1bc4-4e97-acfd-25ba50290f4e for patient 6861a91326c12e8c4a686df2 by doctor@allergyaffiliates.com
+2025-06-29 20:58:59,969 [INFO] Fetched 1 insights from PubMed for condition: Contact dermatitis
+2025-06-29 20:59:01,246 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-29 20:59:01,249 [INFO] Found 126 patients for tenant doctor@allergyaffiliates.com
+2025-06-29 20:59:01,364 [INFO] Fetching history for patient 6861a91326c12e8c4a686df2 in tenant doctor@allergyaffiliates.com
+2025-06-29 20:59:01,366 [INFO] Retrieved 0 transcripts for patient 6861a91326c12e8c4a686df2 in tenant doctor@allergyaffiliates.com
+2025-06-29 20:59:01,970 [INFO] Returning 4 insights for patient 685eb09408703b6bd3e97be9
+2025-06-29 20:59:32,055 [INFO] 🔄 Processing Freed-style transcript analysis
+2025-06-29 20:59:32,647 [INFO] Extracted conditions: ['hives', 'allergies', 'reflux', 'ganglion cyst', 'cataract']
+2025-06-29 20:59:35,253 [INFO] Generated Freed-style plan: In regards to hives:
+* Continue montelukast as discussed
+* No need for Allegra, Zyrtec, or Pepcid for hives
+* No specific follow-up plan mentioned for hives
+
+In regards to allergies:
+* Continue using Nasonex as needed for allergies
+* No specific follow-up plan mentioned for allergies
+
+In regards to reflux:
+* Continue Pepcid for GI as discussed
+* Reflux control and cough have improved
+* No specific follow-up plan mentioned for reflux
+
+In regards to ganglion cyst:
+* Discussed - plan to be determined
+
+In regards to cataract:
+* Had cataract surgery in the left eye
+* Pulsing sensation discussed, advised to ask the eye doctor
+* No specific follow-up plan mentioned for cataract
+
+In regards to biologic therapy:
+* Continue biologic injections
+* Space injections to every 5 weeks, then 6 weeks if doing well
+* Next visit scheduled in 4 months
+* Stop biologic at 6 weeks until next visit
+* Decision on discontinuation to be made at next visit
+2025-06-29 20:59:43,738 [INFO] 🔄 Generating structured recommendations...
+2025-06-29 20:59:43,738 [INFO] 🔧 FORCE CREATING structured recommendations
+2025-06-29 20:59:43,738 [INFO] ✅ Generated 3 recommendation categories
+2025-06-29 20:59:43,738 [INFO] ✅ Categories: ['MEDICATION MANAGEMENT', 'EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES']
+2025-06-29 20:59:43,738 [INFO] 🐛 BACKEND DEBUG: structured_recommendations type: <class 'dict'>
+2025-06-29 20:59:43,738 [INFO] 🐛 BACKEND DEBUG: structured_recommendations content: {'MEDICATION MANAGEMENT': ['Stop Pepcid as recommended'], 'EMERGENCY ACTION PLAN': ['Contact clinic if symptoms worsen before follow-up appointment'], 'PATIENT EDUCATION RESOURCES': ['Educate patient on signs and symptoms of drug allergies', 'Discuss importance of medication adherence and monitoring', 'Provide instructions on proper skin care routine']}
+2025-06-29 20:59:43,738 [INFO] 🐛 BACKEND DEBUG: Is it a dict? True
+2025-06-29 20:59:43,738 [INFO] 🐛 BACKEND DEBUG: Keys: ['MEDICATION MANAGEMENT', 'EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES']
+2025-06-29 20:59:43,738 [INFO] ✅ Added 3 structured recommendation categories
+2025-06-29 20:59:43,738 [INFO] ✅ Categories: ['MEDICATION MANAGEMENT', 'EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES']
+2025-06-29 20:59:43,745 [INFO] ✅ Successfully stored Freed-style SOAP notes with structured recommendations
+2025-06-29 20:59:43,752 [INFO] ✅ Stored Freed-style transcript with structured recommendations: 6861a93f26c12e8c4a686df4
+2025-06-29 20:59:43,808 [INFO] Fetching history for patient 6861a91326c12e8c4a686df2 in tenant doctor@allergyaffiliates.com
+2025-06-29 20:59:43,810 [INFO] Retrieved 1 transcripts for patient 6861a91326c12e8c4a686df2 in tenant doctor@allergyaffiliates.com
+2025-06-29 20:59:43,874 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-29 20:59:43,887 [INFO] Found 0 insights for patient 6861a91326c12e8c4a686df2 using GSI
+2025-06-29 20:59:43,945 [INFO] Handling GET request for /get-insights
+2025-06-29 20:59:43,945 [WARNING] Email parameter missing, using fallback
+2025-06-29 20:59:43,945 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-29 20:59:43,949 [INFO] Simplified diagnoses for searching: ['Chronic urticaria', 'Ganglion cyst', 'Allergic rhinitis']
+2025-06-29 20:59:43,949 [INFO] Processing diagnosis: Chronic urticaria
+2025-06-29 20:59:45,675 [INFO] Fetched 1 insights from Semantic Scholar for condition: Chronic urticaria
+2025-06-29 20:59:49,889 [INFO] Fetched 1 insights from PubMed for condition: Chronic urticaria
+2025-06-29 20:59:51,889 [INFO] Processing diagnosis: Ganglion cyst
+2025-06-29 20:59:53,523 [INFO] Fetched 1 insights from Semantic Scholar for condition: Ganglion cyst
+2025-06-29 20:59:57,836 [INFO] Fetched 1 insights from PubMed for condition: Ganglion cyst
+2025-06-29 20:59:59,836 [INFO] Returning 4 insights for patient 6861a91326c12e8c4a686df2
+2025-06-30 09:39:02,151 [INFO] Fetching patients for tenant_id: avikanak.bkr@gmail.com
+2025-06-30 09:39:02,156 [INFO] Found 0 patients for tenant avikanak.bkr@gmail.com
+2025-06-30 09:39:05,153 [INFO] Fetching patients for tenant_id: avikanak.bkr@gmail.com
+2025-06-30 09:39:05,154 [INFO] Found 0 patients for tenant avikanak.bkr@gmail.com
+2025-06-30 09:39:18,518 [INFO] Handling POST request for /api/visit/start
+2025-06-30 09:39:18,519 [ERROR] Active subscription required for email: avikanak.bkr@gmail.com
+2025-06-30 09:40:01,837 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 09:40:01,847 [INFO] Found 126 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 09:40:04,424 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 09:40:04,428 [INFO] Found 126 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 09:40:27,890 [INFO] Fetching history for patient 6861a91326c12e8c4a686df2 in tenant doctor@allergyaffiliates.com
+2025-06-30 09:40:27,892 [INFO] Retrieved 1 transcripts for patient 6861a91326c12e8c4a686df2 in tenant doctor@allergyaffiliates.com
+2025-06-30 09:40:28,195 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 09:40:28,257 [INFO] Found 0 insights for patient 6861a91326c12e8c4a686df2 using GSI
+2025-06-30 09:40:28,506 [INFO] Handling GET request for /get-insights
+2025-06-30 09:40:28,506 [WARNING] Email parameter missing, using fallback
+2025-06-30 09:40:28,506 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 09:40:28,511 [INFO] Simplified diagnoses for searching: ['Chronic urticaria', 'Ganglion cyst', 'Allergic rhinitis']
+2025-06-30 09:40:28,512 [INFO] Processing diagnosis: Chronic urticaria
+2025-06-30 09:40:29,639 [WARNING] Rate limited by Semantic Scholar for 'Chronic urticaria', skipping
+2025-06-30 09:40:33,867 [INFO] Fetched 1 insights from PubMed for condition: Chronic urticaria
+2025-06-30 09:40:35,868 [INFO] Processing diagnosis: Ganglion cyst
+2025-06-30 09:40:37,749 [INFO] Fetched 1 insights from Semantic Scholar for condition: Ganglion cyst
+2025-06-30 09:40:42,245 [INFO] Fetched 1 insights from PubMed for condition: Ganglion cyst
+2025-06-30 09:40:44,246 [INFO] Returning 3 insights for patient 6861a91326c12e8c4a686df2
+2025-06-30 09:41:12,625 [INFO] Handling POST request for /api/visit/start
+2025-06-30 09:41:12,627 [INFO] Patient Av not found, creating new patient
+2025-06-30 09:41:12,631 [INFO] Created new patient with ID: 68625bb826c12e8c4a686df5
+2025-06-30 09:41:12,635 [INFO] Visit started: 3ebeb75b-4c98-4630-801c-3cd7a848b66c for patient 68625bb826c12e8c4a686df5 by doctor@allergyaffiliates.com
+2025-06-30 09:41:17,468 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 09:41:17,470 [INFO] Found 127 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 09:41:17,990 [INFO] Fetching history for patient 68625bb826c12e8c4a686df5 in tenant doctor@allergyaffiliates.com
+2025-06-30 09:41:17,992 [INFO] Retrieved 0 transcripts for patient 68625bb826c12e8c4a686df5 in tenant doctor@allergyaffiliates.com
+2025-06-30 09:41:43,037 [INFO] 🔄 Processing Freed-style transcript analysis
+2025-06-30 09:41:43,305 [INFO] Extracted conditions: ['Current medical concerns']
+2025-06-30 09:41:43,834 [INFO] Generated Freed-style plan: Based on the transcript provided, there is no content to generate a treatment plan from. Therefore, no conditions or treatment plans can be documented as per the instructions given.
+2025-06-30 09:41:57,328 [INFO] 🔄 Generating structured recommendations...
+2025-06-30 09:41:57,328 [INFO] 🔧 FORCE CREATING structured recommendations
+2025-06-30 09:41:57,328 [INFO] ✅ Generated 2 recommendation categories
+2025-06-30 09:41:57,328 [INFO] ✅ Categories: ['EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES']
+2025-06-30 09:41:57,328 [INFO] 🐛 BACKEND DEBUG: structured_recommendations type: <class 'dict'>
+2025-06-30 09:41:57,328 [INFO] 🐛 BACKEND DEBUG: structured_recommendations content: {'EMERGENCY ACTION PLAN': ['Contact clinic if symptoms worsen before follow-up appointment'], 'PATIENT EDUCATION RESOURCES': ['Educate patient on signs and symptoms of drug allergies', 'Discuss importance of medication adherence and monitoring', 'Provide instructions on proper skin care routine']}
+2025-06-30 09:41:57,328 [INFO] 🐛 BACKEND DEBUG: Is it a dict? True
+2025-06-30 09:41:57,328 [INFO] 🐛 BACKEND DEBUG: Keys: ['EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES']
+2025-06-30 09:41:57,328 [INFO] ✅ Added 2 structured recommendation categories
+2025-06-30 09:41:57,328 [INFO] ✅ Categories: ['EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES']
+2025-06-30 09:41:57,336 [INFO] ✅ Successfully stored Freed-style SOAP notes with structured recommendations
+2025-06-30 09:41:57,341 [INFO] ✅ Stored Freed-style transcript with structured recommendations: 68625be526c12e8c4a686df7
+2025-06-30 09:41:57,686 [INFO] Fetching history for patient 68625bb826c12e8c4a686df5 in tenant doctor@allergyaffiliates.com
+2025-06-30 09:41:57,688 [INFO] Retrieved 1 transcripts for patient 68625bb826c12e8c4a686df5 in tenant doctor@allergyaffiliates.com
+2025-06-30 09:42:31,999 [INFO] Fetching history for patient 68625bb826c12e8c4a686df5 in tenant doctor@allergyaffiliates.com
+2025-06-30 09:42:32,003 [INFO] Retrieved 1 transcripts for patient 68625bb826c12e8c4a686df5 in tenant doctor@allergyaffiliates.com
+2025-06-30 09:42:58,079 [INFO] Handling POST request for /api/visit/start
+2025-06-30 09:42:58,081 [INFO] Using existing patient ID: 68625bb826c12e8c4a686df5
+2025-06-30 09:42:58,084 [INFO] Visit started: 359e5d5d-ad84-4a5e-8b20-3c6e28ce956c for patient 68625bb826c12e8c4a686df5 by doctor@allergyaffiliates.com
+2025-06-30 09:43:05,131 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 09:43:05,133 [INFO] Found 127 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 09:43:05,836 [INFO] Fetching history for patient 68625bb826c12e8c4a686df5 in tenant doctor@allergyaffiliates.com
+2025-06-30 09:43:05,838 [INFO] Retrieved 1 transcripts for patient 68625bb826c12e8c4a686df5 in tenant doctor@allergyaffiliates.com
+2025-06-30 09:44:52,837 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 09:44:52,841 [INFO] Found 127 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 09:44:55,358 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 09:44:55,361 [INFO] Found 127 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 09:48:07,657 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 09:48:07,660 [INFO] Found 127 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 09:48:09,429 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 09:48:09,432 [INFO] Found 127 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 09:48:37,970 [INFO] Fetching history for patient 6861a91326c12e8c4a686df2 in tenant doctor@allergyaffiliates.com
+2025-06-30 09:48:37,973 [INFO] Retrieved 1 transcripts for patient 6861a91326c12e8c4a686df2 in tenant doctor@allergyaffiliates.com
+2025-06-30 09:48:38,292 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 09:48:38,307 [INFO] Handling GET request for /get-insights
+2025-06-30 09:48:38,308 [WARNING] Email parameter missing, using fallback
+2025-06-30 09:48:38,310 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 09:48:38,362 [INFO] Found 0 insights for patient 6861a91326c12e8c4a686df2 using GSI
+2025-06-30 09:48:38,369 [INFO] Simplified diagnoses for searching: ['Chronic urticaria', 'Ganglion cyst', 'Allergic rhinitis']
+2025-06-30 09:48:38,369 [INFO] Processing diagnosis: Chronic urticaria
+2025-06-30 09:48:39,493 [WARNING] Rate limited by Semantic Scholar for 'Chronic urticaria', skipping
+2025-06-30 09:48:43,799 [INFO] Fetched 1 insights from PubMed for condition: Chronic urticaria
+2025-06-30 09:48:45,800 [INFO] Processing diagnosis: Ganglion cyst
+2025-06-30 09:48:46,894 [WARNING] Rate limited by Semantic Scholar for 'Ganglion cyst', skipping
+2025-06-30 09:48:51,115 [INFO] Fetched 1 insights from PubMed for condition: Ganglion cyst
+2025-06-30 09:48:53,116 [INFO] Returning 2 insights for patient 6861a91326c12e8c4a686df2
+2025-06-30 09:48:53,824 [INFO] Fetching history for patient 68625bb826c12e8c4a686df5 in tenant doctor@allergyaffiliates.com
+2025-06-30 09:48:53,825 [INFO] Retrieved 1 transcripts for patient 68625bb826c12e8c4a686df5 in tenant doctor@allergyaffiliates.com
+2025-06-30 09:49:23,885 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 09:49:23,888 [INFO] Found 127 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 09:49:26,411 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 09:49:26,415 [INFO] Found 127 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 09:49:47,829 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 09:49:47,831 [INFO] Found 127 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 09:50:09,653 [INFO] Fetching patients for tenant_id: avikanak.bkr@gmail.com
+2025-06-30 09:50:09,655 [INFO] Found 0 patients for tenant avikanak.bkr@gmail.com
+2025-06-30 09:50:12,225 [INFO] Fetching patients for tenant_id: avikanak.bkr@gmail.com
+2025-06-30 09:50:12,227 [INFO] Found 0 patients for tenant avikanak.bkr@gmail.com
+2025-06-30 09:50:20,628 [INFO] Handling POST request for /api/visit/start
+2025-06-30 09:50:20,629 [ERROR] Active subscription required for email: avikanak.bkr@gmail.com
+2025-06-30 09:50:33,861 [INFO] Handling POST request for /api/visit/start
+2025-06-30 09:50:33,861 [ERROR] Active subscription required for email: avikanak.bkr@gmail.com
+2025-06-30 09:50:38,983 [INFO] Handling POST request for /api/visit/start
+2025-06-30 09:50:38,983 [ERROR] Active subscription required for email: avikanak.bkr@gmail.com
+2025-06-30 09:51:04,693 [INFO] Handling POST request for /api/visit/start
+2025-06-30 09:51:04,693 [ERROR] Active subscription required for email: avikanak.bkr@gmail.com
+2025-06-30 09:52:21,740 [INFO] Fetching patients for tenant_id: avikanak.bkr@gmail.com
+2025-06-30 09:52:21,742 [INFO] Found 0 patients for tenant avikanak.bkr@gmail.com
+2025-06-30 09:52:53,915 [INFO] Handling POST request for /api/visit/start
+2025-06-30 09:52:53,917 [INFO] Patient Avi not found, creating new patient
+2025-06-30 09:52:53,921 [INFO] Created new patient with ID: 68625e7526c12e8c4a686df9
+2025-06-30 09:52:53,924 [INFO] Visit started: 2f0deee0-1c85-4134-8919-b997d1bac05c for patient 68625e7526c12e8c4a686df9 by doctor@allergyaffiliates.com
+2025-06-30 09:53:32,433 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 09:53:32,435 [INFO] Found 128 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 09:53:33,149 [INFO] Fetching history for patient 68625e7526c12e8c4a686df9 in tenant doctor@allergyaffiliates.com
+2025-06-30 09:53:33,151 [INFO] Retrieved 0 transcripts for patient 68625e7526c12e8c4a686df9 in tenant doctor@allergyaffiliates.com
+2025-06-30 09:53:56,291 [INFO] Fetching history for patient 68625e7526c12e8c4a686df9 in tenant doctor@allergyaffiliates.com
+2025-06-30 09:53:56,293 [INFO] Retrieved 0 transcripts for patient 68625e7526c12e8c4a686df9 in tenant doctor@allergyaffiliates.com
+2025-06-30 09:54:26,136 [INFO] 🔄 Processing Freed-style transcript analysis
+2025-06-30 09:54:26,421 [INFO] Extracted conditions: ['Current medical concerns']
+2025-06-30 09:54:27,049 [INFO] Generated Freed-style plan: Based on the provided transcript and following the strict guidelines, there is no content to generate a treatment plan as no specific conditions or plans were discussed in the transcript provided.
+2025-06-30 09:54:35,754 [INFO] 🔄 Generating structured recommendations...
+2025-06-30 09:54:35,754 [INFO] 🔧 FORCE CREATING structured recommendations
+2025-06-30 09:54:35,754 [INFO] ✅ Generated 2 recommendation categories
+2025-06-30 09:54:35,754 [INFO] ✅ Categories: ['EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES']
+2025-06-30 09:54:35,754 [INFO] 🐛 BACKEND DEBUG: structured_recommendations type: <class 'dict'>
+2025-06-30 09:54:35,754 [INFO] 🐛 BACKEND DEBUG: structured_recommendations content: {'EMERGENCY ACTION PLAN': ['Contact clinic if symptoms worsen before follow-up appointment'], 'PATIENT EDUCATION RESOURCES': ['Educate patient on signs and symptoms of drug allergies', 'Discuss importance of medication adherence and monitoring', 'Provide instructions on proper skin care routine']}
+2025-06-30 09:54:35,754 [INFO] 🐛 BACKEND DEBUG: Is it a dict? True
+2025-06-30 09:54:35,754 [INFO] 🐛 BACKEND DEBUG: Keys: ['EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES']
+2025-06-30 09:54:35,754 [INFO] ✅ Added 2 structured recommendation categories
+2025-06-30 09:54:35,755 [INFO] ✅ Categories: ['EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES']
+2025-06-30 09:54:35,806 [INFO] ✅ Successfully stored Freed-style SOAP notes with structured recommendations
+2025-06-30 09:54:35,810 [INFO] ✅ Stored Freed-style transcript with structured recommendations: 68625edb26c12e8c4a686dfb
+2025-06-30 09:54:36,065 [INFO] Fetching history for patient 68625e7526c12e8c4a686df9 in tenant doctor@allergyaffiliates.com
+2025-06-30 09:54:36,067 [INFO] Retrieved 1 transcripts for patient 68625e7526c12e8c4a686df9 in tenant doctor@allergyaffiliates.com
+2025-06-30 09:55:04,427 [INFO] Fetching history for patient 68625e7526c12e8c4a686df9 in tenant doctor@allergyaffiliates.com
+2025-06-30 09:55:04,428 [INFO] Retrieved 1 transcripts for patient 68625e7526c12e8c4a686df9 in tenant doctor@allergyaffiliates.com
+2025-06-30 09:56:17,121 [INFO] 🔄 Processing Freed-style transcript analysis
+2025-06-30 09:56:17,374 [INFO] Extracted conditions: ['Current medical concerns']
+2025-06-30 09:56:17,999 [INFO] Generated Freed-style plan: Based on the provided transcript, there were no medical conditions or treatment plans discussed. Therefore, there is no treatment plan to document.
+2025-06-30 09:56:20,912 [INFO] 🔄 Generating structured recommendations...
+2025-06-30 09:56:20,913 [INFO] 🔧 FORCE CREATING structured recommendations
+2025-06-30 09:56:20,913 [INFO] ✅ Generated 2 recommendation categories
+2025-06-30 09:56:20,913 [INFO] ✅ Categories: ['EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES']
+2025-06-30 09:56:20,913 [INFO] 🐛 BACKEND DEBUG: structured_recommendations type: <class 'dict'>
+2025-06-30 09:56:20,913 [INFO] 🐛 BACKEND DEBUG: structured_recommendations content: {'EMERGENCY ACTION PLAN': ['Contact clinic if symptoms worsen before follow-up appointment'], 'PATIENT EDUCATION RESOURCES': ['Educate patient on signs and symptoms of drug allergies', 'Discuss importance of medication adherence and monitoring', 'Provide instructions on proper skin care routine']}
+2025-06-30 09:56:20,913 [INFO] 🐛 BACKEND DEBUG: Is it a dict? True
+2025-06-30 09:56:20,913 [INFO] 🐛 BACKEND DEBUG: Keys: ['EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES']
+2025-06-30 09:56:20,913 [INFO] ✅ Added 2 structured recommendation categories
+2025-06-30 09:56:20,913 [INFO] ✅ Categories: ['EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES']
+2025-06-30 09:56:20,962 [INFO] ✅ Successfully stored Freed-style SOAP notes with structured recommendations
+2025-06-30 09:56:20,967 [INFO] ✅ Stored Freed-style transcript with structured recommendations: 68625f4426c12e8c4a686dfc
+2025-06-30 09:56:21,246 [INFO] Fetching history for patient 68625e7526c12e8c4a686df9 in tenant doctor@allergyaffiliates.com
+2025-06-30 09:56:21,247 [INFO] Retrieved 2 transcripts for patient 68625e7526c12e8c4a686df9 in tenant doctor@allergyaffiliates.com
+2025-06-30 09:56:57,680 [INFO] Fetching history for patient 68625e7526c12e8c4a686df9 in tenant doctor@allergyaffiliates.com
+2025-06-30 09:56:57,682 [INFO] Retrieved 2 transcripts for patient 68625e7526c12e8c4a686df9 in tenant doctor@allergyaffiliates.com
+2025-06-30 10:00:22,488 [INFO] Fetching history for patient 68625e7526c12e8c4a686df9 in tenant doctor@allergyaffiliates.com
+2025-06-30 10:00:22,489 [INFO] Retrieved 2 transcripts for patient 68625e7526c12e8c4a686df9 in tenant doctor@allergyaffiliates.com
+2025-06-30 10:05:56,360 [INFO] Fetching patients for tenant_id: avikanak.bkr@gmail.com
+2025-06-30 10:05:56,361 [INFO] Found 0 patients for tenant avikanak.bkr@gmail.com
+2025-06-30 10:05:59,147 [INFO] Fetching patients for tenant_id: avikanak.bkr@gmail.com
+2025-06-30 10:05:59,149 [INFO] Found 0 patients for tenant avikanak.bkr@gmail.com
+2025-06-30 10:06:07,087 [INFO] Handling POST request for /api/visit/start
+2025-06-30 10:06:07,087 [ERROR] Active subscription required for email: avikanak.bkr@gmail.com
+2025-06-30 10:06:21,171 [INFO] Handling POST request for /api/visit/start
+2025-06-30 10:06:21,171 [ERROR] Active subscription required for email: avikanak.bkr@gmail.com
+2025-06-30 10:07:25,250 [INFO] Handling POST request for /api/visit/start
+2025-06-30 10:07:25,250 [ERROR] Active subscription required for email: avikanak.bkr@gmail.com
+2025-06-30 10:12:58,082 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 10:12:58,085 [INFO] Found 128 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 10:12:59,988 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 10:12:59,990 [INFO] Found 128 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 10:13:02,380 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 10:13:02,383 [INFO] Found 128 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 10:13:04,884 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 10:13:04,887 [INFO] Found 128 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 10:13:36,149 [INFO] Handling POST request for /api/visit/start
+2025-06-30 10:13:36,151 [INFO] Using existing patient ID: 68625bb826c12e8c4a686df5
+2025-06-30 10:13:36,155 [INFO] Visit started: d3f5b0d1-5ae5-4706-85ec-de461fb0a600 for patient 68625bb826c12e8c4a686df5 by doctor@allergyaffiliates.com
+2025-06-30 10:14:15,068 [INFO] Fetching patients for tenant_id: avikanak.bkr@gmail.com
+2025-06-30 10:14:15,070 [INFO] Found 0 patients for tenant avikanak.bkr@gmail.com
+2025-06-30 10:14:17,796 [INFO] Fetching patients for tenant_id: avikanak.bkr@gmail.com
+2025-06-30 10:14:17,799 [INFO] Found 0 patients for tenant avikanak.bkr@gmail.com
+2025-06-30 10:14:41,739 [INFO] Handling POST request for /api/visit/start
+2025-06-30 10:14:41,739 [ERROR] Active subscription required for email: avikanak.bkr@gmail.com
+2025-06-30 10:17:37,595 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 10:17:37,598 [INFO] Found 128 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 10:17:38,214 [INFO] Fetching history for patient 68625bb826c12e8c4a686df5 in tenant doctor@allergyaffiliates.com
+2025-06-30 10:17:38,216 [INFO] Retrieved 1 transcripts for patient 68625bb826c12e8c4a686df5 in tenant doctor@allergyaffiliates.com
+2025-06-30 10:18:24,939 [INFO] Handling POST request for /api/visit/start
+2025-06-30 10:18:24,941 [INFO] Using existing patient ID: 68625bb826c12e8c4a686df5
+2025-06-30 10:18:24,945 [INFO] Visit started: 845d6c42-4b21-42a3-988f-a125a8539faf for patient 68625bb826c12e8c4a686df5 by doctor@allergyaffiliates.com
+2025-06-30 10:19:27,198 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 10:19:27,200 [INFO] Found 128 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 10:19:27,734 [INFO] Fetching history for patient 68625bb826c12e8c4a686df5 in tenant doctor@allergyaffiliates.com
+2025-06-30 10:19:27,742 [INFO] Retrieved 1 transcripts for patient 68625bb826c12e8c4a686df5 in tenant doctor@allergyaffiliates.com
+2025-06-30 10:23:36,584 [INFO] Handling POST request for /api/visit/start
+2025-06-30 10:23:36,585 [ERROR] Active subscription required for email: avikanak.bkr@gmail.com
+2025-06-30 10:28:11,637 [INFO] Handling POST request for /api/visit/start
+2025-06-30 10:28:11,637 [ERROR] Active subscription required for email: avikanak.bkr@gmail.com
+2025-06-30 10:31:40,378 [INFO] Handling POST request for /api/visit/start
+2025-06-30 10:31:40,378 [ERROR] Active subscription required for email: avikanak.bkr@gmail.com
+2025-06-30 10:33:38,704 [INFO] Handling POST request for /api/visit/start
+2025-06-30 10:33:38,704 [ERROR] Active subscription required for email: avikanak.bkr@gmail.com
+2025-06-30 10:34:08,209 [INFO] Handling POST request for /api/visit/start
+2025-06-30 10:34:08,210 [ERROR] Active subscription required for email: avikanak.bkr@gmail.com
+2025-06-30 10:42:17,581 [INFO] Handling POST request for /api/visit/start
+2025-06-30 10:42:17,581 [ERROR] Active subscription required for email: avikanak.bkr@gmail.com
+2025-06-30 10:44:48,099 [INFO] Handling POST request for /api/visit/start
+2025-06-30 10:44:48,099 [ERROR] Active subscription required for email: avikanak.bkr@gmail.com
+2025-06-30 10:46:25,365 [INFO] Handling POST request for /api/visit/start
+2025-06-30 10:46:25,365 [ERROR] Active subscription required for email: avikanak.bkr@gmail.com
+2025-06-30 10:51:32,062 [INFO] Handling POST request for /api/visit/start
+2025-06-30 10:51:32,062 [ERROR] Active subscription required for email: avikanak.bkr@gmail.com
+2025-06-30 10:52:05,184 [INFO] Handling POST request for /api/visit/start
+2025-06-30 10:52:05,184 [ERROR] Active subscription required for email: avikanak.bkr@gmail.com
+2025-06-30 10:57:34,748 [INFO] Fetching patients for tenant_id: avikanak.bkr@gmail.com
+2025-06-30 10:57:34,750 [INFO] Found 0 patients for tenant avikanak.bkr@gmail.com
+2025-06-30 10:57:37,731 [INFO] Fetching patients for tenant_id: avikanak.bkr@gmail.com
+2025-06-30 10:57:37,732 [INFO] Found 0 patients for tenant avikanak.bkr@gmail.com
+2025-06-30 10:57:42,348 [INFO] Handling POST request for /api/visit/start
+2025-06-30 10:57:42,349 [ERROR] Active subscription required for email: avikanak.bkr@gmail.com
+2025-06-30 10:59:55,541 [INFO] Handling POST request for /api/visit/start
+2025-06-30 10:59:55,541 [ERROR] Active subscription required for email: avikanak.bkr@gmail.com
+2025-06-30 11:08:49,803 [INFO] Fetching patients for tenant_id: avikanak.bkr@gmail.com
+2025-06-30 11:08:49,804 [INFO] Found 0 patients for tenant avikanak.bkr@gmail.com
+2025-06-30 11:08:52,521 [INFO] Fetching patients for tenant_id: avikanak.bkr@gmail.com
+2025-06-30 11:08:52,523 [INFO] Found 0 patients for tenant avikanak.bkr@gmail.com
+2025-06-30 11:09:51,981 [INFO] Handling POST request for /api/visit/start
+2025-06-30 11:09:51,981 [ERROR] Active subscription required for email: avikanak.bkr@gmail.com
+2025-06-30 11:11:31,050 [INFO] Handling POST request for /api/visit/start
+2025-06-30 11:11:31,050 [ERROR] Active subscription required for email: avikanak.bkr@gmail.com
+2025-06-30 11:14:18,817 [INFO] Handling POST request for /api/visit/start
+2025-06-30 11:14:18,817 [ERROR] Active subscription required for email: avikanak.bkr@gmail.com
+2025-06-30 11:16:29,644 [INFO] Handling POST request for /api/visit/start
+2025-06-30 11:16:29,644 [ERROR] Active subscription required for email: avikanak.bkr@gmail.com
+2025-06-30 11:17:38,252 [INFO] Handling POST request for /api/visit/start
+2025-06-30 11:17:38,253 [ERROR] Active subscription required for email: avikanak.bkr@gmail.com
+2025-06-30 12:49:40,072 [INFO] Handling POST request for /api/visit/start
+2025-06-30 12:49:40,076 [ERROR] Active subscription required for email: avikanak.bkr@gmail.com
+2025-06-30 12:53:37,120 [INFO] Fetching history for patient 68625bb826c12e8c4a686df5 in tenant doctor@allergyaffiliates.com
+2025-06-30 12:53:37,123 [INFO] Retrieved 1 transcripts for patient 68625bb826c12e8c4a686df5 in tenant doctor@allergyaffiliates.com
+2025-06-30 12:53:56,844 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 12:53:56,847 [INFO] Found 128 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 12:53:59,418 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 12:53:59,421 [INFO] Found 128 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 12:54:03,978 [INFO] Fetching history for patient 68625e7526c12e8c4a686df9 in tenant doctor@allergyaffiliates.com
+2025-06-30 12:54:03,980 [INFO] Retrieved 2 transcripts for patient 68625e7526c12e8c4a686df9 in tenant doctor@allergyaffiliates.com
+2025-06-30 12:57:23,499 [INFO] Fetching history for patient 68625e7526c12e8c4a686df9 in tenant doctor@allergyaffiliates.com
+2025-06-30 12:57:23,500 [INFO] Retrieved 2 transcripts for patient 68625e7526c12e8c4a686df9 in tenant doctor@allergyaffiliates.com
+2025-06-30 12:57:33,079 [INFO] Fetching history for patient 68625e7526c12e8c4a686df9 in tenant doctor@allergyaffiliates.com
+2025-06-30 12:57:33,080 [INFO] Retrieved 2 transcripts for patient 68625e7526c12e8c4a686df9 in tenant doctor@allergyaffiliates.com
+2025-06-30 12:59:24,490 [INFO] Fetching patients for tenant_id: default_tenant
+2025-06-30 12:59:24,492 [INFO] Found 0 patients for tenant default_tenant
+2025-06-30 13:00:19,007 [INFO] Fetching patients for tenant_id: default_tenant
+2025-06-30 13:00:19,008 [INFO] Found 0 patients for tenant default_tenant
+2025-06-30 13:03:44,702 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 13:03:44,705 [INFO] Found 128 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 13:07:58,600 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 13:07:58,603 [INFO] Found 128 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 13:14:55,180 [INFO] Fetching history for patient 68625bb826c12e8c4a686df5 in tenant doctor@allergyaffiliates.com
+2025-06-30 13:14:55,182 [INFO] Retrieved 1 transcripts for patient 68625bb826c12e8c4a686df5 in tenant doctor@allergyaffiliates.com
+2025-06-30 13:15:28,977 [INFO] Deleted patient 68625bb826c12e8c4a686df5 and associated data in tenant doctor@allergyaffiliates.com
+2025-06-30 13:19:21,168 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 13:19:21,171 [INFO] Found 127 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 13:19:23,740 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 13:19:23,743 [INFO] Found 127 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 13:19:32,579 [INFO] Handling POST request for /api/visit/start
+2025-06-30 13:19:32,581 [INFO] Patient test130 not found, creating new patient
+2025-06-30 13:19:32,585 [INFO] Created new patient with ID: 68628ee426c12e8c4a686dff
+2025-06-30 13:19:32,589 [INFO] Visit started: ef47acc3-453f-4975-82c2-965bc24cc38b for patient 68628ee426c12e8c4a686dff by doctor@allergyaffiliates.com
+2025-06-30 13:19:33,854 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 13:19:33,856 [INFO] Found 128 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 13:19:33,993 [INFO] Fetching history for patient 68628ee426c12e8c4a686dff in tenant doctor@allergyaffiliates.com
+2025-06-30 13:19:33,994 [INFO] Retrieved 0 transcripts for patient 68628ee426c12e8c4a686dff in tenant doctor@allergyaffiliates.com
+2025-06-30 13:21:58,346 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 13:21:58,349 [INFO] Found 128 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 13:22:08,998 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 13:22:09,001 [INFO] Found 128 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 13:22:11,499 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 13:22:11,502 [INFO] Found 128 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 13:22:15,560 [INFO] Fetching history for patient 68625e7526c12e8c4a686df9 in tenant doctor@allergyaffiliates.com
+2025-06-30 13:22:15,561 [INFO] Retrieved 2 transcripts for patient 68625e7526c12e8c4a686df9 in tenant doctor@allergyaffiliates.com
+2025-06-30 13:22:27,063 [INFO] Fetching history for patient 68628ee426c12e8c4a686dff in tenant doctor@allergyaffiliates.com
+2025-06-30 13:22:27,065 [INFO] Retrieved 0 transcripts for patient 68628ee426c12e8c4a686dff in tenant doctor@allergyaffiliates.com
+2025-06-30 13:22:45,808 [INFO] Fetching history for patient 68625e7526c12e8c4a686df9 in tenant doctor@allergyaffiliates.com
+2025-06-30 13:22:45,810 [INFO] Retrieved 2 transcripts for patient 68625e7526c12e8c4a686df9 in tenant doctor@allergyaffiliates.com
+2025-06-30 13:24:27,977 [INFO] Handling POST request for /api/visit/start
+2025-06-30 13:24:27,979 [INFO] Patient pankajhhggs not found, creating new patient
+2025-06-30 13:24:27,983 [INFO] Created new patient with ID: 6862900b26c12e8c4a686e01
+2025-06-30 13:24:27,987 [INFO] Visit started: dd0196a1-f477-48ef-a9ed-53c134c2a4b5 for patient 6862900b26c12e8c4a686e01 by doctor@allergyaffiliates.com
+2025-06-30 13:24:30,777 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 13:24:30,781 [INFO] Found 129 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 13:24:30,898 [INFO] Fetching history for patient 6862900b26c12e8c4a686e01 in tenant doctor@allergyaffiliates.com
+2025-06-30 13:24:30,900 [INFO] Retrieved 0 transcripts for patient 6862900b26c12e8c4a686e01 in tenant doctor@allergyaffiliates.com
+2025-06-30 13:24:40,016 [INFO] 🔄 Processing Freed-style transcript analysis
+2025-06-30 13:24:40,528 [INFO] Extracted conditions: ['nut allergies', 'egg allergy']
+2025-06-30 13:24:43,055 [INFO] Generated Freed-style plan: In regards to nut allergies:
+* Patient needs to come for 4 different appointments for oral food challenges with almonds, cashews, walnuts, and peanuts.
+* For almonds, patient will bring Barney's almond butter.
+* For cashews, patient will bring Sunshine cashews.
+* Walnuts will be provided by the office.
+* After passing the cashew challenge, patient can try pistachio at home.
+* After passing the walnut challenge, patient can try pecans at home.
+* After completing all nut challenges, patient can try peanut butter.
+* Patient needs to make appointments and can reschedule if needed.
+
+In regards to egg allergy:
+* Patient should avoid fresh egg if it causes itching and continue with baked egg in cookies and cake.
+* In 6 months, patient will come for an egg challenge in the office.
+* If mom is okay with giving half an egg and there is no reaction, patient can continue to do that.
+* Patient will repeat the test orally to see what happens.
+2025-06-30 13:24:54,765 [INFO] 🔄 Generating structured recommendations...
+2025-06-30 13:24:54,765 [INFO] 🔧 FORCE CREATING structured recommendations
+2025-06-30 13:24:54,765 [INFO] ✅ Generated 2 recommendation categories
+2025-06-30 13:24:54,765 [INFO] ✅ Categories: ['EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES']
+2025-06-30 13:24:54,765 [INFO] 🐛 BACKEND DEBUG: structured_recommendations type: <class 'dict'>
+2025-06-30 13:24:54,765 [INFO] 🐛 BACKEND DEBUG: structured_recommendations content: {'EMERGENCY ACTION PLAN': ['Contact clinic if symptoms worsen before follow-up appointment'], 'PATIENT EDUCATION RESOURCES': ['Educate patient on signs and symptoms of drug allergies', 'Discuss importance of medication adherence and monitoring', 'Provide instructions on proper skin care routine']}
+2025-06-30 13:24:54,765 [INFO] 🐛 BACKEND DEBUG: Is it a dict? True
+2025-06-30 13:24:54,765 [INFO] 🐛 BACKEND DEBUG: Keys: ['EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES']
+2025-06-30 13:24:54,765 [INFO] ✅ Added 2 structured recommendation categories
+2025-06-30 13:24:54,765 [INFO] ✅ Categories: ['EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES']
+2025-06-30 13:24:54,816 [INFO] ✅ Successfully stored Freed-style SOAP notes with structured recommendations
+2025-06-30 13:24:54,822 [INFO] ✅ Stored Freed-style transcript with structured recommendations: 6862902626c12e8c4a686e03
+2025-06-30 13:24:54,877 [INFO] Fetching history for patient 6862900b26c12e8c4a686e01 in tenant doctor@allergyaffiliates.com
+2025-06-30 13:24:54,878 [INFO] Retrieved 1 transcripts for patient 6862900b26c12e8c4a686e01 in tenant doctor@allergyaffiliates.com
+2025-06-30 13:24:54,940 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 13:24:54,954 [INFO] Found 0 insights for patient 6862900b26c12e8c4a686e01 using GSI
+2025-06-30 13:24:55,040 [INFO] Handling GET request for /get-insights
+2025-06-30 13:24:55,040 [WARNING] Email parameter missing, using fallback
+2025-06-30 13:24:55,040 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 13:24:55,046 [INFO] Simplified diagnoses for searching: ['Food allergies to peanuts']
+2025-06-30 13:24:55,046 [INFO] Processing diagnosis: Food allergies to peanuts
+2025-06-30 13:24:57,335 [INFO] Fetched 1 insights from Semantic Scholar for condition: Food allergies to peanuts
+2025-06-30 13:25:01,639 [INFO] Fetched 1 insights from PubMed for condition: Food allergies to peanuts
+2025-06-30 13:25:03,640 [INFO] Returning 2 insights for patient 6862900b26c12e8c4a686e01
+2025-06-30 13:29:14,736 [ERROR] Error processing /api/delete-patient request: 415 Unsupported Media Type: Did not attempt to load JSON data because the request Content-Type was not 'application/json'.
+2025-06-30 13:30:02,198 [INFO] 🔄 Processing Freed-style transcript analysis
+2025-06-30 13:30:02,963 [INFO] Extracted conditions: ['eczema', 'hand, foot and mouth']
+2025-06-30 13:30:06,042 [INFO] Generated Freed-style plan: In regards to eczema:
+* Use Eucrisa twice a day as currently prescribed
+* Start triamcinolone ointment on the body and hydrocortisone on the face, to be used for 5-7 days at a time with 3-day breaks, applied twice a day
+* Moisturize with Cera VE or Vanicream at least two to three times a day, whole body, especially after showers
+* Use Vaseline (petroleum jelly) at night, covering her with full pajamas and mittens or socks on her feet and legs to prevent scratching
+* Consider using serene wraps on the worse areas to improve moisture absorption
+* Start hydroxyzine at bedtime, 5ML for 2 weeks to help with itching and sleep
+* Undergo allergy testing for environmental allergens including pollen, cat, dog, and dust mites to see if they are worsening the eczema
+* Follow-up in 2 weeks to assess progress
+
+In regards to hand, foot and mouth:
+* Discussed - plan to be determined
+2025-06-30 13:30:17,208 [INFO] 🔄 Generating structured recommendations...
+2025-06-30 13:30:17,210 [INFO] 🔧 FORCE CREATING structured recommendations
+2025-06-30 13:30:17,210 [INFO] ✅ Generated 5 recommendation categories
+2025-06-30 13:30:17,210 [INFO] ✅ Categories: ['MEDICATION MANAGEMENT', 'LIFESTYLE MODIFICATIONS', 'EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES', 'FOLLOW-UP SCHEDULE']
+2025-06-30 13:30:17,210 [INFO] 🐛 BACKEND DEBUG: structured_recommendations type: <class 'dict'>
+2025-06-30 13:30:17,210 [INFO] 🐛 BACKEND DEBUG: structured_recommendations content: {'MEDICATION MANAGEMENT': ['Continue iron supplementation for anemia'], 'LIFESTYLE MODIFICATIONS': ['Use free and clear detergent products', 'Moisturize twice daily with fragrance-free products like Vanicream or Vaseline', 'Apply sunscreen when going outdoors'], 'EMERGENCY ACTION PLAN': ['Contact clinic if symptoms worsen before follow-up appointment'], 'PATIENT EDUCATION RESOURCES': ['Educate patient on signs and symptoms of drug allergies', 'Discuss importance of medication adherence and monitoring', 'Provide instructions on proper skin care routine'], 'FOLLOW-UP SCHEDULE': ['Return for follow-up appointment in 2 weeks', 'See primary care physician on Tuesday to discuss blood pressure medication change']}
+2025-06-30 13:30:17,210 [INFO] 🐛 BACKEND DEBUG: Is it a dict? True
+2025-06-30 13:30:17,210 [INFO] 🐛 BACKEND DEBUG: Keys: ['MEDICATION MANAGEMENT', 'LIFESTYLE MODIFICATIONS', 'EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES', 'FOLLOW-UP SCHEDULE']
+2025-06-30 13:30:17,210 [INFO] ✅ Added 5 structured recommendation categories
+2025-06-30 13:30:17,210 [INFO] ✅ Categories: ['MEDICATION MANAGEMENT', 'LIFESTYLE MODIFICATIONS', 'EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES', 'FOLLOW-UP SCHEDULE']
+2025-06-30 13:30:17,261 [INFO] ✅ Successfully stored Freed-style SOAP notes with structured recommendations
+2025-06-30 13:30:17,266 [INFO] ✅ Stored Freed-style transcript with structured recommendations: 6862916926c12e8c4a686e04
+2025-06-30 13:30:17,334 [INFO] Fetching history for patient 68628ee426c12e8c4a686dff in tenant doctor@allergyaffiliates.com
+2025-06-30 13:30:17,336 [INFO] Retrieved 1 transcripts for patient 68628ee426c12e8c4a686dff in tenant doctor@allergyaffiliates.com
+2025-06-30 13:31:07,104 [INFO] Fetching history for patient 68628ee426c12e8c4a686dff in tenant doctor@allergyaffiliates.com
+2025-06-30 13:31:07,107 [INFO] Retrieved 1 transcripts for patient 68628ee426c12e8c4a686dff in tenant doctor@allergyaffiliates.com
+2025-06-30 13:36:29,164 [INFO] Handling POST request for /api/visit/start
+2025-06-30 13:36:29,165 [INFO] Patient test131 not found, creating new patient
+2025-06-30 13:36:29,169 [INFO] Created new patient with ID: 686292dd26c12e8c4a686e05
+2025-06-30 13:36:29,172 [INFO] Visit started: 82b65011-57fe-4edd-9218-7215baad2387 for patient 686292dd26c12e8c4a686e05 by doctor@allergyaffiliates.com
+2025-06-30 13:36:30,382 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 13:36:30,385 [INFO] Found 130 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 13:36:30,522 [INFO] Fetching history for patient 686292dd26c12e8c4a686e05 in tenant doctor@allergyaffiliates.com
+2025-06-30 13:36:30,524 [INFO] Retrieved 0 transcripts for patient 686292dd26c12e8c4a686e05 in tenant doctor@allergyaffiliates.com
+2025-06-30 13:40:04,424 [ERROR] Error processing /api/delete-patient request: 415 Unsupported Media Type: Did not attempt to load JSON data because the request Content-Type was not 'application/json'.
+2025-06-30 13:42:17,202 [INFO] 🔄 Processing Freed-style transcript analysis
+2025-06-30 13:42:18,026 [INFO] Extracted conditions: ['peanut allergy', 'tree nut allergy', 'hazelnut allergy', 'environmental allergies', 'seasonal allergies', 'eczema']
+2025-06-30 13:42:22,136 [INFO] Generated Freed-style plan: In regards to peanut allergy:
+* Discussed - plan to be determined
+* Will test for peanuts
+* Mentioned Xolair as a drug approved for peanut allergy to prevent anaphylactic reaction if accidentally eaten, but it won't cure the allergy
+* Mentioned peanut powder as an approved treatment for peanut allergy
+
+In regards to tree nut allergy:
+* Discussed - plan to be determined
+* Will test for tree nuts
+* Mentioned Xolair as a drug approved for tree nut allergy to prevent anaphylactic reaction if accidentally eaten, but it won't cure the allergy
+
+In regards to hazelnut allergy:
+* Discussed - plan to be determined
+* Will test for hazelnut
+
+In regards to environmental allergies:
+* Discussed - plan to be determined
+* Will test for environmental allergies
+* Patient experiences sneezing, runny nose, itchy eyes, especially in spring and summer
+
+In regards to seasonal allergies:
+* Discussed - plan to be determined
+* Will test for seasonal allergies
+* Patient experiences symptoms right now and in spring and summer
+
+In regards to eczema:
+* Discussed - plan to be determined
+* Patient has dry skin and some eczema on the right finger, but it's not itchy
+* Recommended using just soap for the dry skin
+2025-06-30 13:42:32,372 [INFO] 🔄 Generating structured recommendations...
+2025-06-30 13:42:32,372 [INFO] 🔧 FORCE CREATING structured recommendations
+2025-06-30 13:42:32,372 [INFO] ✅ Generated 3 recommendation categories
+2025-06-30 13:42:32,372 [INFO] ✅ Categories: ['MEDICATION MANAGEMENT', 'EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES']
+2025-06-30 13:42:32,372 [INFO] 🐛 BACKEND DEBUG: structured_recommendations type: <class 'dict'>
+2025-06-30 13:42:32,372 [INFO] 🐛 BACKEND DEBUG: structured_recommendations content: {'MEDICATION MANAGEMENT': ['Continue iron supplementation for anemia'], 'EMERGENCY ACTION PLAN': ['Contact clinic if symptoms worsen before follow-up appointment'], 'PATIENT EDUCATION RESOURCES': ['Educate patient on signs and symptoms of drug allergies', 'Discuss importance of medication adherence and monitoring', 'Provide instructions on proper skin care routine']}
+2025-06-30 13:42:32,372 [INFO] 🐛 BACKEND DEBUG: Is it a dict? True
+2025-06-30 13:42:32,372 [INFO] 🐛 BACKEND DEBUG: Keys: ['MEDICATION MANAGEMENT', 'EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES']
+2025-06-30 13:42:32,372 [INFO] ✅ Added 3 structured recommendation categories
+2025-06-30 13:42:32,372 [INFO] ✅ Categories: ['MEDICATION MANAGEMENT', 'EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES']
+2025-06-30 13:42:32,422 [INFO] ✅ Successfully stored Freed-style SOAP notes with structured recommendations
+2025-06-30 13:42:32,427 [INFO] ✅ Stored Freed-style transcript with structured recommendations: 6862944826c12e8c4a686e07
+2025-06-30 13:42:32,495 [INFO] Fetching history for patient 686292dd26c12e8c4a686e05 in tenant doctor@allergyaffiliates.com
+2025-06-30 13:42:32,497 [INFO] Retrieved 1 transcripts for patient 686292dd26c12e8c4a686e05 in tenant doctor@allergyaffiliates.com
+2025-06-30 13:42:32,565 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 13:42:32,573 [INFO] Handling GET request for /get-insights
+2025-06-30 13:42:32,574 [WARNING] Email parameter missing, using fallback
+2025-06-30 13:42:32,574 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 13:42:32,580 [INFO] Found 0 insights for patient 686292dd26c12e8c4a686e05 using GSI
+2025-06-30 13:42:32,622 [INFO] Simplified diagnoses for searching: ['Peanut and tree nut allergy', 'Seasonal environmental allergies', 'Contact dermatitis']
+2025-06-30 13:42:32,623 [INFO] Processing diagnosis: Peanut and tree nut allergy
+2025-06-30 13:42:34,062 [INFO] Fetched 1 insights from Semantic Scholar for condition: Peanut and tree nut allergy
+2025-06-30 13:42:35,657 [INFO] Handling POST request for /api/visit/start
+2025-06-30 13:42:35,658 [INFO] Patient test132 not found, creating new patient
+2025-06-30 13:42:35,661 [INFO] Created new patient with ID: 6862944b26c12e8c4a686e08
+2025-06-30 13:42:35,664 [INFO] Visit started: b01caeef-9d3c-46b9-9e13-e65dde49bb2a for patient 6862944b26c12e8c4a686e08 by doctor@allergyaffiliates.com
+2025-06-30 13:42:36,977 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 13:42:36,982 [INFO] Found 131 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 13:42:37,117 [INFO] Fetching history for patient 6862944b26c12e8c4a686e08 in tenant doctor@allergyaffiliates.com
+2025-06-30 13:42:37,119 [INFO] Retrieved 0 transcripts for patient 6862944b26c12e8c4a686e08 in tenant doctor@allergyaffiliates.com
+2025-06-30 13:42:38,315 [INFO] Fetched 1 insights from PubMed for condition: Peanut and tree nut allergy
+2025-06-30 13:42:40,315 [INFO] Processing diagnosis: Seasonal environmental allergies
+2025-06-30 13:42:41,406 [WARNING] Rate limited by Semantic Scholar for 'Seasonal environmental allergies', skipping
+2025-06-30 13:42:45,776 [INFO] Fetched 1 insights from PubMed for condition: Seasonal environmental allergies
+2025-06-30 13:42:47,777 [INFO] Returning 3 insights for patient 686292dd26c12e8c4a686e05
+2025-06-30 13:43:23,846 [ERROR] Error processing /api/delete-patient request: 415 Unsupported Media Type: Did not attempt to load JSON data because the request Content-Type was not 'application/json'.
+2025-06-30 13:44:24,998 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 13:44:25,001 [INFO] Found 131 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 13:44:27,587 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 13:44:27,590 [INFO] Found 131 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 13:44:35,081 [INFO] Fetching history for patient 6862944b26c12e8c4a686e08 in tenant doctor@allergyaffiliates.com
+2025-06-30 13:44:35,083 [INFO] Retrieved 0 transcripts for patient 6862944b26c12e8c4a686e08 in tenant doctor@allergyaffiliates.com
+2025-06-30 13:44:48,080 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 13:44:48,083 [INFO] Found 131 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 13:44:50,592 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 13:44:50,597 [INFO] Found 131 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 13:47:26,513 [INFO] 🔄 Processing Freed-style transcript analysis
+2025-06-30 13:47:27,734 [INFO] Extracted conditions: ['allergy', 'environmental allergies', 'hives', 'itchy tongue', 'seasonal allergies', 'itchy eyes', 'nasal congestion', 'eczema', 'asthma', 'infection', 'drug allergy', 'itching', 'itchy chest']
+2025-06-30 13:47:31,152 [INFO] Generated Freed-style plan: In regards to allergy:
+* Discussed - plan to be determined
+
+In regards to environmental allergies:
+* Discussed - plan to be determined
+
+In regards to hives:
+* Discussed - plan to be determined
+
+In regards to itchy tongue:
+* Discussed - plan to be determined
+
+In regards to seasonal allergies:
+* Discussed - plan to be determined
+
+In regards to itchy eyes:
+* Discussed - plan to be determined
+
+In regards to nasal congestion:
+* Discussed - plan to be determined
+
+In regards to eczema:
+* Discussed - plan to be determined
+
+In regards to asthma:
+* Discussed - plan to be determined
+
+In regards to infection:
+* Discussed - plan to be determined
+
+In regards to drug allergy:
+* Discussed - plan to be determined
+
+In regards to itching:
+* Discussed - plan to be determined
+
+In regards to itchy chest:
+* Discussed - plan to be determined
+
+In regards to food allergy testing:
+* Will test for peanut and tree nuts
+* Will perform skin testing on the back
+* Nurse will be in to conduct the test
+2025-06-30 13:47:39,729 [INFO] 🔄 Generating structured recommendations...
+2025-06-30 13:47:39,729 [INFO] 🔧 FORCE CREATING structured recommendations
+2025-06-30 13:47:39,729 [INFO] ✅ Generated 3 recommendation categories
+2025-06-30 13:47:39,729 [INFO] ✅ Categories: ['MEDICATION MANAGEMENT', 'EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES']
+2025-06-30 13:47:39,729 [INFO] 🐛 BACKEND DEBUG: structured_recommendations type: <class 'dict'>
+2025-06-30 13:47:39,729 [INFO] 🐛 BACKEND DEBUG: structured_recommendations content: {'MEDICATION MANAGEMENT': ['Continue iron supplementation for anemia'], 'EMERGENCY ACTION PLAN': ['Contact clinic if symptoms worsen before follow-up appointment'], 'PATIENT EDUCATION RESOURCES': ['Educate patient on signs and symptoms of drug allergies', 'Discuss importance of medication adherence and monitoring', 'Provide instructions on proper skin care routine']}
+2025-06-30 13:47:39,730 [INFO] 🐛 BACKEND DEBUG: Is it a dict? True
+2025-06-30 13:47:39,730 [INFO] 🐛 BACKEND DEBUG: Keys: ['MEDICATION MANAGEMENT', 'EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES']
+2025-06-30 13:47:39,730 [INFO] ✅ Added 3 structured recommendation categories
+2025-06-30 13:47:39,730 [INFO] ✅ Categories: ['MEDICATION MANAGEMENT', 'EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES']
+2025-06-30 13:47:39,782 [INFO] ✅ Successfully stored Freed-style SOAP notes with structured recommendations
+2025-06-30 13:47:39,790 [INFO] ✅ Stored Freed-style transcript with structured recommendations: 6862957b26c12e8c4a686e0a
+2025-06-30 13:47:39,856 [INFO] Fetching history for patient 6862944b26c12e8c4a686e08 in tenant doctor@allergyaffiliates.com
+2025-06-30 13:47:39,857 [INFO] Retrieved 1 transcripts for patient 6862944b26c12e8c4a686e08 in tenant doctor@allergyaffiliates.com
+2025-06-30 13:56:47,951 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 13:56:47,954 [INFO] Found 131 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 13:56:50,619 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 13:56:50,622 [INFO] Found 131 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 13:56:52,224 [INFO] Fetching history for patient 686292dd26c12e8c4a686e05 in tenant doctor@allergyaffiliates.com
+2025-06-30 13:56:52,226 [INFO] Retrieved 1 transcripts for patient 686292dd26c12e8c4a686e05 in tenant doctor@allergyaffiliates.com
+2025-06-30 13:56:52,284 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 13:56:52,294 [INFO] Handling GET request for /get-insights
+2025-06-30 13:56:52,296 [WARNING] Email parameter missing, using fallback
+2025-06-30 13:56:52,296 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 13:56:52,358 [INFO] Simplified diagnoses for searching: ['Peanut and tree nut allergy', 'Seasonal environmental allergies', 'Contact dermatitis']
+2025-06-30 13:56:52,358 [INFO] Processing diagnosis: Peanut and tree nut allergy
+2025-06-30 13:56:52,382 [INFO] Found 0 insights for patient 686292dd26c12e8c4a686e05 using GSI
+2025-06-30 13:56:53,482 [WARNING] Rate limited by Semantic Scholar for 'Peanut and tree nut allergy', skipping
+2025-06-30 13:56:57,737 [INFO] Fetched 1 insights from PubMed for condition: Peanut and tree nut allergy
+2025-06-30 13:56:59,738 [INFO] Processing diagnosis: Seasonal environmental allergies
+2025-06-30 13:57:01,957 [INFO] Fetched 1 insights from Semantic Scholar for condition: Seasonal environmental allergies
+2025-06-30 13:57:06,241 [INFO] Fetched 1 insights from PubMed for condition: Seasonal environmental allergies
+2025-06-30 13:57:08,242 [INFO] Returning 3 insights for patient 686292dd26c12e8c4a686e05
+2025-06-30 13:57:08,549 [INFO] Fetching history for patient 6862944b26c12e8c4a686e08 in tenant doctor@allergyaffiliates.com
+2025-06-30 13:57:08,551 [INFO] Retrieved 1 transcripts for patient 6862944b26c12e8c4a686e08 in tenant doctor@allergyaffiliates.com
+2025-06-30 13:58:59,974 [INFO] Fetching history for patient 686292dd26c12e8c4a686e05 in tenant doctor@allergyaffiliates.com
+2025-06-30 13:58:59,977 [INFO] Retrieved 1 transcripts for patient 686292dd26c12e8c4a686e05 in tenant doctor@allergyaffiliates.com
+2025-06-30 13:59:00,040 [INFO] Handling GET request for /get-insights
+2025-06-30 13:59:00,040 [WARNING] Email parameter missing, using fallback
+2025-06-30 13:59:00,040 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 13:59:00,088 [INFO] Simplified diagnoses for searching: ['Peanut and tree nut allergy', 'Seasonal environmental allergies', 'Contact dermatitis']
+2025-06-30 13:59:00,088 [INFO] Processing diagnosis: Peanut and tree nut allergy
+2025-06-30 13:59:01,790 [INFO] Fetched 1 insights from Semantic Scholar for condition: Peanut and tree nut allergy
+2025-06-30 13:59:06,096 [INFO] Fetched 1 insights from PubMed for condition: Peanut and tree nut allergy
+2025-06-30 13:59:08,096 [INFO] Processing diagnosis: Seasonal environmental allergies
+2025-06-30 13:59:10,070 [INFO] Fetched 1 insights from Semantic Scholar for condition: Seasonal environmental allergies
+2025-06-30 13:59:14,427 [INFO] Fetched 1 insights from PubMed for condition: Seasonal environmental allergies
+2025-06-30 13:59:16,427 [INFO] Returning 4 insights for patient 686292dd26c12e8c4a686e05
+2025-06-30 13:59:19,228 [INFO] Fetching history for patient 6862944b26c12e8c4a686e08 in tenant doctor@allergyaffiliates.com
+2025-06-30 13:59:19,230 [INFO] Retrieved 1 transcripts for patient 6862944b26c12e8c4a686e08 in tenant doctor@allergyaffiliates.com
+2025-06-30 14:12:02,812 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 14:12:02,816 [INFO] Found 131 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 14:19:18,195 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 14:19:18,198 [INFO] Found 131 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 14:19:20,840 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 14:19:20,843 [INFO] Found 131 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 14:19:21,258 [INFO] Fetching history for patient 6862944b26c12e8c4a686e08 in tenant doctor@allergyaffiliates.com
+2025-06-30 14:19:21,261 [INFO] Retrieved 1 transcripts for patient 6862944b26c12e8c4a686e08 in tenant doctor@allergyaffiliates.com
+2025-06-30 14:19:31,966 [INFO] Fetching history for patient 686292dd26c12e8c4a686e05 in tenant doctor@allergyaffiliates.com
+2025-06-30 14:19:31,968 [INFO] Retrieved 1 transcripts for patient 686292dd26c12e8c4a686e05 in tenant doctor@allergyaffiliates.com
+2025-06-30 14:19:32,028 [INFO] Handling GET request for /get-insights
+2025-06-30 14:19:32,028 [WARNING] Email parameter missing, using fallback
+2025-06-30 14:19:32,029 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 14:19:32,029 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 14:19:32,103 [INFO] Simplified diagnoses for searching: ['Peanut and tree nut allergy', 'Seasonal environmental allergies', 'Contact dermatitis']
+2025-06-30 14:19:32,103 [INFO] Processing diagnosis: Peanut and tree nut allergy
+2025-06-30 14:19:32,110 [INFO] Found 0 insights for patient 686292dd26c12e8c4a686e05 using GSI
+2025-06-30 14:19:33,968 [INFO] Fetched 1 insights from Semantic Scholar for condition: Peanut and tree nut allergy
+2025-06-30 14:19:38,308 [INFO] Fetched 1 insights from PubMed for condition: Peanut and tree nut allergy
+2025-06-30 14:19:40,309 [INFO] Processing diagnosis: Seasonal environmental allergies
+2025-06-30 14:19:41,413 [WARNING] Rate limited by Semantic Scholar for 'Seasonal environmental allergies', skipping
+2025-06-30 14:19:46,454 [INFO] Fetched 1 insights from PubMed for condition: Seasonal environmental allergies
+2025-06-30 14:19:48,455 [INFO] Returning 3 insights for patient 686292dd26c12e8c4a686e05
+2025-06-30 14:19:54,310 [INFO] Fetching history for patient 686292dd26c12e8c4a686e05 in tenant doctor@allergyaffiliates.com
+2025-06-30 14:19:54,311 [INFO] Retrieved 1 transcripts for patient 686292dd26c12e8c4a686e05 in tenant doctor@allergyaffiliates.com
+2025-06-30 14:19:54,375 [INFO] Handling GET request for /get-insights
+2025-06-30 14:19:54,375 [WARNING] Email parameter missing, using fallback
+2025-06-30 14:19:54,375 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 14:19:54,379 [INFO] Simplified diagnoses for searching: ['Peanut and tree nut allergy', 'Seasonal environmental allergies', 'Contact dermatitis']
+2025-06-30 14:19:54,379 [INFO] Processing diagnosis: Peanut and tree nut allergy
+2025-06-30 14:19:55,487 [WARNING] Rate limited by Semantic Scholar for 'Peanut and tree nut allergy', skipping
+2025-06-30 14:19:59,772 [INFO] Fetched 1 insights from PubMed for condition: Peanut and tree nut allergy
+2025-06-30 14:20:01,772 [INFO] Processing diagnosis: Seasonal environmental allergies
+2025-06-30 14:20:02,877 [WARNING] Rate limited by Semantic Scholar for 'Seasonal environmental allergies', skipping
+2025-06-30 14:20:04,198 [INFO] Fetching history for patient 686292dd26c12e8c4a686e05 in tenant doctor@allergyaffiliates.com
+2025-06-30 14:20:04,200 [INFO] Retrieved 1 transcripts for patient 686292dd26c12e8c4a686e05 in tenant doctor@allergyaffiliates.com
+2025-06-30 14:20:07,493 [INFO] Fetched 1 insights from PubMed for condition: Seasonal environmental allergies
+2025-06-30 14:20:09,493 [INFO] Returning 2 insights for patient 686292dd26c12e8c4a686e05
+2025-06-30 14:20:09,554 [INFO] Handling GET request for /get-insights
+2025-06-30 14:20:09,554 [WARNING] Email parameter missing, using fallback
+2025-06-30 14:20:09,554 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 14:20:09,562 [INFO] Simplified diagnoses for searching: ['Peanut and tree nut allergy', 'Seasonal environmental allergies', 'Contact dermatitis']
+2025-06-30 14:20:09,562 [INFO] Processing diagnosis: Peanut and tree nut allergy
+2025-06-30 14:20:09,955 [INFO] Fetching history for patient 6862944b26c12e8c4a686e08 in tenant doctor@allergyaffiliates.com
+2025-06-30 14:20:09,957 [INFO] Retrieved 1 transcripts for patient 6862944b26c12e8c4a686e08 in tenant doctor@allergyaffiliates.com
+2025-06-30 14:20:11,194 [INFO] Fetched 1 insights from Semantic Scholar for condition: Peanut and tree nut allergy
+2025-06-30 14:20:15,683 [INFO] Fetched 1 insights from PubMed for condition: Peanut and tree nut allergy
+2025-06-30 14:20:17,683 [INFO] Processing diagnosis: Seasonal environmental allergies
+2025-06-30 14:20:18,781 [WARNING] Rate limited by Semantic Scholar for 'Seasonal environmental allergies', skipping
+2025-06-30 14:20:23,087 [INFO] Fetched 1 insights from PubMed for condition: Seasonal environmental allergies
+2025-06-30 14:20:25,088 [INFO] Returning 3 insights for patient 686292dd26c12e8c4a686e05
+2025-06-30 14:20:51,755 [INFO] Fetching history for patient 6862900b26c12e8c4a686e01 in tenant doctor@allergyaffiliates.com
+2025-06-30 14:20:51,759 [INFO] Retrieved 1 transcripts for patient 6862900b26c12e8c4a686e01 in tenant doctor@allergyaffiliates.com
+2025-06-30 14:20:51,815 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 14:20:51,824 [INFO] Handling GET request for /get-insights
+2025-06-30 14:20:51,824 [WARNING] Email parameter missing, using fallback
+2025-06-30 14:20:51,824 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 14:20:51,827 [INFO] Found 0 insights for patient 6862900b26c12e8c4a686e01 using GSI
+2025-06-30 14:20:51,828 [INFO] Simplified diagnoses for searching: ['Food allergies to peanuts']
+2025-06-30 14:20:51,829 [INFO] Processing diagnosis: Food allergies to peanuts
+2025-06-30 14:20:52,923 [WARNING] Rate limited by Semantic Scholar for 'Food allergies to peanuts', skipping
+2025-06-30 14:20:57,224 [INFO] Fetched 1 insights from PubMed for condition: Food allergies to peanuts
+2025-06-30 14:20:59,225 [INFO] Returning 1 insights for patient 6862900b26c12e8c4a686e01
+2025-06-30 14:21:05,369 [INFO] Fetching history for patient 6862944b26c12e8c4a686e08 in tenant doctor@allergyaffiliates.com
+2025-06-30 14:21:05,371 [INFO] Retrieved 1 transcripts for patient 6862944b26c12e8c4a686e08 in tenant doctor@allergyaffiliates.com
+2025-06-30 14:42:57,743 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 14:42:57,746 [INFO] Found 131 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 14:43:00,330 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 14:43:00,332 [INFO] Found 131 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 14:43:01,973 [INFO] Handling POST request for /api/visit/start
+2025-06-30 14:43:01,977 [INFO] Patient test133 not found, creating new patient
+2025-06-30 14:43:01,983 [INFO] Created new patient with ID: 6862a27526c12e8c4a686e0b
+2025-06-30 14:43:01,996 [INFO] Visit started: 5cee3ba5-518f-4aec-b8f6-4e04c99b3cf4 for patient 6862a27526c12e8c4a686e0b by doctor@allergyaffiliates.com
+2025-06-30 14:43:03,180 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 14:43:03,184 [INFO] Found 132 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 14:43:03,323 [INFO] Fetching history for patient 6862a27526c12e8c4a686e0b in tenant doctor@allergyaffiliates.com
+2025-06-30 14:43:03,325 [INFO] Retrieved 0 transcripts for patient 6862a27526c12e8c4a686e0b in tenant doctor@allergyaffiliates.com
+2025-06-30 14:49:54,620 [INFO] 🔄 Processing Freed-style transcript analysis
+2025-06-30 14:49:55,236 [INFO] Extracted conditions: ['lactose intolerance', 'eczema', 'bronchitis', 'seasonal allergies']
+2025-06-30 14:49:57,637 [INFO] Generated Freed-style plan: In regards to lactose intolerance:
+* Discussed - plan to be determined
+
+In regards to eczema:
+* Offered to do a patch test for contact allergens, which is a three-day process starting on Monday, with follow-up on Wednesday and Thursday
+* Advised to keep skin moisturized
+* Recommended using free and clear soap
+* Offered to prescribe a steroid cream
+
+In regards to bronchitis:
+* Discussed - plan to be determined
+
+In regards to seasonal allergies:
+* Will test for environmental allergens
+* Advised patient to fill out a food allergy testing paper for common foods they eat
+* Recommended avoiding one food group at a time for two to three weeks to identify food intolerances, specifically mentioning gluten, dairy, eggs, soy, peanuts, tree nuts, and seafood
+* Follow-up for patch test results on Wednesday and Thursday
+2025-06-30 14:50:07,604 [INFO] 🔄 Generating structured recommendations...
+2025-06-30 14:50:07,605 [INFO] 🔧 FORCE CREATING structured recommendations
+2025-06-30 14:50:07,605 [INFO] ✅ Generated 4 recommendation categories
+2025-06-30 14:50:07,605 [INFO] ✅ Categories: ['MEDICATION MANAGEMENT', 'LIFESTYLE MODIFICATIONS', 'EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES']
+2025-06-30 14:50:07,605 [INFO] 🐛 BACKEND DEBUG: structured_recommendations type: <class 'dict'>
+2025-06-30 14:50:07,605 [INFO] 🐛 BACKEND DEBUG: structured_recommendations content: {'MEDICATION MANAGEMENT': ['Stop Pepcid as recommended', 'Continue iron supplementation for anemia'], 'LIFESTYLE MODIFICATIONS': ['Use free and clear detergent products', 'Moisturize twice daily with fragrance-free products like Vanicream or Vaseline', 'Apply sunscreen when going outdoors'], 'EMERGENCY ACTION PLAN': ['Contact clinic if symptoms worsen before follow-up appointment'], 'PATIENT EDUCATION RESOURCES': ['Educate patient on signs and symptoms of drug allergies', 'Discuss importance of medication adherence and monitoring', 'Provide instructions on proper skin care routine']}
+2025-06-30 14:50:07,605 [INFO] 🐛 BACKEND DEBUG: Is it a dict? True
+2025-06-30 14:50:07,605 [INFO] 🐛 BACKEND DEBUG: Keys: ['MEDICATION MANAGEMENT', 'LIFESTYLE MODIFICATIONS', 'EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES']
+2025-06-30 14:50:07,605 [INFO] ✅ Added 4 structured recommendation categories
+2025-06-30 14:50:07,605 [INFO] ✅ Categories: ['MEDICATION MANAGEMENT', 'LIFESTYLE MODIFICATIONS', 'EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES']
+2025-06-30 14:50:07,654 [INFO] ✅ Successfully stored Freed-style SOAP notes with structured recommendations
+2025-06-30 14:50:07,659 [INFO] ✅ Stored Freed-style transcript with structured recommendations: 6862a41f26c12e8c4a686e0d
+2025-06-30 14:50:07,726 [INFO] Fetching history for patient 6862a27526c12e8c4a686e0b in tenant doctor@allergyaffiliates.com
+2025-06-30 14:50:07,727 [INFO] Retrieved 1 transcripts for patient 6862a27526c12e8c4a686e0b in tenant doctor@allergyaffiliates.com
+2025-06-30 14:50:07,816 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 14:50:07,832 [INFO] Found 0 insights for patient 6862a27526c12e8c4a686e0b using GSI
+2025-06-30 14:50:07,891 [INFO] Handling GET request for /get-insights
+2025-06-30 14:50:07,891 [WARNING] Email parameter missing, using fallback
+2025-06-30 14:50:07,891 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 14:50:07,896 [INFO] Simplified diagnoses for searching: ['Food intolerance (e.g.']
+2025-06-30 14:50:07,897 [INFO] Processing diagnosis: Food intolerance (e.g.
+2025-06-30 14:50:09,004 [WARNING] Rate limited by Semantic Scholar for 'Food intolerance (e.g.', skipping
+2025-06-30 14:50:13,280 [INFO] Fetched 1 insights from PubMed for condition: Food intolerance (e.g.
+2025-06-30 14:50:15,280 [INFO] Returning 1 insights for patient 6862a27526c12e8c4a686e0b
+2025-06-30 15:19:07,370 [INFO] Handling POST request for /api/visit/start
+2025-06-30 15:19:07,372 [INFO] Patient test134 not found, creating new patient
+2025-06-30 15:19:07,375 [INFO] Created new patient with ID: 6862aaeb26c12e8c4a686e0e
+2025-06-30 15:19:07,379 [INFO] Visit started: e3b66292-8cf9-4c64-a3ec-e80a7ba098c5 for patient 6862aaeb26c12e8c4a686e0e by doctor@allergyaffiliates.com
+2025-06-30 15:19:27,902 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 15:19:27,906 [INFO] Found 133 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 15:19:28,035 [INFO] Fetching history for patient 6862aaeb26c12e8c4a686e0e in tenant doctor@allergyaffiliates.com
+2025-06-30 15:19:28,037 [INFO] Retrieved 0 transcripts for patient 6862aaeb26c12e8c4a686e0e in tenant doctor@allergyaffiliates.com
+2025-06-30 15:21:07,628 [INFO] Fetching history for patient 6862aaeb26c12e8c4a686e0e in tenant doctor@allergyaffiliates.com
+2025-06-30 15:21:07,629 [INFO] Retrieved 0 transcripts for patient 6862aaeb26c12e8c4a686e0e in tenant doctor@allergyaffiliates.com
+2025-06-30 15:21:10,509 [INFO] Fetching history for patient 6862a27526c12e8c4a686e0b in tenant doctor@allergyaffiliates.com
+2025-06-30 15:21:10,511 [INFO] Retrieved 1 transcripts for patient 6862a27526c12e8c4a686e0b in tenant doctor@allergyaffiliates.com
+2025-06-30 15:21:10,594 [INFO] Handling GET request for /get-insights
+2025-06-30 15:21:10,594 [WARNING] Email parameter missing, using fallback
+2025-06-30 15:21:10,594 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 15:21:10,640 [INFO] Simplified diagnoses for searching: ['Food intolerance (e.g.']
+2025-06-30 15:21:10,640 [INFO] Processing diagnosis: Food intolerance (e.g.
+2025-06-30 15:21:11,744 [WARNING] Rate limited by Semantic Scholar for 'Food intolerance (e.g.', skipping
+2025-06-30 15:21:15,015 [INFO] Fetching history for patient 6862aaeb26c12e8c4a686e0e in tenant doctor@allergyaffiliates.com
+2025-06-30 15:21:15,019 [INFO] Retrieved 0 transcripts for patient 6862aaeb26c12e8c4a686e0e in tenant doctor@allergyaffiliates.com
+2025-06-30 15:21:15,948 [INFO] Fetched 1 insights from PubMed for condition: Food intolerance (e.g.
+2025-06-30 15:21:17,948 [INFO] Returning 1 insights for patient 6862a27526c12e8c4a686e0b
+2025-06-30 15:21:21,253 [INFO] Handling POST request for /api/visit/start
+2025-06-30 15:21:21,255 [INFO] Patient test135 not found, creating new patient
+2025-06-30 15:21:21,258 [INFO] Created new patient with ID: 6862ab7126c12e8c4a686e10
+2025-06-30 15:21:21,260 [INFO] Visit started: 61da3688-23c6-4d8a-bee6-c4ed2d71a20e for patient 6862ab7126c12e8c4a686e10 by doctor@allergyaffiliates.com
+2025-06-30 15:21:22,544 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 15:21:22,547 [INFO] Found 134 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 15:21:22,689 [INFO] Fetching history for patient 6862ab7126c12e8c4a686e10 in tenant doctor@allergyaffiliates.com
+2025-06-30 15:21:22,690 [INFO] Retrieved 0 transcripts for patient 6862ab7126c12e8c4a686e10 in tenant doctor@allergyaffiliates.com
+2025-06-30 15:29:40,361 [INFO] 🔄 Processing Freed-style transcript analysis
+2025-06-30 15:29:40,875 [INFO] Extracted conditions: ['Current medical concerns']
+2025-06-30 15:29:41,786 [INFO] Generated Freed-style plan: Based on the provided transcript, no specific medical conditions or treatment plans were discussed. Therefore, there are no entries to be made in the treatment plan format specified.
+2025-06-30 15:29:45,272 [INFO] 🔄 Generating structured recommendations...
+2025-06-30 15:29:45,272 [INFO] 🔧 FORCE CREATING structured recommendations
+2025-06-30 15:29:45,272 [INFO] ✅ Generated 2 recommendation categories
+2025-06-30 15:29:45,272 [INFO] ✅ Categories: ['EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES']
+2025-06-30 15:29:45,272 [INFO] 🐛 BACKEND DEBUG: structured_recommendations type: <class 'dict'>
+2025-06-30 15:29:45,272 [INFO] 🐛 BACKEND DEBUG: structured_recommendations content: {'EMERGENCY ACTION PLAN': ['Contact clinic if symptoms worsen before follow-up appointment'], 'PATIENT EDUCATION RESOURCES': ['Educate patient on signs and symptoms of drug allergies', 'Discuss importance of medication adherence and monitoring', 'Provide instructions on proper skin care routine']}
+2025-06-30 15:29:45,272 [INFO] 🐛 BACKEND DEBUG: Is it a dict? True
+2025-06-30 15:29:45,272 [INFO] 🐛 BACKEND DEBUG: Keys: ['EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES']
+2025-06-30 15:29:45,272 [INFO] ✅ Added 2 structured recommendation categories
+2025-06-30 15:29:45,272 [INFO] ✅ Categories: ['EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES']
+2025-06-30 15:29:45,322 [INFO] ✅ Successfully stored Freed-style SOAP notes with structured recommendations
+2025-06-30 15:29:45,327 [INFO] ✅ Stored Freed-style transcript with structured recommendations: 6862ad6926c12e8c4a686e12
+2025-06-30 15:29:45,388 [INFO] Fetching history for patient 6862ab7126c12e8c4a686e10 in tenant doctor@allergyaffiliates.com
+2025-06-30 15:29:45,390 [INFO] Retrieved 1 transcripts for patient 6862ab7126c12e8c4a686e10 in tenant doctor@allergyaffiliates.com
+2025-06-30 15:40:44,590 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 15:40:44,593 [INFO] Found 134 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 15:41:25,467 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 15:41:25,470 [INFO] Found 134 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 15:42:20,301 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 15:42:20,304 [INFO] Found 134 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 15:43:02,414 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 15:43:02,418 [INFO] Found 134 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 16:06:07,458 [INFO] Handling POST request for /api/visit/start
+2025-06-30 16:06:07,460 [INFO] Patient test136 not found, creating new patient
+2025-06-30 16:06:07,463 [INFO] Created new patient with ID: 6862b5ef26c12e8c4a686e13
+2025-06-30 16:06:07,467 [INFO] Visit started: f019bb30-df7d-4c65-8e50-95ea796b4521 for patient 6862b5ef26c12e8c4a686e13 by doctor@allergyaffiliates.com
+2025-06-30 16:06:08,625 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 16:06:08,628 [INFO] Found 135 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 16:06:08,763 [INFO] Fetching history for patient 6862b5ef26c12e8c4a686e13 in tenant doctor@allergyaffiliates.com
+2025-06-30 16:06:08,765 [INFO] Retrieved 0 transcripts for patient 6862b5ef26c12e8c4a686e13 in tenant doctor@allergyaffiliates.com
+2025-06-30 16:16:15,395 [INFO] 🔄 Processing Freed-style transcript analysis
+2025-06-30 16:16:16,051 [INFO] Extracted conditions: ['antibiotic allergies', 'staph infections', 'abscesses', 'eczema', 'shellfish allergy']
+2025-06-30 16:16:18,180 [INFO] Generated Freed-style plan: In regards to antibiotic allergies:
+* Discussed skin testing followed by a challenge to clear penicillin allergy
+* Will perform penicillin skin test and challenge on Thursday at 1:00 PM at the Manatee Ave. location
+* Patient instructed not to take any antihistamines between now and the test
+
+In regards to staph infections:
+* Discussed - plan to be determined
+* Will perform blood work to rule out immune system deficiency
+* Patient to go to Quest lab for special tests on an early morning Monday or Tuesday
+
+In regards to abscesses:
+* Discussed - plan to be determined
+
+In regards to eczema:
+* Discussed - plan to be determined
+
+In regards to shellfish allergy:
+* Will perform shellfish allergy testing on Thursday at 1:00 PM at the Manatee Ave. location
+* Will prescribe a new EpiPen for the patient to carry at all times
+* Patient instructed to be careful about cross-contamination at restaurants
+2025-06-30 16:16:29,229 [INFO] 🔄 Generating structured recommendations...
+2025-06-30 16:16:29,229 [INFO] 🔧 FORCE CREATING structured recommendations
+2025-06-30 16:16:29,229 [INFO] ✅ Generated 4 recommendation categories
+2025-06-30 16:16:29,229 [INFO] ✅ Categories: ['MEDICATION MANAGEMENT', 'EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES', 'FOLLOW-UP SCHEDULE']
+2025-06-30 16:16:29,229 [INFO] 🐛 BACKEND DEBUG: structured_recommendations type: <class 'dict'>
+2025-06-30 16:16:29,229 [INFO] 🐛 BACKEND DEBUG: structured_recommendations content: {'MEDICATION MANAGEMENT': ['Continue iron supplementation for anemia'], 'EMERGENCY ACTION PLAN': ['Contact clinic if symptoms worsen before follow-up appointment'], 'PATIENT EDUCATION RESOURCES': ['Educate patient on signs and symptoms of drug allergies', 'Discuss importance of medication adherence and monitoring', 'Provide instructions on proper skin care routine'], 'FOLLOW-UP SCHEDULE': ['Return for follow-up appointment in 2 weeks', 'See primary care physician on Tuesday to discuss blood pressure medication change']}
+2025-06-30 16:16:29,229 [INFO] 🐛 BACKEND DEBUG: Is it a dict? True
+2025-06-30 16:16:29,229 [INFO] 🐛 BACKEND DEBUG: Keys: ['MEDICATION MANAGEMENT', 'EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES', 'FOLLOW-UP SCHEDULE']
+2025-06-30 16:16:29,229 [INFO] ✅ Added 4 structured recommendation categories
+2025-06-30 16:16:29,229 [INFO] ✅ Categories: ['MEDICATION MANAGEMENT', 'EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES', 'FOLLOW-UP SCHEDULE']
+2025-06-30 16:16:29,283 [INFO] ✅ Successfully stored Freed-style SOAP notes with structured recommendations
+2025-06-30 16:16:29,294 [INFO] ✅ Stored Freed-style transcript with structured recommendations: 6862b85d26c12e8c4a686e15
+2025-06-30 16:16:29,379 [INFO] Fetching history for patient 6862b5ef26c12e8c4a686e13 in tenant doctor@allergyaffiliates.com
+2025-06-30 16:16:29,381 [INFO] Retrieved 1 transcripts for patient 6862b5ef26c12e8c4a686e13 in tenant doctor@allergyaffiliates.com
+2025-06-30 16:16:29,520 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 16:16:29,522 [INFO] Handling GET request for /get-insights
+2025-06-30 16:16:29,522 [WARNING] Email parameter missing, using fallback
+2025-06-30 16:16:29,522 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 16:16:29,527 [INFO] Simplified diagnoses for searching: ['Recurrent staph infections possibly due to an underlying immune deficiency.', 'Allergic reactions to antibiotics leading to difficulty in treating infections.', 'Potential underlying gastrointestinal issues contributing to recurrent abscesses.']
+2025-06-30 16:16:29,529 [INFO] Processing diagnosis: Recurrent staph infections possibly due to an underlying immune deficiency.
+2025-06-30 16:16:29,581 [INFO] Found 0 insights for patient 6862b5ef26c12e8c4a686e13 using GSI
+2025-06-30 16:16:30,802 [INFO] Fetched 0 insights from Semantic Scholar for condition: Recurrent staph infections possibly due to an underlying immune deficiency.
+2025-06-30 16:16:33,976 [WARNING] No PubMed articles found for condition: Recurrent staph infections possibly due to an underlying immune deficiency.
+2025-06-30 16:16:35,228 [INFO] Fetched 0 insights from PubMed for condition: Recurrent staph infections possibly due to an underlying immune deficiency.
+2025-06-30 16:16:37,229 [INFO] Processing diagnosis: Allergic reactions to antibiotics leading to difficulty in treating infections.
+2025-06-30 16:16:38,508 [INFO] Fetched 0 insights from Semantic Scholar for condition: Allergic reactions to antibiotics leading to difficulty in treating infections.
+2025-06-30 16:16:42,851 [INFO] Fetched 1 insights from PubMed for condition: Allergic reactions to antibiotics leading to difficulty in treating infections.
+2025-06-30 16:16:44,852 [INFO] Returning 1 insights for patient 6862b5ef26c12e8c4a686e13
+2025-06-30 16:17:22,678 [INFO] Handling POST request for /api/visit/start
+2025-06-30 16:17:22,679 [INFO] Patient test137 not found, creating new patient
+2025-06-30 16:17:22,683 [INFO] Created new patient with ID: 6862b89226c12e8c4a686e16
+2025-06-30 16:17:22,686 [INFO] Visit started: 60a8ed6c-ac3a-43d7-afd1-9b3466227ed9 for patient 6862b89226c12e8c4a686e16 by doctor@allergyaffiliates.com
+2025-06-30 16:17:23,818 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 16:17:23,822 [INFO] Found 136 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 16:17:23,968 [INFO] Fetching history for patient 6862b89226c12e8c4a686e16 in tenant doctor@allergyaffiliates.com
+2025-06-30 16:17:23,970 [INFO] Retrieved 0 transcripts for patient 6862b89226c12e8c4a686e16 in tenant doctor@allergyaffiliates.com
+2025-06-30 16:29:46,263 [INFO] 🔄 Processing Freed-style transcript analysis
+2025-06-30 16:29:46,750 [INFO] Extracted conditions: ['food allergies', 'outdoor allergies', 'sinus issues']
+2025-06-30 16:29:47,469 [INFO] Generated Freed-style plan: In regards to food allergies:
+* Discussed - plan to be determined
+
+In regards to outdoor allergies:
+* Discussed - plan to be determined
+
+In regards to sinus issues:
+* Discussed - plan to be determined
+2025-06-30 16:29:53,570 [INFO] 🔄 Generating structured recommendations...
+2025-06-30 16:29:53,570 [INFO] 🔧 FORCE CREATING structured recommendations
+2025-06-30 16:29:53,570 [INFO] ✅ Generated 2 recommendation categories
+2025-06-30 16:29:53,570 [INFO] ✅ Categories: ['EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES']
+2025-06-30 16:29:53,570 [INFO] 🐛 BACKEND DEBUG: structured_recommendations type: <class 'dict'>
+2025-06-30 16:29:53,570 [INFO] 🐛 BACKEND DEBUG: structured_recommendations content: {'EMERGENCY ACTION PLAN': ['Contact clinic if symptoms worsen before follow-up appointment'], 'PATIENT EDUCATION RESOURCES': ['Educate patient on signs and symptoms of drug allergies', 'Discuss importance of medication adherence and monitoring', 'Provide instructions on proper skin care routine']}
+2025-06-30 16:29:53,570 [INFO] 🐛 BACKEND DEBUG: Is it a dict? True
+2025-06-30 16:29:53,570 [INFO] 🐛 BACKEND DEBUG: Keys: ['EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES']
+2025-06-30 16:29:53,570 [INFO] ✅ Added 2 structured recommendation categories
+2025-06-30 16:29:53,570 [INFO] ✅ Categories: ['EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES']
+2025-06-30 16:29:53,623 [INFO] ✅ Successfully stored Freed-style SOAP notes with structured recommendations
+2025-06-30 16:29:53,628 [INFO] ✅ Stored Freed-style transcript with structured recommendations: 6862bb8126c12e8c4a686e18
+2025-06-30 16:29:53,725 [INFO] Fetching history for patient 6862b89226c12e8c4a686e16 in tenant doctor@allergyaffiliates.com
+2025-06-30 16:29:53,726 [INFO] Retrieved 1 transcripts for patient 6862b89226c12e8c4a686e16 in tenant doctor@allergyaffiliates.com
+2025-06-30 16:30:40,845 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 16:30:40,847 [INFO] Found 136 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 16:30:43,016 [INFO] Fetching history for patient 6862ab7126c12e8c4a686e10 in tenant doctor@allergyaffiliates.com
+2025-06-30 16:30:43,017 [INFO] Retrieved 1 transcripts for patient 6862ab7126c12e8c4a686e10 in tenant doctor@allergyaffiliates.com
+2025-06-30 16:30:43,483 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 16:30:43,487 [INFO] Found 136 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 16:30:57,255 [INFO] Fetching history for patient 6862b5ef26c12e8c4a686e13 in tenant doctor@allergyaffiliates.com
+2025-06-30 16:30:57,266 [INFO] Retrieved 1 transcripts for patient 6862b5ef26c12e8c4a686e13 in tenant doctor@allergyaffiliates.com
+2025-06-30 16:30:57,371 [INFO] Handling GET request for /get-insights
+2025-06-30 16:30:57,371 [WARNING] Email parameter missing, using fallback
+2025-06-30 16:30:57,371 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 16:30:57,374 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 16:30:57,376 [INFO] Simplified diagnoses for searching: ['Recurrent staph infections possibly due to an underlying immune deficiency.', 'Allergic reactions to antibiotics leading to difficulty in treating infections.', 'Potential underlying gastrointestinal issues contributing to recurrent abscesses.']
+2025-06-30 16:30:57,377 [INFO] Processing diagnosis: Recurrent staph infections possibly due to an underlying immune deficiency.
+2025-06-30 16:30:57,426 [INFO] Found 0 insights for patient 6862b5ef26c12e8c4a686e13 using GSI
+2025-06-30 16:30:58,597 [INFO] Fetched 0 insights from Semantic Scholar for condition: Recurrent staph infections possibly due to an underlying immune deficiency.
+2025-06-30 16:31:01,802 [WARNING] No PubMed articles found for condition: Recurrent staph infections possibly due to an underlying immune deficiency.
+2025-06-30 16:31:03,421 [INFO] Fetched 0 insights from PubMed for condition: Recurrent staph infections possibly due to an underlying immune deficiency.
+2025-06-30 16:31:05,422 [INFO] Processing diagnosis: Allergic reactions to antibiotics leading to difficulty in treating infections.
+2025-06-30 16:31:06,510 [WARNING] Rate limited by Semantic Scholar for 'Allergic reactions to antibiotics leading to difficulty in treating infections.', skipping
+2025-06-30 16:31:10,839 [INFO] Fetched 1 insights from PubMed for condition: Allergic reactions to antibiotics leading to difficulty in treating infections.
+2025-06-30 16:31:12,840 [INFO] Returning 1 insights for patient 6862b5ef26c12e8c4a686e13
+2025-06-30 16:31:15,511 [INFO] Fetching history for patient 6862ab7126c12e8c4a686e10 in tenant doctor@allergyaffiliates.com
+2025-06-30 16:31:15,513 [INFO] Retrieved 1 transcripts for patient 6862ab7126c12e8c4a686e10 in tenant doctor@allergyaffiliates.com
+2025-06-30 16:31:27,446 [INFO] Fetching history for patient 6862b89226c12e8c4a686e16 in tenant doctor@allergyaffiliates.com
+2025-06-30 16:31:27,447 [INFO] Retrieved 1 transcripts for patient 6862b89226c12e8c4a686e16 in tenant doctor@allergyaffiliates.com
+2025-06-30 16:31:31,335 [INFO] Fetching history for patient 6862a27526c12e8c4a686e0b in tenant doctor@allergyaffiliates.com
+2025-06-30 16:31:31,338 [INFO] Retrieved 1 transcripts for patient 6862a27526c12e8c4a686e0b in tenant doctor@allergyaffiliates.com
+2025-06-30 16:31:31,405 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 16:31:31,411 [INFO] Handling GET request for /get-insights
+2025-06-30 16:31:31,411 [WARNING] Email parameter missing, using fallback
+2025-06-30 16:31:31,411 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 16:31:31,416 [INFO] Simplified diagnoses for searching: ['Food intolerance (e.g.']
+2025-06-30 16:31:31,417 [INFO] Processing diagnosis: Food intolerance (e.g.
+2025-06-30 16:31:31,420 [INFO] Found 0 insights for patient 6862a27526c12e8c4a686e0b using GSI
+2025-06-30 16:31:32,635 [WARNING] Rate limited by Semantic Scholar for 'Food intolerance (e.g.', skipping
+2025-06-30 16:31:37,078 [INFO] Fetched 1 insights from PubMed for condition: Food intolerance (e.g.
+2025-06-30 16:31:39,079 [INFO] Returning 1 insights for patient 6862a27526c12e8c4a686e0b
+2025-06-30 16:35:09,541 [INFO] Handling POST request for /api/visit/start
+2025-06-30 16:35:09,543 [INFO] Patient test138 not found, creating new patient
+2025-06-30 16:35:09,546 [INFO] Created new patient with ID: 6862bcbd26c12e8c4a686e19
+2025-06-30 16:35:09,550 [INFO] Visit started: 703e9336-f3ad-42df-ace8-dec118f3a4f0 for patient 6862bcbd26c12e8c4a686e19 by doctor@allergyaffiliates.com
+2025-06-30 16:35:10,927 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 16:35:10,930 [INFO] Found 137 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 16:35:11,049 [INFO] Fetching history for patient 6862bcbd26c12e8c4a686e19 in tenant doctor@allergyaffiliates.com
+2025-06-30 16:35:11,050 [INFO] Retrieved 0 transcripts for patient 6862bcbd26c12e8c4a686e19 in tenant doctor@allergyaffiliates.com
+2025-06-30 16:47:02,815 [INFO] 🔄 Processing Freed-style transcript analysis
+2025-06-30 16:47:03,247 [INFO] Extracted conditions: ['Current medical concerns']
+2025-06-30 16:47:03,865 [INFO] Generated Freed-style plan: Based on the provided transcript, no specific medical conditions or treatment plans were discussed. Therefore, there are no entries to be made in the treatment plan format specified.
+2025-06-30 16:47:06,967 [INFO] 🔄 Generating structured recommendations...
+2025-06-30 16:47:06,967 [INFO] 🔧 FORCE CREATING structured recommendations
+2025-06-30 16:47:06,967 [INFO] ✅ Generated 2 recommendation categories
+2025-06-30 16:47:06,967 [INFO] ✅ Categories: ['EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES']
+2025-06-30 16:47:06,967 [INFO] 🐛 BACKEND DEBUG: structured_recommendations type: <class 'dict'>
+2025-06-30 16:47:06,967 [INFO] 🐛 BACKEND DEBUG: structured_recommendations content: {'EMERGENCY ACTION PLAN': ['Contact clinic if symptoms worsen before follow-up appointment'], 'PATIENT EDUCATION RESOURCES': ['Educate patient on signs and symptoms of drug allergies', 'Discuss importance of medication adherence and monitoring', 'Provide instructions on proper skin care routine']}
+2025-06-30 16:47:06,967 [INFO] 🐛 BACKEND DEBUG: Is it a dict? True
+2025-06-30 16:47:06,968 [INFO] 🐛 BACKEND DEBUG: Keys: ['EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES']
+2025-06-30 16:47:06,968 [INFO] ✅ Added 2 structured recommendation categories
+2025-06-30 16:47:06,968 [INFO] ✅ Categories: ['EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES']
+2025-06-30 16:47:07,018 [INFO] ✅ Successfully stored Freed-style SOAP notes with structured recommendations
+2025-06-30 16:47:07,025 [INFO] ✅ Stored Freed-style transcript with structured recommendations: 6862bf8b26c12e8c4a686e1b
+2025-06-30 16:47:07,085 [INFO] Fetching history for patient 6862bcbd26c12e8c4a686e19 in tenant doctor@allergyaffiliates.com
+2025-06-30 16:47:07,088 [INFO] Retrieved 1 transcripts for patient 6862bcbd26c12e8c4a686e19 in tenant doctor@allergyaffiliates.com
+2025-06-30 16:50:41,240 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 16:50:41,243 [INFO] Found 137 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 17:00:29,934 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 17:00:29,936 [INFO] Found 137 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 17:00:31,719 [INFO] Fetching history for patient 6862bcbd26c12e8c4a686e19 in tenant doctor@allergyaffiliates.com
+2025-06-30 17:00:31,720 [INFO] Retrieved 1 transcripts for patient 6862bcbd26c12e8c4a686e19 in tenant doctor@allergyaffiliates.com
+2025-06-30 17:00:32,586 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 17:00:32,589 [INFO] Found 137 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 17:00:36,380 [INFO] Fetching history for patient 6862b89226c12e8c4a686e16 in tenant doctor@allergyaffiliates.com
+2025-06-30 17:00:36,381 [INFO] Retrieved 1 transcripts for patient 6862b89226c12e8c4a686e16 in tenant doctor@allergyaffiliates.com
+2025-06-30 17:00:40,902 [INFO] Fetching history for patient 6862bcbd26c12e8c4a686e19 in tenant doctor@allergyaffiliates.com
+2025-06-30 17:00:40,904 [INFO] Retrieved 1 transcripts for patient 6862bcbd26c12e8c4a686e19 in tenant doctor@allergyaffiliates.com
+2025-06-30 17:01:04,409 [INFO] Fetching history for patient 6862ab7126c12e8c4a686e10 in tenant doctor@allergyaffiliates.com
+2025-06-30 17:01:04,410 [INFO] Retrieved 1 transcripts for patient 6862ab7126c12e8c4a686e10 in tenant doctor@allergyaffiliates.com
+2025-06-30 17:01:08,384 [INFO] Fetching history for patient 6862a27526c12e8c4a686e0b in tenant doctor@allergyaffiliates.com
+2025-06-30 17:01:08,386 [INFO] Retrieved 1 transcripts for patient 6862a27526c12e8c4a686e0b in tenant doctor@allergyaffiliates.com
+2025-06-30 17:01:08,440 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 17:01:08,441 [INFO] Handling GET request for /get-insights
+2025-06-30 17:01:08,442 [WARNING] Email parameter missing, using fallback
+2025-06-30 17:01:08,442 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 17:01:08,518 [INFO] Simplified diagnoses for searching: ['Food intolerance (e.g.']
+2025-06-30 17:01:08,518 [INFO] Processing diagnosis: Food intolerance (e.g.
+2025-06-30 17:01:08,525 [INFO] Found 0 insights for patient 6862a27526c12e8c4a686e0b using GSI
+2025-06-30 17:01:10,366 [INFO] Fetched 1 insights from Semantic Scholar for condition: Food intolerance (e.g.
+2025-06-30 17:01:14,628 [INFO] Fetched 1 insights from PubMed for condition: Food intolerance (e.g.
+2025-06-30 17:01:16,629 [INFO] Returning 2 insights for patient 6862a27526c12e8c4a686e0b
+2025-06-30 17:34:49,648 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 17:34:49,650 [INFO] Found 137 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 17:34:49,729 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 17:34:49,733 [INFO] Found 137 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 18:23:26,726 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 18:23:26,729 [INFO] Found 137 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 18:23:29,238 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 18:23:29,244 [INFO] Found 137 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 18:23:32,176 [INFO] Handling POST request for /api/visit/start
+2025-06-30 18:23:32,178 [INFO] Patient test139 not found, creating new patient
+2025-06-30 18:23:32,182 [INFO] Created new patient with ID: 6862d62426c12e8c4a686e1c
+2025-06-30 18:23:32,185 [INFO] Visit started: fdabbf3e-62c9-4118-85e0-f2cdcbfb28ea for patient 6862d62426c12e8c4a686e1c by doctor@allergyaffiliates.com
+2025-06-30 18:23:33,445 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 18:23:33,448 [INFO] Found 138 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 18:23:33,584 [INFO] Fetching history for patient 6862d62426c12e8c4a686e1c in tenant doctor@allergyaffiliates.com
+2025-06-30 18:23:33,585 [INFO] Retrieved 0 transcripts for patient 6862d62426c12e8c4a686e1c in tenant doctor@allergyaffiliates.com
+2025-06-30 18:31:02,043 [INFO] 🔄 Processing Freed-style transcript analysis
+2025-06-30 18:31:02,564 [INFO] Extracted conditions: ['ear infection', 'hives', 'drug allergy']
+2025-06-30 18:31:04,798 [INFO] Generated Freed-style plan: In regards to ear infection:
+* The patient recovered from the ear infection without further antibiotics after stopping amoxicillin
+* No specific plan discussed for future ear infections
+
+In regards to hives:
+* Hives appeared after amoxicillin and after vaccines
+* Give cetirizine (Zyrtec) 2.5 mL daily for a week when the patient gets sick or around the time of vaccines
+* Cetirizine is better than Benadryl because it is 24-hour acting
+
+In regards to drug allergy:
+* Possible amoxicillin allergy, but may have been a response to the ear infection rather than a true allergy
+* No testing for amoxicillin allergy at this time due to patient's age
+* If the patient needs antibiotics in the future and amoxicillin cannot be used, come back for testing
+* Re-evaluate amoxicillin allergy when the patient is 10 years old
+* Follow-up in one year to monitor the patient's condition and discuss any changes
+2025-06-30 18:31:13,682 [INFO] 🔄 Generating structured recommendations...
+2025-06-30 18:31:13,682 [INFO] 🔧 FORCE CREATING structured recommendations
+2025-06-30 18:31:13,682 [INFO] ✅ Generated 2 recommendation categories
+2025-06-30 18:31:13,682 [INFO] ✅ Categories: ['EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES']
+2025-06-30 18:31:13,682 [INFO] 🐛 BACKEND DEBUG: structured_recommendations type: <class 'dict'>
+2025-06-30 18:31:13,682 [INFO] 🐛 BACKEND DEBUG: structured_recommendations content: {'EMERGENCY ACTION PLAN': ['Contact clinic if symptoms worsen before follow-up appointment'], 'PATIENT EDUCATION RESOURCES': ['Educate patient on signs and symptoms of drug allergies', 'Discuss importance of medication adherence and monitoring', 'Provide instructions on proper skin care routine']}
+2025-06-30 18:31:13,682 [INFO] 🐛 BACKEND DEBUG: Is it a dict? True
+2025-06-30 18:31:13,682 [INFO] 🐛 BACKEND DEBUG: Keys: ['EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES']
+2025-06-30 18:31:13,682 [INFO] ✅ Added 2 structured recommendation categories
+2025-06-30 18:31:13,682 [INFO] ✅ Categories: ['EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES']
+2025-06-30 18:31:13,735 [INFO] ✅ Successfully stored Freed-style SOAP notes with structured recommendations
+2025-06-30 18:31:13,750 [INFO] ✅ Stored Freed-style transcript with structured recommendations: 6862d7f126c12e8c4a686e1e
+2025-06-30 18:31:13,862 [INFO] Fetching history for patient 6862d62426c12e8c4a686e1c in tenant doctor@allergyaffiliates.com
+2025-06-30 18:31:13,864 [INFO] Retrieved 1 transcripts for patient 6862d62426c12e8c4a686e1c in tenant doctor@allergyaffiliates.com
+2025-06-30 18:31:13,940 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 18:31:13,952 [INFO] Found 0 insights for patient 6862d62426c12e8c4a686e1c using GSI
+2025-06-30 18:31:14,017 [INFO] Handling GET request for /get-insights
+2025-06-30 18:31:14,017 [WARNING] Email parameter missing, using fallback
+2025-06-30 18:31:14,018 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 18:31:14,022 [INFO] Simplified diagnoses for searching: ['Allergic reaction to amoxicillin', 'Viral exanthem related to ear infection', 'Vaccine-induced immune response causing hives']
+2025-06-30 18:31:14,022 [INFO] Processing diagnosis: Allergic reaction to amoxicillin
+2025-06-30 18:31:15,714 [INFO] Fetched 1 insights from Semantic Scholar for condition: Allergic reaction to amoxicillin
+2025-06-30 18:31:19,962 [INFO] Fetched 1 insights from PubMed for condition: Allergic reaction to amoxicillin
+2025-06-30 18:31:21,963 [INFO] Processing diagnosis: Viral exanthem related to ear infection
+2025-06-30 18:31:23,658 [INFO] Fetched 1 insights from Semantic Scholar for condition: Viral exanthem related to ear infection
+2025-06-30 18:31:27,874 [INFO] Fetched 1 insights from PubMed for condition: Viral exanthem related to ear infection
+2025-06-30 18:31:29,875 [INFO] Returning 4 insights for patient 6862d62426c12e8c4a686e1c
+2025-06-30 18:36:16,387 [INFO] Handling POST request for /api/visit/start
+2025-06-30 18:36:16,390 [INFO] Patient test140 not found, creating new patient
+2025-06-30 18:36:16,394 [INFO] Created new patient with ID: 6862d92026c12e8c4a686e1f
+2025-06-30 18:36:16,398 [INFO] Visit started: c2c86ce2-2761-4484-bb45-163246082516 for patient 6862d92026c12e8c4a686e1f by doctor@allergyaffiliates.com
+2025-06-30 18:36:18,090 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 18:36:18,094 [INFO] Found 139 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 18:36:18,219 [INFO] Fetching history for patient 6862d92026c12e8c4a686e1f in tenant doctor@allergyaffiliates.com
+2025-06-30 18:36:18,221 [INFO] Retrieved 0 transcripts for patient 6862d92026c12e8c4a686e1f in tenant doctor@allergyaffiliates.com
+2025-06-30 18:49:32,250 [INFO] 🔄 Processing Freed-style transcript analysis
+2025-06-30 18:49:32,941 [INFO] Extracted conditions: ['urticaria', 'flu', 'asthma', 'dermatitis', 'penicillin allergy', 'latex allergy']
+2025-06-30 18:49:36,258 [INFO] Generated Freed-style plan: In regards to urticaria:
+* Discussed - plan to be determined
+
+In regards to flu:
+* Discussed - plan to be determined
+
+In regards to asthma:
+* Perform a breathing test today to determine if it's asthma or another issue
+* Continue using albuterol as needed, three times a day as previously prescribed by Doctor Shah
+
+In regards to dermatitis:
+* Perform a patch test today for 79 common allergens, including metals, laundry detergent, shampoo, conditioner, and clothes
+* Return on Wednesday to remove the patches and on Thursday for a reading at the other office
+* Avoid wetting the back this week, shower only the front
+* Consider switching to free and clear laundry detergent
+
+In regards to penicillin allergy:
+* Offered skin testing followed by a challenge to clear the penicillin allergy on Thursday
+* Discussed that clearing the allergy is beneficial as penicillin is a first-line treatment for infections
+
+In regards to latex allergy:
+* Discussed - plan to be determined
+
+In regards to shellfish allergy:
+* Perform a shellfish allergy test today
+* Patient has stopped eating shellfish due to suspected reaction
+
+In regards to seasonal allergies:
+* Perform an allergy test today for pollen, cat, dog, dust mites, and mold
+* Use Zyrtec or Claritin as needed for itching and hives
+2025-06-30 18:49:50,898 [INFO] 🔄 Generating structured recommendations...
+2025-06-30 18:49:50,898 [INFO] 🔧 FORCE CREATING structured recommendations
+2025-06-30 18:49:50,898 [INFO] ✅ Generated 4 recommendation categories
+2025-06-30 18:49:50,898 [INFO] ✅ Categories: ['MEDICATION MANAGEMENT', 'LIFESTYLE MODIFICATIONS', 'EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES']
+2025-06-30 18:49:50,898 [INFO] 🐛 BACKEND DEBUG: structured_recommendations type: <class 'dict'>
+2025-06-30 18:49:50,898 [INFO] 🐛 BACKEND DEBUG: structured_recommendations content: {'MEDICATION MANAGEMENT': ['Complete current course of prednisone as prescribed', 'Continue iron supplementation for anemia'], 'LIFESTYLE MODIFICATIONS': ['Use free and clear detergent products', 'Moisturize twice daily with fragrance-free products like Vanicream or Vaseline', 'Apply sunscreen when going outdoors'], 'EMERGENCY ACTION PLAN': ['Contact clinic if symptoms worsen before follow-up appointment'], 'PATIENT EDUCATION RESOURCES': ['Educate patient on signs and symptoms of drug allergies', 'Discuss importance of medication adherence and monitoring', 'Provide instructions on proper skin care routine']}
+2025-06-30 18:49:50,898 [INFO] 🐛 BACKEND DEBUG: Is it a dict? True
+2025-06-30 18:49:50,898 [INFO] 🐛 BACKEND DEBUG: Keys: ['MEDICATION MANAGEMENT', 'LIFESTYLE MODIFICATIONS', 'EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES']
+2025-06-30 18:49:50,898 [INFO] ✅ Added 4 structured recommendation categories
+2025-06-30 18:49:50,898 [INFO] ✅ Categories: ['MEDICATION MANAGEMENT', 'LIFESTYLE MODIFICATIONS', 'EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES']
+2025-06-30 18:49:50,948 [INFO] ✅ Successfully stored Freed-style SOAP notes with structured recommendations
+2025-06-30 18:49:50,953 [INFO] ✅ Stored Freed-style transcript with structured recommendations: 6862dc4e26c12e8c4a686e21
+2025-06-30 18:49:51,025 [INFO] Fetching history for patient 6862d92026c12e8c4a686e1f in tenant doctor@allergyaffiliates.com
+2025-06-30 18:49:51,027 [INFO] Retrieved 1 transcripts for patient 6862d92026c12e8c4a686e1f in tenant doctor@allergyaffiliates.com
+2025-06-30 18:49:51,146 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 18:49:51,148 [INFO] Handling GET request for /get-insights
+2025-06-30 18:49:51,148 [WARNING] Email parameter missing, using fallback
+2025-06-30 18:49:51,149 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 18:49:51,166 [INFO] Found 0 insights for patient 6862d92026c12e8c4a686e1f using GSI
+2025-06-30 18:49:51,205 [INFO] Simplified diagnoses for searching: ['Allergic reaction to shellfish', 'Chronic urticaria', 'Contact dermatitis']
+2025-06-30 18:49:51,205 [INFO] Processing diagnosis: Allergic reaction to shellfish
+2025-06-30 18:49:52,535 [INFO] Fetched 1 insights from Semantic Scholar for condition: Allergic reaction to shellfish
+2025-06-30 18:49:56,817 [INFO] Fetched 1 insights from PubMed for condition: Allergic reaction to shellfish
+2025-06-30 18:49:58,817 [INFO] Processing diagnosis: Chronic urticaria
+2025-06-30 18:50:00,533 [INFO] Fetched 1 insights from Semantic Scholar for condition: Chronic urticaria
+2025-06-30 18:50:04,955 [INFO] Fetched 1 insights from PubMed for condition: Chronic urticaria
+2025-06-30 18:50:06,956 [INFO] Returning 4 insights for patient 6862d92026c12e8c4a686e1f
+2025-06-30 19:37:35,387 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 19:37:35,390 [INFO] Found 139 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 19:37:37,929 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 19:37:37,933 [INFO] Found 139 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 20:07:12,900 [INFO] Fetching history for patient 6862d62426c12e8c4a686e1c in tenant doctor@allergyaffiliates.com
+2025-06-30 20:07:12,902 [INFO] Retrieved 1 transcripts for patient 6862d62426c12e8c4a686e1c in tenant doctor@allergyaffiliates.com
+2025-06-30 20:07:12,974 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 20:07:12,975 [INFO] Handling GET request for /get-insights
+2025-06-30 20:07:12,976 [WARNING] Email parameter missing, using fallback
+2025-06-30 20:07:12,976 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 20:07:13,043 [INFO] Simplified diagnoses for searching: ['Allergic reaction to amoxicillin', 'Viral exanthem related to ear infection', 'Vaccine-induced immune response causing hives']
+2025-06-30 20:07:13,045 [INFO] Processing diagnosis: Allergic reaction to amoxicillin
+2025-06-30 20:07:13,052 [INFO] Found 0 insights for patient 6862d62426c12e8c4a686e1c using GSI
+2025-06-30 20:07:14,142 [WARNING] Rate limited by Semantic Scholar for 'Allergic reaction to amoxicillin', skipping
+2025-06-30 20:07:18,515 [INFO] Fetched 1 insights from PubMed for condition: Allergic reaction to amoxicillin
+2025-06-30 20:07:20,515 [INFO] Processing diagnosis: Viral exanthem related to ear infection
+2025-06-30 20:07:21,623 [WARNING] Rate limited by Semantic Scholar for 'Viral exanthem related to ear infection', skipping
+2025-06-30 20:07:25,834 [INFO] Fetched 1 insights from PubMed for condition: Viral exanthem related to ear infection
+2025-06-30 20:07:27,834 [INFO] Returning 2 insights for patient 6862d62426c12e8c4a686e1c
+2025-06-30 20:08:08,747 [INFO] Fetching history for patient 6862d62426c12e8c4a686e1c in tenant doctor@allergyaffiliates.com
+2025-06-30 20:08:08,755 [INFO] Retrieved 1 transcripts for patient 6862d62426c12e8c4a686e1c in tenant doctor@allergyaffiliates.com
+2025-06-30 20:08:08,816 [INFO] Handling GET request for /get-insights
+2025-06-30 20:08:08,817 [WARNING] Email parameter missing, using fallback
+2025-06-30 20:08:08,817 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 20:08:08,821 [INFO] Simplified diagnoses for searching: ['Allergic reaction to amoxicillin', 'Viral exanthem related to ear infection', 'Vaccine-induced immune response causing hives']
+2025-06-30 20:08:08,822 [INFO] Processing diagnosis: Allergic reaction to amoxicillin
+2025-06-30 20:08:09,914 [WARNING] Rate limited by Semantic Scholar for 'Allergic reaction to amoxicillin', skipping
+2025-06-30 20:08:14,234 [INFO] Fetched 1 insights from PubMed for condition: Allergic reaction to amoxicillin
+2025-06-30 20:08:16,234 [INFO] Processing diagnosis: Viral exanthem related to ear infection
+2025-06-30 20:08:17,464 [WARNING] Rate limited by Semantic Scholar for 'Viral exanthem related to ear infection', skipping
+2025-06-30 20:08:21,350 [INFO] Fetching history for patient 6862b89226c12e8c4a686e16 in tenant doctor@allergyaffiliates.com
+2025-06-30 20:08:21,353 [INFO] Retrieved 1 transcripts for patient 6862b89226c12e8c4a686e16 in tenant doctor@allergyaffiliates.com
+2025-06-30 20:08:21,683 [INFO] Fetched 1 insights from PubMed for condition: Viral exanthem related to ear infection
+2025-06-30 20:08:23,683 [INFO] Returning 2 insights for patient 6862d62426c12e8c4a686e1c
+2025-06-30 20:08:30,813 [INFO] Fetching history for patient 6862ab7126c12e8c4a686e10 in tenant doctor@allergyaffiliates.com
+2025-06-30 20:08:30,814 [INFO] Retrieved 1 transcripts for patient 6862ab7126c12e8c4a686e10 in tenant doctor@allergyaffiliates.com
+2025-06-30 20:08:35,468 [INFO] Fetching history for patient 6862a27526c12e8c4a686e0b in tenant doctor@allergyaffiliates.com
+2025-06-30 20:08:35,470 [INFO] Retrieved 1 transcripts for patient 6862a27526c12e8c4a686e0b in tenant doctor@allergyaffiliates.com
+2025-06-30 20:08:35,537 [INFO] Handling GET request for /get-insights
+2025-06-30 20:08:35,537 [WARNING] Email parameter missing, using fallback
+2025-06-30 20:08:35,537 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 20:08:35,540 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 20:08:35,544 [INFO] Simplified diagnoses for searching: ['Food intolerance (e.g.']
+2025-06-30 20:08:35,546 [INFO] Processing diagnosis: Food intolerance (e.g.
+2025-06-30 20:08:35,595 [INFO] Found 0 insights for patient 6862a27526c12e8c4a686e0b using GSI
+2025-06-30 20:08:36,650 [WARNING] Rate limited by Semantic Scholar for 'Food intolerance (e.g.', skipping
+2025-06-30 20:08:40,880 [INFO] Fetched 1 insights from PubMed for condition: Food intolerance (e.g.
+2025-06-30 20:08:42,881 [INFO] Returning 1 insights for patient 6862a27526c12e8c4a686e0b
+2025-06-30 20:08:56,012 [INFO] Fetching history for patient 686292dd26c12e8c4a686e05 in tenant doctor@allergyaffiliates.com
+2025-06-30 20:08:56,014 [INFO] Retrieved 1 transcripts for patient 686292dd26c12e8c4a686e05 in tenant doctor@allergyaffiliates.com
+2025-06-30 20:08:56,075 [INFO] Handling GET request for /get-insights
+2025-06-30 20:08:56,075 [WARNING] Email parameter missing, using fallback
+2025-06-30 20:08:56,075 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 20:08:56,075 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 20:08:56,080 [INFO] Simplified diagnoses for searching: ['Peanut and tree nut allergy', 'Seasonal environmental allergies', 'Contact dermatitis']
+2025-06-30 20:08:56,080 [INFO] Processing diagnosis: Peanut and tree nut allergy
+2025-06-30 20:08:56,086 [INFO] Found 0 insights for patient 686292dd26c12e8c4a686e05 using GSI
+2025-06-30 20:08:57,707 [INFO] Fetched 1 insights from Semantic Scholar for condition: Peanut and tree nut allergy
+2025-06-30 20:09:01,924 [INFO] Fetched 1 insights from PubMed for condition: Peanut and tree nut allergy
+2025-06-30 20:09:03,925 [INFO] Processing diagnosis: Seasonal environmental allergies
+2025-06-30 20:09:05,873 [INFO] Fetched 1 insights from Semantic Scholar for condition: Seasonal environmental allergies
+2025-06-30 20:09:10,127 [INFO] Fetched 1 insights from PubMed for condition: Seasonal environmental allergies
+2025-06-30 20:09:12,128 [INFO] Returning 4 insights for patient 686292dd26c12e8c4a686e05
+2025-06-30 20:56:20,054 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 20:56:20,057 [INFO] Found 139 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 20:56:21,939 [INFO] Fetching history for patient 6862d92026c12e8c4a686e1f in tenant doctor@allergyaffiliates.com
+2025-06-30 20:56:21,941 [INFO] Retrieved 1 transcripts for patient 6862d92026c12e8c4a686e1f in tenant doctor@allergyaffiliates.com
+2025-06-30 20:56:22,050 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 20:56:22,105 [INFO] Found 0 insights for patient 6862d92026c12e8c4a686e1f using GSI
+2025-06-30 20:56:22,183 [INFO] Handling GET request for /get-insights
+2025-06-30 20:56:22,183 [WARNING] Email parameter missing, using fallback
+2025-06-30 20:56:22,183 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 20:56:22,189 [INFO] Simplified diagnoses for searching: ['Allergic reaction to shellfish', 'Chronic urticaria', 'Contact dermatitis']
+2025-06-30 20:56:22,189 [INFO] Processing diagnosis: Allergic reaction to shellfish
+2025-06-30 20:56:22,589 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 20:56:22,592 [INFO] Found 139 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 20:56:23,921 [INFO] Fetched 1 insights from Semantic Scholar for condition: Allergic reaction to shellfish
+2025-06-30 20:56:28,194 [INFO] Fetched 1 insights from PubMed for condition: Allergic reaction to shellfish
+2025-06-30 20:56:30,195 [INFO] Processing diagnosis: Chronic urticaria
+2025-06-30 20:56:31,784 [INFO] Fetched 1 insights from Semantic Scholar for condition: Chronic urticaria
+2025-06-30 20:56:35,992 [INFO] Fetched 1 insights from PubMed for condition: Chronic urticaria
+2025-06-30 20:56:37,992 [INFO] Returning 4 insights for patient 6862d92026c12e8c4a686e1f
+2025-06-30 20:56:51,923 [INFO] Fetching history for patient 6862d62426c12e8c4a686e1c in tenant doctor@allergyaffiliates.com
+2025-06-30 20:56:51,925 [INFO] Retrieved 1 transcripts for patient 6862d62426c12e8c4a686e1c in tenant doctor@allergyaffiliates.com
+2025-06-30 20:56:51,983 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 20:56:51,992 [INFO] Handling GET request for /get-insights
+2025-06-30 20:56:51,992 [WARNING] Email parameter missing, using fallback
+2025-06-30 20:56:51,992 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 20:56:51,998 [INFO] Simplified diagnoses for searching: ['Allergic reaction to amoxicillin', 'Viral exanthem related to ear infection', 'Vaccine-induced immune response causing hives']
+2025-06-30 20:56:51,999 [INFO] Processing diagnosis: Allergic reaction to amoxicillin
+2025-06-30 20:56:52,045 [INFO] Found 0 insights for patient 6862d62426c12e8c4a686e1c using GSI
+2025-06-30 20:56:53,836 [INFO] Fetched 1 insights from Semantic Scholar for condition: Allergic reaction to amoxicillin
+2025-06-30 20:56:58,079 [INFO] Fetched 1 insights from PubMed for condition: Allergic reaction to amoxicillin
+2025-06-30 20:57:00,080 [INFO] Processing diagnosis: Viral exanthem related to ear infection
+2025-06-30 20:57:01,502 [INFO] Fetched 1 insights from Semantic Scholar for condition: Viral exanthem related to ear infection
+2025-06-30 20:57:05,706 [INFO] Fetched 1 insights from PubMed for condition: Viral exanthem related to ear infection
+2025-06-30 20:57:07,707 [INFO] Returning 4 insights for patient 6862d62426c12e8c4a686e1c
+2025-06-30 20:57:37,096 [INFO] Fetching history for patient 6862bcbd26c12e8c4a686e19 in tenant doctor@allergyaffiliates.com
+2025-06-30 20:57:37,097 [INFO] Retrieved 1 transcripts for patient 6862bcbd26c12e8c4a686e19 in tenant doctor@allergyaffiliates.com
+2025-06-30 21:02:02,871 [INFO] Fetching history for patient 6862bcbd26c12e8c4a686e19 in tenant doctor@allergyaffiliates.com
+2025-06-30 21:02:02,874 [INFO] Retrieved 1 transcripts for patient 6862bcbd26c12e8c4a686e19 in tenant doctor@allergyaffiliates.com
+2025-06-30 21:03:36,464 [INFO] Fetching history for patient 6862d92026c12e8c4a686e1f in tenant doctor@allergyaffiliates.com
+2025-06-30 21:03:36,466 [INFO] Retrieved 1 transcripts for patient 6862d92026c12e8c4a686e1f in tenant doctor@allergyaffiliates.com
+2025-06-30 21:03:36,576 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 21:03:36,635 [INFO] Found 0 insights for patient 6862d92026c12e8c4a686e1f using GSI
+2025-06-30 21:03:36,669 [INFO] Handling GET request for /get-insights
+2025-06-30 21:03:36,670 [WARNING] Email parameter missing, using fallback
+2025-06-30 21:03:36,670 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 21:03:36,674 [INFO] Simplified diagnoses for searching: ['Allergic reaction to shellfish', 'Chronic urticaria', 'Contact dermatitis']
+2025-06-30 21:03:36,674 [INFO] Processing diagnosis: Allergic reaction to shellfish
+2025-06-30 21:03:37,774 [WARNING] Rate limited by Semantic Scholar for 'Allergic reaction to shellfish', skipping
+2025-06-30 21:03:42,102 [INFO] Fetched 1 insights from PubMed for condition: Allergic reaction to shellfish
+2025-06-30 21:03:44,103 [INFO] Processing diagnosis: Chronic urticaria
+2025-06-30 21:03:45,197 [WARNING] Rate limited by Semantic Scholar for 'Chronic urticaria', skipping
+2025-06-30 21:03:49,394 [INFO] Fetched 1 insights from PubMed for condition: Chronic urticaria
+2025-06-30 21:03:51,394 [INFO] Returning 2 insights for patient 6862d92026c12e8c4a686e1f
+2025-06-30 21:04:27,635 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 21:04:27,638 [INFO] Found 139 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 21:04:30,038 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 21:04:30,044 [INFO] Found 139 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 21:12:00,655 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 21:12:00,657 [INFO] Found 139 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 21:12:03,172 [INFO] Fetching history for patient 6862d92026c12e8c4a686e1f in tenant doctor@allergyaffiliates.com
+2025-06-30 21:12:03,174 [INFO] Retrieved 1 transcripts for patient 6862d92026c12e8c4a686e1f in tenant doctor@allergyaffiliates.com
+2025-06-30 21:12:03,282 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 21:12:03,284 [INFO] Handling GET request for /get-insights
+2025-06-30 21:12:03,284 [WARNING] Email parameter missing, using fallback
+2025-06-30 21:12:03,284 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 21:12:03,353 [INFO] Simplified diagnoses for searching: ['Allergic reaction to shellfish', 'Chronic urticaria', 'Contact dermatitis']
+2025-06-30 21:12:03,353 [INFO] Processing diagnosis: Allergic reaction to shellfish
+2025-06-30 21:12:03,358 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 21:12:03,362 [INFO] Found 139 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 21:12:03,373 [INFO] Found 0 insights for patient 6862d92026c12e8c4a686e1f using GSI
+2025-06-30 21:12:04,748 [INFO] Fetched 1 insights from Semantic Scholar for condition: Allergic reaction to shellfish
+2025-06-30 21:12:09,012 [INFO] Fetched 1 insights from PubMed for condition: Allergic reaction to shellfish
+2025-06-30 21:12:11,012 [INFO] Processing diagnosis: Chronic urticaria
+2025-06-30 21:12:12,436 [INFO] Fetching history for patient 6862d62426c12e8c4a686e1c in tenant doctor@allergyaffiliates.com
+2025-06-30 21:12:12,438 [INFO] Retrieved 1 transcripts for patient 6862d62426c12e8c4a686e1c in tenant doctor@allergyaffiliates.com
+2025-06-30 21:12:12,504 [INFO] Handling GET request for /get-insights
+2025-06-30 21:12:12,504 [WARNING] Email parameter missing, using fallback
+2025-06-30 21:12:12,504 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 21:12:12,506 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 21:12:12,510 [INFO] Simplified diagnoses for searching: ['Allergic reaction to amoxicillin', 'Viral exanthem related to ear infection', 'Vaccine-induced immune response causing hives']
+2025-06-30 21:12:12,510 [INFO] Processing diagnosis: Allergic reaction to amoxicillin
+2025-06-30 21:12:12,520 [INFO] Found 0 insights for patient 6862d62426c12e8c4a686e1c using GSI
+2025-06-30 21:12:12,627 [INFO] Fetched 1 insights from Semantic Scholar for condition: Chronic urticaria
+2025-06-30 21:12:13,940 [INFO] Fetched 1 insights from Semantic Scholar for condition: Allergic reaction to amoxicillin
+2025-06-30 21:12:16,553 [INFO] Fetching history for patient 6862bcbd26c12e8c4a686e19 in tenant doctor@allergyaffiliates.com
+2025-06-30 21:12:16,555 [INFO] Retrieved 1 transcripts for patient 6862bcbd26c12e8c4a686e19 in tenant doctor@allergyaffiliates.com
+2025-06-30 21:12:16,615 [INFO] Handling GET request for /get-insights
+2025-06-30 21:12:16,615 [WARNING] Email parameter missing, using fallback
+2025-06-30 21:12:16,615 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 21:12:16,617 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 21:12:16,621 [INFO] Simplified diagnoses for searching: ['No symptoms or complaints were discussed to formulate a differential diagnosis.']
+2025-06-30 21:12:16,621 [INFO] Processing diagnosis: No symptoms or complaints were discussed to formulate a differential diagnosis.
+2025-06-30 21:12:16,628 [INFO] Found 0 insights for patient 6862bcbd26c12e8c4a686e19 using GSI
+2025-06-30 21:12:16,919 [INFO] Fetched 1 insights from PubMed for condition: Chronic urticaria
+2025-06-30 21:12:17,838 [INFO] Fetched 0 insights from Semantic Scholar for condition: No symptoms or complaints were discussed to formulate a differential diagnosis.
+2025-06-30 21:12:18,204 [INFO] Fetched 1 insights from PubMed for condition: Allergic reaction to amoxicillin
+2025-06-30 21:12:18,920 [INFO] Returning 4 insights for patient 6862d92026c12e8c4a686e1f
+2025-06-30 21:12:20,205 [INFO] Processing diagnosis: Viral exanthem related to ear infection
+2025-06-30 21:12:21,614 [INFO] Fetched 1 insights from Semantic Scholar for condition: Viral exanthem related to ear infection
+2025-06-30 21:12:22,822 [INFO] Fetched 1 insights from PubMed for condition: No symptoms or complaints were discussed to formulate a differential diagnosis.
+2025-06-30 21:12:24,822 [INFO] Returning 1 insights for patient 6862bcbd26c12e8c4a686e19
+2025-06-30 21:12:25,827 [INFO] Fetched 1 insights from PubMed for condition: Viral exanthem related to ear infection
+2025-06-30 21:12:27,828 [INFO] Returning 4 insights for patient 6862d62426c12e8c4a686e1c
+2025-06-30 21:13:02,304 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 21:13:02,310 [INFO] Found 139 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 21:13:04,288 [INFO] Fetching history for patient 6862d92026c12e8c4a686e1f in tenant doctor@allergyaffiliates.com
+2025-06-30 21:13:04,289 [INFO] Retrieved 1 transcripts for patient 6862d92026c12e8c4a686e1f in tenant doctor@allergyaffiliates.com
+2025-06-30 21:13:04,404 [INFO] Handling GET request for /get-insights
+2025-06-30 21:13:04,404 [WARNING] Email parameter missing, using fallback
+2025-06-30 21:13:04,404 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 21:13:04,404 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 21:13:04,410 [INFO] Simplified diagnoses for searching: ['Allergic reaction to shellfish', 'Chronic urticaria', 'Contact dermatitis']
+2025-06-30 21:13:04,410 [INFO] Processing diagnosis: Allergic reaction to shellfish
+2025-06-30 21:13:04,421 [INFO] Found 0 insights for patient 6862d92026c12e8c4a686e1f using GSI
+2025-06-30 21:13:04,829 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 21:13:04,832 [INFO] Found 139 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 21:13:06,122 [INFO] Fetched 1 insights from Semantic Scholar for condition: Allergic reaction to shellfish
+2025-06-30 21:13:07,266 [INFO] Fetching history for patient 6862d62426c12e8c4a686e1c in tenant doctor@allergyaffiliates.com
+2025-06-30 21:13:07,269 [INFO] Retrieved 1 transcripts for patient 6862d62426c12e8c4a686e1c in tenant doctor@allergyaffiliates.com
+2025-06-30 21:13:07,333 [INFO] Handling GET request for /get-insights
+2025-06-30 21:13:07,334 [WARNING] Email parameter missing, using fallback
+2025-06-30 21:13:07,334 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 21:13:07,336 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 21:13:07,341 [INFO] Simplified diagnoses for searching: ['Allergic reaction to amoxicillin', 'Viral exanthem related to ear infection', 'Vaccine-induced immune response causing hives']
+2025-06-30 21:13:07,341 [INFO] Processing diagnosis: Allergic reaction to amoxicillin
+2025-06-30 21:13:07,347 [INFO] Found 0 insights for patient 6862d62426c12e8c4a686e1c using GSI
+2025-06-30 21:13:08,828 [INFO] Fetched 1 insights from Semantic Scholar for condition: Allergic reaction to amoxicillin
+2025-06-30 21:13:09,742 [INFO] Fetching history for patient 6862bcbd26c12e8c4a686e19 in tenant doctor@allergyaffiliates.com
+2025-06-30 21:13:09,744 [INFO] Retrieved 1 transcripts for patient 6862bcbd26c12e8c4a686e19 in tenant doctor@allergyaffiliates.com
+2025-06-30 21:13:09,805 [INFO] Handling GET request for /get-insights
+2025-06-30 21:13:09,805 [WARNING] Email parameter missing, using fallback
+2025-06-30 21:13:09,805 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 21:13:09,807 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 21:13:09,811 [INFO] Simplified diagnoses for searching: ['No symptoms or complaints were discussed to formulate a differential diagnosis.']
+2025-06-30 21:13:09,811 [INFO] Processing diagnosis: No symptoms or complaints were discussed to formulate a differential diagnosis.
+2025-06-30 21:13:09,823 [INFO] Found 0 insights for patient 6862bcbd26c12e8c4a686e19 using GSI
+2025-06-30 21:13:10,382 [INFO] Fetched 1 insights from PubMed for condition: Allergic reaction to shellfish
+2025-06-30 21:13:11,070 [INFO] Fetched 0 insights from Semantic Scholar for condition: No symptoms or complaints were discussed to formulate a differential diagnosis.
+2025-06-30 21:13:12,383 [INFO] Processing diagnosis: Chronic urticaria
+2025-06-30 21:13:13,103 [INFO] Fetched 1 insights from PubMed for condition: Allergic reaction to amoxicillin
+2025-06-30 21:13:13,935 [INFO] Fetching history for patient 6862b89226c12e8c4a686e16 in tenant doctor@allergyaffiliates.com
+2025-06-30 21:13:13,937 [INFO] Retrieved 1 transcripts for patient 6862b89226c12e8c4a686e16 in tenant doctor@allergyaffiliates.com
+2025-06-30 21:13:13,973 [INFO] Fetched 1 insights from Semantic Scholar for condition: Chronic urticaria
+2025-06-30 21:13:13,989 [INFO] Handling GET request for /get-insights
+2025-06-30 21:13:13,989 [WARNING] Email parameter missing, using fallback
+2025-06-30 21:13:13,990 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 21:13:13,995 [INFO] Simplified diagnoses for searching: ['Allergic rhinitis', 'Food allergy-related symptoms']
+2025-06-30 21:13:13,995 [INFO] Processing diagnosis: Allergic rhinitis
+2025-06-30 21:13:13,999 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 21:13:14,016 [INFO] Found 0 insights for patient 6862b89226c12e8c4a686e16 using GSI
+2025-06-30 21:13:15,092 [WARNING] Rate limited by Semantic Scholar for 'Allergic rhinitis', skipping
+2025-06-30 21:13:15,104 [INFO] Processing diagnosis: Viral exanthem related to ear infection
+2025-06-30 21:13:15,973 [INFO] Fetched 1 insights from PubMed for condition: No symptoms or complaints were discussed to formulate a differential diagnosis.
+2025-06-30 21:13:16,520 [INFO] Fetched 1 insights from Semantic Scholar for condition: Viral exanthem related to ear infection
+2025-06-30 21:13:17,974 [INFO] Returning 1 insights for patient 6862bcbd26c12e8c4a686e19
+2025-06-30 21:13:18,206 [INFO] Fetched 1 insights from PubMed for condition: Chronic urticaria
+2025-06-30 21:13:19,295 [INFO] Fetched 1 insights from PubMed for condition: Allergic rhinitis
+2025-06-30 21:13:20,207 [INFO] Returning 4 insights for patient 6862d92026c12e8c4a686e1f
+2025-06-30 21:13:20,723 [INFO] Fetched 1 insights from PubMed for condition: Viral exanthem related to ear infection
+2025-06-30 21:13:21,296 [INFO] Processing diagnosis: Food allergy-related symptoms
+2025-06-30 21:13:22,723 [INFO] Returning 4 insights for patient 6862d62426c12e8c4a686e1c
+2025-06-30 21:13:23,022 [INFO] Fetched 1 insights from Semantic Scholar for condition: Food allergy-related symptoms
+2025-06-30 21:13:27,238 [INFO] Fetched 1 insights from PubMed for condition: Food allergy-related symptoms
+2025-06-30 21:13:29,238 [INFO] Returning 3 insights for patient 6862b89226c12e8c4a686e16
+2025-06-30 21:13:30,632 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 21:13:30,636 [INFO] Found 139 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 21:13:33,162 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 21:13:33,165 [INFO] Found 139 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 21:13:35,742 [INFO] Fetching history for patient 6862d62426c12e8c4a686e1c in tenant doctor@allergyaffiliates.com
+2025-06-30 21:13:35,745 [INFO] Retrieved 1 transcripts for patient 6862d62426c12e8c4a686e1c in tenant doctor@allergyaffiliates.com
+2025-06-30 21:13:35,804 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 21:13:35,814 [INFO] Handling GET request for /get-insights
+2025-06-30 21:13:35,814 [WARNING] Email parameter missing, using fallback
+2025-06-30 21:13:35,814 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 21:13:35,817 [INFO] Found 0 insights for patient 6862d62426c12e8c4a686e1c using GSI
+2025-06-30 21:13:35,818 [INFO] Simplified diagnoses for searching: ['Allergic reaction to amoxicillin', 'Viral exanthem related to ear infection', 'Vaccine-induced immune response causing hives']
+2025-06-30 21:13:35,819 [INFO] Processing diagnosis: Allergic reaction to amoxicillin
+2025-06-30 21:13:37,284 [INFO] Fetched 1 insights from Semantic Scholar for condition: Allergic reaction to amoxicillin
+2025-06-30 21:13:39,844 [INFO] Fetching history for patient 6862bcbd26c12e8c4a686e19 in tenant doctor@allergyaffiliates.com
+2025-06-30 21:13:39,851 [INFO] Retrieved 1 transcripts for patient 6862bcbd26c12e8c4a686e19 in tenant doctor@allergyaffiliates.com
+2025-06-30 21:13:39,932 [INFO] Handling GET request for /get-insights
+2025-06-30 21:13:39,932 [WARNING] Email parameter missing, using fallback
+2025-06-30 21:13:39,932 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 21:13:39,932 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 21:13:39,938 [INFO] Simplified diagnoses for searching: ['No symptoms or complaints were discussed to formulate a differential diagnosis.']
+2025-06-30 21:13:39,938 [INFO] Processing diagnosis: No symptoms or complaints were discussed to formulate a differential diagnosis.
+2025-06-30 21:13:39,943 [INFO] Found 0 insights for patient 6862bcbd26c12e8c4a686e19 using GSI
+2025-06-30 21:13:41,197 [INFO] Fetched 0 insights from Semantic Scholar for condition: No symptoms or complaints were discussed to formulate a differential diagnosis.
+2025-06-30 21:13:41,542 [INFO] Fetched 1 insights from PubMed for condition: Allergic reaction to amoxicillin
+2025-06-30 21:13:43,542 [INFO] Processing diagnosis: Viral exanthem related to ear infection
+2025-06-30 21:13:45,538 [INFO] Fetched 1 insights from Semantic Scholar for condition: Viral exanthem related to ear infection
+2025-06-30 21:13:46,161 [INFO] Fetched 1 insights from PubMed for condition: No symptoms or complaints were discussed to formulate a differential diagnosis.
+2025-06-30 21:13:48,162 [INFO] Returning 1 insights for patient 6862bcbd26c12e8c4a686e19
+2025-06-30 21:13:49,764 [INFO] Fetched 1 insights from PubMed for condition: Viral exanthem related to ear infection
+2025-06-30 21:13:51,764 [INFO] Returning 4 insights for patient 6862d62426c12e8c4a686e1c
+2025-06-30 21:15:43,763 [INFO] Fetching history for patient 6862bcbd26c12e8c4a686e19 in tenant doctor@allergyaffiliates.com
+2025-06-30 21:15:43,765 [INFO] Retrieved 1 transcripts for patient 6862bcbd26c12e8c4a686e19 in tenant doctor@allergyaffiliates.com
+2025-06-30 21:15:43,821 [INFO] Handling GET request for /get-insights
+2025-06-30 21:15:43,822 [WARNING] Email parameter missing, using fallback
+2025-06-30 21:15:43,822 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 21:15:43,864 [INFO] Simplified diagnoses for searching: ['No symptoms or complaints were discussed to formulate a differential diagnosis.']
+2025-06-30 21:15:43,865 [INFO] Processing diagnosis: No symptoms or complaints were discussed to formulate a differential diagnosis.
+2025-06-30 21:15:45,086 [WARNING] Rate limited by Semantic Scholar for 'No symptoms or complaints were discussed to formulate a differential diagnosis.', skipping
+2025-06-30 21:15:50,131 [INFO] Fetched 1 insights from PubMed for condition: No symptoms or complaints were discussed to formulate a differential diagnosis.
+2025-06-30 21:15:52,131 [INFO] Returning 1 insights for patient 6862bcbd26c12e8c4a686e19
+2025-06-30 21:16:01,868 [INFO] Fetching history for patient 6862bcbd26c12e8c4a686e19 in tenant doctor@allergyaffiliates.com
+2025-06-30 21:16:01,870 [INFO] Retrieved 1 transcripts for patient 6862bcbd26c12e8c4a686e19 in tenant doctor@allergyaffiliates.com
+2025-06-30 21:16:01,926 [INFO] Handling GET request for /get-insights
+2025-06-30 21:16:01,926 [WARNING] Email parameter missing, using fallback
+2025-06-30 21:16:01,926 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 21:16:01,930 [INFO] Simplified diagnoses for searching: ['No symptoms or complaints were discussed to formulate a differential diagnosis.']
+2025-06-30 21:16:01,931 [INFO] Processing diagnosis: No symptoms or complaints were discussed to formulate a differential diagnosis.
+2025-06-30 21:16:03,027 [WARNING] Rate limited by Semantic Scholar for 'No symptoms or complaints were discussed to formulate a differential diagnosis.', skipping
+2025-06-30 21:16:08,089 [INFO] Fetched 1 insights from PubMed for condition: No symptoms or complaints were discussed to formulate a differential diagnosis.
+2025-06-30 21:16:10,090 [INFO] Returning 1 insights for patient 6862bcbd26c12e8c4a686e19
+2025-06-30 21:18:25,423 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 21:18:25,425 [INFO] Found 139 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 21:18:27,090 [INFO] Fetching history for patient 6862bcbd26c12e8c4a686e19 in tenant doctor@allergyaffiliates.com
+2025-06-30 21:18:27,098 [INFO] Retrieved 1 transcripts for patient 6862bcbd26c12e8c4a686e19 in tenant doctor@allergyaffiliates.com
+2025-06-30 21:18:27,161 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 21:18:27,224 [INFO] Found 0 insights for patient 6862bcbd26c12e8c4a686e19 using GSI
+2025-06-30 21:18:27,252 [INFO] Handling GET request for /get-insights
+2025-06-30 21:18:27,252 [WARNING] Email parameter missing, using fallback
+2025-06-30 21:18:27,252 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 21:18:27,258 [INFO] Simplified diagnoses for searching: ['No symptoms or complaints were discussed to formulate a differential diagnosis.']
+2025-06-30 21:18:27,258 [INFO] Processing diagnosis: No symptoms or complaints were discussed to formulate a differential diagnosis.
+2025-06-30 21:18:27,942 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 21:18:27,945 [INFO] Found 139 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 21:18:28,444 [INFO] Fetched 0 insights from Semantic Scholar for condition: No symptoms or complaints were discussed to formulate a differential diagnosis.
+2025-06-30 21:18:33,638 [INFO] Fetched 1 insights from PubMed for condition: No symptoms or complaints were discussed to formulate a differential diagnosis.
+2025-06-30 21:18:35,639 [INFO] Returning 1 insights for patient 6862bcbd26c12e8c4a686e19
+2025-06-30 21:19:17,361 [INFO] Fetching history for patient 6862bcbd26c12e8c4a686e19 in tenant doctor@allergyaffiliates.com
+2025-06-30 21:19:17,364 [INFO] Retrieved 1 transcripts for patient 6862bcbd26c12e8c4a686e19 in tenant doctor@allergyaffiliates.com
+2025-06-30 21:19:17,421 [INFO] Handling GET request for /get-insights
+2025-06-30 21:19:17,421 [WARNING] Email parameter missing, using fallback
+2025-06-30 21:19:17,421 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 21:19:17,427 [INFO] Simplified diagnoses for searching: ['No symptoms or complaints were discussed to formulate a differential diagnosis.']
+2025-06-30 21:19:17,427 [INFO] Processing diagnosis: No symptoms or complaints were discussed to formulate a differential diagnosis.
+2025-06-30 21:19:18,683 [INFO] Fetched 0 insights from Semantic Scholar for condition: No symptoms or complaints were discussed to formulate a differential diagnosis.
+2025-06-30 21:19:23,659 [INFO] Fetched 1 insights from PubMed for condition: No symptoms or complaints were discussed to formulate a differential diagnosis.
+2025-06-30 21:19:25,660 [INFO] Returning 1 insights for patient 6862bcbd26c12e8c4a686e19
+2025-06-30 21:24:28,722 [INFO] Fetching history for patient 6862bcbd26c12e8c4a686e19 in tenant doctor@allergyaffiliates.com
+2025-06-30 21:24:28,724 [INFO] Retrieved 1 transcripts for patient 6862bcbd26c12e8c4a686e19 in tenant doctor@allergyaffiliates.com
+2025-06-30 21:24:28,786 [INFO] Handling GET request for /get-insights
+2025-06-30 21:24:28,786 [WARNING] Email parameter missing, using fallback
+2025-06-30 21:24:28,786 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 21:24:28,837 [INFO] Simplified diagnoses for searching: ['No symptoms or complaints were discussed to formulate a differential diagnosis.']
+2025-06-30 21:24:28,838 [INFO] Processing diagnosis: No symptoms or complaints were discussed to formulate a differential diagnosis.
+2025-06-30 21:24:30,055 [WARNING] Rate limited by Semantic Scholar for 'No symptoms or complaints were discussed to formulate a differential diagnosis.', skipping
+2025-06-30 21:24:34,979 [INFO] Fetched 1 insights from PubMed for condition: No symptoms or complaints were discussed to formulate a differential diagnosis.
+2025-06-30 21:24:36,980 [INFO] Returning 1 insights for patient 6862bcbd26c12e8c4a686e19
+2025-06-30 21:26:13,578 [INFO] Fetching history for patient 6862b5ef26c12e8c4a686e13 in tenant doctor@allergyaffiliates.com
+2025-06-30 21:26:13,581 [INFO] Retrieved 1 transcripts for patient 6862b5ef26c12e8c4a686e13 in tenant doctor@allergyaffiliates.com
+2025-06-30 21:26:13,692 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 21:26:13,753 [INFO] Found 0 insights for patient 6862b5ef26c12e8c4a686e13 using GSI
+2025-06-30 21:26:13,798 [INFO] Handling GET request for /get-insights
+2025-06-30 21:26:13,798 [WARNING] Email parameter missing, using fallback
+2025-06-30 21:26:13,798 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 21:26:13,803 [INFO] Simplified diagnoses for searching: ['Recurrent staph infections possibly due to an underlying immune deficiency.', 'Allergic reactions to antibiotics leading to difficulty in treating infections.', 'Potential underlying gastrointestinal issues contributing to recurrent abscesses.']
+2025-06-30 21:26:13,804 [INFO] Processing diagnosis: Recurrent staph infections possibly due to an underlying immune deficiency.
+2025-06-30 21:26:15,033 [INFO] Fetched 0 insights from Semantic Scholar for condition: Recurrent staph infections possibly due to an underlying immune deficiency.
+2025-06-30 21:26:18,192 [WARNING] No PubMed articles found for condition: Recurrent staph infections possibly due to an underlying immune deficiency.
+2025-06-30 21:26:19,422 [INFO] Fetched 0 insights from PubMed for condition: Recurrent staph infections possibly due to an underlying immune deficiency.
+2025-06-30 21:26:21,422 [INFO] Processing diagnosis: Allergic reactions to antibiotics leading to difficulty in treating infections.
+2025-06-30 21:26:22,642 [WARNING] Rate limited by Semantic Scholar for 'Allergic reactions to antibiotics leading to difficulty in treating infections.', skipping
+2025-06-30 21:26:26,984 [INFO] Fetched 1 insights from PubMed for condition: Allergic reactions to antibiotics leading to difficulty in treating infections.
+2025-06-30 21:26:28,985 [INFO] Returning 1 insights for patient 6862b5ef26c12e8c4a686e13
+2025-06-30 21:27:03,464 [INFO] Handling POST request for /api/visit/start
+2025-06-30 21:27:03,465 [INFO] Patient Johnson not found, creating new patient
+2025-06-30 21:27:03,469 [INFO] Created new patient with ID: 6863012726c12e8c4a686e22
+2025-06-30 21:27:03,472 [INFO] Visit started: 441ba62e-580c-4dcc-b9af-319894c2595c for patient 6863012726c12e8c4a686e22 by doctor@allergyaffiliates.com
+2025-06-30 21:27:04,660 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-06-30 21:27:04,662 [INFO] Found 140 patients for tenant doctor@allergyaffiliates.com
+2025-06-30 21:27:04,782 [INFO] Fetching history for patient 6863012726c12e8c4a686e22 in tenant doctor@allergyaffiliates.com
+2025-06-30 21:27:04,784 [INFO] Retrieved 0 transcripts for patient 6863012726c12e8c4a686e22 in tenant doctor@allergyaffiliates.com
+2025-06-30 21:27:16,163 [INFO] 🔄 Processing Freed-style transcript analysis
+2025-06-30 21:27:16,851 [INFO] Extracted conditions: ['shellfish allergy', 'chronic urticaria']
+2025-06-30 21:27:20,952 [INFO] Generated Freed-style plan: In regards to shellfish allergy:
+* Prescribed an EpiPen auto-injector to be carried at all times
+* Advised to completely avoid all shellfish - shrimp, crab, lobster, and any foods that might contain shellfish
+* Instructed to read all food labels carefully
+* Given a list of foods to avoid that commonly cross-react with shellfish
+* Advised that fish like salmon, tuna, and cod should be okay, but to avoid when in doubt until allergy testing results are back
+* Follow-up in two weeks to review test results and adjust treatment plan
+* Instructed to use EpiPen immediately and call 911 if experiencing difficulty breathing, facial swelling, or severe symptoms
+
+In regards to chronic urticaria:
+* Prescribed a short course of prednisone - 20mg daily for 5 days
+* Advised to continue Claritin daily
+* Advised to use Benadryl as needed for breakthrough symptoms
+* Allergy testing planned for environmental allergens like pollen and cat dander
+* Blood test planned to check IgE levels
+* Instructed to start keeping a food and symptom diary to identify potential triggers
+* Follow-up in two weeks to review test results and adjust treatment plan
+2025-06-30 21:27:34,037 [INFO] 🔄 Generating structured recommendations...
+2025-06-30 21:27:34,037 [INFO] 🔧 FORCE CREATING structured recommendations
+2025-06-30 21:27:34,037 [INFO] ✅ Generated 3 recommendation categories
+2025-06-30 21:27:34,037 [INFO] ✅ Categories: ['MEDICATION MANAGEMENT', 'EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES']
+2025-06-30 21:27:34,037 [INFO] 🐛 BACKEND DEBUG: structured_recommendations type: <class 'dict'>
+2025-06-30 21:27:34,037 [INFO] 🐛 BACKEND DEBUG: structured_recommendations content: {'MEDICATION MANAGEMENT': ['Complete current course of prednisone as prescribed', 'Continue iron supplementation for anemia'], 'EMERGENCY ACTION PLAN': ['Contact clinic if symptoms worsen before follow-up appointment'], 'PATIENT EDUCATION RESOURCES': ['Educate patient on signs and symptoms of drug allergies', 'Discuss importance of medication adherence and monitoring', 'Provide instructions on proper skin care routine']}
+2025-06-30 21:27:34,037 [INFO] 🐛 BACKEND DEBUG: Is it a dict? True
+2025-06-30 21:27:34,037 [INFO] 🐛 BACKEND DEBUG: Keys: ['MEDICATION MANAGEMENT', 'EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES']
+2025-06-30 21:27:34,037 [INFO] ✅ Added 3 structured recommendation categories
+2025-06-30 21:27:34,037 [INFO] ✅ Categories: ['MEDICATION MANAGEMENT', 'EMERGENCY ACTION PLAN', 'PATIENT EDUCATION RESOURCES']
+2025-06-30 21:27:34,045 [INFO] ✅ Successfully stored Freed-style SOAP notes with structured recommendations
+2025-06-30 21:27:34,051 [INFO] ✅ Stored Freed-style transcript with structured recommendations: 6863014626c12e8c4a686e24
+2025-06-30 21:27:34,128 [INFO] Fetching history for patient 6863012726c12e8c4a686e22 in tenant doctor@allergyaffiliates.com
+2025-06-30 21:27:34,130 [INFO] Retrieved 1 transcripts for patient 6863012726c12e8c4a686e22 in tenant doctor@allergyaffiliates.com
+2025-06-30 21:27:34,184 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 21:27:34,197 [INFO] Found 0 insights for patient 6863012726c12e8c4a686e22 using GSI
+2025-06-30 21:27:34,252 [INFO] Handling GET request for /get-insights
+2025-06-30 21:27:34,253 [WARNING] Email parameter missing, using fallback
+2025-06-30 21:27:34,253 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-06-30 21:27:34,258 [INFO] Simplified diagnoses for searching: ['Shellfish allergy', 'specifically to shrimp', 'Chronic urticaria']
+2025-06-30 21:27:34,259 [INFO] Processing diagnosis: Shellfish allergy
+2025-06-30 21:27:35,413 [WARNING] Rate limited by Semantic Scholar for 'Shellfish allergy', skipping
+2025-06-30 21:27:39,638 [INFO] Fetched 1 insights from PubMed for condition: Shellfish allergy
+2025-06-30 21:27:41,639 [INFO] Processing diagnosis: specifically to shrimp
+2025-06-30 21:27:42,731 [WARNING] Rate limited by Semantic Scholar for 'specifically to shrimp', skipping
+2025-06-30 21:27:46,984 [INFO] Fetched 0 insights from PubMed for condition: specifically to shrimp
+2025-06-30 21:27:48,985 [INFO] Returning 1 insights for patient 6863012726c12e8c4a686e22
+2025-07-01 00:05:41,078 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-07-01 00:05:41,080 [INFO] Found 140 patients for tenant doctor@allergyaffiliates.com
+2025-07-01 00:05:42,771 [INFO] Fetching history for patient 6863012726c12e8c4a686e22 in tenant doctor@allergyaffiliates.com
+2025-07-01 00:05:42,773 [INFO] Retrieved 1 transcripts for patient 6863012726c12e8c4a686e22 in tenant doctor@allergyaffiliates.com
+2025-07-01 00:05:42,835 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-07-01 00:05:42,891 [INFO] Found 0 insights for patient 6863012726c12e8c4a686e22 using GSI
+2025-07-01 00:05:42,950 [INFO] Handling GET request for /get-insights
+2025-07-01 00:05:42,950 [WARNING] Email parameter missing, using fallback
+2025-07-01 00:05:42,950 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-07-01 00:05:42,954 [INFO] Simplified diagnoses for searching: ['Shellfish allergy', 'specifically to shrimp', 'Chronic urticaria']
+2025-07-01 00:05:42,954 [INFO] Processing diagnosis: Shellfish allergy
+2025-07-01 00:05:43,580 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-07-01 00:05:43,583 [INFO] Found 140 patients for tenant doctor@allergyaffiliates.com
+2025-07-01 00:05:44,648 [INFO] Fetched 1 insights from Semantic Scholar for condition: Shellfish allergy
+2025-07-01 00:05:48,939 [INFO] Fetched 1 insights from PubMed for condition: Shellfish allergy
+2025-07-01 00:05:50,939 [INFO] Processing diagnosis: specifically to shrimp
+2025-07-01 00:05:53,448 [INFO] Fetched 1 insights from Semantic Scholar for condition: specifically to shrimp
+2025-07-01 00:05:55,736 [INFO] Fetching history for patient 6862d92026c12e8c4a686e1f in tenant doctor@allergyaffiliates.com
+2025-07-01 00:05:55,738 [INFO] Retrieved 1 transcripts for patient 6862d92026c12e8c4a686e1f in tenant doctor@allergyaffiliates.com
+2025-07-01 00:05:55,856 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-07-01 00:05:55,871 [INFO] Found 0 insights for patient 6862d92026c12e8c4a686e1f using GSI
+2025-07-01 00:05:55,943 [INFO] Handling GET request for /get-insights
+2025-07-01 00:05:55,943 [WARNING] Email parameter missing, using fallback
+2025-07-01 00:05:55,943 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-07-01 00:05:55,948 [INFO] Simplified diagnoses for searching: ['Allergic reaction to shellfish', 'Chronic urticaria', 'Contact dermatitis']
+2025-07-01 00:05:55,948 [INFO] Processing diagnosis: Allergic reaction to shellfish
+2025-07-01 00:05:57,300 [INFO] Fetched 1 insights from Semantic Scholar for condition: Allergic reaction to shellfish
+2025-07-01 00:05:57,704 [INFO] Fetched 0 insights from PubMed for condition: specifically to shrimp
+2025-07-01 00:05:59,705 [INFO] Returning 3 insights for patient 6863012726c12e8c4a686e22
+2025-07-01 00:06:01,570 [INFO] Fetched 1 insights from PubMed for condition: Allergic reaction to shellfish
+2025-07-01 00:06:03,571 [INFO] Processing diagnosis: Chronic urticaria
+2025-07-01 00:06:05,222 [INFO] Fetched 1 insights from Semantic Scholar for condition: Chronic urticaria
+2025-07-01 00:06:09,432 [INFO] Fetched 1 insights from PubMed for condition: Chronic urticaria
+2025-07-01 00:06:11,433 [INFO] Returning 4 insights for patient 6862d92026c12e8c4a686e1f
+2025-07-01 00:44:21,765 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-07-01 00:44:21,771 [INFO] Found 140 patients for tenant doctor@allergyaffiliates.com
+2025-07-01 01:16:27,957 [INFO] Fetching history for patient 6862bcbd26c12e8c4a686e19 in tenant doctor@allergyaffiliates.com
+2025-07-01 01:16:27,959 [INFO] Retrieved 1 transcripts for patient 6862bcbd26c12e8c4a686e19 in tenant doctor@allergyaffiliates.com
+2025-07-01 01:16:37,626 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-07-01 01:16:37,629 [INFO] Found 140 patients for tenant doctor@allergyaffiliates.com
+2025-07-01 01:16:38,911 [INFO] Fetching history for patient 6863012726c12e8c4a686e22 in tenant doctor@allergyaffiliates.com
+2025-07-01 01:16:38,913 [INFO] Retrieved 1 transcripts for patient 6863012726c12e8c4a686e22 in tenant doctor@allergyaffiliates.com
+2025-07-01 01:16:38,977 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-07-01 01:16:38,979 [INFO] Handling GET request for /get-insights
+2025-07-01 01:16:38,979 [WARNING] Email parameter missing, using fallback
+2025-07-01 01:16:38,979 [INFO] Converting default_tenant to email: doctor@allergyaffiliates.com
+2025-07-01 01:16:39,049 [INFO] Simplified diagnoses for searching: ['Shellfish allergy', 'specifically to shrimp', 'Chronic urticaria']
+2025-07-01 01:16:39,050 [INFO] Processing diagnosis: Shellfish allergy
+2025-07-01 01:16:39,058 [INFO] Found 0 insights for patient 6863012726c12e8c4a686e22 using GSI
+2025-07-01 01:16:40,280 [INFO] Fetching patients for tenant_id: doctor@allergyaffiliates.com
+2025-07-01 01:16:40,282 [INFO] Found 140 patients for tenant doctor@allergyaffiliates.com
+2025-07-01 01:16:40,781 [INFO] Fetched 1 insights from Semantic Scholar for condition: Shellfish allergy
+2025-07-01 01:16:45,202 [INFO] Fetched 1 insights from PubMed for condition: Shellfish allergy
+2025-07-01 01:16:47,203 [INFO] Processing diagnosis: specifically to shrimp
+2025-07-01 01:16:48,297 [WARNING] Rate limited by Semantic Scholar for 'specifically to shrimp', skipping
+2025-07-01 01:16:52,533 [INFO] Fetched 0 insights from PubMed for condition: specifically to shrimp
+2025-07-01 01:16:54,534 [INFO] Returning 2 insights for patient 6863012726c12e8c4a686e22

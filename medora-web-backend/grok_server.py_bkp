@@ -944,7 +944,7 @@ def get_references(tenant_id=None):
 
 def analyze_transcript_freed_style(text, target_language="EN"):
     """
-    Generate Freed-style condition-focused plans ONLY based on actual conversation content
+    Generate Freed-style condition-focused plans instead of templated categories
     """
     # First, extract conditions from the transcript
     conditions_prompt = f"""
@@ -953,19 +953,20 @@ def analyze_transcript_freed_style(text, target_language="EN"):
     TRANSCRIPT: {text}
 
     INSTRUCTIONS:
-    1. Identify ONLY the medical conditions/diagnoses that were explicitly mentioned or directly addressed by the doctor
-    2. Do NOT infer conditions that weren't specifically discussed
+    1. Identify the main medical conditions/diagnoses mentioned or implied
+    2. Focus on conditions the doctor is actually addressing or planning for
     3. Return as a simple JSON list of conditions
 
     OUTPUT FORMAT:
     {{
         "conditions": [
             "condition1",
-            "condition2"
+            "condition2",
+            "condition3"
         ]
     }}
 
-    Only include conditions that the doctor explicitly mentioned, diagnosed, or treated in this conversation.
+    Only include conditions that were actually discussed or that the doctor is treating.
     """
 
     # Get conditions first
@@ -977,7 +978,7 @@ def analyze_transcript_freed_style(text, target_language="EN"):
     conditions_payload = {
         "model": "grok-2-1212",
         "messages": [
-            {"role": "system", "content": "You are a medical AI that identifies only explicitly mentioned conditions from transcripts. Return only valid JSON."},
+            {"role": "system", "content": "You are a medical AI that identifies conditions from transcripts. Return only valid JSON."},
             {"role": "user", "content": conditions_prompt}
         ],
         "max_tokens": 500,
@@ -1004,64 +1005,62 @@ def analyze_transcript_freed_style(text, target_language="EN"):
         
         # Fallback conditions if extraction fails
         if not conditions:
-            conditions = ["Current medical concerns"]
+            conditions = ["Allergic Rhinitis", "Medication Management", "Follow-up Care"]
             
         logger.info(f"Extracted conditions: {conditions}")
         
     except Exception as e:
         logger.error(f"Error extracting conditions: {str(e)}")
-        conditions = ["Current medical concerns"]
+        conditions = ["Allergic Rhinitis", "Medication Management", "Follow-up Care"]
 
-    # Now generate the Freed-style plan - STRICTLY based on actual conversation
+    # Now generate the Freed-style plan
     freed_prompt = f"""
-    You are an expert allergist creating a treatment plan in Dr. Freed's style. You must document ONLY what was actually discussed in this conversation.
+    You are an expert allergist creating a comprehensive treatment plan in the style of Dr. Freed. Analyze this doctor-patient conversation and create a condition-focused plan.
 
     TRANSCRIPT: {text}
 
     IDENTIFIED CONDITIONS: {', '.join(conditions)}
 
-    CRITICAL INSTRUCTIONS - READ CAREFULLY:
-    1. You may ONLY include information that was explicitly mentioned in the transcript
-    2. Do NOT add any standard medical recommendations that weren't discussed
-    3. Do NOT infer or suggest treatments that the doctor didn't mention
-    4. Do NOT add educational content that wasn't provided in the conversation
-    5. If a condition was mentioned but no specific plan was discussed, write "Discussed - plan to be determined"
-    6. EVERY bullet point must be based on something the doctor actually said or did
+    INSTRUCTIONS:
+    Create a detailed plan organized by medical conditions using EXACTLY this format:
 
-    FORMAT:
-    For each condition discussed, write:
+    For each condition, write:
     "In regards to [Condition Name]:
-    * [Only what doctor actually said/planned for this condition]
-    * [Only specific actions/medications the doctor mentioned]
-    * [Only follow-up plans the doctor specified]"
+    * [Detailed narrative point about this condition]
+    * [Another detailed point with specific actions]
+    * [Treatment plan specific to this condition]"
 
-    EXAMPLES OF WHAT TO INCLUDE:
-    - "Continue current medication as discussed" (if doctor said to continue)
-    - "Start Pepcid twice daily as recommended" (if doctor specifically mentioned this)
-    - "Follow-up in 2 weeks as scheduled" (if doctor set specific follow-up)
-    - "Discussed biologic therapy options" (if doctor talked about this)
-    - "Patient education provided on [specific topic]" (if doctor actually provided education)
+    FREED-STYLE REQUIREMENTS:
+    1. Use "In regards to [condition]:" as section headers
+    2. Each bullet point should be a complete, detailed sentence
+    3. Include specific medications, dosages, and instructions mentioned
+    4. Be thorough and narrative - not just bullet points
+    5. Include patient education and follow-up plans for each condition
+    6. Make it sound like how an experienced allergist would document plans
 
-    EXAMPLES OF WHAT NOT TO INCLUDE:
-    - Generic medication management advice not mentioned
-    - Standard lifestyle modifications not discussed
-    - Educational content the doctor didn't provide
-    - Follow-up plans not specifically mentioned
-    - Emergency plans not discussed in this visit
+    EXAMPLE FORMAT:
+    In regards to Allergic Rhinitis:
+    * Patient has history of allergic rhinitis diagnosed in Cuba with persistent symptoms including sneezing, itchy and watery eyes, and nasal congestion that are present year-round and have worsened since relocating.
+    * Previous treatments included loratadine, desloratadine, and cetirizine as recommended by ENT specialist, with patient receiving allergy shots for approximately 3 months in Cuba.
+    * Plan to perform comprehensive allergy testing today to identify specific allergens and develop targeted treatment approach.
+    * Patient has discontinued all allergy medications for the past month in preparation for testing, which will help ensure accurate results.
 
-    VERIFICATION RULE: Before writing each bullet point, ask yourself "Did the doctor specifically mention this in the conversation?" If no, don't include it.
+    In regards to Possible Asthma:
+    * Patient reports increased coughing and respiratory symptoms suggestive of possible asthma component to allergic disease.
+    * Plan to conduct pulmonary function testing to assess respiratory status and determine if asthma is present.
+    * Will evaluate response to bronchodilator therapy and consider appropriate controller medications if asthma is confirmed.
 
-    Generate the plan now, strictly following the conversation content:
+    Now create the complete plan with all relevant conditions from the transcript:
     """
 
     main_payload = {
         "model": "grok-2-1212",
         "messages": [
-            {"role": "system", "content": "You are Dr. Freed creating treatment plans. You can ONLY document what was explicitly discussed in the patient conversation. Never add standard recommendations that weren't mentioned."},
+            {"role": "system", "content": "You are Dr. Freed, an experienced allergist. Create detailed, condition-focused treatment plans. Use 'In regards to [condition]:' format with detailed narrative bullet points."},
             {"role": "user", "content": freed_prompt}
         ],
         "max_tokens": 2500,
-        "temperature": 0.1  # Very low temperature for strict adherence
+        "temperature": 0.2
     }
 
     try:
@@ -1119,12 +1118,13 @@ def analyze_transcript_freed_style(text, target_language="EN"):
             except json.JSONDecodeError as e:
                 logger.error(f"Error parsing SOAP JSON: {str(e)}")
 
-        # Safely handle differential_diagnosis that might be a list or string
+        # FIXED: Safely handle differential_diagnosis that might be a list or string
         def safe_get_diagnosis_text(soap_data):
             """Safely extract diagnosis text, handling both string and list formats"""
             diagnosis = soap_data.get("differential_diagnosis", "N/A")
             
             if isinstance(diagnosis, list):
+                # If it's a list, join the items or take the first one
                 if diagnosis:
                     return diagnosis[0] if len(diagnosis) == 1 else "; ".join(str(d) for d in diagnosis)
                 else:
@@ -1132,10 +1132,12 @@ def analyze_transcript_freed_style(text, target_language="EN"):
             elif isinstance(diagnosis, str):
                 return diagnosis
             else:
+                # Handle any other data type
                 return str(diagnosis) if diagnosis else "N/A"
 
         # Get diagnosis text safely
         diagnosis_text = safe_get_diagnosis_text(soap_data)
+        condition_summary = diagnosis_text.split('\n')[0] if diagnosis_text != "N/A" else "N/A"
 
         # Combine everything with Freed-style plan
         final_result = {
@@ -1148,9 +1150,9 @@ def analyze_transcript_freed_style(text, target_language="EN"):
                 "review_of_systems": "Multiple systems affected"
             }),
             "physical_examination": soap_data.get("physical_examination", "Physical examination findings as discussed"),
-            "differential_diagnosis": diagnosis_text,
+            "differential_diagnosis": diagnosis_text,  # Use the safely extracted diagnosis
             "diagnostic_workup": soap_data.get("diagnostic_workup", "Comprehensive allergy testing planned"),
-            "plan_of_care": freed_plan,  # This is the key - ONLY actual conversation content
+            "plan_of_care": freed_plan,  # This is the key change - Freed-style plan
             "patient_education": soap_data.get("patient_education", "Patient education provided"),
             "follow_up_instructions": soap_data.get("follow_up_instructions", "Follow-up as planned"),
             "summary": soap_data.get("summary", "Comprehensive allergy evaluation and treatment plan established"),
@@ -1174,11 +1176,13 @@ def analyze_transcript_freed_style(text, target_language="EN"):
             "physical_examination": "Physical findings as noted",
             "differential_diagnosis": "Allergic rhinitis and related conditions",
             "diagnostic_workup": "Comprehensive allergy testing",
-            "plan_of_care": "Plan to be documented based on discussion with provider",
-            "patient_education": "Patient education as provided",
-            "follow_up_instructions": "Follow-up as discussed",
-            "summary": "Allergy consultation completed"
+            "plan_of_care": f"In regards to Allergy Management:\n* Comprehensive evaluation planned\n* Testing to be performed\n* Treatment plan to be developed based on results",
+            "patient_education": "Allergy management education provided",
+            "follow_up_instructions": "Follow-up as scheduled",
+            "summary": "Allergy consultation completed with plan established"
         }
+        
+# soap_notes = analyze_transcript_freed_style(transcript)
 
 # Replace your existing analyze_transcript_freed_endpoint function with this:
 
@@ -4107,7 +4111,7 @@ def generate_dynamic_plan():
     """
     if request.method == 'OPTIONS':
         response = make_response()
-        response.headers.add("Access-Control-Allow-Origin", "https://medoramd.ai")
+        response.headers.add("Access-Control-Allow-Origin", "https://test.medoramd.ai")
         response.headers.add("Access-Control-Allow-Headers", "Content-Type")
         response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
         return response
@@ -4412,7 +4416,7 @@ def analyze_transcript_endpoint_enhanced():
     logger.info("Received request for /api/analyze-transcript-enhanced")
     if request.method == 'OPTIONS':
         response = make_response()
-        response.headers.add("Access-Control-Allow-Origin", "https://medoramd.ai")
+        response.headers.add("Access-Control-Allow-Origin", "https://test.medoramd.ai")
         response.headers.add("Access-Control-Allow-Headers", "Content-Type")
         response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
         return response
@@ -4656,5 +4660,4 @@ if __name__ == '__main__':
         logger.error(f"Error creating MongoDB indexes: {str(e)}")
         
     app.run(host='0.0.0.0', port=PORT, debug=False)
-
 

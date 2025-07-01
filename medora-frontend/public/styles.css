@@ -2321,3 +2321,8 @@ select:focus {
     height: calc(100vh - 150px) !important;
     max-height: calc(100vh - 150px) !important;
 }
+#submit-transcript-btn {
+    pointer-events: auto !important;
+    z-index: 1001 !important;
+    position: relative !important;
+}

@@ -7,6 +7,12 @@
     let currentVisitId = null;
     let currentProfileData = null;
 
+    // Modal state management - CRITICAL FIX
+    let modalState = {
+        isOpen: false,
+        isInitialized: false
+    };
+
     // Debugging helpers
     function debugLog(message, data) {
         console.log(`[AllergenIQ] ${message}`, data || '');
@@ -14,6 +20,102 @@
 
     function errorLog(message, error) {
         console.error(`[AllergenIQ ERROR] ${message}`, error);
+    }
+
+    // CRITICAL: Ensure modal is properly hidden on initialization
+    function initializeModalState() {
+        debugLog('🔧 Initializing modal state...');
+        
+        const modalOverlay = document.getElementById('allergeniq-modal-overlay');
+        if (modalOverlay) {
+            // Force modal to be completely hidden
+            modalOverlay.classList.remove('active');
+            modalOverlay.style.display = 'none';
+            modalOverlay.style.opacity = '0';
+            modalOverlay.style.visibility = 'hidden';
+            modalOverlay.style.pointerEvents = 'none';
+            modalOverlay.style.zIndex = '-1'; // Critical: move behind everything
+            
+            modalState.isOpen = false;
+            modalState.isInitialized = true;
+            
+            debugLog('✅ Modal properly hidden and initialized');
+        } else {
+            errorLog('Modal overlay element not found during initialization');
+        }
+        
+        // Ensure body overflow is reset
+        document.body.style.overflow = '';
+        
+        return modalState.isInitialized;
+    }
+
+    // Enhanced close function with complete state cleanup
+    function closeAllergenIQModal() {
+        debugLog('🔒 Closing AllergenIQ modal...');
+        
+        const modalOverlay = document.getElementById('allergeniq-modal-overlay');
+        if (modalOverlay) {
+            // Complete closure with all properties
+            modalOverlay.classList.remove('active');
+            modalOverlay.style.display = 'none';
+            modalOverlay.style.opacity = '0';
+            modalOverlay.style.visibility = 'hidden';
+            modalOverlay.style.pointerEvents = 'none';
+            modalOverlay.style.zIndex = '-1'; // Move behind everything
+            
+            modalState.isOpen = false;
+            debugLog('✅ Modal completely closed and moved behind content');
+        }
+        
+        // Reset body overflow
+        document.body.style.overflow = '';
+        
+        debugLog('✅ AllergenIQ modal fully closed');
+    }
+
+    // Enhanced open function with proper state management
+    function openAllergenIQModal() {
+        debugLog('🔓 Opening AllergenIQ modal...');
+        
+        // Ensure modal is initialized first
+        if (!modalState.isInitialized) {
+            initializeModalState();
+        }
+        
+        const modalOverlay = document.getElementById('allergeniq-modal-overlay');
+        if (modalOverlay) {
+            // Proper opening sequence
+            modalOverlay.style.zIndex = '1000'; // Bring to front
+            modalOverlay.style.display = 'flex';
+            modalOverlay.style.visibility = 'visible';
+            modalOverlay.style.pointerEvents = 'auto';
+            modalOverlay.style.opacity = '1';
+            modalOverlay.classList.add('active');
+            
+            modalState.isOpen = true;
+            debugLog('✅ Modal properly opened and brought to front');
+        }
+        
+        document.body.style.overflow = 'hidden';
+        
+        // Trigger detailed data load if we have current patient/visit
+        if (window.currentPatientId && window.currentVisitId) {
+            debugLog('🔄 Loading data for modal', { 
+                patientId: window.currentPatientId, 
+                visitId: window.currentVisitId 
+            });
+            updateProfileWithVisitId(window.currentPatientId, window.currentVisitId, true);
+        } else if (currentProfileData) {
+            // Use cached data if available
+            debugLog('🔄 Using cached data for modal');
+            updateModalContent(currentProfileData);
+        } else {
+            debugLog('⚠️ No patient/visit data available for modal');
+            showModalError('Please select a patient first');
+        }
+        
+        debugLog('✅ AllergenIQ modal fully opened');
     }
 
     // API Communication
@@ -594,34 +696,6 @@
         }
     }
 
-    // Enhanced modal open function
-    window.openAllergenIQModal = function() {
-        debugLog('🔄 Opening AllergenIQ modal');
-        
-        // Show the modal
-        const modalOverlay = document.getElementById('allergeniq-modal-overlay');
-        if (modalOverlay) {
-            modalOverlay.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-        
-        // Trigger detailed data load if we have current patient/visit
-        if (window.currentPatientId && window.currentVisitId) {
-            debugLog('🔄 Loading data for modal', { 
-                patientId: window.currentPatientId, 
-                visitId: window.currentVisitId 
-            });
-            updateProfileWithVisitId(window.currentPatientId, window.currentVisitId, true);
-        } else if (currentProfileData) {
-            // Use cached data if available
-            debugLog('🔄 Using cached data for modal');
-            updateModalContent(currentProfileData);
-        } else {
-            debugLog('⚠️ No patient/visit data available for modal');
-            showModalError('Please select a patient first');
-        }
-    };
-
     // Auto-update when patient/visit changes
     function setupAutoUpdate() {
         // Listen for patient/visit changes from other modules
@@ -638,9 +712,19 @@
         };
     }
 
-    // Initialize when DOM is ready
+    // CRITICAL: Enhanced initialization with proper modal state
     function initialize() {
         debugLog('🚀 Initializing AllergenIQ Profile module');
+        
+        // FIRST: Initialize modal state to prevent blocking issues
+        const modalInitialized = initializeModalState();
+        
+        if (modalInitialized) {
+            debugLog('✅ Modal state properly initialized');
+        } else {
+            errorLog('Failed to initialize modal state - retrying in 1 second');
+            setTimeout(initializeModalState, 1000);
+        }
         
         // Setup auto-update system
         setupAutoUpdate();
@@ -648,18 +732,44 @@
         // Expose global update function
         window.updateAllergenIQProfile = updateProfileWithVisitId;
 
-        // Override the openAllergenIQ function with our enhanced version
-        window.openAllergenIQ = window.openAllergenIQModal;
+        // Override the global functions with our enhanced versions
+        window.openAllergenIQ = openAllergenIQModal;
+        window.closeAllergenIQ = closeAllergenIQModal;
+
+        // Add keyboard shortcut for closing modal (Escape key)
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && modalState.isOpen) {
+                debugLog('🔒 Closing modal via Escape key');
+                closeAllergenIQModal();
+            }
+        });
+
+        // Add click outside to close modal
+        document.addEventListener('click', function(e) {
+            if (modalState.isOpen && e.target.id === 'allergeniq-modal-overlay') {
+                debugLog('🔒 Closing modal via outside click');
+                closeAllergenIQModal();
+            }
+        });
 
         debugLog('✅ AllergenIQ Profile module ready');
     }
 
-    // Initialize on DOM load
+    // Initialize on DOM load with error handling
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', initialize);
     } else {
+        // DOM already loaded, initialize immediately
         initialize();
     }
+
+    // Additional safety check - ensure modal is closed after page loads
+    window.addEventListener('load', function() {
+        setTimeout(() => {
+            debugLog('🔧 Post-load modal safety check...');
+            initializeModalState(); // Ensure modal is closed
+        }, 500);
+    });
 
     console.log('🧬 AllergenIQ Profile module loaded successfully');
 })();

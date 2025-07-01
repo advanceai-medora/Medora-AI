@@ -1,22 +1,5 @@
 console.log('patient-management.js loaded');
-console.log('patient-management.js version: 4.1.1 - Fixed Data Type Handling for follow_up_instructions');
-
-// Helper function to normalize data to arrays (CRITICAL FIX)
-function normalizeToArray(value) {
-    if (Array.isArray(value)) {
-        return value;
-    } else if (typeof value === 'string' && value.trim() !== '') {
-        return [value];
-    } else {
-        return [];
-    }
-}
-
-// Helper function to safely access array methods
-function safeArrayOperation(value, operation = 'filter', callback) {
-    const arr = normalizeToArray(value);
-    return arr[operation] ? arr[operation](callback) : arr;
-}
+console.log('patient-management.js version: 4.1.0 - Complete Enhanced Card-Based Recommendations with Collapsible Functionality');
 
 // Enhanced Freed-Style Plan Parser with better pattern matching
 class EnhancedFreedStylePlanParser {
@@ -909,8 +892,6 @@ async function selectPatient(patient) {
                 visitHistoryEl.innerHTML = '<div>No visit history available.</div>';
             }
         }
-        
-        // CRITICAL FIX: Process transcripts with safe array handling
         data.transcripts.forEach(async transcript => {
             if (transcript.soapNotes) {
                 latestAnalysis = { soapNotes: transcript.soapNotes, insights: transcript.insights || {} };
@@ -1060,19 +1041,47 @@ async function selectPatient(patient) {
                         }
                     });
                     
-                    // Extract from DIAGNOSTIC WORKUP - WITH SAFE ARRAY HANDLING
+                    // Extract from DIAGNOSTIC WORKUP
                     if (transcript.soapNotes?.diagnostic_workup) {
-                        const diagnosticWorkup = normalizeToArray(transcript.soapNotes.diagnostic_workup);
-                        allCategories['DIAGNOSTIC TESTS'] = [...allCategories['DIAGNOSTIC TESTS'], ...diagnosticWorkup];
+                        const diagnosticWorkup = transcript.soapNotes.diagnostic_workup;
+                        
+                        // Laboratory Tests
+                        if (diagnosticWorkup.laboratory_tests || diagnosticWorkup.blood_tests) {
+                            const labTests = [];
+                            if (Array.isArray(diagnosticWorkup.laboratory_tests)) {
+                                labTests.push(...diagnosticWorkup.laboratory_tests);
+                            }
+                            if (typeof diagnosticWorkup.blood_tests === 'string') {
+                                labTests.push(diagnosticWorkup.blood_tests);
+                            }
+                            if (labTests.length > 0) {
+                                allCategories['LABORATORY TESTS'] = labTests;
+                                allCategories['DIAGNOSTIC TESTS'] = [...allCategories['DIAGNOSTIC TESTS'], ...labTests];
+                            }
+                        }
+                        
+                        // Skin Tests
+                        if (diagnosticWorkup.skin_tests) {
+                            allCategories['DIAGNOSTIC TESTS'].push(diagnosticWorkup.skin_tests);
+                        }
+                        
+                        // Imaging
+                        if (diagnosticWorkup.imaging && diagnosticWorkup.imaging !== "None indicated at this time.") {
+                            allCategories['DIAGNOSTIC TESTS'].push(diagnosticWorkup.imaging);
+                        }
+                        
+                        // Other diagnostic procedures
+                        if (diagnosticWorkup.other) {
+                            allCategories['DIAGNOSTIC TESTS'].push(diagnosticWorkup.other);
+                        }
                     }
                     
-                    // Extract from FOLLOW-UP INSTRUCTIONS - CRITICAL FIX APPLIED HERE
-                    if (transcript.soapNotes?.follow_up_instructions) {
-                        const followUpInstructions = normalizeToArray(transcript.soapNotes.follow_up_instructions);
-                        allCategories['FOLLOW-UP CARE'] = followUpInstructions;
+                    // Extract from FOLLOW-UP INSTRUCTIONS
+                    if (transcript.soapNotes?.follow_up_instructions && Array.isArray(transcript.soapNotes.follow_up_instructions)) {
+                        allCategories['FOLLOW-UP CARE'] = transcript.soapNotes.follow_up_instructions;
                         
                         // Check for monitoring-related instructions
-                        const monitoringItems = safeArrayOperation(followUpInstructions, 'filter', item => 
+                        const monitoringItems = transcript.soapNotes.follow_up_instructions.filter(item => 
                             item.toLowerCase().includes('monitor') || 
                             item.toLowerCase().includes('track') || 
                             item.toLowerCase().includes('watch') ||
@@ -1083,7 +1092,7 @@ async function selectPatient(patient) {
                         }
                         
                         // Check for specialist referrals
-                        const referralItems = safeArrayOperation(followUpInstructions, 'filter', item => 
+                        const referralItems = transcript.soapNotes.follow_up_instructions.filter(item => 
                             item.toLowerCase().includes('refer') || 
                             item.toLowerCase().includes('specialist') || 
                             item.toLowerCase().includes('consult')
@@ -1094,7 +1103,7 @@ async function selectPatient(patient) {
                         }
                         
                         // Check for immunotherapy mentions
-                        const immunotherapyItems = safeArrayOperation(followUpInstructions, 'filter', item => 
+                        const immunotherapyItems = transcript.soapNotes.follow_up_instructions.filter(item => 
                             item.toLowerCase().includes('allergy shot') || 
                             item.toLowerCase().includes('immunotherapy') || 
                             item.toLowerCase().includes('desensitization')
@@ -1104,13 +1113,12 @@ async function selectPatient(patient) {
                         }
                     }
                     
-                    // Extract from PATIENT EDUCATION - WITH SAFE ARRAY HANDLING
-                    if (transcript.soapNotes?.patient_education) {
-                        const patientEducation = normalizeToArray(transcript.soapNotes.patient_education);
-                        allCategories['PATIENT EDUCATION'] = patientEducation;
+                    // Extract from PATIENT EDUCATION
+                    if (transcript.soapNotes?.patient_education && Array.isArray(transcript.soapNotes.patient_education)) {
+                        allCategories['PATIENT EDUCATION'] = transcript.soapNotes.patient_education;
                         
                         // Check for trigger avoidance
-                        const triggerItems = safeArrayOperation(patientEducation, 'filter', item => 
+                        const triggerItems = transcript.soapNotes.patient_education.filter(item => 
                             item.toLowerCase().includes('avoid') || 
                             item.toLowerCase().includes('prevent') || 
                             item.toLowerCase().includes('trigger')
@@ -1121,7 +1129,7 @@ async function selectPatient(patient) {
                         }
                         
                         // Check for environmental control
-                        const environmentalItems = safeArrayOperation(patientEducation, 'filter', item => 
+                        const environmentalItems = transcript.soapNotes.patient_education.filter(item => 
                             item.toLowerCase().includes('outdoor') || 
                             item.toLowerCase().includes('yard') || 
                             item.toLowerCase().includes('environment') ||
@@ -1133,7 +1141,7 @@ async function selectPatient(patient) {
                         }
                         
                         // Check for lifestyle modifications
-                        const lifestyleItems = safeArrayOperation(patientEducation, 'filter', item => 
+                        const lifestyleItems = transcript.soapNotes.patient_education.filter(item => 
                             item.toLowerCase().includes('wear') || 
                             item.toLowerCase().includes('lifestyle') || 
                             item.toLowerCase().includes('habit') ||
@@ -1163,10 +1171,9 @@ async function selectPatient(patient) {
                         allCategories['ALLERGY MANAGEMENT'] = allergyManagementItems;
                     }
                     
-                    // Add symptom tracking if mentioned - WITH SAFE ARRAY HANDLING
+                    // Add symptom tracking if mentioned
                     if (transcript.soapNotes?.follow_up_instructions) {
-                        const followUpInstructions = normalizeToArray(transcript.soapNotes.follow_up_instructions);
-                        const trackingItems = safeArrayOperation(followUpInstructions, 'filter', item => 
+                        const trackingItems = transcript.soapNotes.follow_up_instructions.filter(item => 
                             item.toLowerCase().includes('track') || 
                             item.toLowerCase().includes('record') || 
                             item.toLowerCase().includes('diary') ||
