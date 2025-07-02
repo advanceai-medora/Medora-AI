@@ -1,0 +1,265 @@
+[2025-05-29 15:41:20] [INFO] 🚀 STARTING COMPLETE MEDORA-IMS INTEGRATION TEST
+[2025-05-29 15:41:20] [INFO] ============================================================
+[2025-05-29 15:41:20] [INFO] === STEP 1: GENERATING JWT ASSERTION ===
+[2025-05-29 15:41:20] [INFO] ✅ JWT assertion generated successfully
+[2025-05-29 15:41:20] [INFO] JTI: 342926a8-be93-413b-9ac9-ff383d232e64
+[2025-05-29 15:41:20] [INFO] JWT Payload:
+[2025-05-29 15:41:20] [INFO] {
+  "sub": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "aud": "https://keycloak-qa.medpharmservices.com:8443/realms/fhir-0051185/protocol/openid-connect/token",
+  "iss": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "exp": 1748533580,
+  "iat": 1748533280,
+  "jti": "342926a8-be93-413b-9ac9-ff383d232e64"
+}
+[2025-05-29 15:41:20] [INFO] JWT Assertion Token:
+[2025-05-29 15:41:20] [INFO] eyJhbGciOiJSUzM4NCIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0ZGRkM2E1OS00MTRjLTQwNWUtYWNjNS0yMjZjMDk3YTcwNjAiLCJhdWQiOiJodHRwczovL2tleWNsb2FrLXFhLm1lZHBoYXJtc2VydmljZXMuY29tOjg0NDMvcmVhbG1zL2ZoaXItMDA1MTE4NS9wcm90b2NvbC9vcGVuaWQtY29ubmVjdC90b2tlbiIsImlzcyI6IjRkZGQzYTU5LTQxNGMtNDA1ZS1hY2M1LTIyNmMwOTdhNzA2MCIsImV4cCI6MTc0ODUzMzU4MCwiaWF0IjoxNzQ4NTMzMjgwLCJqdGkiOiIzNDI5MjZhOC1iZTkzLTQxM2ItOWFjOS1mZjM4M2QyMzJlNjQifQ.SE7poSrmJES4dhn8Ddgoy63yqpvShO69qJEV5Gv5ZhbEawHjHstnxIrVlLW-NdOwOo4wW7e-CFXPNPplgvp8vQnaIm4l1pvD58rXcHfv7Lyh8eXJcma9BTGS-wxeiwfDoQiNOlJsnwtHPHbKa3R6JoXvQCnZyGsmcIj7_P_RUK-psRcCfNOa3gscUeQAIzR3e8gfaI-04o-t08K4A-gkYdVY9v3PkR2wjuI62iRTAkjp_PXwvWNrjmxkjdPK6dLKinFwv_riP4_d52OabUg0C34R6fCI7OLd-N6zjeeRILtmFP70CScxpM91pgtcM86acKcY2KNXC99uGs5bQbQiPA
+[2025-05-29 15:41:20] [INFO] 💾 JWT assertion saved to 'jwt_assertion.txt'
+[2025-05-29 15:41:20] [INFO] 
+=== STEP 2: REQUESTING ACCESS TOKEN ===
+[2025-05-29 15:41:20] [INFO] Requesting access token from IMS...
+[2025-05-29 15:41:20] [INFO] ✅ ACCESS TOKEN RECEIVED!
+[2025-05-29 15:41:20] [INFO] Token type: Bearer
+[2025-05-29 15:41:20] [INFO] Expires in: 86400 seconds
+[2025-05-29 15:41:20] [INFO] Scope: profile email system/*.read
+[2025-05-29 15:41:20] [INFO] 
+🔑 ACCESS TOKEN:
+[2025-05-29 15:41:20] [INFO] eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJZMkFmbDNSSVRTMnJ3QUgwWXpiRVJoa3VJOGRuRmNENFF4TXRzMWE1LXZBIn0.eyJleHAiOjE3NDg2MTk2ODAsImlhdCI6MTc0ODUzMzI4MCwianRpIjoiNTI1YjdkZjctMGUwOC00NWE0LThjMjUtMGM3ZTNhZDQ4YjE2IiwiaXNzIjoiaHR0cHM6Ly9rZXljbG9hay1xYS5tZWRwaGFybXNlcnZpY2VzLmNvbTo4NDQzL3JlYWxtcy9maGlyLTAwNTExODUiLCJhdWQiOiJhY2NvdW50Iiwic3ViIjoiODZhZWNiMmQtYmIyZS00NjNjLTliZjktZDJiYTlkOTYwM2ExIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiNGRkZDNhNTktNDE0Yy00MDVlLWFjYzUtMjI2YzA5N2E3MDYwIiwiYWNyIjoiMSIsInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJvZmZsaW5lX2FjY2VzcyIsInVtYV9hdXRob3JpemF0aW9uIiwiZGVmYXVsdC1yb2xlcy1maGlyLTAwNTExODUiXX0sInJlc291cmNlX2FjY2VzcyI6eyI0ZGRkM2E1OS00MTRjLTQwNWUtYWNjNS0yMjZjMDk3YTcwNjAiOnsicm9sZXMiOlsic3lzdGVtL0dvYWwucmVhZCIsInN5c3RlbS9QcmFjdGl0aW9uZXIucmVhZCIsInN5c3RlbS9EZXZpY2UucmVhZCIsInN5c3RlbS9Db25kaXRpb24ucmVhZCIsInN5c3RlbS9DYXJlUGxhbi5yZWFkIiwib3BlbmlkIiwic3lzdGVtL0NhcmVUZWFtLnJlYWQiLCJzeXN0ZW0vSW1tdW5pemF0aW9uLnJlYWQiLCJzeXN0ZW0vTWVkaWNhdGlvblJlcXVlc3QucmVhZCIsInN5c3RlbS9Qcm9jZWR1cmUucmVhZCIsInN5c3RlbS9Qcm92ZW5hbmNlLnJlYWQiLCJzeXN0ZW0vTG9jYXRpb24ucmVhZCIsInN5c3RlbS9EaWFnbm9zdGljUmVwb3J0LnJlYWQiLCJzeXN0ZW0vQWxsZXJneUludG9sZXJhbmNlLnJlYWQiLCJzeXN0ZW0vUHJhY3RpdGlvbmVyUm9sZS5yZWFkIiwic3lzdGVtL1BhdGllbnQucmVhZCIsInN5c3RlbS9Pcmdhbml6YXRpb24ucmVhZCIsInN5c3RlbS9NZWRpY2F0aW9uLnJlYWQiLCJzeXN0ZW0vRG9jdW1lbnRSZWZlcmVuY2UucmVhZCIsIm9mZmxpbmVfYWNjZXNzIiwic3lzdGVtL0JpbmFyeS5yZWFkIiwic3lzdGVtL09ic2VydmF0aW9uLnJlYWQiLCJzeXN0ZW0vKi5yZWFkIiwic3lzdGVtL0VuY291bnRlci5yZWFkIl19LCJhY2NvdW50Ijp7InJvbGVzIjpbIm1hbmFnZS1hY2NvdW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJ2aWV3LXByb2ZpbGUiXX19LCJzY29wZSI6InByb2ZpbGUgZW1haWwgc3lzdGVtLyoucmVhZCIsImNsaWVudEhvc3QiOiIxMy4yMzMuMTc1LjEyNCIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwiY2xpZW50SWQiOiI0ZGRkM2E1OS00MTRjLTQwNWUtYWNjNS0yMjZjMDk3YTcwNjAiLCJ0ZW5hbnRJZCI6IjY0NmRlNmNjNTg0N2IwMDAwMWNjZjVmMyIsImZoaXIvdXNlci9tZWRpdGFiSWQiOiIwMDUxMTg1IiwicHJlZmVycmVkX3VzZXJuYW1lIjoic2VydmljZS1hY2NvdW50LTRkZGQzYTU5LTQxNGMtNDA1ZS1hY2M1LTIyNmMwOTdhNzA2MCIsImNsaWVudEFkZHJlc3MiOiIxMy4yMzMuMTc1LjEyNCJ9.0tKM5UPW7gd_viPODhVJqyd7PF6smmA7mgj14rovTppar4rUy1JAaDFzP5_Fe6BGkgkdWGkxNpWF6UQvGVa-JDn3L9ydfB8vbod4yK74KPX4PYVoNRS8lERPloonOVU9w_QIE101flH8shBOpj44h3OEAsPsknrVyzKa7i2x76Njur0x8Mt4vi_DwzZUmk8sPVh1xwJXQnFjHPGYBfPj5spXbfHiKkO-B4eN0aTTuWK-W9Grci7H8U7qeHFrQOEiVrkHQt_oLqk2V3esE3V-bdUoh9UN41QKn4ai9tnBvnkJic3l0kOcF1wa75dvnLhHBEeln1T4vj8K2Cd57KpilQ
+[2025-05-29 15:41:20] [INFO] 💾 Access token saved to 'access_token.txt'
+[2025-05-29 15:41:20] [INFO] 💾 Token details saved to 'access_token_details.json'
+[2025-05-29 15:41:20] [INFO] 
+=== STEP 3: ANALYZING ACCESS TOKEN ===
+[2025-05-29 15:41:20] [INFO] 📋 TOKEN HEADER:
+[2025-05-29 15:41:20] [INFO] {
+  "alg": "RS256",
+  "typ": "JWT",
+  "kid": "Y2Afl3RITS2rwAH0YzbERhkuI8dnFcD4QxMts1a5-vA"
+}
+[2025-05-29 15:41:20] [INFO] 
+📋 TOKEN PAYLOAD:
+[2025-05-29 15:41:20] [INFO] {
+  "exp": 1748619680,
+  "iat": 1748533280,
+  "jti": "525b7df7-0e08-45a4-8c25-0c7e3ad48b16",
+  "iss": "https://keycloak-qa.medpharmservices.com:8443/realms/fhir-0051185",
+  "aud": "account",
+  "sub": "86aecb2d-bb2e-463c-9bf9-d2ba9d9603a1",
+  "typ": "Bearer",
+  "azp": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "acr": "1",
+  "realm_access": {
+    "roles": [
+      "offline_access",
+      "uma_authorization",
+      "default-roles-fhir-0051185"
+    ]
+  },
+  "resource_access": {
+    "4ddd3a59-414c-405e-acc5-226c097a7060": {
+      "roles": [
+        "system/Goal.read",
+        "system/Practitioner.read",
+        "system/Device.read",
+        "system/Condition.read",
+        "system/CarePlan.read",
+        "openid",
+        "system/CareTeam.read",
+        "system/Immunization.read",
+        "system/MedicationRequest.read",
+        "system/Procedure.read",
+        "system/Provenance.read",
+        "system/Location.read",
+        "system/DiagnosticReport.read",
+        "system/AllergyIntolerance.read",
+        "system/PractitionerRole.read",
+        "system/Patient.read",
+        "system/Organization.read",
+        "system/Medication.read",
+        "system/DocumentReference.read",
+        "offline_access",
+        "system/Binary.read",
+        "system/Observation.read",
+        "system/*.read",
+        "system/Encounter.read"
+      ]
+    },
+    "account": {
+      "roles": [
+        "manage-account",
+        "manage-account-links",
+        "view-profile"
+      ]
+    }
+  },
+  "scope": "profile email system/*.read",
+  "clientHost": "13.233.175.124",
+  "email_verified": false,
+  "clientId": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "tenantId": "646de6cc5847b00001ccf5f3",
+  "fhir/user/meditabId": "0051185",
+  "preferred_username": "service-account-4ddd3a59-414c-405e-acc5-226c097a7060",
+  "clientAddress": "13.233.175.124"
+}
+[2025-05-29 15:41:20] [INFO] 
+🔍 TOKEN ANALYSIS:
+[2025-05-29 15:41:20] [INFO] ⏰ Expires at: 2025-05-30 15:41:20
+[2025-05-29 15:41:20] [INFO] ✅ Token is VALID (expires in 23:59:59.485725)
+[2025-05-29 15:41:20] [INFO] 🔐 Scopes: profile, email, system/*.read
+[2025-05-29 15:41:20] [INFO] 👤 Subject: 86aecb2d-bb2e-463c-9bf9-d2ba9d9603a1
+[2025-05-29 15:41:20] [INFO] 🏢 Issuer: https://keycloak-qa.medpharmservices.com:8443/realms/fhir-0051185
+[2025-05-29 15:41:20] [INFO] 🎯 Audience: account
+[2025-05-29 15:41:20] [INFO] 💾 Token analysis saved to 'access_token_analysis.json'
+[2025-05-29 15:41:20] [INFO] 
+=== STEP 4: TESTING FHIR ENDPOINTS ===
+[2025-05-29 15:41:20] [INFO] 
+--- Testing Capability Statement ---
+[2025-05-29 15:41:50] [INFO] ❌ Error: HTTPSConnectionPool(host='meditabfhirsandbox.meditab.com', port=443): Max retries exceeded with url: /mps/fhir/R4/metadata (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x73e7e7c33f80>, 'Connection to meditabfhirsandbox.meditab.com timed out. (connect timeout=30)'))
+[2025-05-29 15:41:50] [INFO] 
+--- Testing Patient Resources ---
+[2025-05-29 15:42:20] [INFO] ❌ Error: HTTPSConnectionPool(host='meditabfhirsandbox.meditab.com', port=443): Max retries exceeded with url: /mps/fhir/R4/Patient (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x73e7e7c32e40>, 'Connection to meditabfhirsandbox.meditab.com timed out. (connect timeout=30)'))
+[2025-05-29 15:42:20] [INFO] 
+--- Testing Practitioner Resources ---
+[2025-05-29 15:42:50] [INFO] ❌ Error: HTTPSConnectionPool(host='meditabfhirsandbox.meditab.com', port=443): Max retries exceeded with url: /mps/fhir/R4/Practitioner (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x73e7e7a80740>, 'Connection to meditabfhirsandbox.meditab.com timed out. (connect timeout=30)'))
+[2025-05-29 15:42:50] [INFO] 
+--- Testing Organization Resources ---
+[2025-05-29 15:43:20] [INFO] ❌ Error: HTTPSConnectionPool(host='meditabfhirsandbox.meditab.com', port=443): Max retries exceeded with url: /mps/fhir/R4/Organization (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x73e7e7a80c50>, 'Connection to meditabfhirsandbox.meditab.com timed out. (connect timeout=30)'))
+[2025-05-29 15:43:20] [INFO] 
+--- Testing Observation Resources ---
+[2025-05-29 15:43:50] [INFO] ❌ Error: HTTPSConnectionPool(host='meditabfhirsandbox.meditab.com', port=443): Max retries exceeded with url: /mps/fhir/R4/Observation (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x73e7e7a81340>, 'Connection to meditabfhirsandbox.meditab.com timed out. (connect timeout=30)'))
+[2025-05-29 15:43:50] [INFO] 
+📊 FHIR TEST RESULTS:
+[2025-05-29 15:43:50] [INFO] Capability Statement: ❌ FAILED
+[2025-05-29 15:43:50] [INFO] Patient Resources: ❌ FAILED
+[2025-05-29 15:43:50] [INFO] Practitioner Resources: ❌ FAILED
+[2025-05-29 15:43:50] [INFO] Organization Resources: ❌ FAILED
+[2025-05-29 15:43:50] [INFO] Observation Resources: ❌ FAILED
+[2025-05-29 15:43:50] [INFO] 
+Overall FHIR Tests: 0/5 passed
+[2025-05-29 15:43:50] [WARN] ⚠️  Step 4: Some FHIR tests failed
+[2025-05-29 15:43:50] [INFO] 
+============================================================
+[2025-05-29 15:43:50] [INFO] 🎉 INTEGRATION TEST COMPLETED!
+[2025-05-29 15:43:50] [INFO] 
+📁 Files created:
+[2025-05-29 15:43:50] [INFO]   - jwt_assertion.txt
+[2025-05-29 15:43:50] [INFO]   - access_token.txt
+[2025-05-29 15:43:50] [INFO]   - access_token_details.json
+[2025-05-29 15:43:50] [INFO]   - access_token_analysis.json
+[2025-05-29 15:43:50] [INFO]   - fhir_capability_statement.json
+[2025-05-29 15:43:50] [INFO]   - sample_*_response.json (FHIR resource samples)
+[2025-05-29 15:43:50] [INFO]   - medora_ims_complete.log
+[2025-05-30 18:42:24] [INFO] 🚀 STARTING COMPLETE MEDORA-IMS INTEGRATION TEST
+[2025-05-30 18:42:24] [INFO] ============================================================
+[2025-05-30 18:42:24] [INFO] === STEP 1: GENERATING JWT ASSERTION ===
+[2025-05-30 18:42:24] [INFO] ✅ JWT assertion generated successfully
+[2025-05-30 18:42:24] [INFO] JTI: 81860212-325a-464c-962c-3c9a2d0e812c
+[2025-05-30 18:42:24] [INFO] JWT Payload:
+[2025-05-30 18:42:24] [INFO] {
+  "sub": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "aud": "https://keycloak-qa.medpharmservices.com:8443/realms/fhir-0051185/protocol/openid-connect/token",
+  "iss": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "exp": 1748630844,
+  "iat": 1748630544,
+  "jti": "81860212-325a-464c-962c-3c9a2d0e812c"
+}
+[2025-05-30 18:42:24] [INFO] JWT Assertion Token:
+[2025-05-30 18:42:24] [INFO] eyJhbGciOiJSUzM4NCIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0ZGRkM2E1OS00MTRjLTQwNWUtYWNjNS0yMjZjMDk3YTcwNjAiLCJhdWQiOiJodHRwczovL2tleWNsb2FrLXFhLm1lZHBoYXJtc2VydmljZXMuY29tOjg0NDMvcmVhbG1zL2ZoaXItMDA1MTE4NS9wcm90b2NvbC9vcGVuaWQtY29ubmVjdC90b2tlbiIsImlzcyI6IjRkZGQzYTU5LTQxNGMtNDA1ZS1hY2M1LTIyNmMwOTdhNzA2MCIsImV4cCI6MTc0ODYzMDg0NCwiaWF0IjoxNzQ4NjMwNTQ0LCJqdGkiOiI4MTg2MDIxMi0zMjVhLTQ2NGMtOTYyYy0zYzlhMmQwZTgxMmMifQ.X7Fm9VtBU9vetBCEmTWxkmt32ZhsUGqzxF6zVIo6XyGs-qCZO4P-F0Zr8w-lfjGjKr4CI0tpCgK_xCyyJ76nTlARL2zql-GZAXeaeK4JdCBEGNGmw5EXpw72iicLfOHovcshZN03iDiLwXZM_CNyjdQ8CS1NBQVHa7FywfQx74HV1DpTvWI32SZ_2TcawR3e90aisMDeWeU9dPk1X6JzWj7cxr_5ATCMTMIvCN3rU0YeCEcEH6qar8g9ylK3fUtrVySYzhHinkv2BPcR4igcEUp9ajIDmvg62L2LmVfQ90ALDk2N15SDe44oEaFCfX8OGpaG0Ra0zLFGDowh4gocIA
+[2025-05-30 18:42:24] [INFO] 💾 JWT assertion saved to 'jwt_assertion.txt'
+[2025-05-30 18:42:24] [INFO] 
+=== STEP 2: REQUESTING ACCESS TOKEN ===
+[2025-05-30 18:42:24] [INFO] Requesting access token from IMS...
+[2025-05-30 18:42:25] [INFO] ✅ ACCESS TOKEN RECEIVED!
+[2025-05-30 18:42:25] [INFO] Token type: Bearer
+[2025-05-30 18:42:25] [INFO] Expires in: 86400 seconds
+[2025-05-30 18:42:25] [INFO] Scope: profile email system/*.read
+[2025-05-30 18:42:25] [INFO] 
+🔑 ACCESS TOKEN:
+[2025-05-30 18:42:25] [INFO] eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJZMkFmbDNSSVRTMnJ3QUgwWXpiRVJoa3VJOGRuRmNENFF4TXRzMWE1LXZBIn0.eyJleHAiOjE3NDg3MTY5NDUsImlhdCI6MTc0ODYzMDU0NSwianRpIjoiYjgzMzRhODctM2YxMS00NWM4LWIyZGMtMmExZGU4MTU4NmVmIiwiaXNzIjoiaHR0cHM6Ly9rZXljbG9hay1xYS5tZWRwaGFybXNlcnZpY2VzLmNvbTo4NDQzL3JlYWxtcy9maGlyLTAwNTExODUiLCJhdWQiOiJhY2NvdW50Iiwic3ViIjoiODZhZWNiMmQtYmIyZS00NjNjLTliZjktZDJiYTlkOTYwM2ExIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiNGRkZDNhNTktNDE0Yy00MDVlLWFjYzUtMjI2YzA5N2E3MDYwIiwiYWNyIjoiMSIsInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJvZmZsaW5lX2FjY2VzcyIsInVtYV9hdXRob3JpemF0aW9uIiwiZGVmYXVsdC1yb2xlcy1maGlyLTAwNTExODUiXX0sInJlc291cmNlX2FjY2VzcyI6eyI0ZGRkM2E1OS00MTRjLTQwNWUtYWNjNS0yMjZjMDk3YTcwNjAiOnsicm9sZXMiOlsic3lzdGVtL0dvYWwucmVhZCIsInN5c3RlbS9QcmFjdGl0aW9uZXIucmVhZCIsInN5c3RlbS9EZXZpY2UucmVhZCIsInN5c3RlbS9Db25kaXRpb24ucmVhZCIsInN5c3RlbS9DYXJlUGxhbi5yZWFkIiwib3BlbmlkIiwic3lzdGVtL0NhcmVUZWFtLnJlYWQiLCJzeXN0ZW0vSW1tdW5pemF0aW9uLnJlYWQiLCJzeXN0ZW0vTWVkaWNhdGlvblJlcXVlc3QucmVhZCIsInN5c3RlbS9Qcm9jZWR1cmUucmVhZCIsInN5c3RlbS9Qcm92ZW5hbmNlLnJlYWQiLCJzeXN0ZW0vTG9jYXRpb24ucmVhZCIsInN5c3RlbS9EaWFnbm9zdGljUmVwb3J0LnJlYWQiLCJzeXN0ZW0vQWxsZXJneUludG9sZXJhbmNlLnJlYWQiLCJzeXN0ZW0vUHJhY3RpdGlvbmVyUm9sZS5yZWFkIiwic3lzdGVtL1BhdGllbnQucmVhZCIsInN5c3RlbS9Pcmdhbml6YXRpb24ucmVhZCIsInN5c3RlbS9NZWRpY2F0aW9uLnJlYWQiLCJzeXN0ZW0vRG9jdW1lbnRSZWZlcmVuY2UucmVhZCIsIm9mZmxpbmVfYWNjZXNzIiwic3lzdGVtL0JpbmFyeS5yZWFkIiwic3lzdGVtL09ic2VydmF0aW9uLnJlYWQiLCJzeXN0ZW0vKi5yZWFkIiwic3lzdGVtL0VuY291bnRlci5yZWFkIl19LCJhY2NvdW50Ijp7InJvbGVzIjpbIm1hbmFnZS1hY2NvdW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJ2aWV3LXByb2ZpbGUiXX19LCJzY29wZSI6InByb2ZpbGUgZW1haWwgc3lzdGVtLyoucmVhZCIsImNsaWVudEhvc3QiOiIxMy4yMzMuMTc1LjEyNCIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwiY2xpZW50SWQiOiI0ZGRkM2E1OS00MTRjLTQwNWUtYWNjNS0yMjZjMDk3YTcwNjAiLCJ0ZW5hbnRJZCI6IjY0NmRlNmNjNTg0N2IwMDAwMWNjZjVmMyIsImZoaXIvdXNlci9tZWRpdGFiSWQiOiIwMDUxMTg1IiwicHJlZmVycmVkX3VzZXJuYW1lIjoic2VydmljZS1hY2NvdW50LTRkZGQzYTU5LTQxNGMtNDA1ZS1hY2M1LTIyNmMwOTdhNzA2MCIsImNsaWVudEFkZHJlc3MiOiIxMy4yMzMuMTc1LjEyNCJ9.4ff2pNc9udvolwvnEMmWz6sisjbrc8X-v9g0ITjpJImZ4k6cGZ6QO3zcgPMRM2tLd-9hpmxneYuOAyJSF0gunf-odGONDU1mKAx_iYQ1gUgPFbFkRSKIpf0Nsb83BHtfx2-qIzXreDrMwBe775HvacoZd_cZTpwlTPgh8aq1HD3miXjKBffbIlHbdeemVStGyUw9r_7Lxa8cNzDkdBel_b9en-3BAdd-d3yzVUKKUTwg3hWks-2hQ_DNaGWPF5xVD-n0NWJFJo9WaLTfg70-OBhavv_c6pfME1tEJH8luTPI0gOWb2nMhDEQ2MJVJC2YDbBPIQhFCjlKinKr6FH_eg
+[2025-05-30 18:42:25] [INFO] 💾 Access token saved to 'access_token.txt'
+[2025-05-30 18:42:25] [INFO] 💾 Token details saved to 'access_token_details.json'
+[2025-05-30 18:42:25] [INFO] 
+=== STEP 3: ANALYZING ACCESS TOKEN ===
+[2025-05-30 18:42:25] [INFO] 📋 TOKEN HEADER:
+[2025-05-30 18:42:25] [INFO] {
+  "alg": "RS256",
+  "typ": "JWT",
+  "kid": "Y2Afl3RITS2rwAH0YzbERhkuI8dnFcD4QxMts1a5-vA"
+}
+[2025-05-30 18:42:25] [INFO] 
+📋 TOKEN PAYLOAD:
+[2025-05-30 18:42:25] [INFO] {
+  "exp": 1748716945,
+  "iat": 1748630545,
+  "jti": "b8334a87-3f11-45c8-b2dc-2a1de81586ef",
+  "iss": "https://keycloak-qa.medpharmservices.com:8443/realms/fhir-0051185",
+  "aud": "account",
+  "sub": "86aecb2d-bb2e-463c-9bf9-d2ba9d9603a1",
+  "typ": "Bearer",
+  "azp": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "acr": "1",
+  "realm_access": {
+    "roles": [
+      "offline_access",
+      "uma_authorization",
+      "default-roles-fhir-0051185"
+    ]
+  },
+  "resource_access": {
+    "4ddd3a59-414c-405e-acc5-226c097a7060": {
+      "roles": [
+        "system/Goal.read",
+        "system/Practitioner.read",
+        "system/Device.read",
+        "system/Condition.read",
+        "system/CarePlan.read",
+        "openid",
+        "system/CareTeam.read",
+        "system/Immunization.read",
+        "system/MedicationRequest.read",
+        "system/Procedure.read",
+        "system/Provenance.read",
+        "system/Location.read",
+        "system/DiagnosticReport.read",
+        "system/AllergyIntolerance.read",
+        "system/PractitionerRole.read",
+        "system/Patient.read",
+        "system/Organization.read",
+        "system/Medication.read",
+        "system/DocumentReference.read",
+        "offline_access",
+        "system/Binary.read",
+        "system/Observation.read",
+        "system/*.read",
+        "system/Encounter.read"
+      ]
+    },
+    "account": {
+      "roles": [
+        "manage-account",
+        "manage-account-links",
+        "view-profile"
+      ]
+    }
+  },
+  "scope": "profile email system/*.read",
+  "clientHost": "13.233.175.124",
+  "email_verified": false,
+  "clientId": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "tenantId": "646de6cc5847b00001ccf5f3",
+  "fhir/user/meditabId": "0051185",
+  "preferred_username": "service-account-4ddd3a59-414c-405e-acc5-226c097a7060",
+  "clientAddress": "13.233.175.124"
+}
+[2025-05-30 18:42:25] [INFO] 
+🔍 TOKEN ANALYSIS:
+[2025-05-30 18:42:25] [INFO] ⏰ Expires at: 2025-05-31 18:42:25
+[2025-05-30 18:42:25] [INFO] ✅ Token is VALID (expires in 23:59:59.485397)
+[2025-05-30 18:42:25] [INFO] 🔐 Scopes: profile, email, system/*.read
+[2025-05-30 18:42:25] [INFO] 👤 Subject: 86aecb2d-bb2e-463c-9bf9-d2ba9d9603a1
+[2025-05-30 18:42:25] [INFO] 🏢 Issuer: https://keycloak-qa.medpharmservices.com:8443/realms/fhir-0051185
+[2025-05-30 18:42:25] [INFO] 🎯 Audience: account
+[2025-05-30 18:42:25] [INFO] 💾 Token analysis saved to 'access_token_analysis.json'
+[2025-05-30 18:42:25] [INFO] 
+=== STEP 4: TESTING FHIR ENDPOINTS ===
+[2025-05-30 18:42:25] [INFO] 
+--- Testing Capability Statement ---

@@ -1,0 +1,63 @@
+{
+  "exp": 1748716945,
+  "iat": 1748630545,
+  "jti": "b8334a87-3f11-45c8-b2dc-2a1de81586ef",
+  "iss": "https://keycloak-qa.medpharmservices.com:8443/realms/fhir-0051185",
+  "aud": "account",
+  "sub": "86aecb2d-bb2e-463c-9bf9-d2ba9d9603a1",
+  "typ": "Bearer",
+  "azp": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "acr": "1",
+  "realm_access": {
+    "roles": [
+      "offline_access",
+      "uma_authorization",
+      "default-roles-fhir-0051185"
+    ]
+  },
+  "resource_access": {
+    "4ddd3a59-414c-405e-acc5-226c097a7060": {
+      "roles": [
+        "system/Goal.read",
+        "system/Practitioner.read",
+        "system/Device.read",
+        "system/Condition.read",
+        "system/CarePlan.read",
+        "openid",
+        "system/CareTeam.read",
+        "system/Immunization.read",
+        "system/MedicationRequest.read",
+        "system/Procedure.read",
+        "system/Provenance.read",
+        "system/Location.read",
+        "system/DiagnosticReport.read",
+        "system/AllergyIntolerance.read",
+        "system/PractitionerRole.read",
+        "system/Patient.read",
+        "system/Organization.read",
+        "system/Medication.read",
+        "system/DocumentReference.read",
+        "offline_access",
+        "system/Binary.read",
+        "system/Observation.read",
+        "system/*.read",
+        "system/Encounter.read"
+      ]
+    },
+    "account": {
+      "roles": [
+        "manage-account",
+        "manage-account-links",
+        "view-profile"
+      ]
+    }
+  },
+  "scope": "profile email system/*.read",
+  "clientHost": "13.233.175.124",
+  "email_verified": false,
+  "clientId": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "tenantId": "646de6cc5847b00001ccf5f3",
+  "fhir/user/meditabId": "0051185",
+  "preferred_username": "service-account-4ddd3a59-414c-405e-acc5-226c097a7060",
+  "clientAddress": "13.233.175.124"
+}

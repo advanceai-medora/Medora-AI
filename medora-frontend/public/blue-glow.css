@@ -1,0 +1,598 @@
+/* ===== REFINED MEDICAL WHITE + BLUE GLOW THEME ===== */
+/* OPTIMIZED FOR DRAGGABLE BLUE SCROLLBARS */
+
+/* CSS Variables for Clean Medical Design */
+:root {
+    /* Clean Medical White Palette */
+    --medical-white: #ffffff;
+    --medical-off-white: #fefefe;
+    --medical-light: #fafafa;
+    --medical-border: #f0f0f0;
+    --medical-subtle: #f5f5f5;
+    
+    /* Enhanced Blue Glow Effects */
+    --primary-blue: #0ea5e9;
+    --primary-blue-light: #38bdf8;
+    --primary-blue-dark: #0284c7;
+    
+    /* Blue Glow System - Refined */
+    --blue-glow-micro: 0 0 8px rgba(14, 165, 233, 0.3);
+    --blue-glow-subtle: 0 0 15px rgba(14, 165, 233, 0.4);
+    --blue-glow: 0 0 25px rgba(14, 165, 233, 0.6);
+    --blue-glow-strong: 0 0 35px rgba(14, 165, 233, 0.8);
+    --blue-glow-ultra: 0 0 50px rgba(14, 165, 233, 1.0);
+    
+    /* Clean Medical Shadows */
+    --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.04);
+    --shadow-soft: 0 2px 6px rgba(0, 0, 0, 0.06);
+    --shadow-medium: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --shadow-strong: 0 6px 18px rgba(0, 0, 0, 0.10);
+    
+    /* Medical Border System */
+    --border-light: 1px solid #f0f0f0;
+    --border-medium: 1px solid #e5e5e5;
+    --border-blue-light: 1px solid rgba(14, 165, 233, 0.2);
+    --border-blue-medium: 2px solid rgba(14, 165, 233, 0.4);
+    --border-blue-strong: 2px solid rgba(14, 165, 233, 0.6);
+}
+
+/* ===== CLEAN FOUNDATION ===== */
+
+/* Clean medical white background */
+body {
+    background: var(--medical-white) !important;
+    font-family: 'Inter', 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+/* ===== SCROLLING AREAS - NO INTERFERENCE WITH SCROLLBARS ===== */
+
+/* Main scrollable areas - ENSURE SCROLLBAR INTERACTION */
+.scroll-area,
+#main-content,
+#patient-sidebar,
+#ai-insights {
+    /* CORE FUNCTIONAL SCROLLING */
+    overflow-y: scroll !important;
+    overflow-x: hidden !important;
+    scroll-behavior: smooth !important;
+    
+    /* ENSURE SCROLLBAR FUNCTIONALITY */
+    position: relative !important;
+    z-index: 1 !important;
+    
+    /* CRITICAL: DON'T BLOCK SCROLLBAR INTERACTION */
+    pointer-events: auto !important;
+    
+    /* NO TRANSFORMS OR EFFECTS THAT BREAK SCROLLBARS */
+    transform: none !important;
+    will-change: auto !important;
+    backface-visibility: visible !important;
+    contain: none !important;
+    
+    /* STYLING */
+    background: var(--medical-white) !important;
+    border: 1px solid rgba(14, 165, 233, 0.2) !important;
+    box-shadow: 0 2px 8px rgba(14, 165, 233, 0.1) !important;
+    border-radius: 8px;
+    padding: 20px;
+    
+    /* COMPATIBILITY */
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior: auto !important;
+    
+    /* ENSURE CONTENT DOESN'T BLOCK SCROLLBAR */
+    padding-right: 20px !important; /* Space for scrollbar */
+}
+
+/* ===== CONTAINER LAYOUT ===== */
+
+.container {
+    display: grid;
+    grid-template-columns: 300px 1fr 350px;
+    gap: 20px;
+    height: calc(100vh - 80px);
+    padding: 20px;
+    max-width: 100%;
+    overflow: hidden; /* Prevent container scroll */
+}
+
+/* Header styling */
+header {
+    background: var(--medical-white) !important;
+    box-shadow: var(--shadow-soft) !important;
+    border-bottom: var(--border-light);
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 50px;
+}
+
+/* ===== BASIC HEIGHT CONSTRAINTS ===== */
+
+#patient-sidebar {
+    height: calc(100vh - 120px) !important;
+    max-height: calc(100vh - 120px) !important;
+    min-height: 300px !important;
+}
+
+#main-content {
+    height: calc(100vh - 120px) !important;
+    max-height: calc(100vh - 120px) !important;
+    min-height: 400px !important;
+}
+
+#ai-insights {
+    height: calc(100vh - 120px) !important;
+    max-height: calc(100vh - 120px) !important;
+    min-height: 300px !important;
+}
+
+/* ===== INTERACTIVE BLUE SCROLLBARS - DRAGGABLE ===== */
+
+/* Webkit browsers (Chrome, Safari, Edge) - FULLY INTERACTIVE */
+.scroll-area::-webkit-scrollbar,
+#main-content::-webkit-scrollbar,
+#patient-sidebar::-webkit-scrollbar,
+#ai-insights::-webkit-scrollbar {
+    width: 14px !important;
+    background: rgba(14, 165, 233, 0.1) !important;
+    border-radius: 7px !important;
+    /* ENSURE INTERACTIVITY */
+    cursor: pointer !important;
+    pointer-events: auto !important;
+}
+
+.scroll-area::-webkit-scrollbar-track,
+#main-content::-webkit-scrollbar-track,
+#patient-sidebar::-webkit-scrollbar-track,
+#ai-insights::-webkit-scrollbar-track {
+    background: rgba(14, 165, 233, 0.05) !important;
+    border-radius: 7px !important;
+    /* TRACK MUST BE INTERACTIVE */
+    cursor: pointer !important;
+    pointer-events: auto !important;
+}
+
+.scroll-area::-webkit-scrollbar-thumb,
+#main-content::-webkit-scrollbar-thumb,
+#patient-sidebar::-webkit-scrollbar-thumb,
+#ai-insights::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-light) 100%) !important;
+    border-radius: 7px !important;
+    border: 2px solid rgba(255, 255, 255, 0.3) !important;
+    min-height: 30px !important;
+    
+    /* CRITICAL FOR DRAGGING */
+    cursor: grab !important;
+    pointer-events: auto !important;
+    
+    /* VISUAL FEEDBACK */
+    transition: all 0.2s ease !important;
+}
+
+.scroll-area::-webkit-scrollbar-thumb:hover,
+#main-content::-webkit-scrollbar-thumb:hover,
+#patient-sidebar::-webkit-scrollbar-thumb:hover,
+#ai-insights::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, var(--primary-blue-dark) 0%, var(--primary-blue) 100%) !important;
+    border: 2px solid rgba(255, 255, 255, 0.5) !important;
+    cursor: grab !important;
+    transform: scale(1.05) !important;
+}
+
+.scroll-area::-webkit-scrollbar-thumb:active,
+#main-content::-webkit-scrollbar-thumb:active,
+#patient-sidebar::-webkit-scrollbar-thumb:active,
+#ai-insights::-webkit-scrollbar-thumb:active {
+    background: var(--primary-blue-dark) !important;
+    cursor: grabbing !important;
+    transform: scale(1.1) !important;
+}
+
+/* Firefox - Make draggable */
+.scroll-area,
+#main-content,
+#patient-sidebar,
+#ai-insights {
+    scrollbar-width: auto !important;
+    scrollbar-color: var(--primary-blue) rgba(14, 165, 233, 0.1) !important;
+}
+
+/* ===== INTERACTIVE ELEMENTS WITH BLUE GLOW ===== */
+
+/* Logo hover effect */
+.logo-image {
+    transition: all 0.3s ease;
+}
+
+.logo-image:hover {
+    box-shadow: var(--blue-glow-subtle);
+    transform: scale(1.05);
+}
+
+/* Button hover effects */
+button {
+    transition: all 0.3s ease;
+    background: var(--medical-white);
+    border: var(--border-medium);
+    border-radius: 6px;
+    padding: 8px 16px;
+    cursor: pointer;
+}
+
+button:hover {
+    box-shadow: var(--blue-glow-subtle);
+    transform: translateY(-1px);
+    background: rgba(14, 165, 233, 0.05);
+    border: var(--border-blue-light);
+}
+
+/* Primary buttons - stronger effects */
+#start-visit-btn,
+#submit-transcript-btn,
+#copy-soap-btn {
+    background: var(--primary-blue);
+    color: white;
+    border: 2px solid var(--primary-blue);
+}
+
+#start-visit-btn:hover,
+#submit-transcript-btn:hover,
+#copy-soap-btn:hover {
+    box-shadow: var(--blue-glow-strong);
+    transform: translateY(-2px) scale(1.03);
+    background: var(--primary-blue-dark);
+}
+
+/* Patient list items */
+.patient-item {
+    transition: all 0.3s ease;
+    padding: 15px;
+    margin: 10px 0;
+    border: var(--border-light);
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.patient-item:hover {
+    box-shadow: var(--blue-glow-subtle);
+    border-left: 4px solid var(--primary-blue);
+    background: rgba(14, 165, 233, 0.02);
+    transform: translateX(3px);
+}
+
+.patient-item.selected {
+    border-left: 4px solid var(--primary-blue);
+    background: rgba(14, 165, 233, 0.08);
+    box-shadow: var(--blue-glow);
+}
+
+/* Menu button */
+#logout-btn:hover {
+    box-shadow: var(--blue-glow);
+    background: rgba(14, 165, 233, 0.1);
+    border: var(--border-blue-medium);
+}
+
+/* ===== SOAP AND INSIGHTS SECTIONS ===== */
+
+.soap-section,
+.insights-section {
+    background: var(--medical-white);
+    border: var(--border-light);
+    border-radius: 8px;
+    padding: 20px;
+    margin: 15px 0;
+    box-shadow: var(--shadow-subtle);
+    transition: all 0.3s ease;
+}
+
+.soap-section:hover,
+.insights-section:hover {
+    box-shadow: var(--blue-glow-subtle), var(--shadow-medium);
+    border: var(--border-blue-light);
+    transform: translateY(-1px);
+}
+
+/* AllergenIQ special styling */
+.allergeniq-section {
+    background: var(--medical-white);
+    border: var(--border-blue-light);
+    border-radius: 8px;
+    padding: 20px;
+    margin: 15px 0;
+    box-shadow: var(--shadow-soft);
+    transition: all 0.3s ease;
+}
+
+.allergeniq-section:hover {
+    box-shadow: var(--blue-glow), var(--shadow-strong);
+    border: var(--border-blue-medium);
+    transform: translateY(-2px);
+}
+
+/* ===== INPUT FIELDS ===== */
+
+input,
+textarea,
+select {
+    background: var(--medical-white);
+    border: var(--border-medium);
+    border-radius: 6px;
+    padding: 10px;
+    width: 100%;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+    position: relative; /* Don't interfere with scroll area */
+    z-index: 1; /* Stay above scroll area */
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    background: var(--medical-white);
+    box-shadow: var(--blue-glow-subtle), var(--shadow-medium);
+    border: var(--border-blue-strong);
+    outline: none;
+    z-index: 2; /* Higher when focused but still allow scroll area clicks */
+}
+
+/* Special patient ID input */
+#patient-id:focus {
+    box-shadow: var(--blue-glow-strong), var(--shadow-medium);
+    transform: scale(1.02);
+}
+
+/* Ensure input containers don't block scroll area clicks */
+#transcript-section,
+#patient-details {
+    position: relative;
+    pointer-events: auto; /* Allow clicks to pass through to scroll area */
+}
+
+/* Input field containers should not prevent scroll area interaction */
+label {
+    pointer-events: none; /* Labels don't interfere */
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: #1a365d;
+}
+
+/* ===== TABLES ===== */
+
+#references-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--medical-white);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: var(--shadow-subtle);
+}
+
+#references-table th {
+    background: var(--medical-light);
+    border: var(--border-light);
+    padding: 12px;
+    text-align: left;
+    font-weight: 600;
+}
+
+#references-table td {
+    background: var(--medical-white);
+    border: var(--border-light);
+    padding: 10px;
+}
+
+#references-table tbody tr:nth-child(even) td {
+    background: var(--medical-subtle);
+}
+
+#references-table tbody tr:hover td {
+    background: rgba(14, 165, 233, 0.02);
+    border-color: rgba(14, 165, 233, 0.2);
+}
+
+/* ===== CONTENT SPACING FOR SMOOTH SCROLLING ===== */
+
+.scroll-area > *:not(:last-child),
+#main-content > *:not(:last-child),
+#patient-sidebar > *:not(:last-child),
+#ai-insights > *:not(:last-child) {
+    margin-bottom: 20px;
+}
+
+/* Extra space at bottom for comfortable scrolling */
+.scroll-area > *:last-child,
+#main-content > *:last-child,
+#patient-sidebar > *:last-child,
+#ai-insights > *:last-child {
+    margin-bottom: 40px;
+}
+
+/* ===== MOBILE RESPONSIVE ===== */
+
+@media (max-width: 1024px) {
+    .container {
+        grid-template-columns: 250px 1fr 300px;
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+    
+    .container {
+        display: flex;
+        flex-direction: column;
+        height: auto;
+        gap: 15px;
+        padding: 15px;
+    }
+    
+    #patient-sidebar {
+        order: 1;
+        height: 250px !important;
+        max-height: 250px !important;
+        min-height: 200px;
+    }
+    
+    #main-content {
+        order: 2;
+        height: 60vh !important;
+        max-height: 60vh !important;
+        min-height: 400px;
+    }
+    
+    #ai-insights {
+        order: 3;
+        height: 50vh !important;
+        max-height: 50vh !important;
+        min-height: 300px;
+    }
+}
+
+@media (max-width: 480px) {
+    #patient-sidebar {
+        height: 200px;
+        max-height: 200px;
+    }
+    
+    #main-content {
+        height: 55vh;
+        max-height: 55vh;
+        min-height: 350px;
+    }
+    
+    #ai-insights {
+        height: 45vh;
+        max-height: 45vh;
+        min-height: 250px;
+    }
+}
+
+/* ===== TYPOGRAPHY ===== */
+
+.soap-section h3,
+.insights-section h3,
+#ai-insights h2 {
+    color: #1a365d;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+/* ===== MODALS ===== */
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.modal-overlay.active {
+    display: flex;
+    opacity: 1;
+    align-items: center;
+    justify-content: center;
+}
+
+#smart-learning-modal,
+#separate-modal {
+    background: var(--medical-white);
+    box-shadow: var(--shadow-strong);
+    border: var(--border-medium);
+    border-radius: 12px;
+}
+
+/* ===== ALLERGENIQ MODAL STYLING ===== */
+
+.allergeniq-modal {
+    background: var(--medical-white);
+    border-radius: 12px;
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: var(--blue-glow), var(--shadow-strong);
+    border: var(--border-blue-medium);
+}
+
+.allergeniq-collapsed {
+    background: var(--medical-white);
+    border: var(--border-blue-light);
+    border-radius: 8px;
+    padding: 15px;
+    margin: 15px 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.allergeniq-collapsed:hover {
+    box-shadow: var(--blue-glow-subtle);
+    border: var(--border-blue-medium);
+    transform: translateY(-1px);
+}
+
+/* ===== FOCUS STATES FOR ACCESSIBILITY ===== */
+
+*:focus-visible {
+    outline: 2px solid rgba(14, 165, 233, 0.5);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+/* ===== PERFORMANCE OPTIMIZATIONS ===== */
+
+/* Smooth animations */
+* {
+    transition: none; /* Reset all transitions */
+}
+
+/* Only apply transitions to elements that need them */
+button,
+.patient-item,
+.soap-section,
+.insights-section,
+.allergeniq-section,
+input:focus,
+textarea:focus,
+select:focus {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ===== UTILITY CLASSES ===== */
+
+.hidden {
+    display: none !important;
+}
+
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.mb-20 {
+    margin-bottom: 20px;
+}
+
+.p-20 {
+    padding: 20px;
+}

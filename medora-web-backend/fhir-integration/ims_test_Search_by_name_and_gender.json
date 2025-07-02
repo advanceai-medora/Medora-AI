@@ -1,0 +1,15 @@
+{
+  "resourceType": "Bundle",
+  "id": "31bad494-85a5-400c-a1b3-b1ca4f4cd09b",
+  "meta": {
+    "lastUpdated": "2025-05-30T12:12:44.297-07:00"
+  },
+  "type": "searchset",
+  "total": 0,
+  "link": [
+    {
+      "relation": "self",
+      "url": "https://meditabfhirsandbox.meditab.com:2525/mps/fhir/R4/Patient?gender=male&name=Jay"
+    }
+  ]
+}

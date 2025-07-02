@@ -1,0 +1,4848 @@
+{
+  "resourceType": "Bundle",
+  "id": "b2241a84-3dde-4937-b84b-55cd1ea13845",
+  "meta": {
+    "lastUpdated": "2025-05-30T12:13:11.816-07:00"
+  },
+  "type": "searchset",
+  "total": 37,
+  "link": [
+    {
+      "relation": "self",
+      "url": "https://meditabfhirsandbox.meditab.com:2525/mps/fhir/R4/Patient?_count=5"
+    }
+  ],
+  "entry": [
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "Patient-1",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient"
+          ]
+        },
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "http://terminology.hl7.org/CodeSystem/v3-NullFlavor",
+                  "code": "UNK"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "race"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "ethnicity"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+            "valueCode": "UNK"
+          }
+        ],
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "https://meditabfhirsandbox.meditab.com:2525/mps/fhir/Patient-Identifier/MRN",
+            "value": "PT00000009"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "text": "Suitemed, Suitemed",
+            "family": "Suitemed",
+            "given": [
+              "Suitemed"
+            ]
+          },
+          {
+            "text": "Meditab, Im",
+            "family": "Meditab",
+            "given": [
+              "Im"
+            ],
+            "period": {
+              "start": "2009-08-15T00:00:00-07:00",
+              "end": "2010-12-09T00:00:00-08:00"
+            }
+          },
+          {
+            "text": "Suitemed, Im",
+            "family": "Suitemed",
+            "given": [
+              "Im"
+            ],
+            "period": {
+              "start": "2010-12-09T00:00:00-08:00",
+              "end": "2010-12-09T00:00:00-08:00"
+            }
+          },
+          {
+            "text": "Meditab, Meditab",
+            "family": "Meditab",
+            "given": [
+              "Meditab"
+            ],
+            "period": {
+              "start": "2007-09-29T00:00:00-07:00",
+              "end": "2009-08-14T00:00:00-07:00"
+            }
+          }
+        ],
+        "telecom": [
+          {
+            "extension": [
+              {
+                "url": "http://terminology.hl7.org/CodeSystem/data-absent-reason",
+                "valueCode": "unknown"
+              }
+            ]
+          }
+        ],
+        "gender": "male",
+        "birthDate": "2004-09-14",
+        "address": [
+          {
+            "line": [
+              "Edit Street Address"
+            ],
+            "city": "Ohio",
+            "state": "OH",
+            "postalCode": "45874"
+          }
+        ],
+        "maritalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-NullFlavor",
+              "code": "UNK",
+              "display": "unknown"
+            }
+          ]
+        },
+        "communication": [
+          {
+            "language": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/data-absent-reason",
+                  "code": "unknown"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "Patient-3",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient"
+          ]
+        },
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "1002-5",
+                  "display": "American Indian/Alaska Native"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "race"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "2135-2",
+                  "display": "Hispanic/Latino"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "ethnicity"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+            "valueCode": "UNK"
+          }
+        ],
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "https://meditabfhirsandbox.meditab.com:2525/mps/fhir/Patient-Identifier/MRN",
+            "value": "4"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "text": "Meditab, Fhir Rfour",
+            "family": "Meditab",
+            "given": [
+              "Fhir",
+              "Rfour"
+            ],
+            "prefix": [
+              "Mr"
+            ],
+            "suffix": [
+              "Gill"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(789)-876-4544",
+            "use": "mobile"
+          },
+          {
+            "system": "email",
+            "value": "m@mail.com"
+          }
+        ],
+        "gender": "male",
+        "birthDate": "2014-04-01",
+        "address": [
+          {
+            "line": [
+              "street 55"
+            ],
+            "city": "Ohio",
+            "state": "OH",
+            "postalCode": "45874"
+          }
+        ],
+        "maritalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-NullFlavor",
+              "code": "UNK",
+              "display": "unknown"
+            }
+          ]
+        },
+        "communication": [
+          {
+            "language": {
+              "coding": [
+                {
+                  "system": "urn:ietf:bcp:47",
+                  "code": "en",
+                  "display": "English"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "Patient-5",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient"
+          ]
+        },
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "1002-5",
+                  "display": "American Indian/Alaska Native"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "race"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "2135-2",
+                  "display": "Hispanic/Latino"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "ethnicity"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+            "valueCode": "UNK"
+          }
+        ],
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "https://meditabfhirsandbox.meditab.com:2525/mps/fhir/Patient-Identifier/MRN",
+            "value": "5"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "text": "Elite, Meditab Mps",
+            "family": "Elite",
+            "given": [
+              "Meditab",
+              "Mps"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(879)-454-5665",
+            "use": "work"
+          },
+          {
+            "system": "phone",
+            "value": "(246)-456-4456",
+            "use": "home"
+          },
+          {
+            "system": "phone",
+            "value": "(845)-464-5445",
+            "use": "mobile"
+          },
+          {
+            "system": "email",
+            "value": "mps@mail.com"
+          }
+        ],
+        "gender": "female",
+        "birthDate": "2014-06-11",
+        "address": [
+          {
+            "line": [
+              "street 786"
+            ],
+            "city": "Ohio",
+            "state": "OH",
+            "postalCode": "45874"
+          }
+        ],
+        "maritalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-NullFlavor",
+              "code": "UNK",
+              "display": "unknown"
+            }
+          ]
+        },
+        "communication": [
+          {
+            "language": {
+              "coding": [
+                {
+                  "system": "urn:ietf:bcp:47",
+                  "code": "en",
+                  "display": "English"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "Patient-7",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient"
+          ]
+        },
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "2028-9",
+                  "display": "Asian"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "race"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "2135-2",
+                  "display": "Hispanic/Latino"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "ethnicity"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+            "valueCode": "UNK"
+          }
+        ],
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "https://meditabfhirsandbox.meditab.com:2525/mps/fhir/Patient-Identifier/MRN",
+            "value": "6"
+          },
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "SS"
+                }
+              ]
+            },
+            "system": "http://hl7.org/fhir/sid/us-ssn",
+            "value": "345343464"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "text": "Doe, John",
+            "family": "Doe",
+            "given": [
+              "John"
+            ]
+          },
+          {
+            "text": "One, Fhir",
+            "family": "One",
+            "given": [
+              "Fhir"
+            ],
+            "period": {
+              "start": "2023-06-21T00:00:00-07:00",
+              "end": "2023-07-28T00:00:00-07:00"
+            }
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(653)-265-6526",
+            "use": "work"
+          },
+          {
+            "system": "phone",
+            "value": "(656)-565-6565",
+            "use": "home"
+          },
+          {
+            "system": "phone",
+            "value": "(654)-655-4666",
+            "use": "mobile"
+          },
+          {
+            "system": "email",
+            "value": "my@mail.com"
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1995-01-01",
+        "address": [
+          {
+            "line": [
+              "36th cross First floor LA"
+            ],
+            "city": "Ohio",
+            "state": "OH",
+            "postalCode": "45874"
+          }
+        ],
+        "maritalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-MaritalStatus",
+              "code": "D",
+              "display": "Divorced"
+            }
+          ]
+        },
+        "communication": [
+          {
+            "language": {
+              "coding": [
+                {
+                  "system": "urn:ietf:bcp:47",
+                  "code": "de",
+                  "display": "German"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "Patient-9",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient"
+          ]
+        },
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "2028-9",
+                  "display": "Asian"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "race"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "2186-5",
+                  "display": "Non - Hispanic/Latino"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "ethnicity"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+            "valueCode": "UNK"
+          }
+        ],
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "https://meditabfhirsandbox.meditab.com:2525/mps/fhir/Patient-Identifier/MRN",
+            "value": "7"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "text": "Two, Fhir",
+            "family": "Two",
+            "given": [
+              "Fhir"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(654)-654-4656",
+            "use": "work"
+          },
+          {
+            "system": "phone",
+            "value": "(565)-466-5454",
+            "use": "home"
+          },
+          {
+            "system": "phone",
+            "value": "(654)-654-6545",
+            "use": "mobile"
+          },
+          {
+            "system": "email",
+            "value": "two@mail.com"
+          }
+        ],
+        "gender": "female",
+        "birthDate": "1999-02-03",
+        "address": [
+          {
+            "line": [
+              "20th cross First floor LA"
+            ],
+            "city": "Ohio",
+            "state": "OH",
+            "postalCode": "45874"
+          }
+        ],
+        "maritalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-NullFlavor",
+              "code": "UNK",
+              "display": "unknown"
+            }
+          ]
+        },
+        "communication": [
+          {
+            "language": {
+              "coding": [
+                {
+                  "system": "urn:ietf:bcp:47",
+                  "code": "en",
+                  "display": "English"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "Patient-11",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient"
+          ]
+        },
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "1002-5",
+                  "display": "American Indian/Alaska Native"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "race"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "2135-2",
+                  "display": "Hispanic/Latino"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "ethnicity"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+            "valueCode": "UNK"
+          }
+        ],
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "https://meditabfhirsandbox.meditab.com:2525/mps/fhir/Patient-Identifier/MRN",
+            "value": "8"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "text": "Three, Fhir",
+            "family": "Three",
+            "given": [
+              "Fhir"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(566)-565-6565",
+            "use": "work"
+          },
+          {
+            "system": "phone",
+            "value": "(656)-565-6565",
+            "use": "home"
+          },
+          {
+            "system": "phone",
+            "value": "(566)-565-6565",
+            "use": "mobile"
+          },
+          {
+            "system": "email",
+            "value": "three@mail.com"
+          }
+        ],
+        "gender": "male",
+        "birthDate": "2000-05-06",
+        "address": [
+          {
+            "line": [
+              "36th cross First floor LA"
+            ],
+            "city": "Ohio",
+            "state": "OH",
+            "postalCode": "45874"
+          }
+        ],
+        "maritalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-NullFlavor",
+              "code": "UNK",
+              "display": "unknown"
+            }
+          ]
+        },
+        "communication": [
+          {
+            "language": {
+              "coding": [
+                {
+                  "system": "urn:ietf:bcp:47",
+                  "code": "en",
+                  "display": "English"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "Patient-13",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient"
+          ]
+        },
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "1002-5",
+                  "display": "American Indian/Alaska Native"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "race"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "2135-2",
+                  "display": "Hispanic/Latino"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "ethnicity"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+            "valueCode": "UNK"
+          }
+        ],
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "https://meditabfhirsandbox.meditab.com:2525/mps/fhir/Patient-Identifier/MRN",
+            "value": "9"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "text": "Four, Fhir",
+            "family": "Four",
+            "given": [
+              "Fhir"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(665)-656-5656",
+            "use": "work"
+          },
+          {
+            "system": "phone",
+            "value": "(656)-565-6565",
+            "use": "home"
+          },
+          {
+            "system": "phone",
+            "value": "(656)-565-6526",
+            "use": "mobile"
+          },
+          {
+            "system": "email",
+            "value": "four@mail.com"
+          }
+        ],
+        "gender": "male",
+        "birthDate": "2001-05-06",
+        "address": [
+          {
+            "line": [
+              "36th cross First floor CA"
+            ],
+            "city": "CA",
+            "state": "CA",
+            "postalCode": "12125"
+          }
+        ],
+        "maritalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-NullFlavor",
+              "code": "UNK",
+              "display": "unknown"
+            }
+          ]
+        },
+        "communication": [
+          {
+            "language": {
+              "coding": [
+                {
+                  "system": "urn:ietf:bcp:47",
+                  "code": "en",
+                  "display": "English"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "Patient-15",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient"
+          ]
+        },
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "1002-5",
+                  "display": "American Indian/Alaska Native"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "race"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "display": "Unreported/Refused to Report Race and Identity"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "ethnicity"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+            "valueCode": "UNK"
+          }
+        ],
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "https://meditabfhirsandbox.meditab.com:2525/mps/fhir/Patient-Identifier/MRN",
+            "value": "10"
+          },
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "SS"
+                }
+              ]
+            },
+            "system": "http://hl7.org/fhir/sid/us-ssn",
+            "value": "456456456"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "text": "Five, Fhir Fire",
+            "family": "Five",
+            "given": [
+              "Fhir",
+              "Fire"
+            ],
+            "prefix": [
+              "Ms"
+            ]
+          },
+          {
+            "use": "nickname",
+            "text": ", ms.fire",
+            "given": [
+              "ms.fire"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(645)-654-4655",
+            "use": "work"
+          },
+          {
+            "system": "phone",
+            "value": "(665)-446-5465",
+            "use": "home"
+          },
+          {
+            "system": "phone",
+            "value": "(654)-645-6544",
+            "use": "mobile"
+          },
+          {
+            "system": "phone",
+            "value": "+6262622"
+          },
+          {
+            "system": "email",
+            "value": "five@g-mail.com"
+          },
+          {
+            "system": "fax",
+            "value": "324-234-4234"
+          }
+        ],
+        "gender": "female",
+        "birthDate": "1993-05-09",
+        "address": [
+          {
+            "line": [
+              "36th cross First floor AMD"
+            ],
+            "city": "AMD",
+            "state": "AM",
+            "postalCode": "36363"
+          }
+        ],
+        "maritalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-MaritalStatus",
+              "code": "S",
+              "display": "Never Married"
+            }
+          ]
+        },
+        "communication": [
+          {
+            "language": {
+              "coding": [
+                {
+                  "system": "urn:ietf:bcp:47",
+                  "code": "en",
+                  "display": "English"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "Patient-17",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient"
+          ]
+        },
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "2028-9",
+                  "display": "Asian"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "race"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "display": "Unreported/Refused to Report Race and Identity"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "ethnicity"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+            "valueCode": "UNK"
+          }
+        ],
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "https://meditabfhirsandbox.meditab.com:2525/mps/fhir/Patient-Identifier/MRN",
+            "value": "11"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "text": "Six, Fhir",
+            "family": "Six",
+            "given": [
+              "Fhir"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(656)-544-5554",
+            "use": "work"
+          },
+          {
+            "system": "phone",
+            "value": "(645)-654-5465-46",
+            "use": "home"
+          },
+          {
+            "system": "phone",
+            "value": "(545)-465-4665",
+            "use": "mobile"
+          }
+        ],
+        "gender": "female",
+        "birthDate": "1997-08-09",
+        "address": [
+          {
+            "line": [
+              "36th cross First floor IN"
+            ],
+            "city": "LA",
+            "state": "LA",
+            "postalCode": "11221"
+          }
+        ],
+        "maritalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-NullFlavor",
+              "code": "UNK",
+              "display": "unknown"
+            }
+          ]
+        },
+        "communication": [
+          {
+            "language": {
+              "coding": [
+                {
+                  "system": "urn:ietf:bcp:47",
+                  "code": "en",
+                  "display": "English"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "Patient-19",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient"
+          ]
+        },
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "http://terminology.hl7.org/CodeSystem/v3-NullFlavor",
+                  "code": "UNK",
+                  "display": "Native Hawaiian"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "race"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "2186-5",
+                  "display": "Non - Hispanic/Latino"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "ethnicity"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+            "valueCode": "UNK"
+          }
+        ],
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "https://meditabfhirsandbox.meditab.com:2525/mps/fhir/Patient-Identifier/MRN",
+            "value": "12"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "text": "Seven, Fhir",
+            "family": "Seven",
+            "given": [
+              "Fhir"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(654)-656-5565",
+            "use": "work"
+          },
+          {
+            "system": "phone",
+            "value": "(545)-456-4656-5",
+            "use": "home"
+          },
+          {
+            "system": "phone",
+            "value": "(654)-545-4455",
+            "use": "mobile"
+          },
+          {
+            "system": "email",
+            "value": "seven@mail.com"
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1991-06-03",
+        "address": [
+          {
+            "line": [
+              "36th cross First floor LA"
+            ],
+            "city": "LA",
+            "state": "LA",
+            "postalCode": "11221"
+          }
+        ],
+        "maritalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-NullFlavor",
+              "code": "UNK",
+              "display": "unknown"
+            }
+          ]
+        },
+        "communication": [
+          {
+            "language": {
+              "coding": [
+                {
+                  "system": "urn:ietf:bcp:47",
+                  "code": "en",
+                  "display": "English"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "Patient-21",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient"
+          ]
+        },
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "http://terminology.hl7.org/CodeSystem/v3-NullFlavor",
+                  "code": "UNK",
+                  "display": "Unreported/Refused to Report"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "race"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "2135-2",
+                  "display": "Hispanic/Latino"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "ethnicity"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+            "valueCode": "UNK"
+          }
+        ],
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "https://meditabfhirsandbox.meditab.com:2525/mps/fhir/Patient-Identifier/MRN",
+            "value": "13"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "text": "Eight, Fhir",
+            "family": "Eight",
+            "given": [
+              "Fhir"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(654)-655-5454",
+            "use": "work"
+          },
+          {
+            "system": "phone",
+            "value": "(654)-654-5646-54",
+            "use": "home"
+          },
+          {
+            "system": "phone",
+            "value": "(651)-565-6565",
+            "use": "mobile"
+          },
+          {
+            "system": "email",
+            "value": "eighy@mail.com"
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1995-09-06",
+        "address": [
+          {
+            "line": [
+              "36th cross First floor Alpha 2 main gate"
+            ],
+            "city": "CA",
+            "state": "CA",
+            "postalCode": "12125"
+          }
+        ],
+        "maritalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-NullFlavor",
+              "code": "UNK",
+              "display": "unknown"
+            }
+          ]
+        },
+        "communication": [
+          {
+            "language": {
+              "coding": [
+                {
+                  "system": "urn:ietf:bcp:47",
+                  "code": "en",
+                  "display": "English"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "Patient-23",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient"
+          ]
+        },
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "1002-5",
+                  "display": "American Indian/Alaska Native"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "race"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "2135-2",
+                  "display": "Hispanic/Latino"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "ethnicity"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+            "valueCode": "UNK"
+          }
+        ],
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "https://meditabfhirsandbox.meditab.com:2525/mps/fhir/Patient-Identifier/MRN",
+            "value": "14"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "text": "Nine, Fhir",
+            "family": "Nine",
+            "given": [
+              "Fhir"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(654)-654-5464",
+            "use": "work"
+          },
+          {
+            "system": "phone",
+            "value": "(654)-564-5465-46546",
+            "use": "home"
+          },
+          {
+            "system": "phone",
+            "value": "(654)-545-4545",
+            "use": "mobile"
+          },
+          {
+            "system": "email",
+            "value": "nine@mail.com"
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1991-09-08",
+        "address": [
+          {
+            "line": [
+              "36th cross First gate alpha"
+            ],
+            "city": "CA",
+            "state": "CA",
+            "postalCode": "12125"
+          }
+        ],
+        "maritalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-NullFlavor",
+              "code": "UNK",
+              "display": "unknown"
+            }
+          ]
+        },
+        "communication": [
+          {
+            "language": {
+              "coding": [
+                {
+                  "system": "urn:ietf:bcp:47",
+                  "code": "en",
+                  "display": "English"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "Patient-25",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient"
+          ]
+        },
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "http://terminology.hl7.org/CodeSystem/v3-NullFlavor",
+                  "code": "UNK",
+                  "display": "More than one race"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "race"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "2135-2",
+                  "display": "Hispanic/Latino"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "ethnicity"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+            "valueCode": "UNK"
+          }
+        ],
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "https://meditabfhirsandbox.meditab.com:2525/mps/fhir/Patient-Identifier/MRN",
+            "value": "15"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "text": "Ten, Fhir",
+            "family": "Ten",
+            "given": [
+              "Fhir"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(654)-654-5465",
+            "use": "work"
+          },
+          {
+            "system": "phone",
+            "value": "(335)-464-6554-6456",
+            "use": "home"
+          },
+          {
+            "system": "phone",
+            "value": "(655)-531-5555",
+            "use": "mobile"
+          },
+          {
+            "system": "email",
+            "value": "ten@mail.com"
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1994-06-05",
+        "address": [
+          {
+            "line": [
+              "36th cross First floor a gate"
+            ],
+            "city": "CA",
+            "state": "CA",
+            "postalCode": "12125"
+          }
+        ],
+        "maritalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-NullFlavor",
+              "code": "UNK",
+              "display": "unknown"
+            }
+          ]
+        },
+        "communication": [
+          {
+            "language": {
+              "coding": [
+                {
+                  "system": "urn:ietf:bcp:47",
+                  "code": "en",
+                  "display": "English"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "Patient-106",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient"
+          ]
+        },
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "1002-5",
+                  "display": "American Indian/Alaska Native"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "race"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "2135-2",
+                  "display": "Hispanic/Latino"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "ethnicity"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+            "valueCode": "UNK"
+          }
+        ],
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "https://meditabfhirsandbox.meditab.com:2525/mps/fhir/Patient-Identifier/MRN",
+            "value": "106"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "text": "Patientdd, Test",
+            "family": "Patientdd",
+            "given": [
+              "Test"
+            ]
+          },
+          {
+            "text": "Patient1, Test",
+            "family": "Patient1",
+            "given": [
+              "Test"
+            ],
+            "period": {
+              "start": "2023-11-22T00:00:00-08:00",
+              "end": "2023-11-22T00:00:00-08:00"
+            }
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(322)-362-3232",
+            "use": "mobile"
+          }
+        ],
+        "gender": "male",
+        "birthDate": "2000-01-01",
+        "address": [
+          {
+            "line": [
+              "test1"
+            ],
+            "city": "CA",
+            "state": "CA",
+            "postalCode": "12125"
+          }
+        ],
+        "maritalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-NullFlavor",
+              "code": "UNK",
+              "display": "unknown"
+            }
+          ]
+        },
+        "communication": [
+          {
+            "language": {
+              "coding": [
+                {
+                  "system": "urn:ietf:bcp:47",
+                  "code": "en",
+                  "display": "English"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "Patient-108",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient"
+          ]
+        },
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "1002-5",
+                  "display": "American Indian/Alaska Native"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "race"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "2186-5",
+                  "display": "Non - Hispanic/Latino"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "ethnicity"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+            "valueCode": "UNK"
+          }
+        ],
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "https://meditabfhirsandbox.meditab.com:2525/mps/fhir/Patient-Identifier/MRN",
+            "value": "107"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "text": "Tow, Test",
+            "family": "Tow",
+            "given": [
+              "Test"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(232)-333-2323-2",
+            "use": "home"
+          },
+          {
+            "system": "phone",
+            "value": "(635)-232-5362",
+            "use": "mobile"
+          }
+        ],
+        "gender": "female",
+        "birthDate": "2001-01-10",
+        "address": [
+          {
+            "line": [
+              "afdasdf"
+            ],
+            "city": "CA",
+            "state": "CA",
+            "postalCode": "12125"
+          }
+        ],
+        "maritalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-NullFlavor",
+              "code": "UNK",
+              "display": "unknown"
+            }
+          ]
+        },
+        "communication": [
+          {
+            "language": {
+              "coding": [
+                {
+                  "system": "urn:ietf:bcp:47",
+                  "code": "en",
+                  "display": "English"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "Patient-110",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient"
+          ]
+        },
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "2028-9",
+                  "display": "Asian"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "race"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "2186-5",
+                  "display": "Non - Hispanic/Latino"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "ethnicity"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+            "valueCode": "UNK"
+          }
+        ],
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "https://meditabfhirsandbox.meditab.com:2525/mps/fhir/Patient-Identifier/MRN",
+            "value": "123"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "text": "Bruno, Test",
+            "family": "Bruno",
+            "given": [
+              "Test"
+            ]
+          },
+          {
+            "text": "T1, Test",
+            "family": "T1",
+            "given": [
+              "Test"
+            ],
+            "period": {
+              "start": "2023-11-22T00:00:00-08:00",
+              "end": "2023-11-22T00:00:00-08:00"
+            }
+          }
+        ],
+        "telecom": [
+          {
+            "extension": [
+              {
+                "url": "http://terminology.hl7.org/CodeSystem/data-absent-reason",
+                "valueCode": "unknown"
+              }
+            ]
+          }
+        ],
+        "gender": "female",
+        "birthDate": "2001-01-01",
+        "address": [
+          {
+            "line": [
+              "Test road"
+            ],
+            "city": "CA",
+            "state": "CA",
+            "postalCode": "12125"
+          }
+        ],
+        "maritalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-NullFlavor",
+              "code": "UNK",
+              "display": "unknown"
+            }
+          ]
+        },
+        "communication": [
+          {
+            "language": {
+              "text": "Unreported/Refused to Report"
+            }
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "Patient-112",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient"
+          ]
+        },
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "1002-5",
+                  "display": "American Indian/Alaska Native"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "race"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "2135-2",
+                  "display": "Hispanic/Latino"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "ethnicity"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+            "valueCode": "UNK"
+          }
+        ],
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "https://meditabfhirsandbox.meditab.com:2525/mps/fhir/Patient-Identifier/MRN",
+            "value": "234"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "text": "Tommy, Test",
+            "family": "Tommy",
+            "given": [
+              "Test"
+            ]
+          },
+          {
+            "text": "T2, Test",
+            "family": "T2",
+            "given": [
+              "Test"
+            ],
+            "period": {
+              "start": "2023-11-22T00:00:00-08:00",
+              "end": "2023-11-22T00:00:00-08:00"
+            }
+          }
+        ],
+        "telecom": [
+          {
+            "extension": [
+              {
+                "url": "http://terminology.hl7.org/CodeSystem/data-absent-reason",
+                "valueCode": "unknown"
+              }
+            ]
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1998-12-12",
+        "address": [
+          {
+            "line": [
+              "Sola road"
+            ],
+            "city": "CA",
+            "state": "CA",
+            "postalCode": "12125"
+          }
+        ],
+        "maritalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-NullFlavor",
+              "code": "UNK",
+              "display": "unknown"
+            }
+          ]
+        },
+        "communication": [
+          {
+            "language": {
+              "coding": [
+                {
+                  "system": "urn:ietf:bcp:47",
+                  "code": "es",
+                  "display": "Spanish"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "Patient-114",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient"
+          ]
+        },
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "2028-9",
+                  "display": "Asian"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "race"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "2186-5",
+                  "display": "Non - Hispanic/Latino"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "ethnicity"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+            "valueCode": "UNK"
+          }
+        ],
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "https://meditabfhirsandbox.meditab.com:2525/mps/fhir/Patient-Identifier/MRN",
+            "value": "111"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "text": "As, Test",
+            "family": "As",
+            "given": [
+              "Test"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "extension": [
+              {
+                "url": "http://terminology.hl7.org/CodeSystem/data-absent-reason",
+                "valueCode": "unknown"
+              }
+            ]
+          }
+        ],
+        "gender": "female",
+        "birthDate": "1997-08-18",
+        "address": [
+          {
+            "line": [
+              "KP street"
+            ],
+            "city": "LA",
+            "state": "LA",
+            "postalCode": "11221"
+          }
+        ],
+        "maritalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-NullFlavor",
+              "code": "UNK",
+              "display": "unknown"
+            }
+          ]
+        },
+        "communication": [
+          {
+            "language": {
+              "coding": [
+                {
+                  "system": "urn:ietf:bcp:47",
+                  "code": "en",
+                  "display": "English"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "Patient-116",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient"
+          ]
+        },
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "2054-5",
+                  "display": "Black/African American"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "race"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "2186-5",
+                  "display": "Non - Hispanic/Latino"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "ethnicity"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+            "valueCode": "UNK"
+          }
+        ],
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "https://meditabfhirsandbox.meditab.com:2525/mps/fhir/Patient-Identifier/MRN",
+            "value": "123123"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "text": "Andy, Test",
+            "family": "Andy",
+            "given": [
+              "Test"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "extension": [
+              {
+                "url": "http://terminology.hl7.org/CodeSystem/data-absent-reason",
+                "valueCode": "unknown"
+              }
+            ]
+          }
+        ],
+        "gender": "female",
+        "birthDate": "2000-02-22",
+        "address": [
+          {
+            "line": [
+              "Carls street"
+            ],
+            "city": "CA",
+            "state": "CA",
+            "postalCode": "12125"
+          }
+        ],
+        "maritalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-NullFlavor",
+              "code": "UNK",
+              "display": "unknown"
+            }
+          ]
+        },
+        "communication": [
+          {
+            "language": {
+              "coding": [
+                {
+                  "system": "urn:ietf:bcp:47",
+                  "code": "en",
+                  "display": "English"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "Patient-118",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient"
+          ]
+        },
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "2054-5",
+                  "display": "Black/African American"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "race"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "2135-2",
+                  "display": "Hispanic/Latino"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "ethnicity"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+            "valueCode": "UNK"
+          }
+        ],
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "https://meditabfhirsandbox.meditab.com:2525/mps/fhir/Patient-Identifier/MRN",
+            "value": "121212"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "text": "Ruhi, Test",
+            "family": "Ruhi",
+            "given": [
+              "Test"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "extension": [
+              {
+                "url": "http://terminology.hl7.org/CodeSystem/data-absent-reason",
+                "valueCode": "unknown"
+              }
+            ]
+          }
+        ],
+        "gender": "female",
+        "birthDate": "1911-11-11",
+        "address": [
+          {
+            "line": [
+              "roacheck road"
+            ],
+            "city": "Ohio",
+            "state": "OH",
+            "postalCode": "45874"
+          }
+        ],
+        "maritalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-NullFlavor",
+              "code": "UNK",
+              "display": "unknown"
+            }
+          ]
+        },
+        "communication": [
+          {
+            "language": {
+              "coding": [
+                {
+                  "system": "urn:ietf:bcp:47",
+                  "code": "de",
+                  "display": "German"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "Patient-120",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient"
+          ]
+        },
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "1002-5",
+                  "display": "American Indian/Alaska Native"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "race"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "2135-2",
+                  "display": "Hispanic/Latino"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "ethnicity"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+            "valueCode": "UNK"
+          }
+        ],
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "https://meditabfhirsandbox.meditab.com:2525/mps/fhir/Patient-Identifier/MRN",
+            "value": "101010"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "text": "Jin, Test",
+            "family": "Jin",
+            "given": [
+              "Test"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "extension": [
+              {
+                "url": "http://terminology.hl7.org/CodeSystem/data-absent-reason",
+                "valueCode": "unknown"
+              }
+            ]
+          }
+        ],
+        "gender": "female",
+        "birthDate": "2001-10-10",
+        "address": [
+          {
+            "line": [
+              "Fox road"
+            ],
+            "city": "LA",
+            "state": "LA",
+            "postalCode": "11221"
+          }
+        ],
+        "maritalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-NullFlavor",
+              "code": "UNK",
+              "display": "unknown"
+            }
+          ]
+        },
+        "communication": [
+          {
+            "language": {
+              "coding": [
+                {
+                  "system": "urn:ietf:bcp:47",
+                  "code": "de",
+                  "display": "German"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "Patient-122",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient"
+          ]
+        },
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "2028-9",
+                  "display": "Asian"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "race"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "display": "Unreported/Refused to Report Race and Identity"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "ethnicity"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+            "valueCode": "UNK"
+          }
+        ],
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "https://meditabfhirsandbox.meditab.com:2525/mps/fhir/Patient-Identifier/MRN",
+            "value": "232323"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "text": "Vog, Test",
+            "family": "Vog",
+            "given": [
+              "Test"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "extension": [
+              {
+                "url": "http://terminology.hl7.org/CodeSystem/data-absent-reason",
+                "valueCode": "unknown"
+              }
+            ]
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1981-11-11",
+        "address": [
+          {
+            "line": [
+              "Dunking road"
+            ],
+            "city": "CA",
+            "state": "CA",
+            "postalCode": "12125"
+          }
+        ],
+        "maritalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-NullFlavor",
+              "code": "UNK",
+              "display": "unknown"
+            }
+          ]
+        },
+        "communication": [
+          {
+            "language": {
+              "coding": [
+                {
+                  "system": "urn:ietf:bcp:47",
+                  "code": "en",
+                  "display": "English"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "Patient-124",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient"
+          ]
+        },
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "1002-5",
+                  "display": "American Indian/Alaska Native"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "race"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "2135-2",
+                  "display": "Hispanic/Latino"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "ethnicity"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+            "valueCode": "UNK"
+          }
+        ],
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "https://meditabfhirsandbox.meditab.com:2525/mps/fhir/Patient-Identifier/MRN",
+            "value": "22222"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "text": "Simon, Test",
+            "family": "Simon",
+            "given": [
+              "Test"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "extension": [
+              {
+                "url": "http://terminology.hl7.org/CodeSystem/data-absent-reason",
+                "valueCode": "unknown"
+              }
+            ]
+          }
+        ],
+        "gender": "other",
+        "birthDate": "1990-01-01",
+        "address": [
+          {
+            "line": [
+              "Max street"
+            ],
+            "city": "LA",
+            "state": "LA",
+            "postalCode": "11221"
+          }
+        ],
+        "maritalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-NullFlavor",
+              "code": "UNK",
+              "display": "unknown"
+            }
+          ]
+        },
+        "communication": [
+          {
+            "language": {
+              "coding": [
+                {
+                  "system": "urn:ietf:bcp:47",
+                  "code": "en",
+                  "display": "English"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "Patient-126",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient"
+          ]
+        },
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "1002-5",
+                  "display": "American Indian/Alaska Native"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "race"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "2186-5",
+                  "display": "Non - Hispanic/Latino"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "ethnicity"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+            "valueCode": "UNK"
+          }
+        ],
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "https://meditabfhirsandbox.meditab.com:2525/mps/fhir/Patient-Identifier/MRN",
+            "value": "1111111"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "text": "Kris, Test",
+            "family": "Kris",
+            "given": [
+              "Test"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(654)-654-6545-64",
+            "use": "work"
+          },
+          {
+            "system": "phone",
+            "value": "(546)-564-6554-1",
+            "use": "home"
+          },
+          {
+            "system": "phone",
+            "value": "(325)-132-5114",
+            "use": "mobile"
+          },
+          {
+            "system": "email",
+            "value": "65tst@mail.com"
+          }
+        ],
+        "gender": "male",
+        "birthDate": "2003-09-09",
+        "address": [
+          {
+            "line": [
+              "SG highway main gate 1st floor"
+            ],
+            "city": "Ohio",
+            "state": "OH",
+            "postalCode": "45874",
+            "period": {
+              "start": "2024-07-12T00:00:00-07:00"
+            }
+          },
+          {
+            "line": [
+              "SG highway"
+            ],
+            "city": "Ohio",
+            "state": "OH",
+            "postalCode": "45874",
+            "period": {
+              "start": "2023-11-22T00:00:00-08:00",
+              "end": "2024-07-12T00:00:00-07:00"
+            }
+          },
+          {
+            "line": [
+              "SG highway main gate first floor"
+            ],
+            "city": "Ohio",
+            "state": "OH",
+            "postalCode": "45874",
+            "period": {
+              "start": "2024-07-12T00:00:00-07:00",
+              "end": "2024-07-12T00:00:00-07:00"
+            }
+          }
+        ],
+        "maritalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-NullFlavor",
+              "code": "UNK",
+              "display": "unknown"
+            }
+          ]
+        },
+        "communication": [
+          {
+            "language": {
+              "coding": [
+                {
+                  "system": "urn:ietf:bcp:47",
+                  "code": "en",
+                  "display": "English"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "Patient-128",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient"
+          ]
+        },
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "1002-5",
+                  "display": "American Indian/Alaska Native"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "race"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "2135-2",
+                  "display": "Hispanic/Latino"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "ethnicity"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+            "valueCode": "UNK"
+          }
+        ],
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "https://meditabfhirsandbox.meditab.com:2525/mps/fhir/Patient-Identifier/MRN",
+            "value": "23232323"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "text": "Breyer, Test",
+            "family": "Breyer",
+            "given": [
+              "Test"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "extension": [
+              {
+                "url": "http://terminology.hl7.org/CodeSystem/data-absent-reason",
+                "valueCode": "unknown"
+              }
+            ]
+          }
+        ],
+        "gender": "female",
+        "birthDate": "1996-01-01",
+        "address": [
+          {
+            "line": [
+              "Race course road"
+            ],
+            "city": "CA",
+            "state": "CA",
+            "postalCode": "12125"
+          }
+        ],
+        "maritalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-NullFlavor",
+              "code": "UNK",
+              "display": "unknown"
+            }
+          ]
+        },
+        "communication": [
+          {
+            "language": {
+              "coding": [
+                {
+                  "system": "urn:ietf:bcp:47",
+                  "code": "en",
+                  "display": "English"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "Patient-130",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient"
+          ]
+        },
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "2028-9",
+                  "display": "Asian"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "race"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "2135-2",
+                  "display": "Hispanic/Latino"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "ethnicity"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+            "valueCode": "UNK"
+          }
+        ],
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "https://meditabfhirsandbox.meditab.com:2525/mps/fhir/Patient-Identifier/MRN",
+            "value": "1122"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "text": "Tiago, Test",
+            "family": "Tiago",
+            "given": [
+              "Test"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "extension": [
+              {
+                "url": "http://terminology.hl7.org/CodeSystem/data-absent-reason",
+                "valueCode": "unknown"
+              }
+            ]
+          }
+        ],
+        "gender": "other",
+        "birthDate": "2003-02-28",
+        "address": [
+          {
+            "line": [
+              "Calinga road"
+            ],
+            "city": "LA",
+            "state": "LA",
+            "postalCode": "11221"
+          }
+        ],
+        "maritalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-NullFlavor",
+              "code": "UNK",
+              "display": "unknown"
+            }
+          ]
+        },
+        "communication": [
+          {
+            "language": {
+              "coding": [
+                {
+                  "system": "urn:ietf:bcp:47",
+                  "code": "de",
+                  "display": "German"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "Patient-132",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient"
+          ]
+        },
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "1002-5",
+                  "display": "American Indian/Alaska Native"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "race"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "2186-5",
+                  "display": "Non - Hispanic/Latino"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "ethnicity"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+            "valueCode": "UNK"
+          }
+        ],
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "https://meditabfhirsandbox.meditab.com:2525/mps/fhir/Patient-Identifier/MRN",
+            "value": "108"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "text": "Sik, Test",
+            "family": "Sik",
+            "given": [
+              "Test"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "extension": [
+              {
+                "url": "http://terminology.hl7.org/CodeSystem/data-absent-reason",
+                "valueCode": "unknown"
+              }
+            ]
+          }
+        ],
+        "gender": "female",
+        "birthDate": "2000-01-01",
+        "address": [
+          {
+            "line": [
+              "Gb road"
+            ],
+            "city": "LA",
+            "state": "LA",
+            "postalCode": "11221"
+          }
+        ],
+        "maritalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-NullFlavor",
+              "code": "UNK",
+              "display": "unknown"
+            }
+          ]
+        },
+        "communication": [
+          {
+            "language": {
+              "coding": [
+                {
+                  "system": "urn:ietf:bcp:47",
+                  "code": "en",
+                  "display": "English"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "Patient-134",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient"
+          ]
+        },
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "1002-5",
+                  "display": "American Indian/Alaska Native"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "race"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "2135-2",
+                  "display": "Hispanic/Latino"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "ethnicity"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+            "valueCode": "UNK"
+          }
+        ],
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "https://meditabfhirsandbox.meditab.com:2525/mps/fhir/Patient-Identifier/MRN",
+            "value": "109"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "text": "Adad, Test Aaa",
+            "family": "Adad",
+            "given": [
+              "Test",
+              "Aaa"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(656)-526-5655",
+            "use": "mobile"
+          }
+        ],
+        "gender": "male",
+        "birthDate": "2022-12-12",
+        "address": [
+          {
+            "line": [
+              "adfadf"
+            ],
+            "city": "CA",
+            "state": "CA",
+            "postalCode": "12125"
+          }
+        ],
+        "maritalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-NullFlavor",
+              "code": "UNK",
+              "display": "unknown"
+            }
+          ]
+        },
+        "communication": [
+          {
+            "language": {
+              "coding": [
+                {
+                  "system": "urn:ietf:bcp:47",
+                  "code": "en",
+                  "display": "English"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "Patient-136",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient"
+          ]
+        },
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "1002-5",
+                  "display": "American Indian/Alaska Native"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "race"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "2135-2",
+                  "display": "Hispanic/Latino"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "ethnicity"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+            "valueCode": "UNK"
+          }
+        ],
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "https://meditabfhirsandbox.meditab.com:2525/mps/fhir/Patient-Identifier/MRN",
+            "value": "110"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "text": "Pia, Test",
+            "family": "Pia",
+            "given": [
+              "Test"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(345)-345-3454-35",
+            "use": "work"
+          },
+          {
+            "system": "phone",
+            "value": "(343)-434-3243-4",
+            "use": "home"
+          },
+          {
+            "system": "phone",
+            "value": "(514)-454-5455",
+            "use": "mobile"
+          },
+          {
+            "system": "email",
+            "value": "tes@meiasl.com"
+          }
+        ],
+        "gender": "female",
+        "birthDate": "2000-05-05",
+        "address": [
+          {
+            "line": [
+              "asdfasd"
+            ],
+            "city": "CA",
+            "state": "CA",
+            "postalCode": "12125"
+          }
+        ],
+        "maritalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-NullFlavor",
+              "code": "UNK",
+              "display": "unknown"
+            }
+          ]
+        },
+        "communication": [
+          {
+            "language": {
+              "coding": [
+                {
+                  "system": "urn:ietf:bcp:47",
+                  "code": "en",
+                  "display": "English"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "Patient-207",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient"
+          ]
+        },
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "http://terminology.hl7.org/CodeSystem/v3-NullFlavor",
+                  "code": "UNK",
+                  "display": "Unreported/Refused to Report"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "race"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "display": "Unreported/Refused to Report Race and Identity"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "ethnicity"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+            "valueCode": "UNK"
+          }
+        ],
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "https://meditabfhirsandbox.meditab.com:2525/mps/fhir/Patient-Identifier/MRN",
+            "value": "207"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "text": "Doe, Jane",
+            "family": "Doe",
+            "given": [
+              "Jane"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(346)-534-5234-5435",
+            "use": "home"
+          }
+        ],
+        "gender": "female",
+        "birthDate": "1990-01-01",
+        "address": [
+          {
+            "line": [
+              "123 Fake St"
+            ],
+            "city": "LA",
+            "state": "LA",
+            "postalCode": "11221"
+          }
+        ],
+        "maritalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-NullFlavor",
+              "code": "UNK",
+              "display": "unknown"
+            }
+          ]
+        },
+        "communication": [
+          {
+            "language": {
+              "coding": [
+                {
+                  "system": "urn:ietf:bcp:47",
+                  "code": "en",
+                  "display": "English"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "Patient-209",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient"
+          ]
+        },
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "http://terminology.hl7.org/CodeSystem/v3-NullFlavor",
+                  "code": "UNK",
+                  "display": "Unreported/Refused to Report"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "race"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "display": "Unreported/Refused to Report Race and Identity"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "ethnicity"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+            "valueCode": "UNK"
+          }
+        ],
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "https://meditabfhirsandbox.meditab.com:2525/mps/fhir/Patient-Identifier/MRN",
+            "value": "208"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "text": "Doe, Jill",
+            "family": "Doe",
+            "given": [
+              "Jill"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "extension": [
+              {
+                "url": "http://terminology.hl7.org/CodeSystem/data-absent-reason",
+                "valueCode": "unknown"
+              }
+            ]
+          }
+        ],
+        "gender": "female",
+        "birthDate": "1990-01-01",
+        "address": [
+          {
+            "line": [
+              "123 Fake St"
+            ],
+            "city": "LA",
+            "state": "LA",
+            "postalCode": "11221"
+          }
+        ],
+        "maritalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-NullFlavor",
+              "code": "UNK",
+              "display": "unknown"
+            }
+          ]
+        },
+        "communication": [
+          {
+            "language": {
+              "coding": [
+                {
+                  "system": "urn:ietf:bcp:47",
+                  "code": "en",
+                  "display": "English"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "Patient-211",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient"
+          ]
+        },
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "1002-5",
+                  "display": "American Indian/Alaska Native"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "race"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "2135-2",
+                  "display": "Hispanic/Latino"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "ethnicity"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+            "valueCode": "UNK"
+          }
+        ],
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "https://meditabfhirsandbox.meditab.com:2525/mps/fhir/Patient-Identifier/MRN",
+            "value": "209"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "text": "Meditab, Mainbridge",
+            "family": "Meditab",
+            "given": [
+              "Mainbridge"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(465)-464-4565-46",
+            "use": "work"
+          },
+          {
+            "system": "phone",
+            "value": "(564)-654-5646-0",
+            "use": "home"
+          },
+          {
+            "system": "phone",
+            "value": "(456)-475-6456",
+            "use": "mobile"
+          },
+          {
+            "system": "email",
+            "value": "test@medil.com"
+          }
+        ],
+        "gender": "male",
+        "birthDate": "2020-06-02",
+        "address": [
+          {
+            "line": [
+              "123 streetinterface@meditab.com"
+            ],
+            "city": "LA",
+            "state": "LA",
+            "postalCode": "11221"
+          }
+        ],
+        "maritalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-NullFlavor",
+              "code": "UNK",
+              "display": "unknown"
+            }
+          ]
+        },
+        "communication": [
+          {
+            "language": {
+              "coding": [
+                {
+                  "system": "urn:ietf:bcp:47",
+                  "code": "en",
+                  "display": "English"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "Patient-213",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient"
+          ]
+        },
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "2028-9",
+                  "display": "Asian"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "race"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "2135-2",
+                  "display": "Hispanic/Latino"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "ethnicity"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+            "valueCode": "UNK"
+          }
+        ],
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "https://meditabfhirsandbox.meditab.com:2525/mps/fhir/Patient-Identifier/MRN",
+            "value": "PT00001234"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "text": "Patient, Test",
+            "family": "Patient",
+            "given": [
+              "Test"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(455)-455-4522",
+            "use": "work"
+          },
+          {
+            "system": "phone",
+            "value": "(145)-545-4554",
+            "use": "home"
+          },
+          {
+            "system": "phone",
+            "value": "(514)-544-5455",
+            "use": "mobile"
+          },
+          {
+            "system": "email",
+            "value": "test@mail.com"
+          }
+        ],
+        "gender": "male",
+        "birthDate": "2022-08-03",
+        "address": [
+          {
+            "line": [
+              "Alpha one maine gate"
+            ],
+            "city": "LA",
+            "state": "US",
+            "postalCode": "12332"
+          }
+        ],
+        "maritalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-NullFlavor",
+              "code": "UNK",
+              "display": "unknown"
+            }
+          ]
+        },
+        "communication": [
+          {
+            "language": {
+              "coding": [
+                {
+                  "system": "urn:ietf:bcp:47",
+                  "code": "en",
+                  "display": "English"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "Patient-215",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient"
+          ]
+        },
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "2028-9",
+                  "display": "Asian"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "race"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "2135-2",
+                  "display": "Hispanic/Latino"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "ethnicity"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+            "valueCode": "UNK"
+          }
+        ],
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "https://meditabfhirsandbox.meditab.com:2525/mps/fhir/Patient-Identifier/MRN",
+            "value": "PT00012345"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "text": "Fusebox, Test",
+            "family": "Fusebox",
+            "given": [
+              "Test"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(544)-545-4545",
+            "use": "home"
+          },
+          {
+            "system": "phone",
+            "value": "(685)-465-8465",
+            "use": "mobile"
+          },
+          {
+            "system": "email",
+            "value": "test@medi.com"
+          }
+        ],
+        "gender": "male",
+        "birthDate": "2008-09-02",
+        "address": [
+          {
+            "line": [
+              "First cross main gate"
+            ],
+            "city": "AMD",
+            "state": "AM",
+            "postalCode": "36363"
+          }
+        ],
+        "maritalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-NullFlavor",
+              "code": "UNK",
+              "display": "unknown"
+            }
+          ]
+        },
+        "communication": [
+          {
+            "language": {
+              "coding": [
+                {
+                  "system": "urn:ietf:bcp:47",
+                  "code": "en",
+                  "display": "English"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "Patient-217",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient"
+          ]
+        },
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "2028-9",
+                  "display": "Asian"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "race"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "2135-2",
+                  "display": "Hispanic/Latino"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "ethnicity"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+            "valueCode": "UNK"
+          }
+        ],
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "https://meditabfhirsandbox.meditab.com:2525/mps/fhir/Patient-Identifier/MRN",
+            "value": "PT98765"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "text": "Test, Lab A",
+            "family": "Test",
+            "given": [
+              "Lab",
+              "A"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "extension": [
+              {
+                "url": "http://terminology.hl7.org/CodeSystem/data-absent-reason",
+                "valueCode": "unknown"
+              }
+            ]
+          }
+        ],
+        "gender": "male",
+        "birthDate": "2000-01-10",
+        "address": [
+          {
+            "line": [
+              "test"
+            ],
+            "city": "LA",
+            "state": "US",
+            "postalCode": "12332"
+          }
+        ],
+        "maritalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-NullFlavor",
+              "code": "UNK",
+              "display": "unknown"
+            }
+          ]
+        },
+        "communication": [
+          {
+            "language": {
+              "coding": [
+                {
+                  "system": "urn:ietf:bcp:47",
+                  "code": "en",
+                  "display": "English"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "Patient-219",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient"
+          ]
+        },
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "1002-5",
+                  "display": "American Indian/Alaska Native"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "race"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "2135-2",
+                  "display": "Hispanic/Latino"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "ethnicity"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+            "valueCode": "UNK"
+          }
+        ],
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "https://meditabfhirsandbox.meditab.com:2525/mps/fhir/Patient-Identifier/MRN",
+            "value": "PT98766"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "text": "Test, Lab B",
+            "family": "Test",
+            "given": [
+              "Lab",
+              "B"
+            ]
+          },
+          {
+            "text": "Test, Lab A",
+            "family": "Test",
+            "given": [
+              "Lab",
+              "A"
+            ],
+            "period": {
+              "start": "2024-11-11T00:00:00-08:00",
+              "end": "2024-11-11T00:00:00-08:00"
+            }
+          }
+        ],
+        "telecom": [
+          {
+            "extension": [
+              {
+                "url": "http://terminology.hl7.org/CodeSystem/data-absent-reason",
+                "valueCode": "unknown"
+              }
+            ]
+          }
+        ],
+        "gender": "female",
+        "birthDate": "1999-01-11",
+        "address": [
+          {
+            "line": [
+              "teatsda"
+            ],
+            "city": "CA",
+            "state": "CA",
+            "postalCode": "12125"
+          }
+        ],
+        "maritalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-NullFlavor",
+              "code": "UNK",
+              "display": "unknown"
+            }
+          ]
+        },
+        "communication": [
+          {
+            "language": {
+              "coding": [
+                {
+                  "system": "urn:ietf:bcp:47",
+                  "code": "en",
+                  "display": "English"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "Patient-221",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient"
+          ]
+        },
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "2028-9",
+                  "display": "Asian"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "race"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "2135-2",
+                  "display": "Hispanic/Latino"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "ethnicity"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+            "valueCode": "UNK"
+          }
+        ],
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "https://meditabfhirsandbox.meditab.com:2525/mps/fhir/Patient-Identifier/MRN",
+            "value": "PT98767"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "text": "Test, Lab C",
+            "family": "Test",
+            "given": [
+              "Lab",
+              "C"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "extension": [
+              {
+                "url": "http://terminology.hl7.org/CodeSystem/data-absent-reason",
+                "valueCode": "unknown"
+              }
+            ]
+          }
+        ],
+        "gender": "female",
+        "birthDate": "2012-02-20",
+        "address": [
+          {
+            "line": [
+              "testsssfsgfa"
+            ],
+            "city": "LA",
+            "state": "US",
+            "postalCode": "12332"
+          }
+        ],
+        "maritalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-NullFlavor",
+              "code": "UNK",
+              "display": "unknown"
+            }
+          ]
+        },
+        "communication": [
+          {
+            "language": {
+              "coding": [
+                {
+                  "system": "urn:ietf:bcp:47",
+                  "code": "en",
+                  "display": "English"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    }
+  ]
+}

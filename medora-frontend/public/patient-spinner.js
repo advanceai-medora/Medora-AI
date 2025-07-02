@@ -180,19 +180,11 @@ function hideContentSpinner() {
 function showTranscriptSpinner() {
     console.log('Showing transcript spinner...');
     const submitBtn = document.getElementById('submit-transcript-btn');
+    const spinnerElement = document.getElementById('transcript-spinner');
 
-    if (submitBtn) {
+    if (submitBtn && spinnerElement) {
         // Record start time
         spinnerStartTimes.transcript = Date.now();
-
-        // Create spinner element if not already present
-        let spinnerElement = document.getElementById('transcript-spinner');
-        if (!spinnerElement) {
-            spinnerElement = document.createElement('span');
-            spinnerElement.id = 'transcript-spinner';
-            spinnerElement.className = 'spinner';
-            submitBtn.appendChild(spinnerElement);
-        }
 
         // Fade-in spinner
         spinnerElement.style.opacity = '0';
@@ -208,7 +200,10 @@ function showTranscriptSpinner() {
         submitBtn.disabled = true;
         submitBtn.classList.add('disabled');
     } else {
-        console.error('Submit Transcript button not found');
+        console.error('Submit Transcript button or spinner element not found', {
+            submitBtn: !!submitBtn,
+            spinnerElement: !!spinnerElement
+        });
     }
 }
 
@@ -229,10 +224,7 @@ function hideTranscriptSpinner() {
             setTimeout(() => {
                 spinner.style.display = 'none';
                 spinner.setAttribute('aria-busy', 'false'); // Accessibility
-                // Remove spinner element to clean up DOM
-                if (spinner.parentNode) {
-                    spinner.parentNode.removeChild(spinner);
-                }
+                // Note: Do not remove the spinner element, as it is part of the static HTML structure
             }, 300);
 
             // Enable button

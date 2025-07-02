@@ -1,0 +1,230 @@
+{
+  "resourceType": "Bundle",
+  "id": "fb7bde25-ca23-4cac-b68b-24c2f1a14010",
+  "meta": {
+    "lastUpdated": "2025-05-30T12:13:14.378-07:00"
+  },
+  "type": "searchset",
+  "total": 4,
+  "link": [
+    {
+      "relation": "self",
+      "url": "https://meditabfhirsandbox.meditab.com:2525/mps/fhir/R4/Practitioner?_count=3"
+    }
+  ],
+  "entry": [
+    {
+      "resource": {
+        "resourceType": "Practitioner",
+        "id": "Practitioner-1",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-practitioner"
+          ]
+        },
+        "identifier": [
+          {
+            "system": "http://hl7.org/fhir/sid/us-npi",
+            "value": "3454353535"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "family": "Leigh Myers",
+            "given": [
+              "Barbara"
+            ],
+            "suffix": [
+              "Credential"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "email",
+            "value": "jp@gm.com"
+          }
+        ],
+        "address": [
+          {
+            "line": [
+              "Employee Street address"
+            ]
+          }
+        ],
+        "gender": "male"
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Practitioner",
+        "id": "Practitioner-2",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-practitioner"
+          ]
+        },
+        "identifier": [
+          {
+            "system": "http://hl7.org/fhir/sid/us-npi",
+            "value": "3454353576"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "family": "Lastname",
+            "given": [
+              "Lexi"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(876)-875-6555"
+          },
+          {
+            "system": "phone",
+            "value": "(546)-146-5454",
+            "use": "mobile"
+          },
+          {
+            "system": "email",
+            "value": "lexi@mail.com"
+          }
+        ],
+        "gender": "female"
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Practitioner",
+        "id": "Practitioner-103",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-practitioner"
+          ]
+        },
+        "identifier": [
+          {
+            "system": "http://hl7.org/fhir/sid/us-npi",
+            "value": "3434543545"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "family": "Paine",
+            "given": [
+              "Doc1",
+              "max"
+            ],
+            "suffix": [
+              "123"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(321)-311-5151-521"
+          },
+          {
+            "system": "phone",
+            "value": "(212)-121-2121-2022"
+          },
+          {
+            "system": "phone",
+            "value": "(212)-121-2121",
+            "use": "mobile"
+          },
+          {
+            "system": "email",
+            "value": "dfg@dsg.in"
+          },
+          {
+            "system": "fax",
+            "value": "325-345-3453"
+          }
+        ],
+        "address": [
+          {
+            "line": [
+              "435,agt"
+            ],
+            "city": "LA",
+            "state": "LA",
+            "postalCode": "11221"
+          }
+        ],
+        "gender": "male"
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Practitioner",
+        "id": "Practitioner-104",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-practitioner"
+          ]
+        },
+        "identifier": [
+          {
+            "system": "http://hl7.org/fhir/sid/us-npi",
+            "value": "4564564564"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "family": "Hse",
+            "given": [
+              "Doc2",
+              "he"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(435)-345-3535-35311"
+          },
+          {
+            "system": "phone",
+            "value": "(424)-242-4343-4"
+          },
+          {
+            "system": "email",
+            "value": "345435@fdh.iig"
+          }
+        ],
+        "address": [
+          {
+            "line": [
+              "235mdf"
+            ],
+            "city": "LA",
+            "state": "US",
+            "postalCode": "12332"
+          }
+        ],
+        "gender": "female"
+      },
+      "search": {
+        "mode": "match"
+      }
+    }
+  ]
+}

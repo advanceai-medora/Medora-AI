@@ -1,0 +1,410 @@
+{
+  "resourceType": "Bundle",
+  "id": "39326034-bbf2-4e21-9ee0-96b9f1850192",
+  "meta": {
+    "lastUpdated": "2025-05-30T12:13:17.082-07:00"
+  },
+  "type": "searchset",
+  "total": 9,
+  "link": [
+    {
+      "relation": "self",
+      "url": "https://meditabfhirsandbox.meditab.com:2525/mps/fhir/R4/Organization?_count=3"
+    }
+  ],
+  "entry": [
+    {
+      "resource": {
+        "resourceType": "Organization",
+        "id": "Organization-1",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-organization"
+          ]
+        },
+        "identifier": [
+          {
+            "system": "http://hl7.org/fhir/sid/us-npi",
+            "value": "1111111111"
+          },
+          {
+            "system": "urn:oid:2.16.840.1.113883.4.7",
+            "value": "5675756757"
+          }
+        ],
+        "active": true,
+        "name": "Sid office",
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(465)-474-4454"
+          }
+        ],
+        "address": [
+          {
+            "line": [
+              "street 78"
+            ],
+            "city": "Ohio",
+            "state": "OH",
+            "postalCode": "45874",
+            "country": "USA"
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Organization",
+        "id": "Organization-2",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-organization"
+          ]
+        },
+        "identifier": [
+          {
+            "system": "http://hl7.org/fhir/sid/us-npi",
+            "value": "5468765445"
+          },
+          {
+            "system": "urn:oid:2.16.840.1.113883.4.7",
+            "value": "79874654454"
+          }
+        ],
+        "active": true,
+        "name": "Newyork office 2",
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(979)-776-7867"
+          }
+        ],
+        "address": [
+          {
+            "line": [
+              "36 testing street"
+            ],
+            "city": "Ohio",
+            "state": "OH",
+            "postalCode": "45874",
+            "country": "USA"
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Organization",
+        "id": "Organization-P-1",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-organization"
+          ]
+        },
+        "identifier": [
+          {
+            "system": "http://hl7.org/fhir/sid/us-npi",
+            "value": "7932121545"
+          },
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/NCPDPProviderIdentificationNumber",
+            "value": "1234243"
+          }
+        ],
+        "active": true,
+        "name": "Meditab pharmacy",
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(875)-464-6454"
+          }
+        ],
+        "address": [
+          {
+            "line": [
+              "pharmacy 1234"
+            ],
+            "city": "Ohio",
+            "state": "OH",
+            "postalCode": "45874",
+            "country": "USA"
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Organization",
+        "id": "Organization-L-2",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-organization"
+          ]
+        },
+        "identifier": [
+          {
+            "extension": [
+              {
+                "url": "http://terminology.hl7.org/CodeSystem/data-absent-reason",
+                "valueCode": "unknown"
+              }
+            ]
+          }
+        ],
+        "active": true,
+        "name": "Lab of your choice",
+        "telecom": [
+          {
+            "extension": [
+              {
+                "url": "http://terminology.hl7.org/CodeSystem/data-absent-reason",
+                "valueCode": "unknown"
+              }
+            ]
+          }
+        ],
+        "address": [
+          {
+            "country": "USA"
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Organization",
+        "id": "Organization-L-3",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-organization"
+          ]
+        },
+        "identifier": [
+          {
+            "extension": [
+              {
+                "url": "http://terminology.hl7.org/CodeSystem/data-absent-reason",
+                "valueCode": "unknown"
+              }
+            ]
+          }
+        ],
+        "active": true,
+        "name": "Diagnostic Center of your choice",
+        "telecom": [
+          {
+            "extension": [
+              {
+                "url": "http://terminology.hl7.org/CodeSystem/data-absent-reason",
+                "valueCode": "unknown"
+              }
+            ]
+          }
+        ],
+        "address": [
+          {
+            "country": "USA"
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Organization",
+        "id": "Organization-L-4",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-organization"
+          ]
+        },
+        "identifier": [
+          {
+            "system": "urn:oid:2.16.840.1.113883.4.7",
+            "value": "123455678"
+          },
+          {
+            "extension": [
+              {
+                "url": "http://terminology.hl7.org/CodeSystem/data-absent-reason",
+                "valueCode": "unknown"
+              }
+            ]
+          }
+        ],
+        "active": true,
+        "name": "Quest_hl7",
+        "telecom": [
+          {
+            "extension": [
+              {
+                "url": "http://terminology.hl7.org/CodeSystem/data-absent-reason",
+                "valueCode": "unknown"
+              }
+            ]
+          }
+        ],
+        "address": [
+          {
+            "country": "USA"
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Organization",
+        "id": "Organization-L-5",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-organization"
+          ]
+        },
+        "identifier": [
+          {
+            "extension": [
+              {
+                "url": "http://terminology.hl7.org/CodeSystem/data-absent-reason",
+                "valueCode": "unknown"
+              }
+            ]
+          }
+        ],
+        "active": true,
+        "name": "Fertility_Lab",
+        "telecom": [
+          {
+            "extension": [
+              {
+                "url": "http://terminology.hl7.org/CodeSystem/data-absent-reason",
+                "valueCode": "unknown"
+              }
+            ]
+          }
+        ],
+        "address": [
+          {
+            "country": "USA"
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Organization",
+        "id": "Organization-L-106",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-organization"
+          ]
+        },
+        "identifier": [
+          {
+            "extension": [
+              {
+                "url": "http://terminology.hl7.org/CodeSystem/data-absent-reason",
+                "valueCode": "unknown"
+              }
+            ]
+          }
+        ],
+        "active": true,
+        "name": "Lenshook",
+        "telecom": [
+          {
+            "extension": [
+              {
+                "url": "http://terminology.hl7.org/CodeSystem/data-absent-reason",
+                "valueCode": "unknown"
+              }
+            ]
+          }
+        ],
+        "address": [
+          {
+            "country": "USA"
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Organization",
+        "id": "Organization-L-107",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-organization"
+          ]
+        },
+        "identifier": [
+          {
+            "system": "urn:oid:2.16.840.1.113883.4.7",
+            "value": "56765767"
+          },
+          {
+            "extension": [
+              {
+                "url": "http://terminology.hl7.org/CodeSystem/data-absent-reason",
+                "valueCode": "unknown"
+              }
+            ]
+          }
+        ],
+        "active": true,
+        "name": "Office lab",
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(324)-234-2342-3434"
+          },
+          {
+            "system": "email",
+            "value": "32423@dsf.com"
+          },
+          {
+            "system": "fax",
+            "value": "234-234-2342"
+          }
+        ],
+        "address": [
+          {
+            "line": [
+              "eee"
+            ],
+            "city": "CA",
+            "state": "CA",
+            "postalCode": "12125",
+            "country": "USA"
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    }
+  ]
+}

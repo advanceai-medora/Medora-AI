@@ -1,0 +1,162 @@
+import jwt
+import time
+import uuid
+import requests
+import json
+from datetime import datetime
+
+# Configuration
+IMS_BASE_URL = "https://meditabfhirsandbox.meditab.com"
+IMS_FHIR_ENDPOINT = "/mps/fhir/R4"
+IMS_TOKEN_ENDPOINT = "https://keycloak-qa.medpharmservices.com:8443/realms/fhir-0051185/protocol/openid-connect/token"
+IMS_CLIENT_ID = "4ddd3a59-414c-405e-acc5-226c097a7060"
+PRIVATE_KEY_PATH = "/var/www/medora-frontend/public/medora_private_key.pem"
+KEY_ID = "medora-key-1"  # Key identifier for manual registration
+
+# For logging
+LOG_FILE = "medora_ims_integration_test.log"
+
+def log_message(message):
+    """Log messages with timestamp"""
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    log_entry = f"[{timestamp}] {message}"
+    print(log_entry)
+    
+    with open(LOG_FILE, "a") as f:
+        f.write(log_entry + "\n")
+
+def load_private_key():
+    """Load the private key from file"""
+    try:
+        with open(PRIVATE_KEY_PATH, 'r') as f:
+            return f.read()
+    except Exception as e:
+        log_message(f"ERROR: Failed to load private key: {str(e)}")
+        exit(1)
+
+def generate_jwt_assertion_with_kid(private_key):
+    """Generate a JWT assertion with Key ID for manual registration"""
+    now = int(time.time())
+    jti_value = str(uuid.uuid4())
+    
+    # JWT Header with Key ID
+    headers = {
+        "alg": "RS384",
+        "typ": "JWT", 
+        "kid": KEY_ID  # This helps IMS identify which manually registered key to use
+    }
+    
+    payload = {
+        "sub": IMS_CLIENT_ID,
+        "aud": IMS_TOKEN_ENDPOINT,
+        "iss": IMS_CLIENT_ID,
+        "exp": now + 300,  # 5 minutes expiration
+        "iat": now,
+        "jti": jti_value
+    }
+    
+    try:
+        assertion = jwt.encode(payload, private_key, algorithm="RS384", headers=headers)
+        log_message(f"Generated JWT assertion with kid: {KEY_ID}")
+        log_message(f"JTI: {jti_value}")
+        
+        # Print the JWT for sharing with IMS
+        log_message("JWT Assertion Token with KID:")
+        log_message(assertion)
+        
+        # Save to file
+        with open("jwt_assertion_with_kid.txt", "w") as f:
+            f.write(f"JWT Assertion Token (with Key ID):\n{assertion}\n\n")
+            f.write(f"Key ID (kid): {KEY_ID}\n")
+            f.write(f"Algorithm: RS384\n")
+            f.write(f"Client ID: {IMS_CLIENT_ID}\n")
+            f.write(f"Generated at: {datetime.now()}\n")
+            f.write(f"JTI: {jti_value}\n\n")
+            f.write("Public Key for Manual Registration:\n")
+            f.write("-----BEGIN PUBLIC KEY-----\n")
+            f.write("MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsOp0QTDQBZDR6woS0Uyk\n")
+            f.write("AACWH9bVK+6ZWlNantgwQDVM3uVCaXlcMwiLmXxE9HwgCpbn+S+N3lzPmQ5WNvE1\n")
+            f.write("5gCJ7YIWJhf1E/FF+LsWJ1IixKrdoFyZB/Ae0sGdOXC0q/rqHoZjphkWbfmemNxB\n")
+            f.write("1REifC/spYM6fy3onhF9EIHKxCpopNnykQQ1jTqLLz+uwgdpWUDVIVgjqxYeakqD\n")
+            f.write("CxH+1HIg/x9jrQ1FwPEFgsznbC6jKCWxORju03urf4IQ6VndXZt6Kj4+xAqiTbyX\n")
+            f.write("1tTAVSgcNfxVnwzSSthGHqJfVQ75/HZtzCP/qiPu2tG294AhH9AzjwVubhScuy9X\n")
+            f.write("xQIDAQAB\n")
+            f.write("-----END PUBLIC KEY-----\n")
+        
+        log_message("JWT and public key details saved to 'jwt_assertion_with_kid.txt'")
+        
+        return assertion
+    except Exception as e:
+        log_message(f"ERROR: Failed to create JWT: {str(e)}")
+        return None
+
+def get_access_token(assertion):
+    """Request an access token using the JWT assertion"""
+    headers = {
+        "Content-Type": "application/x-www-form-urlencoded"
+    }
+    
+    payload = {
+        "client_assertion_type": "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
+        "grant_type": "client_credentials", 
+        "client_id": IMS_CLIENT_ID,
+        "client_assertion": assertion
+    }
+    
+    try:
+        log_message("Requesting access token with JWT containing Key ID...")
+        log_message(f"Key ID in JWT header: {KEY_ID}")
+        
+        response = requests.post(
+            IMS_TOKEN_ENDPOINT, 
+            headers=headers, 
+            data=payload, 
+            timeout=10
+        )
+        
+        if response.status_code == 200:
+            token_data = response.json()
+            log_message(f"✅ SUCCESS: Obtained access token!")
+            log_message(f"Token expires in: {token_data.get('expires_in')} seconds")
+            return token_data.get('access_token')
+        else:
+            log_message(f"❌ Token request failed with status {response.status_code}")
+            log_message(f"Response: {response.text}")
+       P0+r\P0+r\     return None
+            
+    except Exception as e:
+        log_message(f"ERROR during token request: {str(e)}")
+        if hasattr(e, 'response') and e.response is not None:
+            log_message(f"Response status: {e.response.status_code}")
+            log_message(f"Response text: {e.response.text}")
+        return None
+
+def main():
+    """Main test function"""
+    log_message("=== MEDORA-IMS JWT WITH KEY ID TEST ===")
+    log_message(f"Using Key ID: {KEY_ID}")
+    log_message("This JWT includes a 'kid' header for manual key registration")
+    
+    # 1. Load private key
+    private_key = load_private_key()
+    if not private_key:
+        return
+    
+    # 2. Generate JWT assertion with Key ID
+    assertion = generate_jwt_assertion_with_kid(private_key)
+    if not assertion:
+        return
+    
+    # 3. Try to get access token
+    access_token = get_access_token(assertion)
+    if access_token:
+        log_message("🎉 Integration test SUCCESSFUL!")
+        log_message("You can now proceed with FHIR API calls")
+    else:
+        log_message("Integration test failed - manual key registration needed")
+        log_message("Share the 'jwt_assertion_with_kid.txt' file with IMS for manual setup")
+    
+    log_message("=== TEST COMPLETED ===")
+
+if __name__ == "__main__":
+    main()

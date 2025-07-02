@@ -1,0 +1,15 @@
+{
+  "resourceType": "Bundle",
+  "id": "0f907031-cf14-4fad-8629-ab8765a778a6",
+  "meta": {
+    "lastUpdated": "2025-05-30T12:13:07.707-07:00"
+  },
+  "type": "searchset",
+  "total": 0,
+  "link": [
+    {
+      "relation": "self",
+      "url": "https://meditabfhirsandbox.meditab.com:2525/mps/fhir/R4/AllergyIntolerance?patient=Patient-195181"
+    }
+  ]
+}

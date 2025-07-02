@@ -18,7 +18,7 @@ function signIn(email, password) {
         // Store email in localStorage to persist across pages
         localStorage.setItem('currentEmail', email);
         // Redirect to the test dashboard after successful login
-        window.location.href = 'https://test.medoramd.ai/index.html';
+        window.location.href = 'https://medoramd.ai/index.html';
     } else {
         console.error('Invalid email or password');
         if (errorMessage) {
@@ -34,7 +34,7 @@ function logout() {
     console.log('User signed out');
     localStorage.removeItem('currentEmail');
     // Redirect to the test login page after sign-out
-    window.location.href = 'https://test.medoramd.ai/login.html';
+    window.location.href = 'https://medoramd.ai/login.html';
     // Reset any menu state if necessary
     const userMenu = document.getElementById('user-menu-container');
     if (userMenu) {
@@ -51,7 +51,7 @@ function checkAuthState() {
     } else {
         console.log('No user signed in');
         // Redirect to the test login page if not authenticated
-        window.location.href = 'https://test.medoramd.ai/login.html';
+        window.location.href = 'https://medoramd.ai/login.html';
         return false;
     }
 }

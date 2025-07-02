@@ -13,7 +13,7 @@ const poolData = {
 const cognitoDomain = 'https://ap-south-1esdojoj.auth.ap-south-1.amazoncognito.com';
 
 // Redirect URL that you've configured in your app client
-const redirectUri = 'https://test.medoramd.ai/index.html';
+const redirectUri = 'https://medoramd.ai/index.html';
 
 // Cognito global variables
 let userPool, cognitoUser;

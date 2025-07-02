@@ -1,0 +1,15 @@
+JWT Assertion Token:
+eyJhbGciOiJSUzM4NCIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0ZGRkM2E1OS00MTRjLTQwNWUtYWNjNS0yMjZjMDk3YTcwNjAiLCJhdWQiOiJodHRwczovL2tleWNsb2FrLXFhLm1lZHBoYXJtc2VydmljZXMuY29tOjg0NDMvcmVhbG1zL2ZoaXItMDA1MTE4NS9wcm90b2NvbC9vcGVuaWQtY29ubmVjdC90b2tlbiIsImlzcyI6IjRkZGQzYTU5LTQxNGMtNDA1ZS1hY2M1LTIyNmMwOTdhNzA2MCIsImV4cCI6MTc0ODUzMjI2MSwiaWF0IjoxNzQ4NTMxOTYxLCJqdGkiOiIyNTFiMDBkOC05YzkwLTQ4ZDctYmQzOS1jNzkzMWJlNjlmNmIifQ.lb5iDftY4P6QzVfeA83RIoQqgApRNtUN_TExsk4NkPcX2v9FWzUad5YULxW6jCoJnyJD44hs2z2Z1kff8M233BMSduJvCObDypE13n1rqMhe9Bs1hnFrPZxcVkcpmeybQlEeIynDQt5Vsc38nbbR2hOTEFSSbj8RSNMdXfYpnb96tHVbs8q-JSmxlUNKtQur2w98vdl87GJq0bKCRyeTvkXlAK_AMnH6IRPrbj7I2iTeZh3hUEc_Xd7NFRwUxoqfQNULFh3OHujzEOdzW7-1s-0z7CnNmdbpyI9BNqP4r-mNz8BxU4j7jLaaGTwQE3I5k_i0YVrXo-dfwP4K2OBmew
+
+JWT Payload:
+{
+  "sub": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "aud": "https://keycloak-qa.medpharmservices.com:8443/realms/fhir-0051185/protocol/openid-connect/token",
+  "iss": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "exp": 1748532261,
+  "iat": 1748531961,
+  "jti": "251b00d8-9c90-48d7-bd39-c7931be69f6b"
+}
+
+Generated at: 2025-05-29 15:19:21.847827
+JTI: 251b00d8-9c90-48d7-bd39-c7931be69f6b

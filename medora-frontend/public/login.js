@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Redirect to dashboard
                 setTimeout(() => {
-                    window.location.href = 'https://test.medoramd.ai/index.html';
+                    window.location.href = 'https://medoramd.ai/index.html';
                 }, 100);
                 return;
             }
@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Redirect to dashboard
             setTimeout(() => {
-                window.location.href = 'https://test.medoramd.ai/index.html';
+                window.location.href = 'https://medoramd.ai/index.html';
             }, 100);
         }, 1000);
     });
@@ -161,6 +161,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Only redirect if we're already logged in and on the login page
     if (window.location.pathname.includes('login.html') && checkIfUserIsLoggedIn()) {
         console.log('Already logged in, redirecting to dashboard');
-        window.location.href = 'https://test.medoramd.ai/index.html';
+        window.location.href = 'https://medoramd.ai/index.html';
     }
 });

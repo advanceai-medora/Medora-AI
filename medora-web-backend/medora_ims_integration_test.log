@@ -10,3 +10,519 @@
 [2025-05-20 16:02:14] Token request failed with status 400
 [2025-05-20 16:02:14] Response: {"error":"invalid_client","error_description":"Client authentication with signed JWT failed: Error when loading public keys: javax.net.ssl.SSLHandshakeException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target"}
 [2025-05-20 16:02:14] Failed to obtain access token. Test aborted.
+[2025-05-22 16:48:43] === STARTING MEDORA-IMS INTEGRATION TEST ===
+[2025-05-22 16:48:43] Generated JWT assertion with jti: 0fcbe308-9bf8-43aa-8421-e2e3dd679869
+[2025-05-22 16:48:43] Requesting access token...
+[2025-05-22 16:48:43] Token request failed with status 400
+[2025-05-22 16:48:43] Response: {"error":"invalid_client","error_description":"Client authentication with signed JWT failed: Error when loading public keys: javax.net.ssl.SSLHandshakeException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target"}
+[2025-05-22 16:48:43] Failed to obtain access token. Test aborted.
+[2025-05-22 17:19:06] === STARTING MEDORA-IMS INTEGRATION TEST ===
+[2025-05-22 17:19:06] Generated JWT assertion with jti: b11eac54-d239-4a95-a70e-3ff44d8d64ad
+[2025-05-22 17:19:06] Requesting access token...
+[2025-05-22 17:19:06] Token request failed with status 400
+[2025-05-22 17:19:06] Response: {"error":"invalid_client","error_description":"Client authentication with signed JWT failed: Error when loading public keys: javax.net.ssl.SSLHandshakeException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target"}
+[2025-05-22 17:19:06] Failed to obtain access token. Test aborted.
+[2025-05-22 17:21:02] === STARTING MEDORA-IMS JWT ASSERTION TEST ===
+[2025-05-22 17:21:02] Generated JWT assertion with jti: 6a77260a-fc6f-40e1-9f57-b4aae859c0fc
+[2025-05-22 17:21:02] JWT Payload:
+[2025-05-22 17:21:02] {
+  "sub": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "aud": "https://keycloak-qa.medpharmservices.com:8443/realms/fhir-0051185/protocol/openid-connect/token",
+  "iss": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "exp": 1747934762,
+  "iat": 1747934462,
+  "jti": "6a77260a-fc6f-40e1-9f57-b4aae859c0fc"
+}
+[2025-05-22 17:21:02] JWT Assertion Token:
+[2025-05-22 17:21:02] eyJhbGciOiJSUzM4NCIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0ZGRkM2E1OS00MTRjLTQwNWUtYWNjNS0yMjZjMDk3YTcwNjAiLCJhdWQiOiJodHRwczovL2tleWNsb2FrLXFhLm1lZHBoYXJtc2VydmljZXMuY29tOjg0NDMvcmVhbG1zL2ZoaXItMDA1MTE4NS9wcm90b2NvbC9vcGVuaWQtY29ubmVjdC90b2tlbiIsImlzcyI6IjRkZGQzYTU5LTQxNGMtNDA1ZS1hY2M1LTIyNmMwOTdhNzA2MCIsImV4cCI6MTc0NzkzNDc2MiwiaWF0IjoxNzQ3OTM0NDYyLCJqdGkiOiI2YTc3MjYwYS1mYzZmLTQwZTEtOWY1Ny1iNGFhZTg1OWMwZmMifQ.cwQNnpR_z4sDHKzyMg9Vm_ryPejOw1_wr3S3NC21BYZ5C-lW9beaYtFMtECHxTgk9HUSU4-XK00BnO20M9FW0UfyolYhRye2o-iUIvqcGxyYJW9MFcM3K909czM8NOxET_4Dm9QTFp3FwLzDJA540ivAb8VvcV2robcSKpErGRaw5pSlK8C1uq9NaMskeYOv_nIZRxpWExnxE_pF8zxx3f_0NuAYNfnVRmkLxNzfZeUYeweurfpQGzlk8X82hBtP58_z1YxDDDU9wYfO9sgrc9jd0HoLuBzxzTH-macq8GDI_UzJmNTEHH75S6B7zOi9x3taoSgjMdXxy4aUQ9KXdw
+[2025-05-22 17:21:02] JWT assertion saved to 'jwt_assertion_token.txt' file
+[2025-05-22 17:21:02] === VERIFYING JWT LOCALLY ===
+[2025-05-22 17:21:02] Decoded JWT payload (without verification):
+[2025-05-22 17:21:02] {
+  "sub": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "aud": "https://keycloak-qa.medpharmservices.com:8443/realms/fhir-0051185/protocol/openid-connect/token",
+  "iss": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "exp": 1747934762,
+  "iat": 1747934462,
+  "jti": "6a77260a-fc6f-40e1-9f57-b4aae859c0fc"
+}
+[2025-05-22 17:21:02] JWT verification failed: Invalid audience
+[2025-05-22 17:21:02] === ATTEMPTING TOKEN REQUEST ===
+[2025-05-22 17:21:02] Requesting access token...
+[2025-05-22 17:21:02] Token endpoint: https://keycloak-qa.medpharmservices.com:8443/realms/fhir-0051185/protocol/openid-connect/token
+[2025-05-22 17:21:02] Client ID: 4ddd3a59-414c-405e-acc5-226c097a7060
+[2025-05-22 17:21:02] Token request failed with status 400
+[2025-05-22 17:21:02] Response: {"error":"invalid_client","error_description":"Client authentication with signed JWT failed: Error when loading public keys: javax.net.ssl.SSLHandshakeException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target"}
+[2025-05-22 17:21:02] Failed to obtain access token.
+[2025-05-22 17:21:02] Check the 'jwt_assertion_token.txt' file to share the JWT with IMS for debugging.
+[2025-05-22 17:21:02] === TEST COMPLETED ===
+[2025-05-27 18:50:53] === STARTING MEDORA-IMS JWT ASSERTION TEST ===
+[2025-05-27 18:50:53] Generated JWT assertion with jti: b29e2a6a-a4b8-4106-a1dd-1af9d0a3e4a8
+[2025-05-27 18:50:53] JWT Payload:
+[2025-05-27 18:50:53] {
+  "sub": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "aud": "https://keycloak-qa.medpharmservices.com:8443/realms/fhir-0051185/protocol/openid-connect/token",
+  "iss": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "exp": 1748372153,
+  "iat": 1748371853,
+  "jti": "b29e2a6a-a4b8-4106-a1dd-1af9d0a3e4a8"
+}
+[2025-05-27 18:50:53] JWT Assertion Token:
+[2025-05-27 18:50:53] eyJhbGciOiJSUzM4NCIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0ZGRkM2E1OS00MTRjLTQwNWUtYWNjNS0yMjZjMDk3YTcwNjAiLCJhdWQiOiJodHRwczovL2tleWNsb2FrLXFhLm1lZHBoYXJtc2VydmljZXMuY29tOjg0NDMvcmVhbG1zL2ZoaXItMDA1MTE4NS9wcm90b2NvbC9vcGVuaWQtY29ubmVjdC90b2tlbiIsImlzcyI6IjRkZGQzYTU5LTQxNGMtNDA1ZS1hY2M1LTIyNmMwOTdhNzA2MCIsImV4cCI6MTc0ODM3MjE1MywiaWF0IjoxNzQ4MzcxODUzLCJqdGkiOiJiMjllMmE2YS1hNGI4LTQxMDYtYTFkZC0xYWY5ZDBhM2U0YTgifQ.JmDJW5VbF_VQGExOAwton6pXXvwQgrBI-RiJSvh1aD2pIQwqGY0YZ1pXHGuNfCnOEhWmsuLhKoSicxUV5NcY7dpxoUT79W971FDoOEUWrTx1owwN6aLi89PuCP8Af5MrTTM43ymNtPj7Y9vKEuRqwE1qROEVP7sxqKRHoHbtEnQbEEoDpQiJurdDMLXIEdJNQQsnd9hwEcE-DbBRyz-eajrYasY7djj3OAi_WBh5sluUQk90m5TsMsg03Mpjf3ZE-0hwyP_k1KdbJqxwYLx2tXKaV2nBCtMt7sqZ3Nw7lQqTS6NpKs0v4k5lAZj9h3J_yH8KPeDscOnyVfL5YBJrCw
+[2025-05-27 18:50:53] JWT assertion saved to 'jwt_assertion_token.txt' file
+[2025-05-27 18:50:53] === VERIFYING JWT LOCALLY ===
+[2025-05-27 18:50:53] Decoded JWT payload (without verification):
+[2025-05-27 18:50:53] {
+  "sub": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "aud": "https://keycloak-qa.medpharmservices.com:8443/realms/fhir-0051185/protocol/openid-connect/token",
+  "iss": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "exp": 1748372153,
+  "iat": 1748371853,
+  "jti": "b29e2a6a-a4b8-4106-a1dd-1af9d0a3e4a8"
+}
+[2025-05-27 18:50:53] JWT verification failed: Invalid audience
+[2025-05-27 18:50:53] === ATTEMPTING TOKEN REQUEST ===
+[2025-05-27 18:50:53] Requesting access token...
+[2025-05-27 18:50:53] Token endpoint: https://keycloak-qa.medpharmservices.com:8443/realms/fhir-0051185/protocol/openid-connect/token
+[2025-05-27 18:50:53] Client ID: 4ddd3a59-414c-405e-acc5-226c097a7060
+[2025-05-27 18:50:54] Token request failed with status 400
+[2025-05-27 18:50:54] Response: {"error":"invalid_client","error_description":"Client authentication with signed JWT failed: Error when loading public keys: javax.net.ssl.SSLHandshakeException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target"}
+[2025-05-27 18:50:54] Failed to obtain access token.
+[2025-05-27 18:50:54] Check the 'jwt_assertion_token.txt' file to share the JWT with IMS for debugging.
+[2025-05-27 18:50:54] === TEST COMPLETED ===
+[2025-05-27 19:05:33] === STARTING MEDORA-IMS JWT ASSERTION TEST ===
+[2025-05-27 19:05:33] Generated JWT assertion with jti: e6afdacb-cbea-4031-b316-bd421e4da615
+[2025-05-27 19:05:33] JWT Payload:
+[2025-05-27 19:05:33] {
+  "sub": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "aud": "https://keycloak-qa.medpharmservices.com:8443/realms/fhir-0051185/protocol/openid-connect/token",
+  "iss": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "exp": 1748373033,
+  "iat": 1748372733,
+  "jti": "e6afdacb-cbea-4031-b316-bd421e4da615"
+}
+[2025-05-27 19:05:33] JWT Assertion Token:
+[2025-05-27 19:05:33] eyJhbGciOiJSUzM4NCIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0ZGRkM2E1OS00MTRjLTQwNWUtYWNjNS0yMjZjMDk3YTcwNjAiLCJhdWQiOiJodHRwczovL2tleWNsb2FrLXFhLm1lZHBoYXJtc2VydmljZXMuY29tOjg0NDMvcmVhbG1zL2ZoaXItMDA1MTE4NS9wcm90b2NvbC9vcGVuaWQtY29ubmVjdC90b2tlbiIsImlzcyI6IjRkZGQzYTU5LTQxNGMtNDA1ZS1hY2M1LTIyNmMwOTdhNzA2MCIsImV4cCI6MTc0ODM3MzAzMywiaWF0IjoxNzQ4MzcyNzMzLCJqdGkiOiJlNmFmZGFjYi1jYmVhLTQwMzEtYjMxNi1iZDQyMWU0ZGE2MTUifQ.cpGmjbqqoPtmpR04W6RT_D7PBL1NvmRlxzaMWuFM3LMmRnMtKVcoSpYawcMxjV4-foXST9KJBbO_DhSD2pjYSmN32qWjOz-bOKmE5DD_V5DyF83kyYN6oW3jG_MILlbDCnI75oBfhjIX9Ggtq3VvTOOzdvZrKM4qtARgjetuI9hptraMvSOeH6cxJFzFNn0OR9rM_JU_IR1VfBkPFC1AzRwFxsvLC-WWnZ3TdOHmYXHNDvF-6-EC-wK9LZf5IYec7PoYm6_TE3aw71j4yrCVBdKIkf-zYk_4Le-EDEFnT3vM0VziC3XFSFxhBLS5CMtQEo0-IvcdOHm9GCno1uY1Wg
+[2025-05-27 19:05:33] JWT assertion saved to 'jwt_assertion_token.txt' file
+[2025-05-27 19:05:33] === VERIFYING JWT LOCALLY ===
+[2025-05-27 19:05:33] Decoded JWT payload (without verification):
+[2025-05-27 19:05:33] {
+  "sub": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "aud": "https://keycloak-qa.medpharmservices.com:8443/realms/fhir-0051185/protocol/openid-connect/token",
+  "iss": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "exp": 1748373033,
+  "iat": 1748372733,
+  "jti": "e6afdacb-cbea-4031-b316-bd421e4da615"
+}
+[2025-05-27 19:05:33] JWT verification failed: Invalid audience
+[2025-05-27 19:05:33] === ATTEMPTING TOKEN REQUEST ===
+[2025-05-27 19:05:33] Requesting access token...
+[2025-05-27 19:05:33] Token endpoint: https://keycloak-qa.medpharmservices.com:8443/realms/fhir-0051185/protocol/openid-connect/token
+[2025-05-27 19:05:33] Client ID: 4ddd3a59-414c-405e-acc5-226c097a7060
+[2025-05-27 19:05:34] Token request failed with status 400
+[2025-05-27 19:05:34] Response: {"error":"invalid_client","error_description":"Client authentication with signed JWT failed: Error when loading public keys: javax.net.ssl.SSLHandshakeException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target"}
+[2025-05-27 19:05:34] Failed to obtain access token.
+[2025-05-27 19:05:34] Check the 'jwt_assertion_token.txt' file to share the JWT with IMS for debugging.
+[2025-05-27 19:05:34] === TEST COMPLETED ===
+[2025-05-27 19:06:18] === STARTING MEDORA-IMS JWT ASSERTION TEST ===
+[2025-05-27 19:06:18] Generated JWT assertion with jti: a22b65be-e10e-4dc2-8334-064702685d6f
+[2025-05-27 19:06:18] JWT Payload:
+[2025-05-27 19:06:18] {
+  "sub": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "aud": "https://keycloak-qa.medpharmservices.com:8443/realms/fhir-0051185/protocol/openid-connect/token",
+  "iss": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "exp": 1748373078,
+  "iat": 1748372778,
+  "jti": "a22b65be-e10e-4dc2-8334-064702685d6f"
+}
+[2025-05-27 19:06:18] JWT Assertion Token:
+[2025-05-27 19:06:18] eyJhbGciOiJSUzM4NCIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0ZGRkM2E1OS00MTRjLTQwNWUtYWNjNS0yMjZjMDk3YTcwNjAiLCJhdWQiOiJodHRwczovL2tleWNsb2FrLXFhLm1lZHBoYXJtc2VydmljZXMuY29tOjg0NDMvcmVhbG1zL2ZoaXItMDA1MTE4NS9wcm90b2NvbC9vcGVuaWQtY29ubmVjdC90b2tlbiIsImlzcyI6IjRkZGQzYTU5LTQxNGMtNDA1ZS1hY2M1LTIyNmMwOTdhNzA2MCIsImV4cCI6MTc0ODM3MzA3OCwiaWF0IjoxNzQ4MzcyNzc4LCJqdGkiOiJhMjJiNjViZS1lMTBlLTRkYzItODMzNC0wNjQ3MDI2ODVkNmYifQ.Kfabat3QFT3R5WHjyqNN4O3_nouB-PW7JrJy3ve4xhRNxsJr3vxt2-_TMjh57QG5hLVJ0RM4y-Ut8bRTFe-1kwTM7v0Exwg_vYKFIXBPdQQwcxruZCRn0onFEzKQuVs0qE75FglYUY9TjhjPMnT0gu6WhpMURmMmyXWF3hUJd3MefJ-LWr8JvH6qcSCr_ScDGkos2yu2rDAoaMSdLjQ6LSUfnyzcpB6KUYo3-74_vvaIteCcgfMmMnEp6ZhMdjIniX24KN_Bat3qoRN3JtgDl3j9xjcipMPPIfW1g578x8N72Nao-RMnCWEk18DP-i8rCJCcr2Jth8t8Bg1XOp_Jpw
+[2025-05-27 19:06:18] JWT assertion saved to 'jwt_assertion_token.txt' file
+[2025-05-27 19:06:18] === VERIFYING JWT LOCALLY ===
+[2025-05-27 19:06:18] Decoded JWT payload (without verification):
+[2025-05-27 19:06:18] {
+  "sub": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "aud": "https://keycloak-qa.medpharmservices.com:8443/realms/fhir-0051185/protocol/openid-connect/token",
+  "iss": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "exp": 1748373078,
+  "iat": 1748372778,
+  "jti": "a22b65be-e10e-4dc2-8334-064702685d6f"
+}
+[2025-05-27 19:06:18] JWT verification failed: Invalid audience
+[2025-05-27 19:06:18] === ATTEMPTING TOKEN REQUEST ===
+[2025-05-27 19:06:18] Requesting access token...
+[2025-05-27 19:06:18] Token endpoint: https://keycloak-qa.medpharmservices.com:8443/realms/fhir-0051185/protocol/openid-connect/token
+[2025-05-27 19:06:18] Client ID: 4ddd3a59-414c-405e-acc5-226c097a7060
+[2025-05-27 19:06:18] Token request failed with status 400
+[2025-05-27 19:06:18] Response: {"error":"invalid_client","error_description":"Client authentication with signed JWT failed: Error when loading public keys: javax.net.ssl.SSLHandshakeException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target"}
+[2025-05-27 19:06:18] Failed to obtain access token.
+[2025-05-27 19:06:18] Check the 'jwt_assertion_token.txt' file to share the JWT with IMS for debugging.
+[2025-05-27 19:06:18] === TEST COMPLETED ===
+[2025-05-27 19:13:21] === STARTING MEDORA-IMS JWT ASSERTION TEST ===
+[2025-05-27 19:13:21] Generated JWT assertion with jti: a332a677-0105-4b5c-ab11-34ebe3aa2414
+[2025-05-27 19:13:21] JWT Payload:
+[2025-05-27 19:13:21] {
+  "sub": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "aud": "https://keycloak-qa.medpharmservices.com:8443/realms/fhir-0051185/protocol/openid-connect/token",
+  "iss": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "exp": 1748373501,
+  "iat": 1748373201,
+  "jti": "a332a677-0105-4b5c-ab11-34ebe3aa2414"
+}
+[2025-05-27 19:13:21] JWT Assertion Token:
+[2025-05-27 19:13:21] eyJhbGciOiJSUzM4NCIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0ZGRkM2E1OS00MTRjLTQwNWUtYWNjNS0yMjZjMDk3YTcwNjAiLCJhdWQiOiJodHRwczovL2tleWNsb2FrLXFhLm1lZHBoYXJtc2VydmljZXMuY29tOjg0NDMvcmVhbG1zL2ZoaXItMDA1MTE4NS9wcm90b2NvbC9vcGVuaWQtY29ubmVjdC90b2tlbiIsImlzcyI6IjRkZGQzYTU5LTQxNGMtNDA1ZS1hY2M1LTIyNmMwOTdhNzA2MCIsImV4cCI6MTc0ODM3MzUwMSwiaWF0IjoxNzQ4MzczMjAxLCJqdGkiOiJhMzMyYTY3Ny0wMTA1LTRiNWMtYWIxMS0zNGViZTNhYTI0MTQifQ.HDplwV5JCa1cxVH6ExAwxD_aqCC30AEZ60n8BSZFGVbyp_EScDJ-ruDZ6LCdwwgM8rd9QwjrY3jMFmpFiz6Jst9FwaZo6zYuHjLlbrP656joPXLspreKgZ-5PJ-Y6z9pYL4d6QRlxTjIveYyLif63NGU3BzBrJzmMq3-zC_JWoZb3q3TyH2UNOApkdCBg_e2ez8XGhQT-tqaYo80JtyFfro72nm7yAWvuuVjtr3Its5W_eOuFVph3q8LOzict2iGau61UiXHjwYeAICrNrmjoA4MCbA9G4gs3tCmNk37nTpIgD6sOGDiuK8ysEAQpt1a5bVaHm0WgwyByvKQKScycg
+[2025-05-27 19:13:21] JWT assertion saved to 'jwt_assertion_token.txt' file
+[2025-05-27 19:13:21] === VERIFYING JWT LOCALLY ===
+[2025-05-27 19:13:21] Decoded JWT payload (without verification):
+[2025-05-27 19:13:21] {
+  "sub": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "aud": "https://keycloak-qa.medpharmservices.com:8443/realms/fhir-0051185/protocol/openid-connect/token",
+  "iss": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "exp": 1748373501,
+  "iat": 1748373201,
+  "jti": "a332a677-0105-4b5c-ab11-34ebe3aa2414"
+}
+[2025-05-27 19:13:21] JWT verification failed: Invalid audience
+[2025-05-27 19:13:21] === ATTEMPTING TOKEN REQUEST ===
+[2025-05-27 19:13:21] Requesting access token...
+[2025-05-27 19:13:21] Token endpoint: https://keycloak-qa.medpharmservices.com:8443/realms/fhir-0051185/protocol/openid-connect/token
+[2025-05-27 19:13:21] Client ID: 4ddd3a59-414c-405e-acc5-226c097a7060
+[2025-05-27 19:13:21] Token request failed with status 400
+[2025-05-27 19:13:21] Response: {"error":"invalid_client","error_description":"Client authentication with signed JWT failed: Error when loading public keys: javax.net.ssl.SSLHandshakeException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target"}
+[2025-05-27 19:13:21] Failed to obtain access token.
+[2025-05-27 19:13:21] Check the 'jwt_assertion_token.txt' file to share the JWT with IMS for debugging.
+[2025-05-27 19:13:21] === TEST COMPLETED ===
+[2025-05-27 19:25:59] === STARTING MEDORA-IMS JWT ASSERTION TEST ===
+[2025-05-27 19:25:59] Generated JWT assertion with jti: 47960ffb-41d4-40c3-afdb-c22791057e7b
+[2025-05-27 19:25:59] JWT Payload:
+[2025-05-27 19:25:59] {
+  "sub": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "aud": "https://keycloak-qa.medpharmservices.com:8443/realms/fhir-0051185/protocol/openid-connect/token",
+  "iss": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "exp": 1748374259,
+  "iat": 1748373959,
+  "jti": "47960ffb-41d4-40c3-afdb-c22791057e7b"
+}
+[2025-05-27 19:25:59] JWT Assertion Token:
+[2025-05-27 19:25:59] eyJhbGciOiJSUzM4NCIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0ZGRkM2E1OS00MTRjLTQwNWUtYWNjNS0yMjZjMDk3YTcwNjAiLCJhdWQiOiJodHRwczovL2tleWNsb2FrLXFhLm1lZHBoYXJtc2VydmljZXMuY29tOjg0NDMvcmVhbG1zL2ZoaXItMDA1MTE4NS9wcm90b2NvbC9vcGVuaWQtY29ubmVjdC90b2tlbiIsImlzcyI6IjRkZGQzYTU5LTQxNGMtNDA1ZS1hY2M1LTIyNmMwOTdhNzA2MCIsImV4cCI6MTc0ODM3NDI1OSwiaWF0IjoxNzQ4MzczOTU5LCJqdGkiOiI0Nzk2MGZmYi00MWQ0LTQwYzMtYWZkYi1jMjI3OTEwNTdlN2IifQ.SBKYl1OXo2mGSN9iu3xDMmVGDilbM3YkorQQWDH_hlg9vOIll2k2fQxtXVIQbM42qaQKO1YxLDAReq-2MrteaUO8VauUVgyea7uHG0zLtkP5yTmfHDXHfamW6XEnrsinxyHSdp9xQhikkI4dMozQDsXbXu_Wdne8El_mbRbDJXG_72-Uue_AjsCw7E5TMij3kx8msO3-E9lz0U_4tBJ_2Rgssx62Pni9R6yo19q-i7E1AebsGi2c2YWji85Kspwd98ohJzdKRlQBFj9AcRkbGA9_cMCEQ0LYgijspNHlutqCBARTWlF8zLAW_8Alwk0_nFKcHGkX2C3CfUgExhB1FA
+[2025-05-27 19:25:59] JWT assertion saved to 'jwt_assertion_token.txt' file
+[2025-05-27 19:25:59] === VERIFYING JWT LOCALLY ===
+[2025-05-27 19:25:59] Decoded JWT payload (without verification):
+[2025-05-27 19:25:59] {
+  "sub": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "aud": "https://keycloak-qa.medpharmservices.com:8443/realms/fhir-0051185/protocol/openid-connect/token",
+  "iss": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "exp": 1748374259,
+  "iat": 1748373959,
+  "jti": "47960ffb-41d4-40c3-afdb-c22791057e7b"
+}
+[2025-05-27 19:25:59] JWT verification failed: Invalid audience
+[2025-05-27 19:25:59] === ATTEMPTING TOKEN REQUEST ===
+[2025-05-27 19:25:59] Requesting access token...
+[2025-05-27 19:25:59] Token endpoint: https://keycloak-qa.medpharmservices.com:8443/realms/fhir-0051185/protocol/openid-connect/token
+[2025-05-27 19:25:59] Client ID: 4ddd3a59-414c-405e-acc5-226c097a7060
+[2025-05-27 19:25:59] Token request failed with status 400
+[2025-05-27 19:25:59] Response: {"error":"invalid_client","error_description":"Client authentication with signed JWT failed: Error when loading public keys: javax.net.ssl.SSLHandshakeException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target"}
+[2025-05-27 19:25:59] Failed to obtain access token.
+[2025-05-27 19:25:59] Check the 'jwt_assertion_token.txt' file to share the JWT with IMS for debugging.
+[2025-05-27 19:25:59] === TEST COMPLETED ===
+[2025-05-27 19:32:13] === STARTING MEDORA-IMS JWT ASSERTION TEST ===
+[2025-05-27 19:32:13] Generated JWT assertion with jti: 64032ef9-d429-4611-9d45-18efcb46cfe4
+[2025-05-27 19:32:13] JWT Payload:
+[2025-05-27 19:32:13] {
+  "sub": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "aud": "https://keycloak-qa.medpharmservices.com:8443/realms/fhir-0051185/protocol/openid-connect/token",
+  "iss": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "exp": 1748374633,
+  "iat": 1748374333,
+  "jti": "64032ef9-d429-4611-9d45-18efcb46cfe4"
+}
+[2025-05-27 19:32:13] JWT Assertion Token:
+[2025-05-27 19:32:13] eyJhbGciOiJSUzM4NCIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0ZGRkM2E1OS00MTRjLTQwNWUtYWNjNS0yMjZjMDk3YTcwNjAiLCJhdWQiOiJodHRwczovL2tleWNsb2FrLXFhLm1lZHBoYXJtc2VydmljZXMuY29tOjg0NDMvcmVhbG1zL2ZoaXItMDA1MTE4NS9wcm90b2NvbC9vcGVuaWQtY29ubmVjdC90b2tlbiIsImlzcyI6IjRkZGQzYTU5LTQxNGMtNDA1ZS1hY2M1LTIyNmMwOTdhNzA2MCIsImV4cCI6MTc0ODM3NDYzMywiaWF0IjoxNzQ4Mzc0MzMzLCJqdGkiOiI2NDAzMmVmOS1kNDI5LTQ2MTEtOWQ0NS0xOGVmY2I0NmNmZTQifQ.DHZXY70syY2gK9opmkX6IVErNwChZ45mV_U8bQPtt-zM7fKQ-KO6eq2zk8FoY8fNhEP4rilygBPlJnbom8fAbC0c0qAreCw0rzl-9K5ZxF-U76VZz0uL19ISxwj_BBc575wW-ExQt1Pr1dCyitHnUFWeSeJ63ABiRuGKCBTrfATs82U7vtZzbS7hrORMIqaZwfOvNeZtKdDWILeDSKSO6kRHX9g9YGJ16v-sLcIGJdnlSoK0R-b0TdkAMO389BBiFoHxcBgsjkV6xrDlVbgviWWlZy-qpVpN_FT_f7ib9T-wX9o_5xqO7CnOxpVXSoiy7-UXhfTdTlTPX1Mf9i6ZvQ
+[2025-05-27 19:32:13] JWT assertion saved to 'jwt_assertion_token.txt' file
+[2025-05-27 19:32:13] === VERIFYING JWT LOCALLY ===
+[2025-05-27 19:32:13] Decoded JWT payload (without verification):
+[2025-05-27 19:32:13] {
+  "sub": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "aud": "https://keycloak-qa.medpharmservices.com:8443/realms/fhir-0051185/protocol/openid-connect/token",
+  "iss": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "exp": 1748374633,
+  "iat": 1748374333,
+  "jti": "64032ef9-d429-4611-9d45-18efcb46cfe4"
+}
+[2025-05-27 19:32:13] JWT verification failed: Invalid audience
+[2025-05-27 19:32:13] === ATTEMPTING TOKEN REQUEST ===
+[2025-05-27 19:32:13] Requesting access token...
+[2025-05-27 19:32:13] Token endpoint: https://keycloak-qa.medpharmservices.com:8443/realms/fhir-0051185/protocol/openid-connect/token
+[2025-05-27 19:32:13] Client ID: 4ddd3a59-414c-405e-acc5-226c097a7060
+[2025-05-27 19:32:14] Token request failed with status 400
+[2025-05-27 19:32:14] Response: {"error":"invalid_client","error_description":"Client authentication with signed JWT failed: Error when loading public keys: javax.net.ssl.SSLHandshakeException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target"}
+[2025-05-27 19:32:14] Failed to obtain access token.
+[2025-05-27 19:32:14] Check the 'jwt_assertion_token.txt' file to share the JWT with IMS for debugging.
+[2025-05-27 19:32:14] === TEST COMPLETED ===
+[2025-05-27 20:03:55] === STARTING MEDORA-IMS JWT ASSERTION TEST ===
+[2025-05-27 20:03:56] Generated JWT assertion with jti: de76f41c-63ab-458f-9d28-e7472851dded
+[2025-05-27 20:03:56] JWT Payload:
+[2025-05-27 20:03:56] {
+  "sub": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "aud": "https://keycloak-qa.medpharmservices.com:8443/realms/fhir-0051185/protocol/openid-connect/token",
+  "iss": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "exp": 1748376535,
+  "iat": 1748376235,
+  "jti": "de76f41c-63ab-458f-9d28-e7472851dded"
+}
+[2025-05-27 20:03:56] JWT Assertion Token:
+[2025-05-27 20:03:56] eyJhbGciOiJSUzM4NCIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0ZGRkM2E1OS00MTRjLTQwNWUtYWNjNS0yMjZjMDk3YTcwNjAiLCJhdWQiOiJodHRwczovL2tleWNsb2FrLXFhLm1lZHBoYXJtc2VydmljZXMuY29tOjg0NDMvcmVhbG1zL2ZoaXItMDA1MTE4NS9wcm90b2NvbC9vcGVuaWQtY29ubmVjdC90b2tlbiIsImlzcyI6IjRkZGQzYTU5LTQxNGMtNDA1ZS1hY2M1LTIyNmMwOTdhNzA2MCIsImV4cCI6MTc0ODM3NjUzNSwiaWF0IjoxNzQ4Mzc2MjM1LCJqdGkiOiJkZTc2ZjQxYy02M2FiLTQ1OGYtOWQyOC1lNzQ3Mjg1MWRkZWQifQ.PuBiFTbz3dNC-TLp6s5YntvT-ALkK6kYu1GrAPU9iULB3FE6d65FkNuS0luGUvAnA7iVRPA2NFcIVoMpDaY9fHwJmGrz6vujoVkxNer2xT8lsLX2XJDk-AHzD6K1Fa5lQ_mh9bJ56jtX5LqXi5SUe1Nw2bMjFAGwIjepfxr-Ejn0QKWHYkYXKykXNWRSuqGXt-X-56mJZoE31zxYSQGPmCFyZqtVXFtOEnROzAls0Sano3lsw24Dz7dj5ldQYDYLRHib7F4KcAKJYC9VdNzatUX-7oGwkT2KducCP7ZT2oLCcfAzKdnlieqBl9bifNkqM-8bQgWq45bj_Ai3IgOkHw
+[2025-05-27 20:03:56] JWT assertion saved to 'jwt_assertion_token.txt' file
+[2025-05-27 20:03:56] === VERIFYING JWT LOCALLY ===
+[2025-05-27 20:03:56] Decoded JWT payload (without verification):
+[2025-05-27 20:03:56] {
+  "sub": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "aud": "https://keycloak-qa.medpharmservices.com:8443/realms/fhir-0051185/protocol/openid-connect/token",
+  "iss": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "exp": 1748376535,
+  "iat": 1748376235,
+  "jti": "de76f41c-63ab-458f-9d28-e7472851dded"
+}
+[2025-05-27 20:03:56] JWT verification failed: Invalid audience
+[2025-05-27 20:03:56] === ATTEMPTING TOKEN REQUEST ===
+[2025-05-27 20:03:56] Requesting access token...
+[2025-05-27 20:03:56] Token endpoint: https://keycloak-qa.medpharmservices.com:8443/realms/fhir-0051185/protocol/openid-connect/token
+[2025-05-27 20:03:56] Client ID: 4ddd3a59-414c-405e-acc5-226c097a7060
+[2025-05-27 20:03:56] Token request failed with status 400
+[2025-05-27 20:03:56] Response: {"error":"invalid_client","error_description":"Client authentication with signed JWT failed: Error when loading public keys: javax.net.ssl.SSLHandshakeException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target"}
+[2025-05-27 20:03:56] Failed to obtain access token.
+[2025-05-27 20:03:56] Check the 'jwt_assertion_token.txt' file to share the JWT with IMS for debugging.
+[2025-05-27 20:03:56] === TEST COMPLETED ===
+[2025-05-27 20:04:02] === STARTING MEDORA-IMS JWT ASSERTION TEST ===
+[2025-05-27 20:04:02] Generated JWT assertion with jti: e8912bef-00f5-4ac3-83a1-337def862b42
+[2025-05-27 20:04:02] JWT Payload:
+[2025-05-27 20:04:02] {
+  "sub": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "aud": "https://keycloak-qa.medpharmservices.com:8443/realms/fhir-0051185/protocol/openid-connect/token",
+  "iss": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "exp": 1748376542,
+  "iat": 1748376242,
+  "jti": "e8912bef-00f5-4ac3-83a1-337def862b42"
+}
+[2025-05-27 20:04:02] JWT Assertion Token:
+[2025-05-27 20:04:02] eyJhbGciOiJSUzM4NCIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0ZGRkM2E1OS00MTRjLTQwNWUtYWNjNS0yMjZjMDk3YTcwNjAiLCJhdWQiOiJodHRwczovL2tleWNsb2FrLXFhLm1lZHBoYXJtc2VydmljZXMuY29tOjg0NDMvcmVhbG1zL2ZoaXItMDA1MTE4NS9wcm90b2NvbC9vcGVuaWQtY29ubmVjdC90b2tlbiIsImlzcyI6IjRkZGQzYTU5LTQxNGMtNDA1ZS1hY2M1LTIyNmMwOTdhNzA2MCIsImV4cCI6MTc0ODM3NjU0MiwiaWF0IjoxNzQ4Mzc2MjQyLCJqdGkiOiJlODkxMmJlZi0wMGY1LTRhYzMtODNhMS0zMzdkZWY4NjJiNDIifQ.mBsY5j9emBpWIAhiRjhf8d4HI_D5yfYNpt-RzcEBsp1LtVc7IhfpRtb0DLvj9917jo90FHvIqZXug1wpM7oYy-G2IgYRjCHzYm3_e0LUsMYa2h41qwFcsZHkGBPau8WtSfbVLMvHXjwkVirNxoxeypMNjSHQmTu2xa_fStTDIN2SInqMkAOfiBu3XVtgFEFmZO2tl50IQM0uX9BWq4LrfnaNyXXEcEcFWDGkzLM4kEusW7ZQZiweDKVd73qRJ0sB0T30mTms0capwVaRSRQD2PN-xpGTTCOmHM0Hc4RbURkvBWRBrF72kZxbe3qZc4s9wrJ48zITSUUo1e598WfWxA
+[2025-05-27 20:04:02] JWT assertion saved to 'jwt_assertion_token.txt' file
+[2025-05-27 20:04:02] === VERIFYING JWT LOCALLY ===
+[2025-05-27 20:04:02] Decoded JWT payload (without verification):
+[2025-05-27 20:04:02] {
+  "sub": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "aud": "https://keycloak-qa.medpharmservices.com:8443/realms/fhir-0051185/protocol/openid-connect/token",
+  "iss": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "exp": 1748376542,
+  "iat": 1748376242,
+  "jti": "e8912bef-00f5-4ac3-83a1-337def862b42"
+}
+[2025-05-27 20:04:02] JWT verification failed: Invalid audience
+[2025-05-27 20:04:02] === ATTEMPTING TOKEN REQUEST ===
+[2025-05-27 20:04:02] Requesting access token...
+[2025-05-27 20:04:02] Token endpoint: https://keycloak-qa.medpharmservices.com:8443/realms/fhir-0051185/protocol/openid-connect/token
+[2025-05-27 20:04:02] Client ID: 4ddd3a59-414c-405e-acc5-226c097a7060
+[2025-05-27 20:04:03] Token request failed with status 400
+[2025-05-27 20:04:03] Response: {"error":"invalid_client","error_description":"Client authentication with signed JWT failed: Error when loading public keys: javax.net.ssl.SSLHandshakeException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target"}
+[2025-05-27 20:04:03] Failed to obtain access token.
+[2025-05-27 20:04:03] Check the 'jwt_assertion_token.txt' file to share the JWT with IMS for debugging.
+[2025-05-27 20:04:03] === TEST COMPLETED ===
+[2025-05-27 20:04:14] === STARTING MEDORA-IMS JWT ASSERTION TEST ===
+[2025-05-27 20:04:14] Generated JWT assertion with jti: c5105cf9-ccd2-4278-83cb-b7f6a360d8c8
+[2025-05-27 20:04:14] JWT Payload:
+[2025-05-27 20:04:14] {
+  "sub": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "aud": "https://keycloak-qa.medpharmservices.com:8443/realms/fhir-0051185/protocol/openid-connect/token",
+  "iss": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "exp": 1748376554,
+  "iat": 1748376254,
+  "jti": "c5105cf9-ccd2-4278-83cb-b7f6a360d8c8"
+}
+[2025-05-27 20:04:14] JWT Assertion Token:
+[2025-05-27 20:04:14] eyJhbGciOiJSUzM4NCIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0ZGRkM2E1OS00MTRjLTQwNWUtYWNjNS0yMjZjMDk3YTcwNjAiLCJhdWQiOiJodHRwczovL2tleWNsb2FrLXFhLm1lZHBoYXJtc2VydmljZXMuY29tOjg0NDMvcmVhbG1zL2ZoaXItMDA1MTE4NS9wcm90b2NvbC9vcGVuaWQtY29ubmVjdC90b2tlbiIsImlzcyI6IjRkZGQzYTU5LTQxNGMtNDA1ZS1hY2M1LTIyNmMwOTdhNzA2MCIsImV4cCI6MTc0ODM3NjU1NCwiaWF0IjoxNzQ4Mzc2MjU0LCJqdGkiOiJjNTEwNWNmOS1jY2QyLTQyNzgtODNjYi1iN2Y2YTM2MGQ4YzgifQ.HgITedlPJ-unqlhxc9Md34tyxIo7tZm1U_Yn0z3-1s455G-8rvSptd2PGeO9Gwu8nDrEaIYlJ4jr3sd_el1ksAqWTxzmOsEgORkzDTdT9SiH2uakQpO4hc9lqbnYKCM0k7_d8Y_KXCr3zprgow3_XQJ6JOrfeisKnZGBmZ442Oy0BuqzFN-aPi76xZ3n52whz4_BEf7ae2tPEnjsHu1Nm2N9PJkzXhkKvCIh_gE7BpIDGaeoCVqDzyAI4q6hj7a4-5rBQihXM6OpaVZrO4eTAXGwPLoNmqNAdO7G90F0ey0ejOYqSq0Blvchmwa3MJDgABugeDOqiX1me-G5pYFfLA
+[2025-05-27 20:04:14] JWT assertion saved to 'jwt_assertion_token.txt' file
+[2025-05-27 20:04:14] === VERIFYING JWT LOCALLY ===
+[2025-05-27 20:04:14] Decoded JWT payload (without verification):
+[2025-05-27 20:04:14] {
+  "sub": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "aud": "https://keycloak-qa.medpharmservices.com:8443/realms/fhir-0051185/protocol/openid-connect/token",
+  "iss": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "exp": 1748376554,
+  "iat": 1748376254,
+  "jti": "c5105cf9-ccd2-4278-83cb-b7f6a360d8c8"
+}
+[2025-05-27 20:04:14] JWT verification failed: Invalid audience
+[2025-05-27 20:04:14] === ATTEMPTING TOKEN REQUEST ===
+[2025-05-27 20:04:14] Requesting access token...
+[2025-05-27 20:04:14] Token endpoint: https://keycloak-qa.medpharmservices.com:8443/realms/fhir-0051185/protocol/openid-connect/token
+[2025-05-27 20:04:14] Client ID: 4ddd3a59-414c-405e-acc5-226c097a7060
+[2025-05-27 20:04:14] Token request failed with status 400
+[2025-05-27 20:04:14] Response: {"error":"invalid_client","error_description":"Client authentication with signed JWT failed: Error when loading public keys: javax.net.ssl.SSLHandshakeException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target"}
+[2025-05-27 20:04:14] Failed to obtain access token.
+[2025-05-27 20:04:14] Check the 'jwt_assertion_token.txt' file to share the JWT with IMS for debugging.
+[2025-05-27 20:04:14] === TEST COMPLETED ===
+[2025-05-27 20:04:16] === STARTING MEDORA-IMS JWT ASSERTION TEST ===
+[2025-05-27 20:04:17] Generated JWT assertion with jti: 9230eb1c-da71-48d8-9880-6468721e9f56
+[2025-05-27 20:04:17] JWT Payload:
+[2025-05-27 20:04:17] {
+  "sub": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "aud": "https://keycloak-qa.medpharmservices.com:8443/realms/fhir-0051185/protocol/openid-connect/token",
+  "iss": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "exp": 1748376556,
+  "iat": 1748376256,
+  "jti": "9230eb1c-da71-48d8-9880-6468721e9f56"
+}
+[2025-05-27 20:04:17] JWT Assertion Token:
+[2025-05-27 20:04:17] eyJhbGciOiJSUzM4NCIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0ZGRkM2E1OS00MTRjLTQwNWUtYWNjNS0yMjZjMDk3YTcwNjAiLCJhdWQiOiJodHRwczovL2tleWNsb2FrLXFhLm1lZHBoYXJtc2VydmljZXMuY29tOjg0NDMvcmVhbG1zL2ZoaXItMDA1MTE4NS9wcm90b2NvbC9vcGVuaWQtY29ubmVjdC90b2tlbiIsImlzcyI6IjRkZGQzYTU5LTQxNGMtNDA1ZS1hY2M1LTIyNmMwOTdhNzA2MCIsImV4cCI6MTc0ODM3NjU1NiwiaWF0IjoxNzQ4Mzc2MjU2LCJqdGkiOiI5MjMwZWIxYy1kYTcxLTQ4ZDgtOTg4MC02NDY4NzIxZTlmNTYifQ.l8GbnOwPB9zmbKRy_2-dqI4ecx0gEiQ-uG1_L3OnX0LHRoBIcJ7VD52nmVx6d0lNEtMDR_0wdpqPYOeuA5Mp25xqi6MAyiyKvZJ8RRDMM2XbPbKbJGKHhvknbnCEEchMXUgSPM5dlX5nNN-CBiFQuh9U81rHS4wM0g0x9QzsWGum7izzclE8ONd97Th5rs-Xobe6nUq9v8uj5aCm_Yo5GKLnZ3sRmqB28H0T85Z1QZM9NqzG-F1RYdFyWaTW-GHPb7gu9BieD12qM-5XdwHEJfEueL6ljlDw_tFsxTwr4-FUOgN5er2z2mMNz7tyc9oDwemVqWj7LVU90hKVxcp3Ew
+[2025-05-27 20:04:17] JWT assertion saved to 'jwt_assertion_token.txt' file
+[2025-05-27 20:04:17] === VERIFYING JWT LOCALLY ===
+[2025-05-27 20:04:17] Decoded JWT payload (without verification):
+[2025-05-27 20:04:17] {
+  "sub": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "aud": "https://keycloak-qa.medpharmservices.com:8443/realms/fhir-0051185/protocol/openid-connect/token",
+  "iss": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "exp": 1748376556,
+  "iat": 1748376256,
+  "jti": "9230eb1c-da71-48d8-9880-6468721e9f56"
+}
+[2025-05-27 20:04:17] JWT verification failed: Invalid audience
+[2025-05-27 20:04:17] === ATTEMPTING TOKEN REQUEST ===
+[2025-05-27 20:04:17] Requesting access token...
+[2025-05-27 20:04:17] Token endpoint: https://keycloak-qa.medpharmservices.com:8443/realms/fhir-0051185/protocol/openid-connect/token
+[2025-05-27 20:04:17] Client ID: 4ddd3a59-414c-405e-acc5-226c097a7060
+[2025-05-27 20:04:17] Token request failed with status 400
+[2025-05-27 20:04:17] Response: {"error":"invalid_client","error_description":"Client authentication with signed JWT failed: Error when loading public keys: javax.net.ssl.SSLHandshakeException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target"}
+[2025-05-27 20:04:17] Failed to obtain access token.
+[2025-05-27 20:04:17] Check the 'jwt_assertion_token.txt' file to share the JWT with IMS for debugging.
+[2025-05-27 20:04:17] === TEST COMPLETED ===
+[2025-05-27 20:05:41] === STARTING MEDORA-IMS JWT ASSERTION TEST ===
+[2025-05-27 20:05:41] Generated JWT assertion with jti: 72e22cba-d560-4ef3-b21c-2ae868ca702b
+[2025-05-27 20:05:41] JWT Payload:
+[2025-05-27 20:05:41] {
+  "sub": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "aud": "https://keycloak-qa.medpharmservices.com:8443/realms/fhir-0051185/protocol/openid-connect/token",
+  "iss": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "exp": 1748376641,
+  "iat": 1748376341,
+  "jti": "72e22cba-d560-4ef3-b21c-2ae868ca702b"
+}
+[2025-05-27 20:05:41] JWT Assertion Token:
+[2025-05-27 20:05:41] eyJhbGciOiJSUzM4NCIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0ZGRkM2E1OS00MTRjLTQwNWUtYWNjNS0yMjZjMDk3YTcwNjAiLCJhdWQiOiJodHRwczovL2tleWNsb2FrLXFhLm1lZHBoYXJtc2VydmljZXMuY29tOjg0NDMvcmVhbG1zL2ZoaXItMDA1MTE4NS9wcm90b2NvbC9vcGVuaWQtY29ubmVjdC90b2tlbiIsImlzcyI6IjRkZGQzYTU5LTQxNGMtNDA1ZS1hY2M1LTIyNmMwOTdhNzA2MCIsImV4cCI6MTc0ODM3NjY0MSwiaWF0IjoxNzQ4Mzc2MzQxLCJqdGkiOiI3MmUyMmNiYS1kNTYwLTRlZjMtYjIxYy0yYWU4NjhjYTcwMmIifQ.Xl09ZOcI3419sklgTbHEHBaPcDnkphI96iHWvELhzmpH4g4RS476jrTFa6-30pDsM84TrHCyr6GXDw1wcwy2niTFqEvlbHQv4nFtwJU1_Dfzh-Tra2F7A84LeEW6rJ4IiqvdxT-OMtWj0tWS97jlmmT_fdLSb_zR9dZwXPrK-lbsVV44MF0LBlAb6OEZCUcNu4yaRMzW1KmJkZPGuN1qG-zadfeTKhOMSiPxc7n66KQ2jkHJk6mrdEhvYO6Nk6e_or7I2GKmJTeISxYE27UqcQTFLYErGEEXjb_CBvYiqr_9kp2gI_jAb4aUxwMqRWUdJyFxsHPh_pvR0FnIoFA8zg
+[2025-05-27 20:05:41] JWT assertion saved to 'jwt_assertion_token.txt' file
+[2025-05-27 20:05:41] === VERIFYING JWT LOCALLY ===
+[2025-05-27 20:05:41] Decoded JWT payload (without verification):
+[2025-05-27 20:05:41] {
+  "sub": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "aud": "https://keycloak-qa.medpharmservices.com:8443/realms/fhir-0051185/protocol/openid-connect/token",
+  "iss": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "exp": 1748376641,
+  "iat": 1748376341,
+  "jti": "72e22cba-d560-4ef3-b21c-2ae868ca702b"
+}
+[2025-05-27 20:05:41] JWT verification failed: Invalid audience
+[2025-05-27 20:05:41] === ATTEMPTING TOKEN REQUEST ===
+[2025-05-27 20:05:41] Requesting access token...
+[2025-05-27 20:05:41] Token endpoint: https://keycloak-qa.medpharmservices.com:8443/realms/fhir-0051185/protocol/openid-connect/token
+[2025-05-27 20:05:41] Client ID: 4ddd3a59-414c-405e-acc5-226c097a7060
+[2025-05-27 20:05:41] Token request failed with status 400
+[2025-05-27 20:05:41] Response: {"error":"invalid_client","error_description":"Client authentication with signed JWT failed: Error when loading public keys: javax.net.ssl.SSLHandshakeException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target"}
+[2025-05-27 20:05:41] Failed to obtain access token.
+[2025-05-27 20:05:41] Check the 'jwt_assertion_token.txt' file to share the JWT with IMS for debugging.
+[2025-05-27 20:05:41] === TEST COMPLETED ===
+[2025-05-29 15:10:24] === STARTING MEDORA-IMS JWT ASSERTION TEST ===
+[2025-05-29 15:10:24] Generated JWT assertion with jti: 32ede590-6058-4c7a-889c-b718ca2f40ba
+[2025-05-29 15:10:24] JWT Payload:
+[2025-05-29 15:10:24] {
+  "sub": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "aud": "https://keycloak-qa.medpharmservices.com:8443/realms/fhir-0051185/protocol/openid-connect/token",
+  "iss": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "exp": 1748531724,
+  "iat": 1748531424,
+  "jti": "32ede590-6058-4c7a-889c-b718ca2f40ba"
+}
+[2025-05-29 15:10:24] JWT Assertion Token:
+[2025-05-29 15:10:24] eyJhbGciOiJSUzM4NCIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0ZGRkM2E1OS00MTRjLTQwNWUtYWNjNS0yMjZjMDk3YTcwNjAiLCJhdWQiOiJodHRwczovL2tleWNsb2FrLXFhLm1lZHBoYXJtc2VydmljZXMuY29tOjg0NDMvcmVhbG1zL2ZoaXItMDA1MTE4NS9wcm90b2NvbC9vcGVuaWQtY29ubmVjdC90b2tlbiIsImlzcyI6IjRkZGQzYTU5LTQxNGMtNDA1ZS1hY2M1LTIyNmMwOTdhNzA2MCIsImV4cCI6MTc0ODUzMTcyNCwiaWF0IjoxNzQ4NTMxNDI0LCJqdGkiOiIzMmVkZTU5MC02MDU4LTRjN2EtODg5Yy1iNzE4Y2EyZjQwYmEifQ.kwmFBD1-WJPByVPKdeoFD8pkIZua4yZ_OADAoA46OuO2CPTILnG8L9eVGV8CJ3_FliZcvomE7UtbianTyfDm0KlRVR_mShE9gM6eXNiiGPIbZRu0is7Oyz5SlLv4m9EEblWlVI_4Lo5oHgYtTjOuNyCxaO4RvkvcBmiTDuBYOohbykUc8T4_vkpVEo8s54fAguduHpEx-e4AsrwJqQB1WW7pMXksuWPTx9MPmAFTUEnDi5qhkTKmys2RHkqc_5_25CT30BN4gY4AvS1b3ViKbZwv0Fa-I0DWoFYL3CuXe3_pxXN2oSerE-3NFqoGAA_dmneNG7g2ioVaKXCBgR26OA
+[2025-05-29 15:10:24] JWT assertion saved to 'jwt_assertion_token.txt' file
+[2025-05-29 15:10:24] === VERIFYING JWT LOCALLY ===
+[2025-05-29 15:10:24] Decoded JWT payload (without verification):
+[2025-05-29 15:10:24] {
+  "sub": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "aud": "https://keycloak-qa.medpharmservices.com:8443/realms/fhir-0051185/protocol/openid-connect/token",
+  "iss": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "exp": 1748531724,
+  "iat": 1748531424,
+  "jti": "32ede590-6058-4c7a-889c-b718ca2f40ba"
+}
+[2025-05-29 15:10:24] JWT verification failed: Invalid audience
+[2025-05-29 15:10:24] === ATTEMPTING TOKEN REQUEST ===
+[2025-05-29 15:10:24] Requesting access token...
+[2025-05-29 15:10:24] Token endpoint: https://keycloak-qa.medpharmservices.com:8443/realms/fhir-0051185/protocol/openid-connect/token
+[2025-05-29 15:10:24] Client ID: 4ddd3a59-414c-405e-acc5-226c097a7060
+[2025-05-29 15:10:25] Successfully obtained token. Expires in: 86400 seconds
+[2025-05-29 15:10:25] SUCCESS: Obtained access token!
+[2025-05-29 15:10:25] === TEST COMPLETED ===
+[2025-05-29 15:11:27] === STARTING MEDORA-IMS JWT ASSERTION TEST ===
+[2025-05-29 15:11:27] Generated JWT assertion with jti: e9a91d11-e665-4d72-84dd-e06d24e507c6
+[2025-05-29 15:11:27] JWT Payload:
+[2025-05-29 15:11:27] {
+  "sub": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "aud": "https://keycloak-qa.medpharmservices.com:8443/realms/fhir-0051185/protocol/openid-connect/token",
+  "iss": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "exp": 1748531787,
+  "iat": 1748531487,
+  "jti": "e9a91d11-e665-4d72-84dd-e06d24e507c6"
+}
+[2025-05-29 15:11:27] JWT Assertion Token:
+[2025-05-29 15:11:27] eyJhbGciOiJSUzM4NCIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0ZGRkM2E1OS00MTRjLTQwNWUtYWNjNS0yMjZjMDk3YTcwNjAiLCJhdWQiOiJodHRwczovL2tleWNsb2FrLXFhLm1lZHBoYXJtc2VydmljZXMuY29tOjg0NDMvcmVhbG1zL2ZoaXItMDA1MTE4NS9wcm90b2NvbC9vcGVuaWQtY29ubmVjdC90b2tlbiIsImlzcyI6IjRkZGQzYTU5LTQxNGMtNDA1ZS1hY2M1LTIyNmMwOTdhNzA2MCIsImV4cCI6MTc0ODUzMTc4NywiaWF0IjoxNzQ4NTMxNDg3LCJqdGkiOiJlOWE5MWQxMS1lNjY1LTRkNzItODRkZC1lMDZkMjRlNTA3YzYifQ.I1CxQMCJynmKcxJfqApw7fAxrK3AlzEyYeR9HW0yv4Z05IQWPQabPNmhHEqnv5PsPrW1fMEEh4-om0obSLYGHKCqcWCdZEep87HO0kPw-vBGSlQdHHpEh-idSVLR8vnyUSnOjo-AgdEgXHPEHypsyPtKZjoO2DIJ5DDa49JSodnkzL40aA2OTuON5LUwLmUSZNVrsT1fhncDvV1FQv4l2aakkhMYcvvRhRwG5fpInCxAp6FegBDMD3HLq-nhwGSgBe9WVh2xJwhN6b3-lGTQV6aMm-_aPTbswQAkTjrqoEQOavfjOG9yXfDDF0a4qkhhR27SWsnX6uYIZb1vokg7Dg
+[2025-05-29 15:11:27] JWT assertion saved to 'jwt_assertion_token.txt' file
+[2025-05-29 15:11:27] === VERIFYING JWT LOCALLY ===
+[2025-05-29 15:11:27] Decoded JWT payload (without verification):
+[2025-05-29 15:11:27] {
+  "sub": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "aud": "https://keycloak-qa.medpharmservices.com:8443/realms/fhir-0051185/protocol/openid-connect/token",
+  "iss": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "exp": 1748531787,
+  "iat": 1748531487,
+  "jti": "e9a91d11-e665-4d72-84dd-e06d24e507c6"
+}
+[2025-05-29 15:11:27] JWT verification failed: Invalid audience
+[2025-05-29 15:11:27] === ATTEMPTING TOKEN REQUEST ===
+[2025-05-29 15:11:27] Requesting access token...
+[2025-05-29 15:11:27] Token endpoint: https://keycloak-qa.medpharmservices.com:8443/realms/fhir-0051185/protocol/openid-connect/token
+[2025-05-29 15:11:27] Client ID: 4ddd3a59-414c-405e-acc5-226c097a7060
+[2025-05-29 15:11:27] Successfully obtained token. Expires in: 86400 seconds
+[2025-05-29 15:11:27] SUCCESS: Obtained access token!
+[2025-05-29 15:11:27] === TEST COMPLETED ===
+[2025-05-29 15:19:21] === STARTING MEDORA-IMS JWT ASSERTION TEST ===
+[2025-05-29 15:19:21] Generated JWT assertion with jti: 251b00d8-9c90-48d7-bd39-c7931be69f6b
+[2025-05-29 15:19:21] JWT Payload:
+[2025-05-29 15:19:21] {
+  "sub": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "aud": "https://keycloak-qa.medpharmservices.com:8443/realms/fhir-0051185/protocol/openid-connect/token",
+  "iss": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "exp": 1748532261,
+  "iat": 1748531961,
+  "jti": "251b00d8-9c90-48d7-bd39-c7931be69f6b"
+}
+[2025-05-29 15:19:21] JWT Assertion Token:
+[2025-05-29 15:19:21] eyJhbGciOiJSUzM4NCIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0ZGRkM2E1OS00MTRjLTQwNWUtYWNjNS0yMjZjMDk3YTcwNjAiLCJhdWQiOiJodHRwczovL2tleWNsb2FrLXFhLm1lZHBoYXJtc2VydmljZXMuY29tOjg0NDMvcmVhbG1zL2ZoaXItMDA1MTE4NS9wcm90b2NvbC9vcGVuaWQtY29ubmVjdC90b2tlbiIsImlzcyI6IjRkZGQzYTU5LTQxNGMtNDA1ZS1hY2M1LTIyNmMwOTdhNzA2MCIsImV4cCI6MTc0ODUzMjI2MSwiaWF0IjoxNzQ4NTMxOTYxLCJqdGkiOiIyNTFiMDBkOC05YzkwLTQ4ZDctYmQzOS1jNzkzMWJlNjlmNmIifQ.lb5iDftY4P6QzVfeA83RIoQqgApRNtUN_TExsk4NkPcX2v9FWzUad5YULxW6jCoJnyJD44hs2z2Z1kff8M233BMSduJvCObDypE13n1rqMhe9Bs1hnFrPZxcVkcpmeybQlEeIynDQt5Vsc38nbbR2hOTEFSSbj8RSNMdXfYpnb96tHVbs8q-JSmxlUNKtQur2w98vdl87GJq0bKCRyeTvkXlAK_AMnH6IRPrbj7I2iTeZh3hUEc_Xd7NFRwUxoqfQNULFh3OHujzEOdzW7-1s-0z7CnNmdbpyI9BNqP4r-mNz8BxU4j7jLaaGTwQE3I5k_i0YVrXo-dfwP4K2OBmew
+[2025-05-29 15:19:21] JWT assertion saved to 'jwt_assertion_token.txt' file
+[2025-05-29 15:19:21] === VERIFYING JWT LOCALLY ===
+[2025-05-29 15:19:21] Decoded JWT payload (without verification):
+[2025-05-29 15:19:21] {
+  "sub": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "aud": "https://keycloak-qa.medpharmservices.com:8443/realms/fhir-0051185/protocol/openid-connect/token",
+  "iss": "4ddd3a59-414c-405e-acc5-226c097a7060",
+  "exp": 1748532261,
+  "iat": 1748531961,
+  "jti": "251b00d8-9c90-48d7-bd39-c7931be69f6b"
+}
+[2025-05-29 15:19:21] JWT verification failed: Invalid audience
+[2025-05-29 15:19:21] === ATTEMPTING TOKEN REQUEST ===
+[2025-05-29 15:19:21] Requesting access token...
+[2025-05-29 15:19:21] Token endpoint: https://keycloak-qa.medpharmservices.com:8443/realms/fhir-0051185/protocol/openid-connect/token
+[2025-05-29 15:19:21] Client ID: 4ddd3a59-414c-405e-acc5-226c097a7060
+[2025-05-29 15:19:22] Successfully obtained token. Expires in: 86400 seconds
+[2025-05-29 15:19:22] SUCCESS: Obtained access token!
+[2025-05-29 15:19:22] === TEST COMPLETED ===

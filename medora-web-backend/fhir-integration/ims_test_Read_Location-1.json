@@ -1,0 +1,26 @@
+{
+  "resourceType": "Location",
+  "id": "Location-1",
+  "meta": {
+    "profile": [
+      "http://hl7.org/fhir/us/core/StructureDefinition/us-core-location"
+    ]
+  },
+  "status": "active",
+  "name": "Sid office",
+  "telecom": [
+    {
+      "system": "phone",
+      "value": "(465)-474-4454"
+    }
+  ],
+  "address": {
+    "line": [
+      "street 78"
+    ],
+    "city": "Ohio",
+    "state": "OH",
+    "postalCode": "2",
+    "country": "USA"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "resourceType": "Bundle",
+  "id": "5e0ee5bd-63b0-47d4-84f9-5229aa9c1a3b",
+  "meta": {
+    "lastUpdated": "2025-05-30T12:12:59.800-07:00"
+  },
+  "type": "searchset",
+  "total": 0,
+  "link": [
+    {
+      "relation": "self",
+      "url": "https://meditabfhirsandbox.meditab.com:2525/mps/fhir/R4/Condition?patient=Patient-195181"
+    }
+  ]
+}

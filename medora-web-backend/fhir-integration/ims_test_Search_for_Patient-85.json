@@ -1,0 +1,15 @@
+{
+  "resourceType": "Bundle",
+  "id": "98a974f7-bbde-486c-ae7e-a63edbb99bce",
+  "meta": {
+    "lastUpdated": "2025-05-30T12:12:39.156-07:00"
+  },
+  "type": "searchset",
+  "total": 0,
+  "link": [
+    {
+      "relation": "self",
+      "url": "https://meditabfhirsandbox.meditab.com:2525/mps/fhir/R4/Patient?_id=Patient-85"
+    }
+  ]
+}

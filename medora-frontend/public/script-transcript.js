@@ -29,14 +29,13 @@ try {
             if (startListeningBtn && stopListeningBtn) {
                 startListeningBtn.classList.add('hidden');
                 stopListeningBtn.classList.remove('hidden');
-                stopListeningBtn.classList.remove('disabled'); // Remove disabled class
-                stopListeningBtn.disabled = false; // Ensure the button is not disabled
-                stopListeningBtn.classList.add('blink-red'); // Add blinking red effect
-                stopListeningBtn.style.pointerEvents = 'auto'; // Ensure the button is clickable
-                stopListeningBtn.style.opacity = '1'; // Ensure the button is fully visible
-                // Force a repaint to ensure the animation triggers
+                stopListeningBtn.classList.remove('disabled');
+                stopListeningBtn.disabled = false;
+                stopListeningBtn.classList.add('blink-red');
+                stopListeningBtn.style.pointerEvents = 'auto';
+                stopListeningBtn.style.opacity = '1';
                 stopListeningBtn.style.animation = 'none';
-                void stopListeningBtn.offsetWidth; // Trigger reflow
+                void stopListeningBtn.offsetWidth;
                 stopListeningBtn.style.animation = 'blink-animation 1s infinite';
                 console.log('Switched to Stop Listening button with blink-red class', stopListeningBtn.classList.toString(), {
                     disabled: stopListeningBtn.disabled,
@@ -89,9 +88,9 @@ try {
             if (startListeningBtn && stopListeningBtn) {
                 startListeningBtn.classList.remove('hidden');
                 stopListeningBtn.classList.add('hidden');
-                stopListeningBtn.classList.remove('blink-red'); // Remove blinking effect
-                stopListeningBtn.classList.add('disabled'); // Add disabled class
-                stopListeningBtn.disabled = true; // Disable the button
+                stopListeningBtn.classList.remove('blink-red');
+                stopListeningBtn.classList.add('disabled');
+                stopListeningBtn.disabled = true;
                 console.log('Switched back to Start Listening button', startListeningBtn.classList.toString());
             } else {
                 console.error('Start or Stop Listening button not found', { startListeningBtn, stopListeningBtn });
@@ -111,9 +110,9 @@ try {
             if (startListeningBtn && stopListeningBtn) {
                 startListeningBtn.classList.remove('hidden');
                 stopListeningBtn.classList.add('hidden');
-                stopListeningBtn.classList.remove('blink-red'); // Remove blinking effect
-                stopListeningBtn.classList.add('disabled'); // Add disabled class
-                stopListeningBtn.disabled = true; // Disable the button
+                stopListeningBtn.classList.remove('blink-red');
+                stopListeningBtn.classList.add('disabled');
+                stopListeningBtn.disabled = true;
                 console.log('Speech recognition stopped, switched to Start Listening button', startListeningBtn.classList.toString());
             } else {
                 console.error('Start or Stop Listening button not found', { startListeningBtn, stopListeningBtn });
@@ -183,7 +182,7 @@ try {
             feedbackDiv.className = 'transcript-feedback';
             feedbackDiv.style.color = 'green';
             feedbackDiv.style.marginTop = '10px';
-            feedbackDiv.style.display = 'block'; // Ensure visibility
+            feedbackDiv.style.display = 'block';
             feedbackDiv.style.fontSize = '14px';
             feedbackDiv.style.textAlign = 'center';
             feedbackDiv.innerText = 'Transcript submitted successfully!';
@@ -195,32 +194,23 @@ try {
                 if (feedbackDiv.parentNode) {
                     feedbackDiv.parentNode.removeChild(feedbackDiv);
                 }
-            }, 3000); // Remove after 3 seconds
+            }, 3000);
 
             // Show spinner and disable button
             submitTranscriptBtn.disabled = true;
             submitTranscriptBtn.classList.add('disabled');
-            submitTranscriptBtn.classList.remove('blink'); // Remove blinking effect during submission
+            submitTranscriptBtn.classList.remove('blink');
             transcriptSpinner.classList.remove('hidden');
-            transcriptSpinner.style.display = 'inline-block'; // Ensure spinner is visible
+            transcriptSpinner.style.display = 'inline-block';
             console.log('Showing spinner during submission, spinner display:', transcriptSpinner.style.display);
 
-            // Important: Use BOTH formats and provide email as the tenant value in API requests
-            // This is a critical fix to ensure compatibility with the backend
+            // FIXED: Use the correct data format for the Freed-style endpoint
             const transcriptData = {
-                // Submit in both formats (snake_case and camelCase) for compatibility
-                patient_id: currentPatientId,
-                patientId: currentPatientId,
-                visit_id: activeVisitId,
-                visitId: activeVisitId,
                 transcript: transcriptText,
-                
-                // CRITICAL: Include BOTH formats to ensure backend receives email
-                tenantId: currentEmail,       // New format (camelCase)
-                tenant_id: currentEmail,      // Old format (snake_case)
-                
-                // Include email separately as well
-                email: currentEmail
+                patientId: currentPatientId,
+                visitId: activeVisitId,
+                email: currentEmail,
+                tenantId: currentEmail
             };
             
             // Log the exact request for debugging
@@ -228,13 +218,12 @@ try {
                 patientId: transcriptData.patientId,
                 visitId: transcriptData.visitId,
                 tenantId: transcriptData.tenantId,
-                tenant_id: transcriptData.tenant_id,
                 email: transcriptData.email,
                 transcriptLength: transcriptData.transcript.length
             });
 
-            // Use the correct endpoint
-            fetch('/api/analyze-transcript', {
+            // FIXED: Use the correct endpoint that exists in your backend
+            fetch('/api/analyze-transcript-freed', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(transcriptData)
@@ -272,9 +261,9 @@ try {
                 // Hide spinner and re-enable button
                 submitTranscriptBtn.disabled = false;
                 submitTranscriptBtn.classList.remove('disabled');
-                submitTranscriptBtn.classList.remove('blink'); // Ensure blinking is removed after submission
+                submitTranscriptBtn.classList.remove('blink');
                 transcriptSpinner.classList.add('hidden');
-                transcriptSpinner.style.display = 'none'; // Ensure spinner is hidden
+                transcriptSpinner.style.display = 'none';
                 console.log('Hiding spinner after submission, spinner display:', transcriptSpinner.style.display);
             });
         } else {
@@ -286,17 +275,17 @@ try {
     // Function to reset the transcript state
     function resetTranscript() {
         console.log('resetTranscript called');
-        finalTranscript = ''; // Clear the final transcript
+        finalTranscript = '';
         console.log('finalTranscript cleared:', finalTranscript);
         const transcriptInput = document.getElementById('transcript-input');
         if (transcriptInput) {
-            transcriptInput.value = ''; // Clear the input field
+            transcriptInput.value = '';
             console.log('Transcript input cleared via resetTranscript, current value:', transcriptInput.value);
         } else {
             console.error('Transcript input not found in resetTranscript');
         }
         if (recognition && isRecognizing) {
-            recognition.stop(); // Stop any active speech recognition
+            recognition.stop();
             isRecognizing = false;
             console.log('Stopped active speech recognition');
         } else {

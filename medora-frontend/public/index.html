@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Roboto:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="icon" href="/images/Medora.png" type="image/png">
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="blue-glow.css">
     
     <!-- Add React BEFORE Recharts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react/16.14.0/umd/react.production.min.js" crossorigin="anonymous"></script>
@@ -27,7 +28,7 @@
     </header>
     <div class="container">
         <!-- Patient Sidebar -->
-        <div id="patient-sidebar">
+        <div id="patient-sidebar" class="scroll-area">
             <div class="sidebar-header">
                 <h2>Patients</h2>
                 <select id="patient-filter">
@@ -40,7 +41,7 @@
         </div>
 
         <!-- Main Content Area -->
-        <div id="main-content">
+        <div id="main-content" class="scroll-area">
             <div id="patient-details" style="display: none;">
                 <div class="patient-details-header">
                     <h3>Patient Details</h3>
@@ -51,7 +52,7 @@
                 <p><strong>Last Visit:</strong> <span id="patient-details-last-visit"></span></p>
                 <p><strong>Current Visit:</strong> <span id="patient-details-current-visit"></span></p>
                 <p><strong>Visit History:</strong></p>
-                <div id="visit-history">No visit history available.</div>
+                <div id="patient-details-visit-history">No visit history available.</div>
             </div>
 
             <!-- Transcript Section -->
@@ -110,7 +111,7 @@
         </div>
 
         <!-- AI Insights Section -->
-        <div id="ai-insights">
+        <div id="ai-insights" class="scroll-area">
             <h2>AI Insights</h2>
             <div class="insights-section">
                 <h3>Allergy Triggers</h3>
@@ -130,15 +131,33 @@
                 </div>
             </div>
             
-            <!-- NEW: AllergenIQ New Patient Profile Section -->
-            <div class="insights-section allergeniq-section">
-                <h3><span class="new-badge">NEW</span> AllergenIQ™ Profile</h3>
-                <div id="allergeniq-profile-container">
-                    <p class="loading-message">Loading patient analysis...</p>
+            <!-- NEW: AllergenIQ Collapsed Card -->
+            <div class="allergeniq-collapsed" id="allergeniq-collapsed-card" onclick="openAllergenIQ()">
+                <div class="allergeniq-header">
+                    <div class="allergeniq-title">
+                        🧬 ALLERGENIQ PROFILE
+                        <span class="new-badge">NEW</span>
+                    </div>
+                    <span class="expand-icon">→</span>
                 </div>
-                <div class="insights-actions">
-                    <button id="allergeniq-download-btn">Download PDF</button>
-                    <button id="allergeniq-copy-btn">Copy Report</button>
+                
+                <div class="quick-summary" id="allergeniq-quick-summary">
+                    <div class="summary-item">
+                        <span class="summary-count" id="allergen-count">-</span>
+                        <span class="summary-label">Allergens</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-count" id="symptom-count">-</span>
+                        <span class="summary-label">Symptoms</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-count" id="medication-count">-</span>
+                        <span class="summary-label">Medications</span>
+                    </div>
+                </div>
+                
+                <div class="alert-indicators" id="allergeniq-alerts">
+                    <span class="alert-text">Loading patient analysis...</span>
                 </div>
             </div>
             
@@ -187,6 +206,80 @@
         </div>
     </div>
 
+    <!-- AllergenIQ Modal Overlay -->
+    <div class="modal-overlay" id="allergeniq-modal-overlay" onclick="closeAllergenIQ()">
+        <div class="allergeniq-modal" onclick="event.stopPropagation()">
+            <!-- UPDATED: Modal Header with Subtitle -->
+            <div class="modal-header">
+                <div class="header-content">
+                    <div class="modal-title">
+                        🧬 AllergenIQ Profile
+                        <span class="new-badge">NEW</span>
+                    </div>
+                    <div class="modal-subtitle">
+                        Comprehensive allergy assessment and monitoring
+                    </div>
+                </div>
+                <button class="close-btn" onclick="closeAllergenIQ()">×</button>
+            </div>
+            
+            <div class="modal-content" id="allergeniq-modal-content">
+                <div class="modal-grid">
+                    <!-- Diagnosis Card -->
+                    <div class="modal-card">
+                        <div class="modal-card-header">
+                            <div class="modal-card-icon diagnosis-icon">⚠️</div>
+                            <div class="modal-card-title">Primary Diagnosis</div>
+                        </div>
+                        <div id="modal-diagnosis-content">
+                            <div class="loading-message">Loading diagnosis information...</div>
+                        </div>
+                    </div>
+
+                    <!-- Allergens Card -->
+                    <div class="modal-card">
+                        <div class="modal-card-header">
+                            <div class="modal-card-icon allergen-icon">🥜</div>
+                            <div class="modal-card-title">Known Allergens</div>
+                        </div>
+                        <div id="modal-allergens-content">
+                            <div class="loading-message">Loading allergen information...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Symptoms Card - Full Width -->
+                <div class="modal-card full-width">
+                    <div class="modal-card-header">
+                        <div class="modal-card-icon symptoms-icon">🩺</div>
+                        <div class="modal-card-title">Symptom Profile & Severity</div>
+                    </div>
+                    <div id="modal-symptoms-content">
+                        <div class="loading-message">Loading symptom analysis...</div>
+                    </div>
+                </div>
+
+                <!-- Medication Card -->
+                <div class="modal-card full-width">
+                    <div class="modal-card-header">
+                        <div class="modal-card-icon medication-icon">💊</div>
+                        <div class="modal-card-title">Current Medications</div>
+                    </div>
+                    <div id="modal-medications-content">
+                        <div class="loading-message">Loading medication history...</div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="modal-actions">
+                    <button class="btn btn-primary" onclick="downloadAllergenIQPDF()">📄 Download PDF</button>
+                    <button class="btn" onclick="copyAllergenIQReport()">📋 Copy Report</button>
+                    <button class="btn" onclick="sendToPatient()">📧 Send to Patient</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Include the JavaScript files in the correct order with error handling -->
     <script src="patient-management.js?v=1.2.19" onerror="console.error('Failed to load patient-management.js');"></script>
     <script src="patient-spinner.js" onerror="console.error('Failed to load patient-spinner.js');"></script>
@@ -196,26 +289,66 @@
     <script src="script-transcript.js" onerror="console.error('Failed to load script-transcript.js');"></script>
     <script src="recommendations-display.js" onerror="console.error('Failed to load recommendations-display.js');"></script>
     <script src="time-utils.js" onerror="console.error('Failed to load time-utils.js');"></script> 
-    <!-- NEW: AllergenIQ Profile JavaScript -->
+    <!-- NEW: Updated AllergenIQ Profile JavaScript -->
     <script src="allergeniq-profile.js" onerror="console.error('Failed to load allergeniq-profile.js');"></script>
-    
-    <!-- Optional debugging scripts -->
-    <!-- <script src="recommendations-troubleshooting.js" onerror="console.error('Failed to load recommendations-troubleshooting.js');"></script> -->
-    <!-- <script src="medora-integration.js" onerror="console.error('Failed to load medora-integration.js');"></script> -->
     
     <!-- Load menu.js before script-core.js to ensure logout-btn is set up -->
     <script src="menu.js" onerror="console.error('Failed to load menu.js');"></script>
     <script src="script-core.js" onerror="console.error('Failed to load script-core.js');"></script>
+    
+    <!-- AllergenIQ Modal Functions -->
+    <script>
+        function openAllergenIQ() {
+            console.log('Opening AllergenIQ modal');
+            document.getElementById('allergeniq-modal-overlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+            // Trigger detailed data load if we have current patient/visit
+            if (window.currentPatientId && window.currentVisitId) {
+                if (typeof updateProfileWithVisitId === 'function') {
+                    updateProfileWithVisitId(window.currentPatientId, window.currentVisitId, true); // true for modal view
+                }
+            }
+        }
+
+        function closeAllergenIQ() {
+            console.log('Closing AllergenIQ modal');
+            document.getElementById('allergeniq-modal-overlay').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function downloadAllergenIQPDF() {
+            console.log('Download AllergenIQ PDF');
+            alert('PDF download functionality will be implemented');
+        }
+
+        function copyAllergenIQReport() {
+            console.log('Copy AllergenIQ Report');
+            alert('Copy report functionality will be implemented');
+        }
+
+        function sendToPatient() {
+            console.log('Send to Patient');
+            alert('Send to patient functionality will be implemented');
+        }
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeAllergenIQ();
+            }
+        });
+    </script>
+    
+    <!-- Authentication Functions -->
     <script>
         // Sign out a user (for use in menu.js)
         function logout() {
             console.log('User signed out');
             localStorage.removeItem('currentEmail');
-            // Redirect to the test login page after sign-out with a delay
             setTimeout(() => {
                 window.location.href = 'https://test.medoramd.ai/login.html';
-            }, 1000); // 1-second delay for better UX
-            // Reset any menu state if necessary
+            }, 1000);
             const userMenu = document.getElementById('user-menu-container');
             if (userMenu) {
                 userMenu.style.display = 'none';
@@ -228,7 +361,6 @@
             const email = localStorage.getItem('currentEmail');
             console.log('Retrieved email from localStorage:', email);
 
-            // Prevent redirect if already on login page
             if (window.location.pathname.includes('login.html')) {
                 console.log('Already on login page, skipping redirect');
                 return false;
@@ -241,7 +373,7 @@
                 console.log('No user signed in, redirecting to login page');
                 setTimeout(() => {
                     window.location.href = 'https://test.medoramd.ai/login.html';
-                }, 1000); // 1-second delay for better UX
+                }, 1000);
                 return false;
             }
         }
@@ -249,6 +381,11 @@
         // Expose functions to the global scope
         window.logout = logout;
         window.checkAuthState = checkAuthState;
+        window.openAllergenIQ = openAllergenIQ;
+        window.closeAllergenIQ = closeAllergenIQ;
+        window.downloadAllergenIQPDF = downloadAllergenIQPDF;
+        window.copyAllergenIQReport = copyAllergenIQReport;
+        window.sendToPatient = sendToPatient;
 
         // Monitor localStorage changes
         let lastEmail = localStorage.getItem('currentEmail');
@@ -261,10 +398,10 @@
                     console.log('currentEmail cleared, redirecting to login page with delay');
                     setTimeout(() => {
                         window.location.href = 'https://test.medoramd.ai/login.html';
-                    }, 1000); // 1-second delay for better UX
+                    }, 1000);
                 }
             }
-        }, 1000); // Check every second
+        }, 1000);
 
         // Check authentication state on page load with a delay and error handling
         document.addEventListener('DOMContentLoaded', () => {
@@ -278,7 +415,7 @@
                         console.log('Authentication failed, redirecting to login page');
                         setTimeout(() => {
                             window.location.href = 'https://test.medoramd.ai/login.html';
-                        }, 1000); // 1-second delay for better UX
+                        }, 1000);
                     } else {
                         console.log('Authentication successful, proceeding to load dashboard');
                     }
@@ -286,9 +423,33 @@
                     console.error('Error checking authentication state:', error);
                     setTimeout(() => {
                         window.location.href = 'https://test.medoramd.ai/login.html';
-                    }, 1000); // 1-second delay for better UX
+                    }, 1000);
                 }
-            }, 100); // 100ms delay to ensure localStorage is updated
+            }, 100);
+        });
+    </script>
+    
+    <!-- CLEAN BLUE SCROLLING SETUP -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('✅ Blue scrolling initialized');
+            
+            // Get all scrollable areas
+            const scrollAreas = ['main-content', 'patient-sidebar', 'ai-insights'];
+            
+            scrollAreas.forEach(areaId => {
+                const area = document.getElementById(areaId);
+                if (area) {
+                    // Enable smooth blue scrolling
+                    area.style.overflowY = 'scroll';
+                    area.style.overflowX = 'hidden';
+                    area.style.height = 'calc(100vh - 120px)';
+                    area.style.maxHeight = 'calc(100vh - 120px)';
+                    area.style.position = 'relative';
+                    area.style.zIndex = '1';
+                    area.style.pointerEvents = 'auto';
+                }
+            });
         });
     </script>
 </body>
