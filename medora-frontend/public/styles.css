@@ -776,6 +776,31 @@ button.active-stop {
     text-rendering: optimizeLegibility !important;
 }
 
+/* ASSESSMENT CONTENT FORMATTING - FIXED TO MATCH OTHER SOAP SECTIONS */
+.assessment-content,
+.differential-diagnosis,
+.soap-content {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+    font-size: 12px !important;
+    font-weight: 400 !important;
+    color: #4b5563 !important;
+    line-height: 1.4 !important;
+    white-space: normal;
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+    text-rendering: optimizeLegibility !important;
+    margin: 0;
+    padding: 0;
+}
+
+.assessment-content {
+    white-space: normal;
+}
+
+.assessment-content br {
+    line-height: 1.2;
+}
+
 /* Enhanced action buttons */
 .soap-section .action-buttons {
     display: flex;

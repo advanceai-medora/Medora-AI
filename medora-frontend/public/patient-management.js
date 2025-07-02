@@ -1,5 +1,5 @@
 console.log('patient-management.js loaded');
-console.log('patient-management.js version: 4.1.1 - Fixed Data Type Handling for follow_up_instructions');
+console.log('patient-management.js version: 4.1.2 - Fixed Assessment Formatting and Data Type Handling');
 
 // Helper function to normalize data to arrays (CRITICAL FIX)
 function normalizeToArray(value) {
@@ -727,7 +727,7 @@ window.toggleRecommendationCategory = function(categoryId) {
     }
 };
 
-// Select a patient with enhanced card-based recommendations (FIXED WITH COLLAPSIBLE FUNCTIONALITY)
+// Select a patient with enhanced card-based recommendations (FIXED WITH COLLAPSIBLE FUNCTIONALITY AND ASSESSMENT FORMATTING)
 async function selectPatient(patient) {
     console.log('Before setting patient in selectPatient: currentPatientId:', currentPatientId);
     currentPatientId = patient.patientId;
@@ -945,14 +945,25 @@ async function selectPatient(patient) {
                         ${physicalExamination}. Vital signs include blood pressure, heart rate, respiratory rate, and temperature. Physical findings indicate the patient's current health status, with specific attention to respiratory, cardiovascular, ENT, and general appearance. Additional observations include skin condition, neurological status, and musculoskeletal findings.
                     `;
                 }
+                
+                // FIXED: Assessment content formatting with proper CSS class application
                 const assessmentContent = document.getElementById('assessment-content');
                 if (assessmentContent) {
+                    // Apply the CSS class for proper formatting
+                    assessmentContent.className = 'assessment-content';
+                    
                     let assessmentText = transcript.soapNotes.differential_diagnosis || 'Not specified';
-                    assessmentText = assessmentText.replace(/\*/g, '<br>*');
+                    // Clean up the text formatting - replace asterisks with proper line breaks but avoid excessive spacing
+                    assessmentText = assessmentText.replace(/\*/g, '<br>•');
+                    // Remove excessive line breaks and normalize spacing
+                    assessmentText = assessmentText.replace(/\n\s*\n/g, '<br>').replace(/\n/g, ' ');
+                    
                     assessmentContent.innerHTML = `
                         ${assessmentText}<br><br>
                         The assessment considers the patient's symptoms, history, and physical findings to determine potential diagnoses and contributing factors. Differential diagnoses are prioritized based on clinical presentation, with recommendations for further evaluation to confirm the primary diagnosis.
                     `;
+                    
+                    console.log('Assessment formatting applied with CSS class:', assessmentContent.className);
                 }
                 
                 // ENHANCED PLAN RENDERING - FREED STYLE
