@@ -1,47 +1,5 @@
 console.log('patient-management.js loaded');
-console.log('patient-management.js version: 4.1.2 - Fixed Assessment Formatting and Data Type Handling WITH AUTH');
-
-// ===============================
-// AUTHENTICATION HELPER FUNCTIONS
-// ===============================
-
-/**
- * Get authentication headers for API calls
- * Supports both Cognito JWT tokens and fallback compatibility
- */
-function getAuthHeaders() {
-    const headers = {
-        'Content-Type': 'application/json'
-    };
-    
-    // Try to get Cognito JWT token first
-    const idToken = localStorage.getItem('idToken');
-    if (idToken) {
-        headers['Authorization'] = `Bearer ${idToken}`;
-        console.log('🔐 Using Cognito JWT token for authentication');
-    } else {
-        console.log('⚠️ No JWT token found, using session-based auth fallback');
-    }
-    
-    return headers;
-}
-
-/**
- * Check if JWT token is expired and refresh if needed
- */
-function isTokenExpired() {
-    const idToken = localStorage.getItem('idToken');
-    if (!idToken) return true;
-    
-    try {
-        const tokenPayload = JSON.parse(atob(idToken.split('.')[1]));
-        const currentTime = Math.floor(Date.now() / 1000);
-        return tokenPayload.exp < currentTime;
-    } catch (e) {
-        console.error('Error checking token expiration:', e);
-        return true;
-    }
-}
+console.log('patient-management.js version: 4.1.2 - Fixed Assessment Formatting and Data Type Handling');
 
 // Helper function to normalize data to arrays (CRITICAL FIX)
 function normalizeToArray(value) {
@@ -223,14 +181,16 @@ class EnhancedFreedStylePlanParser {
     }
 }
 
-// Function to submit transcript using Freed-style endpoint - FIXED WITH AUTH
+// Function to submit transcript using Freed-style endpoint
 async function submitTranscriptFreedStyle(transcript, patientId, visitId, email, tenantId) {
     try {
         console.log('Submitting transcript for Freed-style analysis...');
         
         const response = await fetch('/api/analyze-transcript-freed', {
             method: 'POST',
-            headers: getAuthHeaders(), // ✅ FIXED: Added authentication
+            headers: {
+                'Content-Type': 'application/json'
+            },
             body: JSON.stringify({
                 transcript: transcript,
                 patientId: patientId,
@@ -317,7 +277,7 @@ async function initializeUserData() {
     }
 }
 
-// Fetch patients from backend - FIXED WITH AUTH
+// Fetch patients from backend
 async function fetchPatients() {
     console.log('Fetching patients for tenant:', currentTenantId);
     window.showSpinner();
@@ -342,7 +302,7 @@ async function fetchPatients() {
         
         const response = await fetch(apiUrl, {
             method: 'GET',
-            headers: getAuthHeaders() // ✅ FIXED: Added authentication
+            headers: { 'Content-Type': 'application/json' }
         });
         
         if (!response.ok) {
@@ -613,7 +573,7 @@ async function startVisit() {
     }
 }
 
-// Proceed with visit after template selection - FIXED WITH AUTH
+// Proceed with visit after template selection
 async function proceedWithVisit(patientId) {
     if (!currentTemplate) {
         alert('No template selected. Please select a template to start a visit.');
@@ -631,14 +591,6 @@ async function proceedWithVisit(patientId) {
     console.log('Starting visit for patient:', patientId, 'with email:', currentEmail, 
                'and tenantId:', currentTenantId, 'using template:', currentTemplate.name);
     console.log('Before API call: currentPatientId:', currentPatientId);
-    
-    // Check if token is expired
-    if (isTokenExpired()) {
-        alert('Your session has expired. Please log in again.');
-        window.location.href = '/login.html';
-        return;
-    }
-    
     window.showSpinner();
     try {
         const controller = new AbortController();
@@ -654,7 +606,7 @@ async function proceedWithVisit(patientId) {
 
         const response = await fetch('/api/visit/start', {
             method: 'POST',
-            headers: getAuthHeaders(), // ✅ FIXED: Added authentication
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(requestBody),
             signal: controller.signal
         });
@@ -775,7 +727,7 @@ window.toggleRecommendationCategory = function(categoryId) {
     }
 };
 
-// Select a patient with enhanced card-based recommendations (FIXED WITH COLLAPSIBLE FUNCTIONALITY AND ASSESSMENT FORMATTING) - FIXED WITH AUTH
+// Select a patient with enhanced card-based recommendations (FIXED WITH COLLAPSIBLE FUNCTIONALITY AND ASSESSMENT FORMATTING)
 async function selectPatient(patient) {
     console.log('Before setting patient in selectPatient: currentPatientId:', currentPatientId);
     currentPatientId = patient.patientId;
@@ -881,7 +833,7 @@ async function selectPatient(patient) {
         
         const response = await fetch(apiUrl, {
             method: 'GET',
-            headers: getAuthHeaders() // ✅ FIXED: Added authentication
+            headers: { 'Content-Type': 'application/json' }
         });
         
         if (!response.ok) {
@@ -1534,7 +1486,7 @@ async function selectPatient(patient) {
     }
 }
 
-// Delete a patient - FIXED WITH AUTH
+// Delete a patient
 async function deletePatient(patientId) {
     if (!confirm('Are you sure you want to delete this patient and all associated transcripts?')) return;
     
@@ -1558,7 +1510,7 @@ async function deletePatient(patientId) {
         
         const response = await fetch('/api/delete-patient', {
             method: 'POST',
-            headers: getAuthHeaders(), // ✅ FIXED: Added authentication
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(requestBody)
         });
         
@@ -1597,10 +1549,6 @@ async function deletePatient(patientId) {
 function logout() {
     console.log('Logging out...');
     localStorage.removeItem('user');
-    localStorage.removeItem('idToken');
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
-    localStorage.removeItem('currentEmail');
     currentEmail = null;
     currentTenantId = null;
     currentRole = null;

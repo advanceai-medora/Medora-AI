@@ -103,38 +103,21 @@
             z-index: 1;
         }
 
-        /* Custom Medora Logo Styling */
-        .medora-logo {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 1rem;
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 20px;
+        .enterprise-logo {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
+            margin: 0 auto 1rem;
             backdrop-filter: blur(10px);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            transition: all 0.3s ease;
         }
 
-        .medora-logo:hover {
-            transform: scale(1.05);
-            box-shadow: 0 10px 30px rgba(14, 165, 233, 0.3);
-        }
-
-        .medora-logo img {
-            width: 50px;
-            height: 50px;
-            filter: brightness(0) invert(1);
-            transition: all 0.3s ease;
-        }
-
-        /* Fallback icon if logo image not found */
-        .medora-logo .fallback-icon {
+        .enterprise-logo i {
             font-size: 2rem;
             color: white;
-            display: none;
         }
 
         .brand-name {
@@ -143,14 +126,12 @@
             color: white;
             margin-bottom: 0.5rem;
             letter-spacing: -0.02em;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
         }
 
         .brand-tagline {
             color: rgba(255, 255, 255, 0.9);
             font-size: 0.9rem;
             font-weight: 500;
-            text-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
         }
 
         /* Trial Status Banner */
@@ -162,7 +143,6 @@
             font-weight: 600;
             font-size: 0.9rem;
             display: none;
-            animation: slideDown 0.5s ease;
         }
 
         .trial-status-banner.active {
@@ -172,17 +152,6 @@
         .trial-countdown {
             font-size: 1.1rem;
             font-weight: 700;
-        }
-
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
         }
 
         /* Content Section */
@@ -264,15 +233,12 @@
         .specialty-option:hover {
             border-color: var(--primary);
             background: rgba(14, 165, 233, 0.1);
-            transform: translateY(-2px);
         }
 
         .specialty-option.selected {
             border-color: var(--primary);
             background: var(--primary);
             color: white;
-            transform: translateY(-2px);
-            box-shadow: var(--glow);
         }
 
         .specialty-option i {
@@ -345,14 +311,12 @@
             border: 1px solid var(--border);
             border-radius: 8px;
             color: var(--text-primary);
-            transition: all 0.3s ease;
         }
 
         .code-digit:focus {
             border-color: var(--primary);
             box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.2);
             outline: none;
-            transform: scale(1.05);
         }
 
         /* Messages */
@@ -362,12 +326,6 @@
             margin: 1rem 0;
             font-size: 0.9rem;
             display: none;
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
         }
 
         .message.success {
@@ -394,7 +352,6 @@
             border-radius: 12px;
             padding: 1.5rem;
             margin: 2rem 0;
-            border: 1px solid var(--border);
         }
 
         .feature-item {
@@ -403,11 +360,6 @@
             gap: 0.75rem;
             margin-bottom: 1rem;
             font-size: 0.9rem;
-            transition: all 0.3s ease;
-        }
-
-        .feature-item:hover {
-            transform: translateX(5px);
         }
 
         .feature-item:last-child {
@@ -424,7 +376,6 @@
             justify-content: center;
             color: white;
             font-size: 0.75rem;
-            flex-shrink: 0;
         }
 
         /* Trust Indicators */
@@ -443,12 +394,6 @@
             align-items: center;
             font-size: 0.8rem;
             color: var(--text-muted);
-            transition: all 0.3s ease;
-        }
-
-        .trust-item:hover {
-            color: var(--primary);
-            transform: translateY(-2px);
         }
 
         .trust-item i {
@@ -472,13 +417,11 @@
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-size: 0.9rem;
         }
 
         .nav-btn:hover {
             border-color: var(--primary);
             color: var(--primary);
-            transform: translateY(-1px);
         }
 
         /* Responsive Design */
@@ -506,14 +449,6 @@
                 height: 40px;
                 font-size: 1rem;
             }
-
-            .trust-indicators {
-                gap: 1rem;
-            }
-
-            .trust-item {
-                font-size: 0.7rem;
-            }
         }
 
         /* Hidden Forms */
@@ -536,24 +471,6 @@
                 transform: translateX(0);
             }
         }
-
-        /* Legacy compatibility for existing login */
-        .legacy-fallback {
-            margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 1px solid var(--border);
-            text-align: center;
-        }
-
-        .legacy-link {
-            color: var(--text-muted);
-            font-size: 0.8rem;
-            text-decoration: none;
-        }
-
-        .legacy-link:hover {
-            color: var(--primary);
-        }
     </style>
 </head>
 <body>
@@ -561,11 +478,8 @@
         <!-- Header -->
         <div class="enterprise-header">
             <div class="logo-section">
-                <div class="medora-logo">
-                    <!-- Replace this src with your actual Medora logo path -->
-                    <img src="images/Medora.png" alt="Medora Logo" 
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <i class="fas fa-stethoscope fallback-icon"></i>
+                <div class="enterprise-logo">
+                    <i class="fas fa-stethoscope"></i>
                 </div>
                 <div class="brand-name">MedoraMD</div>
                 <div class="brand-tagline">Enterprise Medical AI Platform</div>
@@ -626,13 +540,6 @@
                     <button class="nav-btn" onclick="showStep('register-step')">
                         Create Account <i class="fas fa-arrow-right"></i>
                     </button>
-                </div>
-
-                <!-- Legacy compatibility fallback -->
-                <div class="legacy-fallback">
-                    <a href="login-legacy.html" class="legacy-link">
-                        <i class="fas fa-arrow-left"></i> Use Classic Login
-                    </a>
                 </div>
             </div>
 
@@ -766,11 +673,10 @@
         let selectedSpecialty = '';
         let currentStep = 'login-step';
 
-        // Configuration - Update these with your actual values
-        const BACKEND_URL = '/api'; // Your backend URL
+        // Cognito Configuration
         const poolData = {
-            UserPoolId: 'ap-south-1_6zdLiOolJ', // Update with your Cognito User Pool ID
-            ClientId: '4dtmlgehjfoamnlibijn3kt85u'   // Update with your Cognito Client ID
+            UserPoolId: 'ap-south-1_6zdLiOolJ',
+            ClientId: '4dtmlgehjfoamnlibijn3kt85u'
         };
         AWS.config.region = 'ap-south-1';
         const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
@@ -879,7 +785,6 @@
             setLoading('login-btn', 'login-spinner', true);
             
             try {
-                // Try Cognito authentication first
                 await signInWithCognito(email, password);
                 showMessage('login-message', 'Login successful! Redirecting...', 'success');
                 showTrialStatus();
@@ -889,39 +794,13 @@
                 }, 2000);
                 
             } catch (error) {
-                console.error('Cognito login error:', error);
-                
-                // Fallback to legacy authentication
+                console.error('Login error:', error);
                 if (error.code === 'UserNotConfirmedException') {
                     localStorage.setItem('pendingEmail', email);
                     showStep('verification-step');
                     showMessage('verify-message', 'Please verify your account with the code sent to your email', 'info');
                 } else {
-                    // Try legacy login
-                    try {
-                        const response = await fetch(`${BACKEND_URL}/login`, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ email, password })
-                        });
-                        
-                        const result = await response.json();
-                        
-                        if (result.success) {
-                            localStorage.setItem('currentEmail', email);
-                            localStorage.setItem('legacyAuth', 'true');
-                            showMessage('login-message', 'Login successful! Redirecting...', 'success');
-                            
-                            setTimeout(() => {
-                                window.location.href = 'index.html';
-                            }, 2000);
-                        } else {
-                            showMessage('login-message', result.message || 'Login failed', 'error');
-                        }
-                        
-                    } catch (legacyError) {
-                        showMessage('login-message', 'Login failed. Please check your credentials.', 'error');
-                    }
+                    showMessage('login-message', error.message || 'Login failed', 'error');
                 }
             } finally {
                 setLoading('login-btn', 'login-spinner', false);
@@ -1027,7 +906,7 @@
             }
         }
 
-        // Cognito functions
+        // Cognito functions (similar to your existing ones but enhanced)
         async function signInWithCognito(email, password) {
             return new Promise((resolve, reject) => {
                 const authenticationData = {
@@ -1046,7 +925,6 @@
                         localStorage.setItem('accessToken', result.getAccessToken().getJwtToken());
                         localStorage.setItem('refreshToken', result.getRefreshToken().getToken());
                         localStorage.setItem('currentEmail', email);
-                        localStorage.setItem('trialStart', new Date().toISOString().split('T')[0]);
                         
                         resolve(result);
                     },
@@ -1121,7 +999,7 @@
         // Email functions (these would call your backend)
         async function sendWelcomeEmail(email, firstName, lastName) {
             try {
-                await fetch(`${BACKEND_URL}/send-welcome-email`, {
+                await fetch('/api/send-welcome-email', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, firstName, lastName })
@@ -1133,7 +1011,7 @@
 
         async function sendActivationEmail(email) {
             try {
-                await fetch(`${BACKEND_URL}/send-activation-email`, {
+                await fetch('/api/send-activation-email', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email })

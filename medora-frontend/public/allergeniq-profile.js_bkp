@@ -118,47 +118,22 @@
         debugLog('✅ AllergenIQ modal fully opened');
     }
 
-    // API Communication - BULLETPROOF VERSION
+    // API Communication
     async function fetchAllergeniqProfile(patientId, visitId) {
+        const email = localStorage.getItem('currentEmail');
+        const tenantID = localStorage.getItem('tenantID');
+        
+        if (!email || !tenantID) {
+            throw new Error('Missing authentication credentials');
+        }
+
+        const url = `https://medoramd.ai/api/allergeniq-profile?patient_id=${patientId}&visit_id=${visitId}&email=${email}&tenantID=${tenantID}`;
+        debugLog('Fetching profile data', { url, patientId, visitId });
+
         try {
-            console.log('🚀 AllergenIQ fetchAllergeniqProfile called');
-            console.log('📋 Parameters:', { patientId, visitId });
-            
-            // Get authentication credentials - WE KNOW THESE EXIST FROM DEBUG
-            const email = localStorage.getItem('currentEmail') || 'ceo@advanceai.ai';
-            const tenantID = localStorage.getItem('tenantID') || email;
-            const idToken = localStorage.getItem('idToken') || localStorage.getItem('accessToken');
-            
-            console.log('🔍 Retrieved credentials:', { 
-                email: email, 
-                tenantID: tenantID, 
-                hasToken: !!idToken 
-            });
-            
-            if (!email) {
-                console.error('❌ Email still missing after explicit check');
-                throw new Error('Email not found in localStorage');
-            }
-
-            const url = `/api/allergeniq-profile?patient_id=${patientId}&visit_id=${visitId}&email=${email}&tenantId=${tenantID}`;
-            debugLog('🌐 Request URL:', url);
-            debugLog('📋 Fetching profile data', { patientId, visitId });
-
-            const headers = {
-                'Content-Type': 'application/json'
-            };
-            
-            // Add auth header if available
-            if (idToken) {
-                headers['Authorization'] = `Bearer ${idToken}`;
-                debugLog('✅ Added Bearer token to request');
-            } else {
-                debugLog('⚠️ No idToken found, proceeding without Bearer auth');
-            }
-
             const response = await fetch(url, {
                 method: 'GET',
-                headers: headers
+                headers: { 'Content-Type': 'application/json' }
             });
 
             if (!response.ok) {
@@ -178,7 +153,6 @@
             });
 
             return data;
-            
         } catch (error) {
             errorLog('Failed to fetch profile data', error);
             throw error;
@@ -660,12 +634,11 @@
         showToast('Send to patient feature coming soon!', 'info');
     };
 
-    // Main Update Function - ENHANCED ERROR HANDLING
+    // Main Update Function
     async function updateProfileWithVisitId(patientId, visitId, forceModalUpdate = false) {
-        console.log('🔄 updateProfileWithVisitId called', { patientId, visitId, forceModalUpdate });
-        
+        debugLog('🔄 Update requested', { patientId, visitId, forceModalUpdate });
+
         if (!patientId || !visitId) {
-            console.error('❌ Missing patientId or visitId:', { patientId, visitId });
             errorLog('Missing patientId or visitId');
             return;
         }
@@ -688,18 +661,14 @@
         currentVisitId = visitId;
 
         try {
-            console.log('🔄 About to call fetchAllergeniqProfile...');
-            
             // Show loading states
             updateCollapsedCard(null);
             if (forceModalUpdate) {
                 showModalError('Loading detailed analysis...');
             }
 
-            // Fetch fresh data with enhanced error handling
+            // Fetch fresh data
             const data = await fetchAllergeniqProfile(patientId, visitId);
-            console.log('✅ fetchAllergeniqProfile succeeded:', data);
-            
             currentProfileData = data;
 
             // Update both views
@@ -713,7 +682,6 @@
             debugLog('✅ Profile updated successfully');
 
         } catch (error) {
-            console.error('❌ updateProfileWithVisitId error:', error);
             errorLog('Failed to update profile', error);
             
             // Show error states
@@ -803,5 +771,5 @@
         }, 500);
     });
 
-    console.log('🧬 AllergenIQ Profile module loaded successfully - VERSION 2.0 FIXED');
+    console.log('🧬 AllergenIQ Profile module loaded successfully');
 })();
