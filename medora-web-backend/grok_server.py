@@ -570,7 +570,7 @@ class EnterpriseTrialManager:
         try:
             # First check enterprise trials
             trial = enterprise_trials_collection.find_one(
-                {'email': email}, 
+                {'email': email},
                 sort=[('trial_start', -1)]
             )
             
@@ -4438,6 +4438,22 @@ def get_patients():
         
         logger.info(f"Fetching patients for tenant_id: {tenant_id}")
         
+        # ADD THIS: Check subscription status (this will trigger welcome email for new users)
+        if email:
+            logger.info(f"🔍 WELCOME EMAIL CHECK: Checking subscription status for {email}")
+            try:
+                subscription_status = get_subscription_status(email)
+                logger.info(f"🔍 WELCOME EMAIL CHECK: Subscription status result: {subscription_status}")
+                
+                # If this is a new enterprise trial, the welcome email should have been sent
+                if subscription_status.get('enterprise_trial') and subscription_status.get('tier') == 'Trial':
+                    logger.info(f"✅ WELCOME EMAIL: Enterprise trial detected for {email}")
+                
+            except Exception as e:
+                logger.error(f"❌ Error checking subscription status: {str(e)}")
+                # Don't let subscription check errors break patient fetching
+        
+        # EXISTING CODE CONTINUES (no changes below)
         patients = list(patients_collection.find({"tenantId": tenant_id}))
         
         logger.info(f"Found {len(patients)} patients for tenant {tenant_id}")
@@ -4450,6 +4466,70 @@ def get_patients():
     except Exception as e:
         logger.error(f'Error processing /api/get-patients request: {str(e)}')
         return jsonify({"success": False, "error": str(e)}), 500
+        
+@app.route('/api/send-welcome-email', methods=['POST', 'OPTIONS'])
+def send_welcome_email_endpoint():
+    """Legacy endpoint for welcome email (forwards to enterprise endpoint)"""
+    if request.method == 'OPTIONS':
+        response = make_response()
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
+        response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
+        return response
+        
+    try:
+        data = request.get_json()
+        email = data.get('email')
+        first_name = data.get('firstName', 'Doctor')
+        last_name = data.get('lastName', 'User')
+        specialty = data.get('specialty', 'general')
+        
+        if not email:
+            return jsonify({'error': 'Email is required'}), 400
+        
+        logger.info(f"📧 MANUAL WELCOME EMAIL: Sending to {email}")
+        success = send_welcome_email(email, first_name, last_name, specialty)
+        
+        return jsonify({
+            'success': success,
+            'message': 'Welcome email sent successfully' if success else 'Failed to send email'
+        }), 200 if success else 500
+        
+    except Exception as e:
+        logger.error(f"❌ Error in manual welcome email: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/send-activation-email', methods=['POST', 'OPTIONS'])
+def send_activation_email_endpoint():
+    """Legacy endpoint for activation email"""
+    if request.method == 'OPTIONS':
+        response = make_response()
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
+        response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
+        return response
+        
+    try:
+        data = request.get_json()
+        email = data.get('email')
+        
+        if not email:
+            return jsonify({'error': 'Email is required'}), 400
+        
+        logger.info(f"📧 ACTIVATION EMAIL: Processing for {email}")
+        
+        # For now, treat activation email same as welcome email
+        # You can customize this later
+        success = send_welcome_email(email, 'Doctor', 'User', 'general')
+        
+        return jsonify({
+            'success': success,
+            'message': 'Activation email sent successfully' if success else 'Failed to send email'
+        }), 200 if success else 500
+        
+    except Exception as e:
+        logger.error(f"❌ Error in activation email: {str(e)}")
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/api/fetchPatients', methods=['GET'])
 def fetch_patients():
@@ -4555,6 +4635,37 @@ def start_visit():
         logger.error(f"Error starting visit: {str(e)}")
         logger.error(f"Exception traceback: {str(e.__traceback__)}")
         return jsonify({"success": False, "error": str(e)}), 500
+        
+@app.route('/api/test-ses', methods=['POST', 'OPTIONS'])
+def test_ses():
+    """Test SES email sending"""
+    if request.method == 'OPTIONS':
+        response = make_response()
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+        response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
+        return response
+        
+    try:
+        data = request.get_json()
+        test_email = data.get('email', 'ceo@advanceai.ai')  # Default to your verified email
+        
+        # Simple test email
+        subject = "SES Test Email"
+        body = "This is a test email to verify SES configuration."
+        
+        success = send_enterprise_email(test_email, subject, body)
+        
+        return jsonify({
+            'success': success,
+            'message': f'Test email sent to {test_email}' if success else 'Failed to send test email',
+            'ses_from_email': SES_FROM_EMAIL,
+            'ses_from_name': SES_FROM_NAME
+        }), 200 if success else 500
+        
+    except Exception as e:
+        logger.error(f"❌ SES test error: {str(e)}")
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/api/delete-patient', methods=['POST', 'OPTIONS'])
 def delete_patient():
@@ -6020,3 +6131,4 @@ if __name__ == '__main__':
     # Start the Flask application
     app.run(host='0.0.0.0', port=PORT, debug=False)
                     
+
