@@ -931,47 +931,214 @@ If you have questions, contact support at {SUPPORT_EMAIL}
 # Initialize enterprise trial manager
 enterprise_trial_manager = EnterpriseTrialManager()
 
-def send_enterprise_email(to_email, subject, body, html_body=None):
-    """Send enterprise email using AWS SES"""
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+
+def send_email_via_smtp_gmail(to_email, subject, body, html_body=None):
+    """Send email using Gmail SMTP"""
     try:
-        destination = {'ToAddresses': [to_email]}
+        smtp_server = os.getenv('SMTP_SERVER', 'smtp.gmail.com')
+        smtp_port = int(os.getenv('SMTP_PORT', '587'))
+        smtp_username = os.getenv('SMTP_USERNAME')
+        smtp_password = os.getenv('SMTP_PASSWORD')
         
-        message = {
-            'Subject': {'Data': subject, 'Charset': 'UTF-8'},
-            'Body': {
-                'Text': {'Data': body, 'Charset': 'UTF-8'}
-            }
-        }
+        if not smtp_username or not smtp_password:
+            logger.error("❌ Gmail SMTP credentials not configured")
+            return False
         
+        # Create message
+        msg = MIMEMultipart('alternative')
+        msg['Subject'] = subject
+        msg['From'] = f"MedoraMD <{smtp_username}>"
+        msg['To'] = to_email
+        
+        # Add text part
+        text_part = MIMEText(body, 'plain')
+        msg.attach(text_part)
+        
+        # Add HTML part if provided
         if html_body:
-            message['Body']['Html'] = {'Data': html_body, 'Charset': 'UTF-8'}
+            html_part = MIMEText(html_body, 'html')
+            msg.attach(html_part)
         
-        response = ses_client.send_email(
-            Source=f"{SES_FROM_NAME} <{SES_FROM_EMAIL}>",
-            Destination=destination,
-            Message=message
-        )
+        # Send email
+        logger.info(f"📧 GMAIL SMTP: Sending email to {to_email}")
+        with smtplib.SMTP(smtp_server, smtp_port) as server:
+            server.starttls()
+            server.login(smtp_username, smtp_password)
+            server.send_message(msg)
         
-        logger.info(f"📧 Email sent successfully to {to_email}: {response['MessageId']}")
+        logger.info(f"✅ Gmail SMTP email sent to {to_email}")
         
-        # Log email campaign
-        email_campaigns_collection.insert_one({
-            'email': to_email,
-            'subject': subject,
-            'campaign_type': 'renewal_reminder',
-            'message_id': response['MessageId'],
-            'sent_at': datetime.now(),
-            'status': 'sent'
-        })
+        # Log successful send
+        try:
+            email_campaigns_collection.insert_one({
+                'email': to_email,
+                'subject': subject,
+                'campaign_type': 'welcome_email',
+                'provider': 'gmail_smtp',
+                'sent_at': datetime.now(),
+                'status': 'sent'
+            })
+        except Exception as db_error:
+            logger.warning(f"⚠️ Failed to log email campaign: {str(db_error)}")
         
         return True
         
-    except ClientError as e:
-        error_code = e.response['Error']['Code']
-        logger.error(f"❌ SES error sending email to {to_email}: {error_code}")
-        return False
     except Exception as e:
-        logger.error(f"❌ Unexpected error sending email to {to_email}: {str(e)}")
+        logger.error(f"❌ Gmail SMTP error: {str(e)}")
+        return False
+
+# Update your welcome email function
+def send_welcome_email(email, first_name, last_name, specialty='general'):
+    """Send welcome email via Gmail SMTP"""
+    try:
+        specialty_display = enterprise_trial_manager.specialties.get(specialty, 'Medical Professional')
+        
+        subject = f"🎉 Welcome to MedoraMD, Dr. {first_name}!"
+        
+        body = f"""
+Dear Dr. {first_name} {last_name},
+
+Welcome to MedoraMD! We're excited to have you join our community of healthcare professionals.
+
+Your 30-Day Enterprise Trial is now active and includes:
+✅ UNLIMITED transcript analysis and SOAP note generation
+✅ Advanced AllergenIQ patient profiling system  
+✅ AI-powered clinical insights and research integration
+✅ Specialty-focused recommendations for {specialty_display}
+✅ Priority customer support
+
+Getting Started:
+1. Log in to your dashboard at https://test.medoramd.ai
+2. Start your first patient consultation
+3. Upload or record your patient interaction
+4. Watch MedoraMD generate comprehensive SOAP notes instantly
+
+Need help? Contact us at {SUPPORT_EMAIL}
+
+Best regards,
+The MedoraMD Team
+        """
+        
+        html_body = f"""
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome to MedoraMD</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+    <div style="background: linear-gradient(135deg, {ENTERPRISE_BRAND_COLOR} 0%, #1e40af 100%); padding: 30px; color: white; text-align: center; border-radius: 10px; margin-bottom: 20px;">
+        <h1 style="margin: 0; font-size: 24px;">🎉 Welcome to MedoraMD!</h1>
+        <p style="margin: 10px 0 0 0; font-size: 16px;">Your 30-Day Trial Starts Now</p>
+    </div>
+    
+    <div style="padding: 20px;">
+        <p><strong>Dear Dr. {first_name} {last_name},</strong></p>
+        
+        <p>Welcome to MedoraMD! We're excited to have you join our community of healthcare professionals.</p>
+        
+        <div style="background: #f0f9ff; border-left: 4px solid {ENTERPRISE_BRAND_COLOR}; padding: 15px; margin: 20px 0;">
+            <h3 style="margin: 0 0 10px 0; color: {ENTERPRISE_BRAND_COLOR};">Your Trial Includes:</h3>
+            <ul style="margin: 0; padding-left: 20px;">
+                <li>✅ Unlimited transcript analysis</li>
+                <li>✅ Advanced SOAP note generation</li>
+                <li>✅ AllergenIQ patient profiling</li>
+                <li>✅ Priority customer support</li>
+            </ul>
+        </div>
+        
+        <div style="text-align: center; margin: 25px 0;">
+            <a href="https://test.medoramd.ai" 
+               style="background: {ENTERPRISE_BRAND_COLOR}; color: white; padding: 12px 25px; border-radius: 5px; text-decoration: none; font-weight: bold;">
+                🚀 Get Started Now
+            </a>
+        </div>
+        
+        <p style="font-size: 14px; color: #666;">
+            Need help? Contact us at <a href="mailto:{SUPPORT_EMAIL}">{SUPPORT_EMAIL}</a>
+        </p>
+        
+        <p>Best regards,<br>The MedoraMD Team</p>
+    </div>
+</body>
+</html>
+        """
+        
+        success = send_email_via_smtp_gmail(email, subject, body, html_body)
+        
+        if success:
+            logger.info(f"✅ Welcome email sent successfully to {email}")
+        else:
+            logger.error(f"❌ Failed to send welcome email to {email}")
+        
+        return success
+        
+    except Exception as e:
+        logger.error(f"❌ Error sending welcome email to {email}: {str(e)}")
+        return False
+
+# Update your enterprise email function
+# REPLACE the existing send_enterprise_email function with this:
+def send_enterprise_email(to_email, subject, body, html_body=None):
+    """Send email using Gmail SMTP (replacing SES)"""
+    try:
+        import smtplib
+        from email.mime.text import MIMEText
+        from email.mime.multipart import MIMEMultipart
+        
+        smtp_server = os.getenv('SMTP_SERVER', 'smtp.gmail.com')
+        smtp_port = int(os.getenv('SMTP_PORT', '587'))
+        smtp_username = os.getenv('SMTP_USERNAME')
+        smtp_password = os.getenv('SMTP_PASSWORD')
+        
+        if not smtp_username or not smtp_password:
+            logger.error("❌ Gmail SMTP credentials not configured")
+            return False
+        
+        # Create message
+        msg = MIMEMultipart('alternative')
+        msg['Subject'] = subject
+        msg['From'] = f"MedoraMD <{smtp_username}>"
+        msg['To'] = to_email
+        
+        # Add text part
+        text_part = MIMEText(body, 'plain')
+        msg.attach(text_part)
+        
+        # Add HTML part if provided
+        if html_body:
+            html_part = MIMEText(html_body, 'html')
+            msg.attach(html_part)
+        
+        # Send email
+        logger.info(f"📧 GMAIL SMTP: Sending email to {to_email}")
+        with smtplib.SMTP(smtp_server, smtp_port) as server:
+            server.starttls()
+            server.login(smtp_username, smtp_password)
+            server.send_message(msg)
+        
+        logger.info(f"✅ Gmail SMTP email sent to {to_email}")
+        
+        # Log successful send
+        try:
+            email_campaigns_collection.insert_one({
+                'email': to_email,
+                'subject': subject,
+                'campaign_type': 'welcome_email',
+                'provider': 'gmail_smtp',
+                'sent_at': datetime.now(),
+                'status': 'sent'
+            })
+        except Exception as db_error:
+            logger.warning(f"⚠️ Failed to log email campaign: {str(db_error)}")
+        
+        return True
+        
+    except Exception as e:
+        logger.error(f"❌ Gmail SMTP error: {str(e)}")
         return False
 
 def send_welcome_email(email, first_name, last_name, specialty='general'):
@@ -6131,4 +6298,5 @@ if __name__ == '__main__':
     # Start the Flask application
     app.run(host='0.0.0.0', port=PORT, debug=False)
                     
+
 
