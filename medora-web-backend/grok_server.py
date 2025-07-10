@@ -1770,6 +1770,15 @@ def debug_cognito_test():
             "traceback": traceback.format_exc()
         }), 500
 
+@app.route('/api//python-test', methods=['GET', 'POST'])
+def python_test():
+    """Debug endpoint to test pushed code is deployed to website"""
+    return jsonify({
+        "success": True,
+        "error": 'Python test endpoint is working',
+        "timestamp": datetime.now().isoformat()
+    }), 500
+
 def require_auth(f):
     """Decorator to require either session auth (old method) or Cognito JWT (new method)"""
     @wraps(f)
@@ -4597,6 +4606,7 @@ def debug_patients():
         return jsonify({"error": str(e)}), 500
 
 @app.route('/api/get-patients', methods=['GET'])
+@require_auth
 def get_patients():
     try:
         email = request.args.get('email')
@@ -4699,6 +4709,7 @@ def send_activation_email_endpoint():
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/fetchPatients', methods=['GET'])
+@require_auth
 def fetch_patients():
     try:
         return get_patients()
@@ -4707,6 +4718,7 @@ def fetch_patients():
         return jsonify({"success": False, "error": str(e)}), 500
 
 @app.route('/api/get-patient-history', methods=['GET'])
+@require_auth
 def get_patient_history():
     try:
         email = request.args.get('email')
@@ -4835,6 +4847,7 @@ def test_ses():
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/delete-patient', methods=['POST', 'OPTIONS'])
+@require_auth
 def delete_patient():
     if request.method == 'OPTIONS':
         response = make_response()
