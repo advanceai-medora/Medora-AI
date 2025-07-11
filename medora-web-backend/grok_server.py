@@ -15,6 +15,8 @@ import time
 import certifi
 import xml.etree.ElementTree as ET
 import re
+from jose.utils import base64url_decode
+import time
 import traceback
 from requests.exceptions import HTTPError
 import jwt
@@ -22,8 +24,8 @@ from jwt.algorithms import RSAAlgorithm
 from concurrent.futures import ThreadPoolExecutor, as_completed, TimeoutError as FuturesTimeoutError
 from typing import List, Dict, Tuple, Optional
 from functools import wraps
-
-# Add this right after your imports, before the Flask app initialization
+import hashlib
+from datetime import datetime, timedelta
 import time
 import asyncio
 from functools import wraps
@@ -39,7 +41,23 @@ from email import encoders
 import threading
 from collections import defaultdict
 
-# Add these helper functions to your Flask app if they don't exist
+# Simple token blacklist (in production, use Redis or database)
+token_blacklist = set()
+
+def hash_token(token):
+    """Create a hash of the token for blacklisting"""
+    return hashlib.sha256(token.encode()).hexdigest()
+
+def is_token_blacklisted(token):
+    """Check if a token is blacklisted"""
+    token_hash = hash_token(token)
+    return token_hash in token_blacklist
+
+def blacklist_token(token):
+    """Add token to blacklist"""
+    token_hash = hash_token(token)
+    token_blacklist.add(token_hash)
+    logger.info(f"Token blacklisted: {token_hash[:16]}...")
 
 def safe_string_extract(data, key, default="N/A", max_length=None):
     """
@@ -348,6 +366,13 @@ load_dotenv()
 # Initialize Flask app
 app = Flask(__name__)
 
+app.permanent_session_lifetime = timedelta(hours=24)  # 24 hour sessions
+
+@app.before_request
+def extend_session():
+    """Extend session lifetime"""
+    session.permanent = True
+
 # Add this single function - minimal impact approach
 @app.after_request
 def add_cache_headers(response):
@@ -359,9 +384,21 @@ def add_cache_headers(response):
     return response
 
 CORS(app, resources={
-    r"/api/*": {"origins": ["http://127.0.0.1:8080", "http://localhost:8080", "https://test.medoramd.ai"], "methods": ["GET", "POST", "OPTIONS"]},
-    r"/submit-transcript": {"origins": ["https://test.medoramd.ai"], "methods": ["POST", "OPTIONS"]},
-    r"/get-insights": {"origins": ["https://test.medoramd.ai"], "methods": ["GET", "OPTIONS"]}
+    r"/api/*": {
+        "origins": ["http://127.0.0.1:8080", "http://localhost:8080", "https://test.medoramd.ai"],
+        "methods": ["GET", "POST", "OPTIONS"],
+        "allow_headers": ["Content-Type", "Authorization"]
+    },
+    r"/submit-transcript": {
+        "origins": ["https://test.medoramd.ai"],
+        "methods": ["POST", "OPTIONS"],
+        "allow_headers": ["Content-Type", "Authorization"]
+    },
+    r"/get-insights": {
+        "origins": ["https://test.medoramd.ai"],
+        "methods": ["GET", "OPTIONS"],
+        "allow_headers": ["Content-Type", "Authorization"]
+    }
 })
 
 # Configure logging
@@ -1332,9 +1369,14 @@ def get_cognito_public_keys():
     return cognito_keys
 
 def verify_cognito_token(token):
-    """Verify and decode Cognito JWT token with enhanced debugging"""
+    """Verify and decode Cognito JWT token with blacklist check"""
     if not COGNITO_ENABLED:
         logger.warning("🔍 DEBUG: Cognito not enabled, skipping token verification")
+        return None
+    
+    # CHECK BLACKLIST FIRST - THIS IS THE KEY FIX
+    if is_token_blacklisted(token):
+        logger.warning("🔍 DEBUG: Token is blacklisted - user logged out")
         return None
         
     try:
@@ -1412,43 +1454,70 @@ def verify_cognito_token(token):
         logger.error(f"🔍 DEBUG: Token verification error: {str(e)}")
         logger.error(f"🔍 DEBUG: Full error traceback: {traceback.format_exc()}")
         return None
-
-
+        
 def get_user_from_token():
-    """Extract user information from Cognito token with enhanced debugging"""
+    """Enhanced user extraction from JWT token"""
     auth_header = request.headers.get('Authorization')
-    logger.info(f"🔍 DEBUG: Authorization header present: {bool(auth_header)}")
     
     if not auth_header:
-        logger.info(f"🔍 DEBUG: No Authorization header found")
+        logger.debug("🔍 No Authorization header")
         return None
         
     if not auth_header.startswith('Bearer '):
-        logger.info(f"🔍 DEBUG: Authorization header doesn't start with 'Bearer ': {auth_header[:20]}...")
+        logger.debug(f"🔍 Invalid auth header: {auth_header[:30]}...")
         return None
         
     token = auth_header.split(' ')[1]
-    logger.info(f"🔍 DEBUG: Extracted token (first 20 chars): {token[:20]}...")
-    logger.info(f"🔍 DEBUG: Token length: {len(token)}")
+    logger.debug(f"🔍 Token received, length: {len(token)}")
     
-    decoded_token = verify_cognito_token(token)
-    logger.info(f"🔍 DEBUG: Token verification result: {bool(decoded_token)}")
-    
-    if decoded_token:
-        user_info = {
-            'email': decoded_token.get('email'),
-            'username': decoded_token.get('cognito:username'),
-            'sub': decoded_token.get('sub'),
-            'first_name': decoded_token.get('given_name'),
-            'last_name': decoded_token.get('family_name'),
-            'specialty': decoded_token.get('custom:specialty', 'general'),
-            'auth_type': 'cognito'
-        }
-        logger.info(f"✅ DEBUG: Successfully extracted user info: {user_info}")
-        return user_info
-    else:
-        logger.warning(f"❌ DEBUG: Token verification failed")
+    # Try Cognito token verification first
+    try:
+        # Quick check if it looks like a Cognito token
+        claims = jose_jwt.get_unverified_claims(token)
         
+        # Check if it's a Cognito token
+        if 'cognito' in claims.get('iss', '') or claims.get('token_use') in ['access', 'id']:
+            logger.info("🔍 Detected Cognito token")
+            
+            decoded_token = verify_cognito_token(token)
+            if decoded_token:
+                user_info = {
+                    'email': decoded_token.get('email'),
+                    'username': decoded_token.get('cognito:username'),
+                    'sub': decoded_token.get('sub'),
+                    'first_name': decoded_token.get('given_name', 'Doctor'),
+                    'last_name': decoded_token.get('family_name', 'User'),
+                    'specialty': decoded_token.get('custom:specialty', 'general'),
+                    'auth_type': 'cognito_jwt'
+                }
+                logger.info(f"✅ Cognito user verified: {user_info['email']}")
+                return user_info
+        
+        # Try simple JWT verification (for fallback tokens)
+        try:
+            decoded = jwt.decode(
+                token,
+                app.secret_key,
+                algorithms=['HS256'],
+                options={"verify_aud": False, "verify_iss": False}
+            )
+            
+            user_info = {
+                'email': decoded.get('email'),
+                'first_name': decoded.get('first_name', 'Doctor'),
+                'last_name': decoded.get('last_name', 'User'),
+                'specialty': decoded.get('specialty', 'general'),
+                'auth_type': 'simple_jwt'
+            }
+            logger.info(f"✅ Simple JWT user verified: {user_info['email']}")
+            return user_info
+            
+        except Exception as jwt_error:
+            logger.debug(f"Simple JWT verification failed: {str(jwt_error)}")
+            
+    except Exception as e:
+        logger.error(f"❌ Token verification error: {str(e)}")
+    
     return None
 
 def get_subscription_status(email):
@@ -5029,6 +5098,130 @@ def analyze_transcript_protected():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/api/cognito-login', methods=['POST', 'OPTIONS'])
+def cognito_login():
+    """Handle Cognito login with your actual configuration"""
+    if request.method == 'OPTIONS':
+        response = make_response()
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
+        response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
+        return response
+        
+    try:
+        data = request.get_json()
+        email = data.get('email')
+        password = data.get('password')
+        
+        logger.info(f"🔐 Cognito login attempt for: {email}")
+        
+        # Initialize Cognito client
+        cognito_client = boto3.client('cognito-idp', region_name=COGNITO_REGION)
+        
+        # Authenticate with Cognito
+        try:
+            response = cognito_client.admin_initiate_auth(
+                UserPoolId=COGNITO_USER_POOL_ID,
+                ClientId=COGNITO_CLIENT_ID,
+                AuthFlow='ADMIN_NO_SRP_AUTH',
+                AuthParameters={
+                    'USERNAME': email,
+                    'PASSWORD': password
+                }
+            )
+            
+            # Extract tokens
+            auth_result = response['AuthenticationResult']
+            access_token = auth_result['AccessToken']
+            id_token = auth_result['IdToken']
+            refresh_token = auth_result['RefreshToken']
+            
+            logger.info(f"✅ Cognito authentication successful for: {email}")
+            
+            # Decode ID token to get user info
+            user_claims = jose_jwt.get_unverified_claims(id_token)
+            
+            user_data = {
+                'email': user_claims.get('email', email),
+                'first_name': user_claims.get('given_name', 'Doctor'),
+                'last_name': user_claims.get('family_name', 'User'),
+                'specialty': user_claims.get('custom:specialty', 'general'),
+                'username': user_claims.get('cognito:username'),
+                'sub': user_claims.get('sub')
+            }
+            
+            # Get subscription status for this user
+            subscription = get_subscription_status(email)
+            
+            # Store session for backward compatibility
+            session['user_email'] = email
+            
+            return jsonify({
+                'success': True,
+                'access_token': access_token,
+                'id_token': id_token,
+                'refresh_token': refresh_token,
+                'user': user_data,
+                'subscription': subscription,
+                'auth_type': 'cognito'
+            }), 200
+            
+        except cognito_client.exceptions.NotAuthorizedException:
+            logger.warning(f"❌ Invalid credentials for: {email}")
+            
+            # Fall back to legacy authentication
+            logger.info(f"🔄 Falling back to legacy auth for: {email}")
+            if email in SUBSCRIPTIONS and password == "18June2011!":
+                subscription = get_subscription_status(email)
+                session['user_email'] = email
+                
+                # Create a simple JWT for consistency
+                user_data = {
+                    'email': email,
+                    'first_name': 'Doctor',
+                    'last_name': 'User',
+                    'specialty': 'general'
+                }
+                
+                # Create simple token
+                simple_token = jwt.encode({
+                    'email': email,
+                    'first_name': 'Doctor',
+                    'last_name': 'User',
+                    'specialty': 'general',
+                    'exp': datetime.utcnow() + timedelta(hours=24),
+                    'iat': datetime.utcnow(),
+                    'iss': 'medora-backend'
+                }, app.secret_key, algorithm='HS256')
+                
+                return jsonify({
+                    'success': True,
+                    'access_token': simple_token,
+                    'id_token': simple_token,
+                    'user': user_data,
+                    'subscription': subscription,
+                    'auth_type': 'legacy_fallback'
+                }), 200
+            else:
+                return jsonify({
+                    'success': False,
+                    'error': 'Invalid email or password'
+                }), 401
+                
+        except Exception as cognito_error:
+            logger.error(f"❌ Cognito authentication error: {str(cognito_error)}")
+            return jsonify({
+                'success': False,
+                'error': f'Authentication failed: {str(cognito_error)}'
+            }), 401
+                
+    except Exception as e:
+        logger.error(f"❌ Login endpoint error: {str(e)}")
+        return jsonify({
+            'success': False,
+            'error': f'Server error: {str(e)}'
+        }), 500
+
 @app.route('/api/login', methods=['POST', 'OPTIONS'])
 def login():
     """Handle traditional login (for backward compatibility)"""
@@ -5094,7 +5287,7 @@ def register():
 # Logout endpoint
 @app.route('/api/logout', methods=['POST', 'OPTIONS'])
 def logout():
-    """Handle logout (mainly for session-based auth)"""
+    """Enhanced logout with token blacklisting"""
     if request.method == 'OPTIONS':
         response = make_response()
         response.headers.add("Access-Control-Allow-Origin", "https://test.medoramd.ai")
@@ -5102,9 +5295,174 @@ def logout():
         response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
         return response
         
-    session.pop('user_email', None)
-    return jsonify({'success': True})
+    try:
+        logout_info = {
+            'session_cleared': False,
+            'token_blacklisted': False,
+            'auth_type': 'unknown'
+        }
+        
+        # Clear session-based auth
+        if 'user_email' in session:
+            user_email = session['user_email']
+            session.clear()
+            logout_info['session_cleared'] = True
+            logout_info['auth_type'] = 'session'
+            logger.info(f"🔓 Session-based logout completed for {user_email}")
+        
+        # Handle JWT token blacklisting - THIS IS THE KEY FIX
+        auth_header = request.headers.get('Authorization')
+        if auth_header and auth_header.startswith('Bearer '):
+            token = auth_header.split(' ')[1]
+            
+            # Always blacklist the token, even if it's invalid
+            blacklist_token(token)
+            logout_info['token_blacklisted'] = True
+            logout_info['auth_type'] = 'cognito_jwt'
+            logger.info(f"🔓 JWT token blacklisted")
+        
+        # Ensure session is completely cleared
+        session.clear()
+        
+        response_data = {
+            'success': True,
+            'message': 'Logout successful - token blacklisted',
+            'logout_info': logout_info,
+            'instructions': {
+                'frontend_action_required': 'Clear localStorage and sessionStorage immediately',
+                'items_to_clear': [
+                    'authToken', 'accessToken', 'idToken', 'refreshToken',
+                    'userEmail', 'userInfo', 'user', 'subscription'
+                ],
+                'redirect_to': '/login',
+                'force_reload': True
+            }
+        }
+        
+        logger.info(f"✅ Enhanced logout completed: {logout_info}")
+        return jsonify(response_data), 200
+        
+    except Exception as e:
+        logger.error(f"❌ Error during logout: {str(e)}")
+        return jsonify({
+            'success': False,
+            'error': str(e),
+            'instructions': {
+                'frontend_action_required': 'Clear storage anyway',
+                'items_to_clear': ['authToken', 'userEmail', 'userInfo'],
+                'redirect_to': '/login',
+                'force_reload': True
+            }
+        }), 200
 
+# Add debug endpoint to check blacklist
+@app.route('/api/debug/blacklist-status', methods=['GET', 'OPTIONS'])
+def debug_blacklist_status():
+    """Debug endpoint to check token blacklist status"""
+    if request.method == 'OPTIONS':
+        response = make_response()
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
+        response.headers.add("Access-Control-Allow-Methods", "GET, OPTIONS")
+        return response
+        
+    try:
+        auth_header = request.headers.get('Authorization')
+        token_status = {
+            'token_provided': bool(auth_header and auth_header.startswith('Bearer ')),
+            'blacklist_size': len(token_blacklist),
+            'token_blacklisted': False
+        }
+        
+        if auth_header and auth_header.startswith('Bearer '):
+            token = auth_header.split(' ')[1]
+            token_status['token_blacklisted'] = is_token_blacklisted(token)
+            token_status['token_hash'] = hash_token(token)[:16] + "..."
+        
+        return jsonify({
+            'success': True,
+            'blacklist_status': token_status
+        }), 200
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+# ALSO ADD: Enhanced auth checking that's more strict
+def get_user_from_token():
+    """Extract user information from Cognito token with enhanced debugging"""
+    auth_header = request.headers.get('Authorization')
+    logger.debug(f"🔍 DEBUG: Authorization header present: {bool(auth_header)}")
+    
+    if not auth_header:
+        logger.debug(f"🔍 DEBUG: No Authorization header found")
+        return None
+        
+    if not auth_header.startswith('Bearer '):
+        logger.debug(f"🔍 DEBUG: Authorization header doesn't start with 'Bearer ': {auth_header[:20]}...")
+        return None
+        
+    token = auth_header.split(' ')[1]
+    logger.debug(f"🔍 DEBUG: Extracted token (first 20 chars): {token[:20]}...")
+    logger.debug(f"🔍 DEBUG: Token length: {len(token)}")
+    
+    # ADD THIS CHECK: Make sure token isn't empty or just whitespace
+    if not token or not token.strip():
+        logger.debug(f"🔍 DEBUG: Empty token provided")
+        return None
+    
+    decoded_token = verify_cognito_token(token)
+    logger.debug(f"🔍 DEBUG: Token verification result: {bool(decoded_token)}")
+    
+    if decoded_token:
+        user_info = {
+            'email': decoded_token.get('email'),
+            'username': decoded_token.get('cognito:username'),
+            'sub': decoded_token.get('sub'),
+            'first_name': decoded_token.get('given_name'),
+            'last_name': decoded_token.get('family_name'),
+            'specialty': decoded_token.get('custom:specialty', 'general'),
+            'auth_type': 'cognito'
+        }
+        logger.debug(f"✅ DEBUG: Successfully extracted user info: {user_info.get('email')}")
+        return user_info
+    else:
+        logger.warning(f"❌ DEBUG: Token verification failed")
+        
+    return None
+
+# SIMPLE FRONTEND LOGOUT (add this to your frontend)
+"""
+// Simple frontend logout function
+const handleLogout = async () => {
+  try {
+    // Call backend
+    const response = await fetch('/api/logout', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': localStorage.getItem('authToken') ? 
+          `Bearer ${localStorage.getItem('authToken')}` : undefined
+      }
+    });
+    
+    const result = await response.json();
+    console.log('Logout response:', result);
+    
+  } catch (error) {
+    console.error('Logout error:', error);
+  } finally {
+    // ALWAYS clear client storage regardless of backend response
+    localStorage.clear();
+    sessionStorage.clear();
+    
+    // Force full page reload to clear any remaining state
+    window.location.href = '/login';
+  }
+};
+"""
 # Continue with the rest of your existing endpoints...
 @app.route('/api/analyze-transcript', methods=['POST', 'OPTIONS'])
 def analyze_transcript_endpoint():
@@ -6298,5 +6656,6 @@ if __name__ == '__main__':
     # Start the Flask application
     app.run(host='0.0.0.0', port=PORT, debug=False)
                     
+
 
 
