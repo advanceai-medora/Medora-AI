@@ -1,5 +1,5 @@
 console.log('patient-management.js loaded');
-console.log('patient-management.js version: 4.1.2 - Fixed Assessment Formatting and Data Type Handling WITH AUTH');
+console.log('patient-management.js version: 4.1.6 - Complete Enhanced Allergy Triggers Display WITH AUTH');
 
 // ===============================
 // AUTHENTICATION HELPER FUNCTIONS
@@ -40,6 +40,306 @@ function isTokenExpired() {
     } catch (e) {
         console.error('Error checking token expiration:', e);
         return true;
+    }
+}
+
+// ===============================
+// ENHANCED ALLERGY TRIGGERS DISPLAY FUNCTIONS
+// ===============================
+
+/**
+ * Parse allergy triggers from complex strings - ENHANCED FOR COMPLEX DESCRIPTIONS
+ */
+function parseAllergyTriggersFromString(allergyTriggersString) {
+    console.log('🔍 ENHANCED PARSING: Processing allergy string:', allergyTriggersString);
+    
+    if (!allergyTriggersString || 
+        allergyTriggersString.toLowerCase().includes('no known') ||
+        allergyTriggersString.toLowerCase().includes('none') ||
+        allergyTriggersString.toLowerCase().includes('no allergies')) {
+        return [];
+    }
+    
+    const triggers = [];
+    const lowerText = allergyTriggersString.toLowerCase();
+    
+    // Enhanced parsing for complex medical descriptions
+    const allergenPatterns = [
+        // Food allergens with medical terms
+        { patterns: ['anaphylactic to peanuts', 'peanut allergy', 'peanuts', 'peanut'], display: 'Peanuts' },
+        { patterns: ['allergic to hazelnuts', 'hazelnut allergy', 'hazelnuts', 'hazelnut'], display: 'Hazelnuts' },
+        { patterns: ['tree nuts', 'tree nut'], display: 'Tree nuts' },
+        { patterns: ['shellfish'], display: 'Shellfish' },
+        { patterns: ['nuts'], display: 'Nuts' },
+        { patterns: ['eggs'], display: 'Eggs' },
+        { patterns: ['milk', 'dairy'], display: 'Dairy' },
+        { patterns: ['wheat'], display: 'Wheat' },
+        { patterns: ['soy'], display: 'Soy' },
+        { patterns: ['fish'], display: 'Fish' },
+        { patterns: ['sesame'], display: 'Sesame' },
+        
+        // Environmental allergens
+        { patterns: ['pollen', 'seasonal'], display: 'Pollen' },
+        { patterns: ['dust mite', 'dust'], display: 'Dust mites' },
+        { patterns: ['pet dander', 'cat', 'dog', 'animal dander'], display: 'Pet dander' },
+        { patterns: ['mold', 'mildew'], display: 'Mold' },
+        { patterns: ['grass'], display: 'Grass pollen' },
+        { patterns: ['tree'], display: 'Tree pollen' },
+        { patterns: ['ragweed'], display: 'Ragweed' },
+        
+        // Other triggers
+        { patterns: ['bee sting', 'bee'], display: 'Bee stings' },
+        { patterns: ['wasp'], display: 'Wasp stings' },
+        { patterns: ['perfume', 'fragrance'], display: 'Fragrances' },
+        { patterns: ['smoke'], display: 'Smoke' },
+        { patterns: ['latex'], display: 'Latex' }
+    ];
+    
+    allergenPatterns.forEach(allergen => {
+        // Check if any of the patterns match
+        const found = allergen.patterns.some(pattern => lowerText.includes(pattern));
+        if (found && !triggers.includes(allergen.display)) {
+            triggers.push(allergen.display);
+        }
+    });
+    
+    console.log('🔍 ENHANCED PARSING: Extracted triggers:', triggers);
+    return triggers;
+}
+
+/**
+ * Extract allergy triggers from diagnostic workup section - ENHANCED
+ */
+function extractTriggersFromDiagnostic(diagnosticWorkup) {
+    const triggers = [];
+    
+    if (!diagnosticWorkup) return triggers;
+    
+    const diagnosticText = diagnosticWorkup.toLowerCase();
+    console.log('🔍 DIAGNOSTIC PARSING: Processing diagnostic workup:', diagnosticText);
+    
+    // Extract specific allergens from diagnostic testing mentions
+    if (diagnosticText.includes('pollen')) {
+        triggers.push('Pollen');
+    }
+    if (diagnosticText.includes('cat')) {
+        triggers.push('Cat dander');
+    }
+    if (diagnosticText.includes('dog')) {
+        triggers.push('Dog dander');
+    }
+    if (diagnosticText.includes('dust mites')) {
+        triggers.push('Dust mites');
+    }
+    if (diagnosticText.includes('mold')) {
+        triggers.push('Mold');
+    }
+    if (diagnosticText.includes('grass')) {
+        triggers.push('Grass pollen');
+    }
+    if (diagnosticText.includes('tree')) {
+        triggers.push('Tree pollen');
+    }
+    if (diagnosticText.includes('ragweed')) {
+        triggers.push('Ragweed');
+    }
+    if (diagnosticText.includes('peanut')) {
+        triggers.push('Peanuts');
+    }
+    if (diagnosticText.includes('nut')) {
+        triggers.push('Tree nuts');
+    }
+    
+    console.log('🔍 DIAGNOSTIC PARSING: Extracted triggers from diagnostic workup:', triggers);
+    return triggers;
+}
+
+/**
+ * Extract allergy triggers from SOAP notes patient history - ENHANCED VERSION
+ */
+function extractTriggersFromSOAP(soapNotes) {
+    const triggers = [];
+    
+    if (!soapNotes?.patient_history?.history_of_present_illness) {
+        return triggers;
+    }
+    
+    const historyText = soapNotes.patient_history.history_of_present_illness.toLowerCase();
+    console.log('🔍 SOAP PARSING: Processing patient history:', historyText);
+    
+    // Environmental triggers - ENHANCED DETECTION
+    if (historyText.includes('pollen') || historyText.includes('seasonal')) {
+        triggers.push('Pollen');
+    }
+    if (historyText.includes('dust mite') || historyText.includes('dust')) {
+        triggers.push('Dust mites');
+    }
+    if (historyText.includes('pet dander') || historyText.includes('cat') || historyText.includes('dog')) {
+        triggers.push('Pet dander');
+    }
+    if (historyText.includes('mold') || historyText.includes('mildew')) {
+        triggers.push('Mold');
+    }
+    if (historyText.includes('grass')) {
+        triggers.push('Grass pollen');
+    }
+    if (historyText.includes('tree')) {
+        triggers.push('Tree pollen');
+    }
+    if (historyText.includes('ragweed')) {
+        triggers.push('Ragweed');
+    }
+    
+    // Weather/Environmental
+    if (historyText.includes('humid') || historyText.includes('moisture')) {
+        triggers.push('Humidity');
+    }
+    if (historyText.includes('wind') || historyText.includes('outdoor')) {
+        triggers.push('Wind/Outdoor air');
+    }
+    
+    // Indoor triggers
+    if (historyText.includes('indoor') || historyText.includes('house')) {
+        triggers.push('Indoor allergens');
+    }
+    
+    console.log('🔍 SOAP PARSING: Extracted triggers from SOAP:', triggers);
+    return triggers;
+}
+
+/**
+ * Parse and display allergy triggers in pill format matching the wireframe - ENHANCED FINAL VERSION
+ */
+function renderAllergyTriggers(allergyTriggersString, soapNotes = null) {
+    console.log('🔧 ENHANCED FINAL: Rendering allergy triggers:', allergyTriggersString);
+    console.log('🔧 ENHANCED FINAL: SOAP Notes provided:', !!soapNotes);
+    
+    let triggers = [];
+    
+    // 1. First, try to extract triggers from SOAP notes if available
+    if (soapNotes?.patient_history?.history_of_present_illness) {
+        triggers = extractTriggersFromSOAP(soapNotes);
+        console.log('🔧 ENHANCED FINAL: Extracted from SOAP history:', triggers);
+    }
+    
+    // 2. Also check diagnostic workup for allergens being tested
+    if (soapNotes?.diagnostic_workup) {
+        const diagnosticTriggers = extractTriggersFromDiagnostic(soapNotes.diagnostic_workup);
+        console.log('🔧 ENHANCED FINAL: Extracted from diagnostic workup:', diagnosticTriggers);
+        // Merge without duplicates
+        diagnosticTriggers.forEach(trigger => {
+            if (!triggers.includes(trigger)) {
+                triggers.push(trigger);
+            }
+        });
+    }
+    
+    // 3. If no triggers found in SOAP, try to parse from the allergy triggers string
+    if (triggers.length === 0 && allergyTriggersString) {
+        triggers = parseAllergyTriggersFromString(allergyTriggersString);
+        console.log('🔧 ENHANCED FINAL: Extracted from allergy string:', triggers);
+    }
+    
+    console.log('🔧 ENHANCED FINAL: Final triggers to render:', triggers);
+    
+    // Generate the HTML for the triggers
+    if (triggers.length > 0) {
+        return `
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                ${triggers.map(trigger => `
+                    <div style="
+                        padding: 12px 16px;
+                        background: #dbeafe;
+                        color: #1d4ed8;
+                        border-radius: 8px;
+                        font-size: 14px;
+                        font-weight: 500;
+                        border: 1px solid #bfdbfe;
+                        transition: all 0.2s ease;
+                    ">
+                        ${trigger}
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    } else {
+        // Show the original string or default message
+        const displayText = allergyTriggersString || 'No specific triggers identified';
+        return `
+            <div style="
+                padding: 16px;
+                background: #f9fafb;
+                color: #6b7280;
+                border-radius: 8px;
+                font-size: 14px;
+                font-style: italic;
+                border: 1px solid #e5e7eb;
+                text-align: center;
+            ">
+                ${displayText}
+            </div>
+        `;
+    }
+}
+
+/**
+ * Update allergy triggers display with wireframe styling - ENHANCED FINAL VERSION
+ */
+function updateAllergyTriggersDisplay(transcript) {
+    console.log('✅ ENHANCED FINAL: Updating allergy triggers display');
+    console.log('✅ ENHANCED FINAL: Transcript insights:', transcript.insights);
+    console.log('✅ ENHANCED FINAL: SOAP Notes available:', !!transcript.soapNotes);
+    
+    const insightsAllergyTriggers = document.getElementById('insights-allergy-triggers');
+    if (insightsAllergyTriggers) {
+        const allergyTriggersHTML = renderAllergyTriggers(
+            transcript.insights?.allergy_triggers, 
+            transcript.soapNotes
+        );
+        // Clear existing content completely and replace with new content
+        insightsAllergyTriggers.innerHTML = allergyTriggersHTML;
+        console.log('✅ ENHANCED FINAL: Successfully updated allergy triggers display');
+    } else {
+        console.error('❌ insights-allergy-triggers element not found in DOM');
+    }
+}
+
+/**
+ * Update condition display to match wireframe - ENHANCED FINAL VERSION
+ */
+function updateConditionDisplay(transcript) {
+    console.log('✅ ENHANCED FINAL: Updating condition display');
+    
+    const insightsCondition = document.getElementById('insights-condition');
+    if (insightsCondition) {
+        const conditions = transcript.insights?.condition ? 
+            transcript.insights.condition.split(',').map(c => c.trim()) : 
+            ['No conditions identified'];
+            
+        const conditionsHTML = `
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                ${conditions.map(condition => `
+                    <div style="
+                        padding: 12px 16px;
+                        background: #dcfce7;
+                        color: #15803d;
+                        border-radius: 8px;
+                        font-size: 14px;
+                        font-weight: 500;
+                        border: 1px solid #bbf7d0;
+                        transition: all 0.2s ease;
+                    ">
+                        ${condition}
+                    </div>
+                `).join('')}
+            </div>
+        `;
+        
+        // Clear existing content completely and replace
+        insightsCondition.innerHTML = conditionsHTML;
+        console.log('✅ ENHANCED FINAL: Successfully updated condition display');
+    } else {
+        console.error('❌ insights-condition element not found in DOM');
     }
 }
 
@@ -1076,14 +1376,13 @@ async function selectPatient(patient) {
                     console.error('Plan container element not found in DOM');
                 }
 
+                // ✅ ENHANCED FINAL: Use the enhanced allergy triggers and conditions display functions
+                updateAllergyTriggersDisplay(transcript);
+                updateConditionDisplay(transcript);
+
                 // COMPREHENSIVE ENHANCED CARD-BASED RECOMMENDATIONS DISPLAY WITH FIXED COLLAPSIBLE FUNCTIONALITY
-                const insightsAllergyTriggers = document.getElementById('insights-allergy-triggers');
-                const insightsCondition = document.getElementById('insights-condition');
                 const insightsRecommendations = document.getElementById('insights-recommendations');
-                if (insightsAllergyTriggers && insightsCondition && insightsRecommendations) {
-                    insightsAllergyTriggers.innerHTML = `<p>${transcript.insights?.allergy_triggers || 'Not specified'}</p>`;
-                    insightsCondition.innerHTML = `<p>${transcript.insights?.condition || 'Not specified'}</p>`;
-                    
+                if (insightsRecommendations) {
                     console.log('🎯 COMPREHENSIVE: Creating ALL possible categories');
                     console.log('🎯 COMPREHENSIVE: Full SOAP notes:', transcript.soapNotes);
                     console.log('🎯 COMPREHENSIVE: Full insights:', transcript.insights);
@@ -1466,6 +1765,7 @@ async function selectPatient(patient) {
                         `;
                     }
                 }
+                
                 const notesSection = document.getElementById('notes-section');
                 if (notesSection) notesSection.style.display = 'block';
                 if (transcript.visitId && transcript.visitId !== 'undefined') {
@@ -1684,6 +1984,9 @@ window.selectPatient = selectPatient;
 window.deletePatient = deletePatient;
 window.logout = logout;
 window.parseGeneralAllergyPlan = parseGeneralAllergyPlan;
+window.renderAllergyTriggers = renderAllergyTriggers;
+window.updateAllergyTriggersDisplay = updateAllergyTriggersDisplay;
+window.updateConditionDisplay = updateConditionDisplay;
 
 // Backward compatibility wrapper
 function parseGeneralAllergyPlan(transcriptText, soapNotes = null) {

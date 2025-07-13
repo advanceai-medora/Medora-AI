@@ -7,6 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1068.0.min.js"></script>
+    <script src="https://js.stripe.com/v3/"></script>
     <script src="https://unpkg.com/amazon-cognito-identity-js@6.3.1/dist/amazon-cognito-identity.min.js"></script>
     <style>
         :root {
@@ -623,7 +624,7 @@
 
                 <div class="form-nav">
                     <span></span>
-                    <button class="nav-btn" onclick="showStep('register-step')">
+                    <button class="nav-btn" onclick="showStep('basic-info-step')">
                         Create Account <i class="fas fa-arrow-right"></i>
                     </button>
                 </div>
@@ -637,7 +638,9 @@
             </div>
 
             <!-- Step 2: Registration -->
-            <div class="form-step" id="register-step">
+
+            <!-- Basic information form -->
+            <div class="form-step" id="basic-info-step">
                 <div class="form-section">
                     <h1 class="section-title">Start Your Enterprise Trial</h1>
                     <p class="section-subtitle">Get 30 days of full access to our medical AI platform</p>
@@ -671,43 +674,40 @@
                                 <i class="fas fa-heartbeat"></i>
                                 Cardiology
                             </div>
-                            <div class="specialty-option" data-specialty="emergency">
-                                <i class="fas fa-ambulance"></i>
-                                Emergency
-                            </div>
-                            <div class="specialty-option" data-specialty="family">
-                                <i class="fas fa-user-md"></i>
-                                Family Med
-                            </div>
-                            <div class="specialty-option" data-specialty="internal">
-                                <i class="fas fa-procedures"></i>
-                                Internal Med
-                            </div>
-                            <div class="specialty-option" data-specialty="other">
-                                <i class="fas fa-plus"></i>
-                                Other
-                            </div>
+                            <!-- Add other specialties -->
                         </div>
+                    </div>
+                    
+                    <button class="enterprise-btn" id="next-step-btn">
+                        <i class="fas fa-arrow-right" style="margin-right: 0.5rem;"></i>
+                        Next Step
+                    </button>
+            
+                    <div class="message" id="basic-info-message"></div>
+                </div>
+            </div>
+            <!-- Stripe Payment form  -->
+            <div class="form-step" id="payment-step">
+                <div class="form-section">
+                    <h1 class="section-title">Enter Payment Information</h1>
+                    <p class="section-subtitle">Securely store your payment details for subscription</p>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Credit Card Information</label>
+                        <div id="card-element" class="form-input"></div>
+                        <div id="card-errors" class="message error"></div>
                     </div>
                     
                     <button class="enterprise-btn" id="register-btn">
                         <i class="fas fa-rocket" style="margin-right: 0.5rem;"></i>
-                        Start Free Trial
-                        <span class="loading-spinner" id="register-spinner"></span>
+                        Register
                     </button>
-
-                    <div class="message" id="register-message"></div>
-                </div>
-
-                <div class="form-nav">
-                    <button class="nav-btn" onclick="showStep('login-step')">
-                        <i class="fas fa-arrow-left"></i> Back to Login
-                    </button>
-                    <span></span>
+            
+                    <div class="message" id="payment-message"></div>
                 </div>
             </div>
-
-            <!-- Step 3: Verification -->
+            
+            <!-- Registratio Verification step -->
             <div class="form-step" id="verification-step">
                 <div class="form-section">
                     <h1 class="section-title">Verify Your Account</h1>
@@ -725,24 +725,12 @@
                     <button class="enterprise-btn" id="verify-btn">
                         <i class="fas fa-check-circle" style="margin-right: 0.5rem;"></i>
                         Verify & Activate Trial
-                        <span class="loading-spinner" id="verify-spinner"></span>
                     </button>
-
-                    <button class="nav-btn" id="resend-btn" style="width: 100%; margin-top: 1rem;">
-                        <i class="fas fa-redo"></i> Resend Code
-                    </button>
-
+            
                     <div class="message" id="verify-message"></div>
                 </div>
-
-                <div class="form-nav">
-                    <button class="nav-btn" onclick="showStep('register-step')">
-                        <i class="fas fa-arrow-left"></i> Back
-                    </button>
-                    <span></span>
-                </div>
             </div>
-
+                    
             <!-- Trust Indicators -->
             <div class="trust-indicators">
                 <div class="trust-item">
@@ -825,8 +813,93 @@
                 step.classList.remove('active');
             });
             document.getElementById(stepId).classList.add('active');
-            currentStep = stepId;
         }
+
+        // Stripe Initialization
+        const stripe = Stripe('pk_test_51RiJ34QolxBWu9ValGMgzmHX1jGmUNraq981Sc0lqrLCaI6FfvKpTDbOsAjVV8fUlXFbha4Vmeh1xTCW6aJ7GWer00FATMnmlX'); // Replace with your Stripe publishable key
+        const elements = stripe.elements();
+        const cardElement = elements.create('card', {
+            style: {
+                base: {
+                    color: '#ffffff',
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '16px',
+                    '::placeholder': {
+                        color: '#71717a'
+                    }
+                },
+                invalid: {
+                    color: '#ef4444'
+                }
+            }
+        });
+        cardElement.mount('#card-element');
+
+
+        // Handle basic info submission
+        document.getElementById('next-step-btn').addEventListener('click', () => {
+            const firstName = document.getElementById('first-name').value;
+            const lastName = document.getElementById('last-name').value;
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+
+            if (!firstName || !lastName || !email || !password) {
+                showMessage('basic-info-message', 'Please fill in all fields', 'error');
+                return;
+            }
+
+            showStep('payment-step');
+        });
+
+        // Handle registration
+        document.getElementById('register-btn').addEventListener('click', async () => {
+            const firstName = document.getElementById('first-name').value;
+            const lastName = document.getElementById('last-name').value;
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+
+            setLoading('register-btn', 'register-spinner', true);
+
+            try {
+                // Create Stripe token
+                const { token, error } = await stripe.createToken(cardElement);
+                if (error) {
+                    showMessage('card-errors', error.message, 'error');
+                    setLoading('register-btn', 'register-spinner', false);
+                    return;
+                }
+
+                // Register user with Cognito
+                await registerWithCognito({
+                    firstName,
+                    lastName,
+                    email,
+                    password,
+                    specialty: selectedSpecialty
+                });
+
+                // Send token and user data to backend
+                await fetch('/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        firstName,
+                        lastName,
+                        email,
+                        stripeToken: token.id
+                    })
+                });
+
+                localStorage.setItem('pendingEmail', email);
+                showStep('verification-step');
+                showMessage('verify-message', 'Registration successful! Please check your email for verification code', 'success');
+            } catch (error) {
+                console.error('Registration error:', error);
+                showMessage('payment-message', error.message || 'Registration failed', 'error');
+            } finally {
+                setLoading('register-btn', 'register-spinner', false);
+            }
+        });
 
         // Specialty selection
         function setupSpecialtySelection() {
@@ -861,7 +934,7 @@
         // Event listeners
         function setupEventListeners() {
             document.getElementById('login-btn').addEventListener('click', handleLogin);
-            document.getElementById('register-btn').addEventListener('click', handleRegister);
+            //document.getElementById('register-btn').addEventListener('click', handleRegister);
             document.getElementById('verify-btn').addEventListener('click', handleVerification);
             document.getElementById('resend-btn').addEventListener('click', handleResendCode);
         }
@@ -929,7 +1002,7 @@
         }
 
         // Handle registration
-        async function handleRegister() {
+        /*async function handleRegister() {
             const firstName = document.getElementById('first-name').value;
             const lastName = document.getElementById('last-name').value;
             const email = document.getElementById('register-email').value;
@@ -969,7 +1042,7 @@
             } finally {
                 setLoading('register-btn', 'register-spinner', false);
             }
-        }
+        }*/
 
         // Handle verification
         async function handleVerification() {

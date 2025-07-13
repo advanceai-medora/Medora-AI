@@ -10,6 +10,145 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="blue-glow.css">
     
+    <!-- Simple Select Patient Styles -->
+    <style>
+        /* Simple Select Patient Interface */
+        .select-patient-home {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: calc(100vh - 120px);
+            padding: 40px;
+        }
+
+        .select-patient-home.hidden {
+            display: none;
+        }
+
+        .select-patient-content {
+            text-align: center;
+            max-width: 500px;
+        }
+
+        .patient-icon {
+            font-size: 4rem;
+            margin-bottom: 24px;
+            opacity: 0.6;
+            color: #64748b;
+        }
+
+        .select-patient-content h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 16px;
+        }
+
+        .select-patient-content p {
+            font-size: 1.1rem;
+            color: #64748b;
+            line-height: 1.6;
+        }
+
+        /* Add Patient Button Styles */
+        .patients-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .patients-header h2 {
+            margin: 0;
+        }
+
+        .add-patient-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #4f46e5;
+            color: white;
+            border: none;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .add-patient-btn:hover {
+            background: #4338ca;
+            transform: scale(1.05);
+        }
+
+        /* Hide select patient when patient is selected */
+        .container.patient-view .select-patient-home {
+            display: none;
+        }
+
+        /* Show transcript section only when needed */
+        #transcript-section {
+            display: none;
+        }
+
+        .container.patient-view #transcript-section {
+            display: block;
+        }
+
+        /* Enhanced AI Insights Default State */
+        .insights-default {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 400px;
+            text-align: center;
+            background: white;
+            border-radius: 20px;
+            margin: 20px 0;
+            box-shadow: 0 6px 25px rgba(0,0,0,0.04);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .placeholder-icon {
+            font-size: 3.5rem;
+            margin-bottom: 24px;
+            opacity: 0.4;
+        }
+
+        .insights-default h3 {
+            color: #64748b;
+            margin-bottom: 12px;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .insights-default p {
+            color: #94a3b8;
+            max-width: 320px;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        /* Hide default insights when patient is selected */
+        .container.patient-view .insights-default {
+            display: none;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .select-patient-content h2 {
+                font-size: 1.5rem;
+            }
+            
+            .patient-icon {
+                font-size: 3rem;
+            }
+        }
+    </style>
+    
     <!-- Add React BEFORE Recharts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react/16.14.0/umd/react.production.min.js" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/16.14.0/umd/react-dom.production.min.js" crossorigin="anonymous"></script>
@@ -30,7 +169,10 @@
         <!-- Patient Sidebar -->
         <div id="patient-sidebar" class="scroll-area">
             <div class="sidebar-header">
-                <h2>Patients</h2>
+                <div class="patients-header">
+                    <h2>Patients</h2>
+                    <button id="add-patient-btn" class="add-patient-btn" onclick="openAddPatientModal()" title="Add New Patient">+</button>
+                </div>
                 <select id="patient-filter">
                     <option value="all">Filter: All</option>
                     <option value="today">Today's Visits</option>
@@ -42,6 +184,16 @@
 
         <!-- Main Content Area -->
         <div id="main-content" class="scroll-area">
+            <!-- Simple Select Patient Interface -->
+            <div id="select-patient-home" class="select-patient-home">
+                <div class="select-patient-content">
+                    <div class="patient-icon">👥</div>
+                    <h2>Select a Patient</h2>
+                    <p>Choose a patient from the sidebar to begin or continue a visit</p>
+                </div>
+            </div>
+
+            <!-- Patient Details -->
             <div id="patient-details" style="display: none;">
                 <div class="patient-details-header">
                     <h3>Patient Details</h3>
@@ -113,74 +265,85 @@
         <!-- AI Insights Section -->
         <div id="ai-insights" class="scroll-area">
             <h2>AI Insights</h2>
-            <div class="insights-section">
-                <h3>Allergy Triggers</h3>
-                <div id="insights-allergy-triggers"><p>N/A</p></div>
-            </div>
-            <div class="insights-section">
-                <h3>Condition</h3>
-                <div id="insights-condition"><p>N/A</p></div>
-            </div>
-            <div class="insights-section">
-                <h3>Recommendations</h3>
-                <div id="insights-recommendations"><p>N/A</p></div>
-                <div class="insights-actions">
-                    <button id="insights-detail-toggle">Concise</button>
-                    <button id="insights-bullet-toggle">Bullet</button>
-                    <button id="insights-copy-edit-btn">Copy/Edit</button>
-                </div>
+            
+            <!-- Default message when no patient selected -->
+            <div id="ai-insights-default" class="insights-default">
+                <div class="placeholder-icon">🧠</div>
+                <h3>AI insights will appear when you select a patient</h3>
+                <p>Choose a patient from the sidebar to begin or continue a visit</p>
             </div>
             
-            <!-- NEW: AllergenIQ Collapsed Card -->
-            <div class="allergeniq-collapsed" id="allergeniq-collapsed-card" onclick="openAllergenIQ()">
-                <div class="allergeniq-header">
-                    <div class="allergeniq-title">
-                        🧬 ALLERGENIQ PROFILE
-                        <span class="new-badge">NEW</span>
-                    </div>
-                    <span class="expand-icon">→</span>
+            <!-- Insights content when patient is selected -->
+            <div id="ai-insights-content" style="display: none;">
+                <div class="insights-section">
+                    <h3>Allergy Triggers</h3>
+                    <div id="insights-allergy-triggers"><p>N/A</p></div>
                 </div>
-                
-                <div class="quick-summary" id="allergeniq-quick-summary">
-                    <div class="summary-item">
-                        <span class="summary-count" id="allergen-count">-</span>
-                        <span class="summary-label">Allergens</span>
-                    </div>
-                    <div class="summary-item">
-                        <span class="summary-count" id="symptom-count">-</span>
-                        <span class="summary-label">Symptoms</span>
-                    </div>
-                    <div class="summary-item">
-                        <span class="summary-count" id="medication-count">-</span>
-                        <span class="summary-label">Medications</span>
+                <div class="insights-section">
+                    <h3>Condition</h3>
+                    <div id="insights-condition"><p>N/A</p></div>
+                </div>
+                <div class="insights-section">
+                    <h3>Recommendations</h3>
+                    <div id="insights-recommendations"><p>N/A</p></div>
+                    <div class="insights-actions">
+                        <button id="insights-detail-toggle">Concise</button>
+                        <button id="insights-bullet-toggle">Bullet</button>
+                        <button id="insights-copy-edit-btn">Copy/Edit</button>
                     </div>
                 </div>
                 
-                <div class="alert-indicators" id="allergeniq-alerts">
-                    <span class="alert-text">Loading patient analysis...</span>
+                <!-- AllergenIQ Collapsed Card -->
+                <div class="allergeniq-collapsed" id="allergeniq-collapsed-card" onclick="openAllergenIQ()">
+                    <div class="allergeniq-header">
+                        <div class="allergeniq-title">
+                            🧬 ALLERGENIQ PROFILE
+                            <span class="new-badge">NEW</span>
+                        </div>
+                        <span class="expand-icon">→</span>
+                    </div>
+                    
+                    <div class="quick-summary" id="allergeniq-quick-summary">
+                        <div class="summary-item">
+                            <span class="summary-count" id="allergen-count">-</span>
+                            <span class="summary-label">Allergens</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-count" id="symptom-count">-</span>
+                            <span class="summary-label">Symptoms</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-count" id="medication-count">-</span>
+                            <span class="summary-label">Medications</span>
+                        </div>
+                    </div>
+                    
+                    <div class="alert-indicators" id="allergeniq-alerts">
+                        <span class="alert-text">Loading patient analysis...</span>
+                    </div>
                 </div>
-            </div>
-            
-            <div class="insights-section">
-                <h3>References</h3>
-                <div id="references-spinner" style="display: none;">Loading...</div>
-                <table id="references-table">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Title</th>
-                            <th>Summary</th>
-                            <th>Relevance Score</th>
-                            <th>Confidence</th>
-                            <th>Relevance Tag</th>
-                            <th>Source</th>
-                            <th>Authors</th>
-                            <th>Year</th>
-                            <th>Citation Count</th>
-                        </tr>
-                    </thead>
-                    <tbody id="references-table-body"></tbody>
-                </table>
+                
+                <div class="insights-section">
+                    <h3>References</h3>
+                    <div id="references-spinner" style="display: none;">Loading...</div>
+                    <table id="references-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Title</th>
+                                <th>Summary</th>
+                                <th>Relevance Score</th>
+                                <th>Confidence</th>
+                                <th>Relevance Tag</th>
+                                <th>Source</th>
+                                <th>Authors</th>
+                                <th>Year</th>
+                                <th>Citation Count</th>
+                            </tr>
+                        </thead>
+                        <tbody id="references-table-body"></tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
@@ -209,7 +372,6 @@
     <!-- AllergenIQ Modal Overlay -->
     <div class="modal-overlay" id="allergeniq-modal-overlay" onclick="closeAllergenIQ()">
         <div class="allergeniq-modal" onclick="event.stopPropagation()">
-            <!-- UPDATED: Modal Header with Subtitle -->
             <div class="modal-header">
                 <div class="header-content">
                     <div class="modal-title">
@@ -225,7 +387,6 @@
             
             <div class="modal-content" id="allergeniq-modal-content">
                 <div class="modal-grid">
-                    <!-- Diagnosis Card -->
                     <div class="modal-card">
                         <div class="modal-card-header">
                             <div class="modal-card-icon diagnosis-icon">⚠️</div>
@@ -236,7 +397,6 @@
                         </div>
                     </div>
 
-                    <!-- Allergens Card -->
                     <div class="modal-card">
                         <div class="modal-card-header">
                             <div class="modal-card-icon allergen-icon">🥜</div>
@@ -248,7 +408,6 @@
                     </div>
                 </div>
 
-                <!-- Symptoms Card - Full Width -->
                 <div class="modal-card full-width">
                     <div class="modal-card-header">
                         <div class="modal-card-icon symptoms-icon">🩺</div>
@@ -259,7 +418,6 @@
                     </div>
                 </div>
 
-                <!-- Medication Card -->
                 <div class="modal-card full-width">
                     <div class="modal-card-header">
                         <div class="modal-card-icon medication-icon">💊</div>
@@ -270,7 +428,6 @@
                     </div>
                 </div>
 
-                <!-- Action Buttons -->
                 <div class="modal-actions">
                     <button class="btn btn-primary" onclick="downloadAllergenIQPDF()">📄 Download PDF</button>
                     <button class="btn" onclick="copyAllergenIQReport()">📋 Copy Report</button>
@@ -289,12 +446,67 @@
     <script src="script-transcript.js" onerror="console.error('Failed to load script-transcript.js');"></script>
     <script src="recommendations-display.js" onerror="console.error('Failed to load recommendations-display.js');"></script>
     <script src="time-utils.js" onerror="console.error('Failed to load time-utils.js');"></script> 
-    <!-- NEW: Updated AllergenIQ Profile JavaScript -->
     <script src="allergeniq-profile.js" onerror="console.error('Failed to load allergeniq-profile.js');"></script>
     
-    <!-- Load menu.js before script-core.js to ensure logout-btn is set up -->
     <script src="menu.js" onerror="console.error('Failed to load menu.js');"></script>
     <script src="script-core.js" onerror="console.error('Failed to load script-core.js');"></script>
+    
+    <!-- Simple Dashboard Functions -->
+    <script>
+        // Simple function to open add patient modal
+        function openAddPatientModal() {
+            const patientInput = document.getElementById('patient-id');
+            if (patientInput) {
+                patientInput.focus();
+                patientInput.placeholder = "Enter new patient name or ID...";
+            }
+            console.log('Add patient functionality - focusing on patient input');
+        }
+
+        // Simple patient selection handling
+        function handlePatientSelection(hasPatient) {
+            const selectPatientHome = document.getElementById('select-patient-home');
+            const aiInsightsDefault = document.getElementById('ai-insights-default');
+            const aiInsightsContent = document.getElementById('ai-insights-content');
+            
+            if (hasPatient) {
+                if (selectPatientHome) selectPatientHome.style.display = 'none';
+                if (aiInsightsDefault) aiInsightsDefault.style.display = 'none';
+                if (aiInsightsContent) aiInsightsContent.style.display = 'block';
+            } else {
+                if (selectPatientHome) selectPatientHome.style.display = 'flex';
+                if (aiInsightsDefault) aiInsightsDefault.style.display = 'flex';
+                if (aiInsightsContent) aiInsightsContent.style.display = 'none';
+            }
+        }
+
+        // Override existing functions to handle simple interface
+        const originalShowPatientList = window.showPatientList;
+        window.showPatientList = function(preservePatientId = true) {
+            if (originalShowPatientList) {
+                originalShowPatientList(preservePatientId);
+            }
+            handlePatientSelection(false);
+        };
+
+        const originalSelectPatient = window.selectPatient;
+        window.selectPatient = function(patient) {
+            if (originalSelectPatient) {
+                originalSelectPatient(patient);
+            }
+            handlePatientSelection(true);
+        };
+
+        // Initialize simple interface
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Simple patient interface initialized');
+            handlePatientSelection(false);
+        });
+
+        // Expose functions
+        window.openAddPatientModal = openAddPatientModal;
+        window.handlePatientSelection = handlePatientSelection;
+    </script>
     
     <!-- AllergenIQ Modal Functions -->
     <script>
@@ -303,10 +515,9 @@
             document.getElementById('allergeniq-modal-overlay').classList.add('active');
             document.body.style.overflow = 'hidden';
             
-            // Trigger detailed data load if we have current patient/visit
             if (window.currentPatientId && window.currentVisitId) {
                 if (typeof updateProfileWithVisitId === 'function') {
-                    updateProfileWithVisitId(window.currentPatientId, window.currentVisitId, true); // true for modal view
+                    updateProfileWithVisitId(window.currentPatientId, window.currentVisitId, true);
                 }
             }
         }
@@ -332,7 +543,6 @@
             alert('Send to patient functionality will be implemented');
         }
 
-        // Close modal with Escape key
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 closeAllergenIQ();
@@ -342,7 +552,6 @@
     
     <!-- Authentication Functions -->
     <script>
-        // Sign out a user (for use in menu.js)
         function logout() {
             console.log('User signed out');
             localStorage.removeItem('currentEmail');
@@ -355,7 +564,6 @@
             }
         }
 
-        // Check authentication state on page load
         function checkAuthState() {
             console.log('Checking authentication state...');
             const email = localStorage.getItem('currentEmail');
@@ -378,7 +586,6 @@
             }
         }
 
-        // Expose functions to the global scope
         window.logout = logout;
         window.checkAuthState = checkAuthState;
         window.openAllergenIQ = openAllergenIQ;
@@ -387,7 +594,6 @@
         window.copyAllergenIQReport = copyAllergenIQReport;
         window.sendToPatient = sendToPatient;
 
-        // Monitor localStorage changes
         let lastEmail = localStorage.getItem('currentEmail');
         setInterval(() => {
             const currentEmail = localStorage.getItem('currentEmail');
@@ -403,7 +609,6 @@
             }
         }, 1000);
 
-        // Check authentication state on page load with a delay and error handling
         document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 try {
@@ -429,18 +634,16 @@
         });
     </script>
     
-    <!-- CLEAN BLUE SCROLLING SETUP -->
+    <!-- Blue Scrolling Setup -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             console.log('✅ Blue scrolling initialized');
             
-            // Get all scrollable areas
             const scrollAreas = ['main-content', 'patient-sidebar', 'ai-insights'];
             
             scrollAreas.forEach(areaId => {
                 const area = document.getElementById(areaId);
                 if (area) {
-                    // Enable smooth blue scrolling
                     area.style.overflowY = 'scroll';
                     area.style.overflowX = 'hidden';
                     area.style.height = 'calc(100vh - 120px)';
