@@ -1,4 +1,5 @@
 import base64
+import stripe
 from flask import Flask, request, jsonify, make_response, session
 from flask_cors import CORS
 import logging
@@ -22,6 +23,7 @@ from jwt.algorithms import RSAAlgorithm
 from concurrent.futures import ThreadPoolExecutor, as_completed, TimeoutError as FuturesTimeoutError
 from typing import List, Dict, Tuple, Optional
 from functools import wraps
+
 
 # Add this right after your imports, before the Flask app initialization
 import time
@@ -401,6 +403,7 @@ IMS_FHIR_SERVER_URL = os.getenv('IMS_FHIR_SERVER_URL', 'https://meditabfhirsandb
 IMS_TOKEN_ENDPOINT = os.getenv('IMS_TOKEN_ENDPOINT', 'https://keycloak-qa.medpharmservices.com:8443/realms/fhir-0051185/protocol/openid-connect/token')
 IMS_CLIENT_ID = os.getenv('IMS_CLIENT_ID', '4ddd3a59-414c-405e-acc5-226c097a7060')
 PRIVATE_KEY_PATH = os.getenv('PRIVATE_KEY_PATH', '/var/www/medora-frontend/public/medora_private_key.pem')
+stripe.api_key = os.getenv('STRIPE_SECRET_KEY')  
 
 # ============================================================================
 # ENTERPRISE TRIAL MANAGEMENT CONFIGURATION
@@ -5072,37 +5075,78 @@ def login():
         logger.error(f'Error processing /api/login request: {str(e)}')
         return jsonify({"success": False, "error": str(e)}), 500
 
-@app.route('/api/register', methods=['POST', 'OPTIONS'])
-def register():
+@app.route('/api/registercard', methods=['POST', 'OPTIONS'])
+def registercard():
     if request.method == 'OPTIONS':
         response = make_response()
-        response.headers.add("Access-Control-Allow-Origin", "http://127.0.0.1:8080")
-        response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+        response.headers.add("Access-Control-Allow-Origin", "https://test.medoramd.ai")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
         response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
         return response
     try:
         data = request.get_json()
+        logger.info(f"Received data: {data}")  # Log the received data
         email = data.get('email')
-        password = data.get('password')
-        card_number = data.get('card_number')
+        stripe_token = data.get('stripeToken')
+        logger.info(f"Email: {email}, Stripe Token: {stripe_token}")  # Log extracted values
+        if not email or not stripe_token:
+            return jsonify({"success": False, "message": "Email and Stripe token are required"}), 400
 
-        if not email or not password or not card_number or len(card_number) < 4:
-            return jsonify({"success": False, "message": "Email, password, and valid card number are required"}), 400
+        subscription_result = create_subscription_with_trial(email, stripe_token)
 
-        if email in SUBSCRIPTIONS:
-            return jsonify({"success": False, "message": "User already registered"}), 400
-
-        trial_start = datetime.now().strftime("%Y-%m-%d")
-        SUBSCRIPTIONS[email] = {
-            "tier": "Trial",
-            "trial_start": trial_start,
-            "card_last4": card_number[-4:]
-        }
-        status = get_subscription_status(email)
-        return jsonify({"success": True, "subscription": status["tier"], "trial_end": status["trial_end"], "card_last4": status["card_last4"]}), 200
+        if subscription_result['success']:
+            return jsonify({
+                'success': True,
+                'message': 'Registration successful! Trial started.',
+                'subscription': subscription_result
+            }), 200
+        else:
+            return jsonify({
+                'success': False,
+                'message': 'Failed to create subscription.',
+                'error': subscription_result['error']
+            }), 400
     except Exception as e:
         logger.error(f'Error processing /api/register request: {str(e)}')
         return jsonify({"success": False, "error": str(e)}), 500
+
+# Initialize Stripe with your secret key
+def create_subscription_with_trial(email, stripe_token, trial_days=30):
+    """
+    Create a Stripe subscription with a trial period.
+    The user will not be charged during the trial period.
+    """
+    try:
+        # Step 1: Create a customer in Stripe
+        customer = stripe.Customer.create(
+            email=email,
+            source=stripe_token  # Token from the frontend
+        )
+
+        # Step 2: Create a subscription with a trial period
+        subscription = stripe.Subscription.create(
+            customer=customer.id,
+            items=[
+                {
+                    'price': os.getenv('STRIPE_PRICE_ID')  # Replace with your Stripe price ID
+                }
+            ],
+            trial_period_days=trial_days  # Set the trial period
+        )
+
+        # Return subscription details
+        return {
+            'success': True,
+            'subscription_id': subscription.id,
+            'customer_id': customer.id,
+            'trial_end': datetime.fromtimestamp(subscription.trial_end).strftime('%Y-%m-%d')
+        }
+    except stripe.error.StripeError as e:
+        logger.error(f"Stripe error: {str(e)}")
+        return {
+            'success': False,
+            'error': str(e)
+        }
 
 # Logout endpoint
 @app.route('/api/logout', methods=['POST', 'OPTIONS'])
