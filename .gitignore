@@ -1,0 +1,23 @@
+__pycache__
+.DS_Store
+# Virtual environment
+venv/
+__pycache__/
+
+# Environment variables
+.env
+medora-web-backend/.env
+
+# OS generated files
+*.pyc
+*.pyo
+*.pyd
+.DS_Store
+
+# Elastic Beanstalk files
+.ebextensions/
+Procfile
+app.yaml
+
+# Xcode files
+*.xcuserstate
