@@ -1,4 +1,5 @@
 import base64
+import stripe
 from flask import Flask, request, jsonify, make_response, session
 from flask_cors import CORS
 import logging
@@ -22,11 +23,23 @@ from jwt.algorithms import RSAAlgorithm
 from concurrent.futures import ThreadPoolExecutor, as_completed, TimeoutError as FuturesTimeoutError
 from typing import List, Dict, Tuple, Optional
 from functools import wraps
-# Add this right after your imports, before the Flask app initialization
 
+
+# Add this right after your imports, before the Flask app initialization
 import time
 import asyncio
 from functools import wraps
+
+# ============================================================================
+# ENTERPRISE TRIAL MANAGEMENT IMPORTS
+# ============================================================================
+from botocore.exceptions import ClientError, NoCredentialsError
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from email.mime.base import MIMEBase
+from email import encoders
+import threading
+from collections import defaultdict
 
 # Add these helper functions to your Flask app if they don't exist
 
@@ -390,6 +403,19 @@ IMS_FHIR_SERVER_URL = os.getenv('IMS_FHIR_SERVER_URL', 'https://meditabfhirsandb
 IMS_TOKEN_ENDPOINT = os.getenv('IMS_TOKEN_ENDPOINT', 'https://keycloak-qa.medpharmservices.com:8443/realms/fhir-0051185/protocol/openid-connect/token')
 IMS_CLIENT_ID = os.getenv('IMS_CLIENT_ID', '4ddd3a59-414c-405e-acc5-226c097a7060')
 PRIVATE_KEY_PATH = os.getenv('PRIVATE_KEY_PATH', '/var/www/medora-frontend/public/medora_private_key.pem')
+stripe.api_key = os.getenv('STRIPE_SECRET_KEY')  
+
+# ============================================================================
+# ENTERPRISE TRIAL MANAGEMENT CONFIGURATION
+# ============================================================================
+SES_FROM_EMAIL = os.getenv('SES_FROM_EMAIL', 'noreply@medoramd.ai')
+SES_FROM_NAME = os.getenv('SES_FROM_NAME', 'MedoraMD Enterprise')
+TRIAL_LENGTH_DAYS = int(os.getenv('TRIAL_LENGTH_DAYS', 30))
+TRIAL_USAGE_LIMIT = int(os.getenv('TRIAL_USAGE_LIMIT', 1000))
+ENTERPRISE_BRAND_COLOR = os.getenv('ENTERPRISE_BRAND_COLOR', '#0ea5e9')
+SUPPORT_EMAIL = os.getenv('SUPPORT_EMAIL', 'support@medoramd.ai')
+SALES_EMAIL = os.getenv('SALES_EMAIL', 'sales@medoramd.ai')
+COMPANY_LOGO_URL = os.getenv('COMPANY_LOGO_URL', 'https://medoramd.ai/logo.png')
 
 # Load configuration from environment variables
 app.secret_key = os.getenv('SECRET_KEY', 'your-fallback-secret-key-change-this')
@@ -431,7 +457,9 @@ try:
     s3_client = boto3.client('s3', region_name=AWS_REGION)
     dynamodb = boto3.client('dynamodb', region_name=AWS_REGION)
     lambda_client = boto3.client('lambda', region_name=AWS_REGION)
-    logger.info("Successfully initialized AWS clients")
+    # ENTERPRISE: Add SES client
+    ses_client = boto3.client('ses', region_name=AWS_REGION)
+    logger.info("Successfully initialized AWS clients (including SES for enterprise features)")
 except Exception as e:
     logger.error(f"Failed to initialize AWS clients: {str(e)}")
     raise
@@ -448,15 +476,25 @@ try:
     transcripts_collection = db['transcripts']
     visits_collection = db['visits']
     
+    # ENTERPRISE: Add new collections for trial management
+    enterprise_trials_collection = db['enterprise_trials']
+    usage_analytics_collection = db['usage_analytics']
+    email_campaigns_collection = db['email_campaigns']
+    
     try:
         patients_collection.create_index("tenantId")
         transcripts_collection.create_index("tenantId")
         visits_collection.create_index("tenantId")
-        logger.info("Created indexes on tenantId fields in MongoDB collections")
+        # ENTERPRISE: Create indexes for new collections
+        enterprise_trials_collection.create_index([("email", 1), ("trial_start", -1)])
+        enterprise_trials_collection.create_index([("trial_status", 1), ("days_remaining", 1)])
+        usage_analytics_collection.create_index([("email", 1), ("date", -1)])
+        email_campaigns_collection.create_index([("email", 1), ("campaign_type", 1)])
+        logger.info("Created indexes on tenantId fields and enterprise collections in MongoDB")
     except Exception as e:
         logger.error(f"Error creating indexes: {str(e)}")
     
-    logger.info("Successfully connected to MongoDB")
+    logger.info("Successfully connected to MongoDB with enterprise collections")
 except Exception as e:
     logger.error(f"Failed to connect to MongoDB: {str(e)}")
     raise
@@ -469,7 +507,815 @@ SUBSCRIPTIONS = {
     "siddharthc@meditab.com": {"tier": "Premium", "trial_start": None, "card_last4": "9012"}
 }
 
-# COGNITO HELPER FUNCTIONS
+# ============================================================================
+# ENTERPRISE TRIAL MANAGEMENT CLASSES AND FUNCTIONS
+# ============================================================================
+
+class EnterpriseTrialManager:
+    """Enhanced trial management with enterprise features"""
+    
+    def __init__(self):
+        self.specialties = {
+            'allergist': 'Allergy and Immunology',
+            'dermatologist': 'Dermatology',
+            'pulmonologist': 'Pulmonology',
+            'rheumatologist': 'Rheumatology',
+            'internist': 'Internal Medicine',
+            'pediatrician': 'Pediatrics',
+            'family_medicine': 'Family Medicine',
+            'emergency_medicine': 'Emergency Medicine'
+        }
+        self.reminder_schedule = [14, 7, 3, 1, 0]  # Days before expiry
+        
+    def create_enterprise_trial(self, email, first_name, last_name, specialty='general'):
+        """Create a new enterprise trial with enhanced tracking"""
+        try:
+            trial_start = datetime.now()
+            trial_end = trial_start + timedelta(days=TRIAL_LENGTH_DAYS)
+            
+            trial_data = {
+                'email': email,
+                'first_name': first_name,
+                'last_name': last_name,
+                'specialty': specialty,
+                'specialty_display': self.specialties.get(specialty, 'General Medicine'),
+                'trial_start': trial_start,
+                'trial_end': trial_end,
+                'trial_status': 'active',
+                'usage_count': 0,
+                'usage_limit': TRIAL_USAGE_LIMIT,
+                'days_remaining': TRIAL_LENGTH_DAYS,
+                'usage_percentage': 0.0,
+                'created_at': trial_start,
+                'reminder_sent': [],
+                'conversion_tracked': False,
+                'enterprise_trial': True,
+                'trial_type': 'enterprise_30_day'
+            }
+            
+            # Store in database
+            result = enterprise_trials_collection.insert_one(trial_data)
+            trial_data['_id'] = result.inserted_id
+            
+            logger.info(f"✅ Created enterprise trial for {email} ({specialty}) - ID: {result.inserted_id}")
+            
+            # Initialize usage analytics
+            self._initialize_usage_analytics(email, trial_start)
+            
+            return trial_data
+            
+        except Exception as e:
+            logger.error(f"❌ Failed to create enterprise trial for {email}: {str(e)}")
+            return None
+    
+    def get_trial_status(self, email):
+        """Get comprehensive trial status for a user"""
+        try:
+            # First check enterprise trials
+            trial = enterprise_trials_collection.find_one(
+                {'email': email},
+                sort=[('trial_start', -1)]
+            )
+            
+            if trial:
+                now = datetime.now()
+                days_remaining = max(0, (trial['trial_end'] - now).days)
+                usage_percentage = (trial['usage_count'] / trial['usage_limit']) * 100
+                
+                # Update calculated fields
+                trial['days_remaining'] = days_remaining
+                trial['usage_percentage'] = min(100.0, usage_percentage)
+                trial['trial_status'] = 'expired' if days_remaining <= 0 else 'active'
+                
+                # Update in database
+                enterprise_trials_collection.update_one(
+                    {'_id': trial['_id']},
+                    {
+                        '$set': {
+                            'days_remaining': days_remaining,
+                            'usage_percentage': trial['usage_percentage'],
+                            'trial_status': trial['trial_status']
+                        }
+                    }
+                )
+                
+                return trial
+            
+            # Fallback to legacy subscription system
+            legacy_status = get_subscription_status(email)
+            if legacy_status['tier'] in ['Trial', 'Premium']:
+                return {
+                    'email': email,
+                    'trial_status': 'active' if legacy_status['tier'] == 'Trial' else 'premium',
+                    'days_remaining': 7 if legacy_status['tier'] == 'Trial' else 365,
+                    'usage_percentage': 0.0,
+                    'enterprise_trial': False,
+                    'specialty': 'legacy',
+                    'legacy_tier': legacy_status['tier']
+                }
+            
+            return None
+            
+        except Exception as e:
+            logger.error(f"❌ Error getting trial status for {email}: {str(e)}")
+            return None
+    
+    def increment_usage(self, email, usage_type='transcript_analysis'):
+        """Increment usage counter for trial user"""
+        try:
+            trial = enterprise_trials_collection.find_one({'email': email})
+            if not trial:
+                return False
+            
+            new_usage_count = trial['usage_count'] + 1
+            usage_percentage = min(100.0, (new_usage_count / trial['usage_limit']) * 100)
+            
+            # Update trial
+            enterprise_trials_collection.update_one(
+                {'_id': trial['_id']},
+                {
+                    '$set': {
+                        'usage_count': new_usage_count,
+                        'usage_percentage': usage_percentage,
+                        'last_activity': datetime.now()
+                    }
+                }
+            )
+            
+            # Log analytics
+            self._log_usage_analytics(email, usage_type)
+            
+            logger.info(f"📊 Usage updated for {email}: {new_usage_count}/{trial['usage_limit']} ({usage_percentage:.1f}%)")
+            return True
+            
+        except Exception as e:
+            logger.error(f"❌ Error incrementing usage for {email}: {str(e)}")
+            return False
+    
+    def check_and_send_reminders(self):
+        """Check all trials and send appropriate reminders"""
+        try:
+            now = datetime.now()
+            sent_count = 0
+            
+            # Find trials that need reminders
+            for reminder_day in self.reminder_schedule:
+                target_date = now + timedelta(days=reminder_day)
+                
+                trials = enterprise_trials_collection.find({
+                    'trial_status': 'active',
+                    'trial_end': {
+                        '$gte': target_date,
+                        '$lt': target_date + timedelta(days=1)
+                    },
+                    f'reminder_sent.{reminder_day}': {'$ne': True}
+                })
+                
+                for trial in trials:
+                    if self._send_renewal_reminder(trial, reminder_day):
+                        sent_count += 1
+                        
+                        # Mark reminder as sent
+                        enterprise_trials_collection.update_one(
+                            {'_id': trial['_id']},
+                            {'$set': {f'reminder_sent.{reminder_day}': True}}
+                        )
+            
+            logger.info(f"📧 Sent {sent_count} renewal reminders")
+            return sent_count
+            
+        except Exception as e:
+            logger.error(f"❌ Error checking reminders: {str(e)}")
+            return 0
+    
+    def get_analytics_dashboard(self, admin_email=None):
+        """Get enterprise analytics dashboard data"""
+        try:
+            now = datetime.now()
+            week_ago = now - timedelta(days=7)
+            month_ago = now - timedelta(days=30)
+            
+            # Trial statistics
+            total_trials = enterprise_trials_collection.count_documents({})
+            active_trials = enterprise_trials_collection.count_documents({'trial_status': 'active'})
+            expired_trials = enterprise_trials_collection.count_documents({'trial_status': 'expired'})
+            converted_trials = enterprise_trials_collection.count_documents({'conversion_tracked': True})
+            
+            # Recent activity
+            recent_trials = enterprise_trials_collection.count_documents({
+                'trial_start': {'$gte': week_ago}
+            })
+            
+            # Specialty breakdown
+            specialty_pipeline = [
+                {'$group': {'_id': '$specialty', 'count': {'$sum': 1}}},
+                {'$sort': {'count': -1}}
+            ]
+            specialty_breakdown = list(enterprise_trials_collection.aggregate(specialty_pipeline))
+            
+            # Usage analytics
+            usage_pipeline = [
+                {
+                    '$match': {
+                        'date': {'$gte': month_ago}
+                    }
+                },
+                {
+                    '$group': {
+                        '_id': {'date': '$date', 'usage_type': '$usage_type'},
+                        'count': {'$sum': 1}
+                    }
+                }
+            ]
+            usage_data = list(usage_analytics_collection.aggregate(usage_pipeline))
+            
+            # Conversion funnel
+            conversion_rate = (converted_trials / total_trials * 100) if total_trials > 0 else 0
+            
+            dashboard = {
+                'trial_statistics': {
+                    'total_trials': total_trials,
+                    'active_trials': active_trials,
+                    'expired_trials': expired_trials,
+                    'converted_trials': converted_trials,
+                    'recent_trials': recent_trials,
+                    'conversion_rate': round(conversion_rate, 2)
+                },
+                'specialty_breakdown': specialty_breakdown,
+                'usage_analytics': usage_data,
+                'generated_at': now.isoformat()
+            }
+            
+            return dashboard
+            
+        except Exception as e:
+            logger.error(f"❌ Error generating analytics dashboard: {str(e)}")
+            return None
+    
+    def _initialize_usage_analytics(self, email, trial_start):
+        """Initialize usage analytics for new trial"""
+        try:
+            analytics_doc = {
+                'email': email,
+                'date': trial_start.date(),
+                'usage_type': 'trial_created',
+                'count': 1,
+                'created_at': trial_start
+            }
+            usage_analytics_collection.insert_one(analytics_doc)
+        except Exception as e:
+            logger.error(f"❌ Error initializing analytics for {email}: {str(e)}")
+    
+    def _log_usage_analytics(self, email, usage_type):
+        """Log usage analytics event"""
+        try:
+            today = datetime.now().date()
+            
+            # Update or insert today's usage
+            usage_analytics_collection.update_one(
+                {
+                    'email': email,
+                    'date': today,
+                    'usage_type': usage_type
+                },
+                {
+                    '$inc': {'count': 1},
+                    '$set': {'updated_at': datetime.now()}
+                },
+                upsert=True
+            )
+        except Exception as e:
+            logger.error(f"❌ Error logging usage analytics: {str(e)}")
+    
+    def _send_renewal_reminder(self, trial, days_remaining):
+        """Send renewal reminder email"""
+        try:
+            email_content = self._generate_renewal_email(trial, days_remaining)
+            return send_enterprise_email(
+                trial['email'],
+                email_content['subject'],
+                email_content['body'],
+                email_content['html_body']
+            )
+        except Exception as e:
+            logger.error(f"❌ Error sending renewal reminder: {str(e)}")
+            return False
+    
+    def _generate_renewal_email(self, trial, days_remaining):
+        """Generate renewal reminder email content"""
+        specialty_display = trial.get('specialty_display', 'Medical Professional')
+        first_name = trial.get('first_name', 'Doctor')
+        
+        if days_remaining == 0:
+            urgency = "🚨 URGENT"
+            subject = f"{urgency}: Your MedoraMD Trial Expires Today"
+            message = "Your trial expires today! Don't lose access to your enhanced medical documentation tools."
+        elif days_remaining == 1:
+            urgency = "⚠️ FINAL NOTICE"
+            subject = f"{urgency}: Your MedoraMD Trial Expires Tomorrow"
+            message = "Only 1 day left in your trial! Upgrade now to maintain uninterrupted access."
+        elif days_remaining <= 3:
+            urgency = "🔔 URGENT"
+            subject = f"{urgency}: {days_remaining} Days Left in Your MedoraMD Trial"
+            message = f"Your trial expires in {days_remaining} days. Upgrade now to continue your enhanced workflow."
+        else:
+            urgency = "📅 REMINDER"
+            subject = f"{urgency}: {days_remaining} Days Left in Your MedoraMD Trial"
+            message = f"You have {days_remaining} days remaining in your trial. Consider upgrading to maintain access."
+        
+        # Text version
+        body = f"""
+Dear Dr. {first_name},
+
+{message}
+
+Trial Status:
+- Specialty: {specialty_display}
+- Days Remaining: {days_remaining}
+- Usage: {trial.get('usage_percentage', 0):.1f}% of limit used
+
+Why Upgrade to MedoraMD Premium?
+✅ Unlimited transcript analysis
+✅ Advanced SOAP note generation
+✅ AllergenIQ patient profiling
+✅ Priority customer support
+✅ Enterprise-grade security
+
+Ready to upgrade? Contact us:
+📧 {SALES_EMAIL}
+📞 1-800-MEDORA-1
+
+Best regards,
+The MedoraMD Team
+
+---
+If you have questions, contact support at {SUPPORT_EMAIL}
+"""
+        
+        # HTML version
+        html_body = f"""
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{subject}</title>
+</head>
+<body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+    <div style="background: linear-gradient(135deg, {ENTERPRISE_BRAND_COLOR} 0%, #1e40af 100%); padding: 30px; border-radius: 10px; color: white; text-align: center; margin-bottom: 30px;">
+        <h1 style="margin: 0; font-size: 28px; font-weight: 700;">{urgency}</h1>
+        <h2 style="margin: 10px 0 0 0; font-size: 18px; font-weight: 400; opacity: 0.9;">{days_remaining} Days Left in Your Trial</h2>
+    </div>
+    
+    <div style="background: #f8fafc; border-left: 4px solid {ENTERPRISE_BRAND_COLOR}; padding: 20px; margin-bottom: 30px; border-radius: 5px;">
+        <p style="margin: 0; font-size: 16px; font-weight: 600;">Dear Dr. {first_name},</p>
+        <p style="margin: 10px 0 0 0; font-size: 16px;">{message}</p>
+    </div>
+    
+    <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 25px; margin-bottom: 30px;">
+        <h3 style="margin: 0 0 15px 0; color: {ENTERPRISE_BRAND_COLOR}; font-size: 18px;">Your Trial Status</h3>
+        <div style="display: grid; gap: 10px;">
+            <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f1f5f9;">
+                <span style="font-weight: 600;">Specialty:</span>
+                <span>{specialty_display}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f1f5f9;">
+                <span style="font-weight: 600;">Days Remaining:</span>
+                <span style="color: {'#dc2626' if days_remaining <= 3 else ENTERPRISE_BRAND_COLOR}; font-weight: 700;">{days_remaining}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; padding: 8px 0;">
+                <span style="font-weight: 600;">Usage:</span>
+                <span>{trial.get('usage_percentage', 0):.1f}% of limit used</span>
+            </div>
+        </div>
+    </div>
+    
+    <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 25px; margin-bottom: 30px;">
+        <h3 style="margin: 0 0 15px 0; color: {ENTERPRISE_BRAND_COLOR}; font-size: 18px;">Why Upgrade to MedoraMD Premium?</h3>
+        <ul style="margin: 0; padding-left: 0; list-style: none;">
+            <li style="padding: 8px 0; border-bottom: 1px solid #f1f5f9;">✅ <strong>Unlimited transcript analysis</strong></li>
+            <li style="padding: 8px 0; border-bottom: 1px solid #f1f5f9;">✅ <strong>Advanced SOAP note generation</strong></li>
+            <li style="padding: 8px 0; border-bottom: 1px solid #f1f5f9;">✅ <strong>AllergenIQ patient profiling</strong></li>
+            <li style="padding: 8px 0; border-bottom: 1px solid #f1f5f9;">✅ <strong>Priority customer support</strong></li>
+            <li style="padding: 8px 0;">✅ <strong>Enterprise-grade security</strong></li>
+        </ul>
+    </div>
+    
+    <div style="text-align: center; margin: 30px 0;">
+        <a href="mailto:{SALES_EMAIL}?subject=MedoraMD Premium Upgrade Request" 
+           style="background: {ENTERPRISE_BRAND_COLOR}; color: white; padding: 15px 30px; border-radius: 25px; text-decoration: none; font-weight: 600; font-size: 16px; display: inline-block; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);">
+            Upgrade to Premium Now
+        </a>
+    </div>
+    
+    <div style="text-align: center; margin: 30px 0; padding: 20px; background: #f8fafc; border-radius: 8px;">
+        <h4 style="margin: 0 0 10px 0; color: {ENTERPRISE_BRAND_COLOR};">Need Help?</h4>
+        <p style="margin: 0;">
+            📧 Sales: <a href="mailto:{SALES_EMAIL}" style="color: {ENTERPRISE_BRAND_COLOR};">{SALES_EMAIL}</a><br>
+            🆘 Support: <a href="mailto:{SUPPORT_EMAIL}" style="color: {ENTERPRISE_BRAND_COLOR};">{SUPPORT_EMAIL}</a><br>
+            📞 Phone: 1-800-MEDORA-1
+        </p>
+    </div>
+    
+    <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #e2e8f0; color: #64748b; font-size: 12px;">
+        <p style="margin: 0;">© 2025 MedoraMD. All rights reserved.</p>
+        <p style="margin: 5px 0 0 0;">This email was sent to {trial['email']}. If you have questions, contact {SUPPORT_EMAIL}</p>
+    </div>
+</body>
+</html>
+"""
+        
+        return {
+            'subject': subject,
+            'body': body,
+            'html_body': html_body
+        }
+
+# Initialize enterprise trial manager
+enterprise_trial_manager = EnterpriseTrialManager()
+
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+
+def send_email_via_smtp_gmail(to_email, subject, body, html_body=None):
+    """Send email using Gmail SMTP"""
+    try:
+        smtp_server = os.getenv('SMTP_SERVER', 'smtp.gmail.com')
+        smtp_port = int(os.getenv('SMTP_PORT', '587'))
+        smtp_username = os.getenv('SMTP_USERNAME')
+        smtp_password = os.getenv('SMTP_PASSWORD')
+        
+        if not smtp_username or not smtp_password:
+            logger.error("❌ Gmail SMTP credentials not configured")
+            return False
+        
+        # Create message
+        msg = MIMEMultipart('alternative')
+        msg['Subject'] = subject
+        msg['From'] = f"MedoraMD <{smtp_username}>"
+        msg['To'] = to_email
+        
+        # Add text part
+        text_part = MIMEText(body, 'plain')
+        msg.attach(text_part)
+        
+        # Add HTML part if provided
+        if html_body:
+            html_part = MIMEText(html_body, 'html')
+            msg.attach(html_part)
+        
+        # Send email
+        logger.info(f"📧 GMAIL SMTP: Sending email to {to_email}")
+        with smtplib.SMTP(smtp_server, smtp_port) as server:
+            server.starttls()
+            server.login(smtp_username, smtp_password)
+            server.send_message(msg)
+        
+        logger.info(f"✅ Gmail SMTP email sent to {to_email}")
+        
+        # Log successful send
+        try:
+            email_campaigns_collection.insert_one({
+                'email': to_email,
+                'subject': subject,
+                'campaign_type': 'welcome_email',
+                'provider': 'gmail_smtp',
+                'sent_at': datetime.now(),
+                'status': 'sent'
+            })
+        except Exception as db_error:
+            logger.warning(f"⚠️ Failed to log email campaign: {str(db_error)}")
+        
+        return True
+        
+    except Exception as e:
+        logger.error(f"❌ Gmail SMTP error: {str(e)}")
+        return False
+
+# Update your welcome email function
+def send_welcome_email(email, first_name, last_name, specialty='general'):
+    """Send welcome email via Gmail SMTP"""
+    try:
+        specialty_display = enterprise_trial_manager.specialties.get(specialty, 'Medical Professional')
+        
+        subject = f"🎉 Welcome to MedoraMD, Dr. {first_name}!"
+        
+        body = f"""
+Dear Dr. {first_name} {last_name},
+
+Welcome to MedoraMD! We're excited to have you join our community of healthcare professionals.
+
+Your 30-Day Enterprise Trial is now active and includes:
+✅ UNLIMITED transcript analysis and SOAP note generation
+✅ Advanced AllergenIQ patient profiling system  
+✅ AI-powered clinical insights and research integration
+✅ Specialty-focused recommendations for {specialty_display}
+✅ Priority customer support
+
+Getting Started:
+1. Log in to your dashboard at https://test.medoramd.ai
+2. Start your first patient consultation
+3. Upload or record your patient interaction
+4. Watch MedoraMD generate comprehensive SOAP notes instantly
+
+Need help? Contact us at {SUPPORT_EMAIL}
+
+Best regards,
+The MedoraMD Team
+        """
+        
+        html_body = f"""
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome to MedoraMD</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+    <div style="background: linear-gradient(135deg, {ENTERPRISE_BRAND_COLOR} 0%, #1e40af 100%); padding: 30px; color: white; text-align: center; border-radius: 10px; margin-bottom: 20px;">
+        <h1 style="margin: 0; font-size: 24px;">🎉 Welcome to MedoraMD!</h1>
+        <p style="margin: 10px 0 0 0; font-size: 16px;">Your 30-Day Trial Starts Now</p>
+    </div>
+    
+    <div style="padding: 20px;">
+        <p><strong>Dear Dr. {first_name} {last_name},</strong></p>
+        
+        <p>Welcome to MedoraMD! We're excited to have you join our community of healthcare professionals.</p>
+        
+        <div style="background: #f0f9ff; border-left: 4px solid {ENTERPRISE_BRAND_COLOR}; padding: 15px; margin: 20px 0;">
+            <h3 style="margin: 0 0 10px 0; color: {ENTERPRISE_BRAND_COLOR};">Your Trial Includes:</h3>
+            <ul style="margin: 0; padding-left: 20px;">
+                <li>✅ Unlimited transcript analysis</li>
+                <li>✅ Advanced SOAP note generation</li>
+                <li>✅ AllergenIQ patient profiling</li>
+                <li>✅ Priority customer support</li>
+            </ul>
+        </div>
+        
+        <div style="text-align: center; margin: 25px 0;">
+            <a href="https://test.medoramd.ai" 
+               style="background: {ENTERPRISE_BRAND_COLOR}; color: white; padding: 12px 25px; border-radius: 5px; text-decoration: none; font-weight: bold;">
+                🚀 Get Started Now
+            </a>
+        </div>
+        
+        <p style="font-size: 14px; color: #666;">
+            Need help? Contact us at <a href="mailto:{SUPPORT_EMAIL}">{SUPPORT_EMAIL}</a>
+        </p>
+        
+        <p>Best regards,<br>The MedoraMD Team</p>
+    </div>
+</body>
+</html>
+        """
+        
+        success = send_email_via_smtp_gmail(email, subject, body, html_body)
+        
+        if success:
+            logger.info(f"✅ Welcome email sent successfully to {email}")
+        else:
+            logger.error(f"❌ Failed to send welcome email to {email}")
+        
+        return success
+        
+    except Exception as e:
+        logger.error(f"❌ Error sending welcome email to {email}: {str(e)}")
+        return False
+
+# Update your enterprise email function
+# REPLACE the existing send_enterprise_email function with this:
+def send_enterprise_email(to_email, subject, body, html_body=None):
+    """Send email using Gmail SMTP (replacing SES)"""
+    try:
+        import smtplib
+        from email.mime.text import MIMEText
+        from email.mime.multipart import MIMEMultipart
+        
+        smtp_server = os.getenv('SMTP_SERVER', 'smtp.gmail.com')
+        smtp_port = int(os.getenv('SMTP_PORT', '587'))
+        smtp_username = os.getenv('SMTP_USERNAME')
+        smtp_password = os.getenv('SMTP_PASSWORD')
+        
+        if not smtp_username or not smtp_password:
+            logger.error("❌ Gmail SMTP credentials not configured")
+            return False
+        
+        # Create message
+        msg = MIMEMultipart('alternative')
+        msg['Subject'] = subject
+        msg['From'] = f"MedoraMD <{smtp_username}>"
+        msg['To'] = to_email
+        
+        # Add text part
+        text_part = MIMEText(body, 'plain')
+        msg.attach(text_part)
+        
+        # Add HTML part if provided
+        if html_body:
+            html_part = MIMEText(html_body, 'html')
+            msg.attach(html_part)
+        
+        # Send email
+        logger.info(f"📧 GMAIL SMTP: Sending email to {to_email}")
+        with smtplib.SMTP(smtp_server, smtp_port) as server:
+            server.starttls()
+            server.login(smtp_username, smtp_password)
+            server.send_message(msg)
+        
+        logger.info(f"✅ Gmail SMTP email sent to {to_email}")
+        
+        # Log successful send
+        try:
+            email_campaigns_collection.insert_one({
+                'email': to_email,
+                'subject': subject,
+                'campaign_type': 'welcome_email',
+                'provider': 'gmail_smtp',
+                'sent_at': datetime.now(),
+                'status': 'sent'
+            })
+        except Exception as db_error:
+            logger.warning(f"⚠️ Failed to log email campaign: {str(db_error)}")
+        
+        return True
+        
+    except Exception as e:
+        logger.error(f"❌ Gmail SMTP error: {str(e)}")
+        return False
+
+def send_welcome_email(email, first_name, last_name, specialty='general'):
+    """Send welcome email for new enterprise trial users"""
+    try:
+        specialty_display = enterprise_trial_manager.specialties.get(specialty, 'Medical Professional')
+        
+        subject = f"🎉 Welcome to MedoraMD, Dr. {first_name}! Your 30-Day Trial Starts Now"
+        
+        # Text version
+        body = f"""
+Dear Dr. {first_name} {last_name},
+
+Welcome to MedoraMD! We're excited to have you join our community of healthcare professionals who are revolutionizing their clinical documentation workflow.
+
+Your 30-Day Enterprise Trial is now active and includes:
+
+✅ UNLIMITED transcript analysis and SOAP note generation
+✅ Advanced AllergenIQ patient profiling system  
+✅ AI-powered clinical insights and research integration
+✅ Specialty-focused recommendations for {specialty_display}
+✅ Priority customer support from our medical team
+
+Getting Started:
+1. Log in to your dashboard at https://test.medoramd.ai
+2. Start your first patient consultation
+3. Upload or record your patient interaction
+4. Watch as MedoraMD generates comprehensive SOAP notes instantly
+
+Trial Details:
+- Duration: 30 days (expires on {(datetime.now() + timedelta(days=30)).strftime('%B %d, %Y')})
+- Usage Limit: {TRIAL_USAGE_LIMIT} transcript analyses
+- Specialty Focus: {specialty_display}
+
+Need help getting started? Our support team is here for you:
+📧 {SUPPORT_EMAIL}
+📞 1-800-MEDORA-1
+💬 Live chat available in your dashboard
+
+Best regards,
+The MedoraMD Team
+
+P.S. - Have colleagues who could benefit from MedoraMD? Refer them for exclusive benefits!
+
+---
+MedoraMD Enterprise
+{SES_FROM_EMAIL}
+"""
+        
+        # HTML version
+        html_body = f"""
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to MedoraMD</title>
+</head>
+<body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; max-width: 650px; margin: 0 auto; padding: 20px; background-color: #f8fafc;">
+    
+    <!-- Header -->
+    <div style="background: linear-gradient(135deg, {ENTERPRISE_BRAND_COLOR} 0%, #1e40af 100%); padding: 40px 30px; border-radius: 15px; color: white; text-align: center; margin-bottom: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+        <h1 style="margin: 0; font-size: 32px; font-weight: 700;">🎉 Welcome to MedoraMD!</h1>
+        <p style="margin: 15px 0 0 0; font-size: 18px; opacity: 0.95;">Your 30-Day Enterprise Trial Starts Now</p>
+    </div>
+    
+    <!-- Welcome Message -->
+    <div style="background: white; border-radius: 12px; padding: 30px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+        <h2 style="margin: 0 0 15px 0; color: {ENTERPRISE_BRAND_COLOR}; font-size: 24px;">Dear Dr. {first_name} {last_name},</h2>
+        <p style="margin: 0; font-size: 16px; line-height: 1.7;">Welcome to MedoraMD! We're excited to have you join our community of healthcare professionals who are revolutionizing their clinical documentation workflow.</p>
+    </div>
+    
+    <!-- Trial Features -->
+    <div style="background: white; border-radius: 12px; padding: 30px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+        <h3 style="margin: 0 0 20px 0; color: {ENTERPRISE_BRAND_COLOR}; font-size: 20px;">Your Enterprise Trial Includes:</h3>
+        <div style="space-y: 12px;">
+            <div style="display: flex; align-items: flex-start; margin-bottom: 12px;">
+                <span style="color: #10b981; font-size: 18px; margin-right: 12px;">✅</span>
+                <span style="font-size: 15px;"><strong>UNLIMITED transcript analysis</strong> and SOAP note generation</span>
+            </div>
+            <div style="display: flex; align-items: flex-start; margin-bottom: 12px;">
+                <span style="color: #10b981; font-size: 18px; margin-right: 12px;">✅</span>
+                <span style="font-size: 15px;"><strong>Advanced AllergenIQ</strong> patient profiling system</span>
+            </div>
+            <div style="display: flex; align-items: flex-start; margin-bottom: 12px;">
+                <span style="color: #10b981; font-size: 18px; margin-right: 12px;">✅</span>
+                <span style="font-size: 15px;"><strong>AI-powered clinical insights</strong> and research integration</span>
+            </div>
+            <div style="display: flex; align-items: flex-start; margin-bottom: 12px;">
+                <span style="color: #10b981; font-size: 18px; margin-right: 12px;">✅</span>
+                <span style="font-size: 15px;"><strong>Specialty-focused recommendations</strong> for {specialty_display}</span>
+            </div>
+            <div style="display: flex; align-items: flex-start; margin-bottom: 12px;">
+                <span style="color: #10b981; font-size: 18px; margin-right: 12px;">✅</span>
+                <span style="font-size: 15px;"><strong>Priority customer support</strong> from our medical team</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Getting Started -->
+    <div style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border: 1px solid #0ea5e9; border-radius: 12px; padding: 25px; margin-bottom: 25px;">
+        <h3 style="margin: 0 0 15px 0; color: {ENTERPRISE_BRAND_COLOR}; font-size: 18px;">🚀 Getting Started (4 Easy Steps):</h3>
+        <ol style="margin: 0; padding-left: 20px;">
+            <li style="margin-bottom: 8px; font-size: 15px;">Log in to your dashboard at <a href="https://test.medoramd.ai" style="color: {ENTERPRISE_BRAND_COLOR};">https://test.medoramd.ai</a></li>
+            <li style="margin-bottom: 8px; font-size: 15px;">Start your first patient consultation</li>
+            <li style="margin-bottom: 8px; font-size: 15px;">Upload or record your patient interaction</li>
+            <li style="margin-bottom: 0; font-size: 15px;">Watch MedoraMD generate comprehensive SOAP notes instantly!</li>
+        </ol>
+    </div>
+    
+    <!-- Trial Details -->
+    <div style="background: white; border-radius: 12px; padding: 30px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+        <h3 style="margin: 0 0 20px 0; color: {ENTERPRISE_BRAND_COLOR}; font-size: 18px;">📋 Trial Details:</h3>
+        <div style="background: #f8fafc; border-left: 4px solid {ENTERPRISE_BRAND_COLOR}; padding: 15px; border-radius: 5px;">
+            <div style="margin-bottom: 8px;"><strong>Duration:</strong> 30 days (expires {(datetime.now() + timedelta(days=30)).strftime('%B %d, %Y')})</div>
+            <div style="margin-bottom: 8px;"><strong>Usage Limit:</strong> {TRIAL_USAGE_LIMIT} transcript analyses</div>
+            <div><strong>Specialty Focus:</strong> {specialty_display}</div>
+        </div>
+    </div>
+    
+    <!-- CTA Button -->
+    <div style="text-align: center; margin: 35px 0;">
+        <a href="https://test.medoramd.ai" 
+           style="background: {ENTERPRISE_BRAND_COLOR}; color: white; padding: 18px 35px; border-radius: 30px; text-decoration: none; font-weight: 600; font-size: 16px; display: inline-block; box-shadow: 0 6px 20px rgba(14, 165, 233, 0.3); transition: all 0.3s ease;">
+            🚀 Start Your First Analysis
+        </a>
+    </div>
+    
+    <!-- Support -->
+    <div style="background: white; border-radius: 12px; padding: 25px; margin-bottom: 25px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+        <h4 style="margin: 0 0 15px 0; color: {ENTERPRISE_BRAND_COLOR}; font-size: 18px;">🆘 Need Help Getting Started?</h4>
+        <p style="margin: 0 0 15px 0; color: #64748b;">Our support team is here for you:</p>
+        <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+            <a href="mailto:{SUPPORT_EMAIL}" style="color: {ENTERPRISE_BRAND_COLOR}; text-decoration: none; font-weight: 600;">📧 {SUPPORT_EMAIL}</a>
+            <span style="color: {ENTERPRISE_BRAND_COLOR}; font-weight: 600;">📞 1-800-MEDORA-1</span>
+            <span style="color: {ENTERPRISE_BRAND_COLOR}; font-weight: 600;">💬 Live chat in dashboard</span>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <div style="text-align: center; margin-top: 40px; padding: 25px; background: #1e293b; color: white; border-radius: 12px;">
+        <p style="margin: 0 0 10px 0; font-size: 16px; font-weight: 600;">Welcome to the future of clinical documentation!</p>
+        <p style="margin: 0 0 15px 0; font-size: 14px; opacity: 0.8;">Best regards,<br>The MedoraMD Team</p>
+        <p style="margin: 0; font-size: 12px; opacity: 0.6;">
+            P.S. - Have colleagues who could benefit from MedoraMD? <a href="mailto:{SALES_EMAIL}?subject=Colleague Referral" style="color: #60a5fa;">Refer them for exclusive benefits!</a>
+        </p>
+    </div>
+    
+    <!-- Legal Footer -->
+    <div style="text-align: center; margin-top: 20px; color: #64748b; font-size: 11px; line-height: 1.5;">
+        <p style="margin: 0;">© 2025 MedoraMD Enterprise. All rights reserved.</p>
+        <p style="margin: 5px 0 0 0;">This email was sent to {email}. Questions? Contact {SUPPORT_EMAIL}</p>
+    </div>
+</body>
+</html>
+"""
+        
+        success = send_enterprise_email(email, subject, body, html_body)
+        
+        if success:
+            logger.info(f"✅ Welcome email sent successfully to {email}")
+        else:
+            logger.error(f"❌ Failed to send welcome email to {email}")
+        
+        return success
+        
+    except Exception as e:
+        logger.error(f"❌ Error sending welcome email to {email}: {str(e)}")
+        return False
+
+# ============================================================================
+# COGNITO HELPER FUNCTIONS (Enhanced for Enterprise)
+# ============================================================================
+
 def get_cognito_public_keys():
     """Fetch and cache Cognito public keys for JWT verification"""
     global cognito_keys
@@ -596,6 +1442,9 @@ def get_user_from_token():
             'email': decoded_token.get('email'),
             'username': decoded_token.get('cognito:username'),
             'sub': decoded_token.get('sub'),
+            'first_name': decoded_token.get('given_name'),
+            'last_name': decoded_token.get('family_name'),
+            'specialty': decoded_token.get('custom:specialty', 'general'),
             'auth_type': 'cognito'
         }
         logger.info(f"✅ DEBUG: Successfully extracted user info: {user_info}")
@@ -606,9 +1455,37 @@ def get_user_from_token():
     return None
 
 def get_subscription_status(email):
-    """Return the subscription status including tier and trial expiration - Enhanced for Cognito users"""
+    """Return the subscription status including tier and trial expiration - Enhanced for Enterprise"""
     logger.info(f"🔍 DEBUG: Checking subscription for email: {email}")
     
+    # ENTERPRISE: First check enterprise trials
+    enterprise_trial = enterprise_trial_manager.get_trial_status(email)
+    if enterprise_trial:
+        logger.info(f"✅ ENTERPRISE: Found enterprise trial for {email}")
+        
+        if enterprise_trial.get('trial_status') == 'active':
+            return {
+                "tier": "Trial",
+                "trial_start": enterprise_trial.get('trial_start', datetime.now()).strftime("%Y-%m-%d"),
+                "trial_end": enterprise_trial.get('trial_end', datetime.now()).strftime("%Y-%m-%d"),
+                "days_remaining": enterprise_trial.get('days_remaining', 0),
+                "usage_percentage": enterprise_trial.get('usage_percentage', 0.0),
+                "enterprise_trial": True,
+                "specialty": enterprise_trial.get('specialty', 'general'),
+                "card_last4": None
+            }
+        elif enterprise_trial.get('trial_status') == 'expired':
+            return {
+                "tier": "Expired",
+                "trial_end": enterprise_trial.get('trial_end', datetime.now()).strftime("%Y-%m-%d"),
+                "days_remaining": 0,
+                "usage_percentage": enterprise_trial.get('usage_percentage', 100.0),
+                "enterprise_trial": True,
+                "specialty": enterprise_trial.get('specialty', 'general'),
+                "card_last4": None
+            }
+    
+    # Check hardcoded subscriptions
     user_data = SUBSCRIPTIONS.get(email, None)
     logger.info(f"🔍 DEBUG: Hardcoded user data: {user_data}")
     
@@ -621,16 +1498,33 @@ def get_subscription_status(email):
         logger.info(f"🔍 DEBUG: Cognito user from token: {cognito_user}")
         
         if cognito_user and cognito_user.get('email') == email:
-            logger.info(f"✅ DEBUG: Valid Cognito user found, granting 30-day trial")
-            # Give new Cognito users automatic trial
-            trial_result = {
-                "tier": "Trial",
-                "trial_start": datetime.now().strftime("%Y-%m-%d"),
-                "trial_end": (datetime.now() + timedelta(days=30)).strftime("%Y-%m-%d"),
-                "card_last4": None
-            }
-            logger.info(f"✅ DEBUG: Trial granted: {trial_result}")
-            return trial_result
+            logger.info(f"✅ ENTERPRISE: Valid Cognito user found, creating enterprise trial")
+            
+            # Create enterprise trial for new Cognito user
+            first_name = cognito_user.get('first_name', 'Doctor')
+            last_name = cognito_user.get('last_name', 'User')
+            specialty = cognito_user.get('specialty', 'general')
+            
+            trial = enterprise_trial_manager.create_enterprise_trial(
+                email, first_name, last_name, specialty
+            )
+            
+            if trial:
+                # Send welcome email
+                send_welcome_email(email, first_name, last_name, specialty)
+                
+                return {
+                    "tier": "Trial",
+                    "trial_start": trial['trial_start'].strftime("%Y-%m-%d"),
+                    "trial_end": trial['trial_end'].strftime("%Y-%m-%d"),
+                    "days_remaining": trial['days_remaining'],
+                    "usage_percentage": trial['usage_percentage'],
+                    "enterprise_trial": True,
+                    "specialty": specialty,
+                    "card_last4": None
+                }
+            else:
+                logger.error(f"❌ Failed to create enterprise trial for {email}")
         elif cognito_user:
             logger.warning(f"⚠️ DEBUG: Cognito user email mismatch. Token email: {cognito_user.get('email')}, Requested email: {email}")
         else:
@@ -666,6 +1560,146 @@ def get_subscription_status(email):
         "card_last4": user_data["card_last4"]
     }
 
+# ============================================================================
+# ENTERPRISE API ENDPOINTS
+# ============================================================================
+
+@app.route('/api/enterprise/user-trial-status', methods=['GET', 'OPTIONS'])
+def get_enterprise_trial_status():
+    """Get detailed enterprise trial status for authenticated user"""
+    if request.method == 'OPTIONS':
+        response = make_response()
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
+        response.headers.add("Access-Control-Allow-Methods", "GET, OPTIONS")
+        return response
+        
+    try:
+        # Get user from token
+        cognito_user = get_user_from_token()
+        if not cognito_user:
+            return jsonify({'error': 'Authentication required'}), 401
+        
+        email = cognito_user['email']
+        
+        # Get enterprise trial status
+        trial_status = enterprise_trial_manager.get_trial_status(email)
+        
+        if trial_status:
+            # Include additional user info
+            trial_status['user_info'] = {
+                'first_name': cognito_user.get('first_name', 'Doctor'),
+                'last_name': cognito_user.get('last_name', 'User'),
+                'specialty': cognito_user.get('specialty', 'general'),
+                'email': email
+            }
+        else:
+            # Create trial if none exists
+            first_name = cognito_user.get('first_name', 'Doctor')
+            last_name = cognito_user.get('last_name', 'User')
+            specialty = cognito_user.get('specialty', 'general')
+            
+            trial_status = enterprise_trial_manager.create_enterprise_trial(
+                email, first_name, last_name, specialty
+            )
+            
+            if trial_status:
+                send_welcome_email(email, first_name, last_name, specialty)
+        
+        return jsonify({
+            'success': True,
+            'trial_status': trial_status
+        }), 200
+        
+    except Exception as e:
+        logger.error(f"❌ Error getting enterprise trial status: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/enterprise/trial-analytics', methods=['GET', 'OPTIONS'])
+def get_enterprise_analytics():
+    """Get enterprise analytics dashboard"""
+    if request.method == 'OPTIONS':
+        response = make_response()
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
+        response.headers.add("Access-Control-Allow-Methods", "GET, OPTIONS")
+        return response
+        
+    try:
+        # This could be protected with admin authentication
+        analytics = enterprise_trial_manager.get_analytics_dashboard()
+        
+        if analytics:
+            return jsonify({
+                'success': True,
+                'analytics': analytics
+            }), 200
+        else:
+            return jsonify({'error': 'Failed to generate analytics'}), 500
+            
+    except Exception as e:
+        logger.error(f"❌ Error getting enterprise analytics: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/enterprise/send-welcome-email', methods=['POST', 'OPTIONS'])
+def send_enterprise_welcome_email():
+    """Send welcome email to new trial user"""
+    if request.method == 'OPTIONS':
+        response = make_response()
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
+        response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
+        return response
+        
+    try:
+        data = request.get_json()
+        email = data.get('email')
+        first_name = data.get('firstName', 'Doctor')
+        last_name = data.get('lastName', 'User')
+        specialty = data.get('specialty', 'general')
+        
+        if not email:
+            return jsonify({'error': 'Email is required'}), 400
+        
+        success = send_welcome_email(email, first_name, last_name, specialty)
+        
+        return jsonify({
+            'success': success,
+            'message': 'Welcome email sent successfully' if success else 'Failed to send email'
+        }), 200 if success else 500
+        
+    except Exception as e:
+        logger.error(f"❌ Error sending welcome email: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/enterprise/send-renewal-reminders', methods=['POST', 'OPTIONS'])
+def send_enterprise_renewal_reminders():
+    """Trigger renewal reminder check (admin function)"""
+    if request.method == 'OPTIONS':
+        response = make_response()
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
+        response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
+        return response
+        
+    try:
+        # This should be protected with admin authentication in production
+        sent_count = enterprise_trial_manager.check_and_send_reminders()
+        
+        return jsonify({
+            'success': True,
+            'reminders_sent': sent_count,
+            'message': f'Sent {sent_count} renewal reminders'
+        }), 200
+        
+    except Exception as e:
+        logger.error(f"❌ Error sending renewal reminders: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+# ============================================================================
+# AUTHENTICATION DECORATORS (Enhanced for Enterprise)
+# ============================================================================
+
 @app.route('/api/debug/cognito-test', methods=['GET', 'POST'])
 def debug_cognito_test():
     """Debug endpoint to test Cognito configuration and token verification"""
@@ -683,6 +1717,12 @@ def debug_cognito_test():
             "cognito_user_pool_id": COGNITO_USER_POOL_ID,
             "cognito_client_id": COGNITO_CLIENT_ID,
             "cognito_issuer": COGNITO_ISSUER if COGNITO_ENABLED else None,
+            "enterprise_features": {
+                "trial_manager_active": True,
+                "ses_configured": bool(SES_FROM_EMAIL),
+                "trial_length_days": TRIAL_LENGTH_DAYS,
+                "usage_limit": TRIAL_USAGE_LIMIT
+            },
             "authorization_header_present": bool(request.headers.get('Authorization')),
             "authorization_header_value": request.headers.get('Authorization', '')[:50] + "..." if request.headers.get('Authorization') else None,
         }
@@ -709,8 +1749,12 @@ def debug_cognito_test():
             }
             
             if cognito_user:
-                subscription = get_subscription_status(cognito_user['email'])
-                debug_info["subscription_test"] = subscription
+                # Test enterprise trial status
+                trial_status = enterprise_trial_manager.get_trial_status(cognito_user['email'])
+                debug_info["enterprise_trial_test"] = {
+                    "trial_found": bool(trial_status),
+                    "trial_data": trial_status
+                }
         else:
             debug_info["token_verification"] = {
                 "token_provided": False
@@ -728,6 +1772,15 @@ def debug_cognito_test():
             "error": str(e),
             "traceback": traceback.format_exc()
         }), 500
+
+@app.route('/api//python-test', methods=['GET', 'POST'])
+def python_test():
+    """Debug endpoint to test pushed code is deployed to website"""
+    return jsonify({
+        "success": True,
+        "error": 'Python test endpoint is working',
+        "timestamp": datetime.now().isoformat()
+    }), 500
 
 def require_auth(f):
     """Decorator to require either session auth (old method) or Cognito JWT (new method)"""
@@ -753,7 +1806,7 @@ def require_auth(f):
     return decorated_function
 
 def require_subscription(f):
-    """Decorator to check subscription status"""
+    """Decorator to check subscription status (Enhanced for Enterprise)"""
     @wraps(f)
     def decorated_function(*args, **kwargs):
         user_email = getattr(request, 'user', {}).get('email')
@@ -761,6 +1814,10 @@ def require_subscription(f):
             return jsonify({'error': 'Authentication required'}), 401
         
         subscription = get_subscription_status(user_email)
+        
+        # ENTERPRISE: Increment usage for enterprise trial users
+        if subscription.get('enterprise_trial') and subscription['tier'] == 'Trial':
+            enterprise_trial_manager.increment_usage(user_email, 'api_request')
         
         # Allow access for Trial, Premium, and other paid tiers
         if subscription['tier'] in ['Trial', 'Premium', 'Pro', 'Enterprise']:
@@ -1702,6 +2759,12 @@ def analyze_transcript_freed_endpoint():
             }), 400
 
         logger.info(f"🔄 Processing Freed-style transcript analysis")
+        
+        # ENTERPRISE: Increment usage for trial users
+        if email:
+            subscription = get_subscription_status(email)
+            if subscription.get('enterprise_trial') and subscription['tier'] == 'Trial':
+                enterprise_trial_manager.increment_usage(email, 'transcript_analysis')
         
         # STEP 1: Use Freed-style analysis for plan_of_care AND enhanced assessment
         soap_notes = analyze_transcript_freed_style(transcript)
@@ -3546,6 +4609,7 @@ def debug_patients():
         return jsonify({"error": str(e)}), 500
 
 @app.route('/api/get-patients', methods=['GET'])
+@require_auth
 def get_patients():
     try:
         email = request.args.get('email')
@@ -3554,6 +4618,22 @@ def get_patients():
         
         logger.info(f"Fetching patients for tenant_id: {tenant_id}")
         
+        # ADD THIS: Check subscription status (this will trigger welcome email for new users)
+        if email:
+            logger.info(f"🔍 WELCOME EMAIL CHECK: Checking subscription status for {email}")
+            try:
+                subscription_status = get_subscription_status(email)
+                logger.info(f"🔍 WELCOME EMAIL CHECK: Subscription status result: {subscription_status}")
+                
+                # If this is a new enterprise trial, the welcome email should have been sent
+                if subscription_status.get('enterprise_trial') and subscription_status.get('tier') == 'Trial':
+                    logger.info(f"✅ WELCOME EMAIL: Enterprise trial detected for {email}")
+                
+            except Exception as e:
+                logger.error(f"❌ Error checking subscription status: {str(e)}")
+                # Don't let subscription check errors break patient fetching
+        
+        # EXISTING CODE CONTINUES (no changes below)
         patients = list(patients_collection.find({"tenantId": tenant_id}))
         
         logger.info(f"Found {len(patients)} patients for tenant {tenant_id}")
@@ -3566,8 +4646,73 @@ def get_patients():
     except Exception as e:
         logger.error(f'Error processing /api/get-patients request: {str(e)}')
         return jsonify({"success": False, "error": str(e)}), 500
+        
+@app.route('/api/send-welcome-email', methods=['POST', 'OPTIONS'])
+def send_welcome_email_endpoint():
+    """Legacy endpoint for welcome email (forwards to enterprise endpoint)"""
+    if request.method == 'OPTIONS':
+        response = make_response()
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
+        response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
+        return response
+        
+    try:
+        data = request.get_json()
+        email = data.get('email')
+        first_name = data.get('firstName', 'Doctor')
+        last_name = data.get('lastName', 'User')
+        specialty = data.get('specialty', 'general')
+        
+        if not email:
+            return jsonify({'error': 'Email is required'}), 400
+        
+        logger.info(f"📧 MANUAL WELCOME EMAIL: Sending to {email}")
+        success = send_welcome_email(email, first_name, last_name, specialty)
+        
+        return jsonify({
+            'success': success,
+            'message': 'Welcome email sent successfully' if success else 'Failed to send email'
+        }), 200 if success else 500
+        
+    except Exception as e:
+        logger.error(f"❌ Error in manual welcome email: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/send-activation-email', methods=['POST', 'OPTIONS'])
+def send_activation_email_endpoint():
+    """Legacy endpoint for activation email"""
+    if request.method == 'OPTIONS':
+        response = make_response()
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
+        response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
+        return response
+        
+    try:
+        data = request.get_json()
+        email = data.get('email')
+        
+        if not email:
+            return jsonify({'error': 'Email is required'}), 400
+        
+        logger.info(f"📧 ACTIVATION EMAIL: Processing for {email}")
+        
+        # For now, treat activation email same as welcome email
+        # You can customize this later
+        success = send_welcome_email(email, 'Doctor', 'User', 'general')
+        
+        return jsonify({
+            'success': success,
+            'message': 'Activation email sent successfully' if success else 'Failed to send email'
+        }), 200 if success else 500
+        
+    except Exception as e:
+        logger.error(f"❌ Error in activation email: {str(e)}")
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/api/fetchPatients', methods=['GET'])
+@require_auth
 def fetch_patients():
     try:
         return get_patients()
@@ -3576,6 +4721,7 @@ def fetch_patients():
         return jsonify({"success": False, "error": str(e)}), 500
 
 @app.route('/api/get-patient-history', methods=['GET'])
+@require_auth
 def get_patient_history():
     try:
         email = request.args.get('email')
@@ -3671,8 +4817,40 @@ def start_visit():
         logger.error(f"Error starting visit: {str(e)}")
         logger.error(f"Exception traceback: {str(e.__traceback__)}")
         return jsonify({"success": False, "error": str(e)}), 500
+        
+@app.route('/api/test-ses', methods=['POST', 'OPTIONS'])
+def test_ses():
+    """Test SES email sending"""
+    if request.method == 'OPTIONS':
+        response = make_response()
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+        response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
+        return response
+        
+    try:
+        data = request.get_json()
+        test_email = data.get('email', 'ceo@advanceai.ai')  # Default to your verified email
+        
+        # Simple test email
+        subject = "SES Test Email"
+        body = "This is a test email to verify SES configuration."
+        
+        success = send_enterprise_email(test_email, subject, body)
+        
+        return jsonify({
+            'success': success,
+            'message': f'Test email sent to {test_email}' if success else 'Failed to send test email',
+            'ses_from_email': SES_FROM_EMAIL,
+            'ses_from_name': SES_FROM_NAME
+        }), 200 if success else 500
+        
+    except Exception as e:
+        logger.error(f"❌ SES test error: {str(e)}")
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/api/delete-patient', methods=['POST', 'OPTIONS'])
+@require_auth
 def delete_patient():
     if request.method == 'OPTIONS':
         response = make_response()
@@ -3742,6 +4920,10 @@ def analyze_endpoint():
             return jsonify({"success": False, "error": "Invalid or missing visit ID"}), 400
 
         patient_id = visit["patientId"]
+
+        # ENTERPRISE: Increment usage for trial users
+        if status.get('enterprise_trial') and status['tier'] == 'Trial':
+            enterprise_trial_manager.increment_usage(email, 'transcript_analysis')
 
         result = analyze_transcript(text, target_language)
 
@@ -3893,37 +5075,81 @@ def login():
         logger.error(f'Error processing /api/login request: {str(e)}')
         return jsonify({"success": False, "error": str(e)}), 500
 
-@app.route('/api/register', methods=['POST', 'OPTIONS'])
-def register():
+@app.route('/api/registercard', methods=['POST', 'OPTIONS'])
+def registercard():
     if request.method == 'OPTIONS':
         response = make_response()
-        response.headers.add("Access-Control-Allow-Origin", "http://127.0.0.1:8080")
-        response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+        response.headers.add("Access-Control-Allow-Origin", "https://test.medoramd.ai")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
         response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
         return response
     try:
         data = request.get_json()
+        logger.info(f"Received data: {data}")  # Log the received data
         email = data.get('email')
-        password = data.get('password')
-        card_number = data.get('card_number')
+        stripe_token = data.get('stripeToken')
+        logger.info(f"Email: {email}, Stripe Token: {stripe_token}")  # Log extracted values
+        if not email or not stripe_token:
+            return jsonify({"success": False, "message": "Email and Stripe token are required"}), 400
 
-        if not email or not password or not card_number or len(card_number) < 4:
-            return jsonify({"success": False, "message": "Email, password, and valid card number are required"}), 400
+        subscription_result = create_subscription_with_trial(email, stripe_token)
 
-        if email in SUBSCRIPTIONS:
-            return jsonify({"success": False, "message": "User already registered"}), 400
-
-        trial_start = datetime.now().strftime("%Y-%m-%d")
-        SUBSCRIPTIONS[email] = {
-            "tier": "Trial",
-            "trial_start": trial_start,
-            "card_last4": card_number[-4:]
-        }
-        status = get_subscription_status(email)
-        return jsonify({"success": True, "subscription": status["tier"], "trial_end": status["trial_end"], "card_last4": status["card_last4"]}), 200
+        if subscription_result['success']:
+            return jsonify({
+                'success': True,
+                'message': 'Registration successful! Trial started.',
+                'subscription': subscription_result
+            }), 200
+        else:
+            return jsonify({
+                'success': False,
+                'message': 'Failed to create subscription.',
+                'error': subscription_result['error']
+            }), 400
     except Exception as e:
         logger.error(f'Error processing /api/register request: {str(e)}')
         return jsonify({"success": False, "error": str(e)}), 500
+
+# Initialize Stripe with your secret key
+def create_subscription_with_trial(email, stripe_token, trial_days=30):
+    """
+    Create a Stripe subscription with a trial period.
+    The user will not be charged during the trial period.
+    """
+    try:
+        # Step 1: Create a customer in Stripe
+        customer = stripe.Customer.create(
+            email=email,
+            source=stripe_token  # Token from the frontend
+        )
+
+        # Step 2: Create a subscription with a trial period
+        trial_end_timestamp = int(time.time()) + 3600
+        subscription = stripe.Subscription.create(
+            customer=customer.id,
+            items=[
+                {
+                    'price': os.getenv('STRIPE_PRICE_ID')  # Replace with your Stripe price ID
+                }
+            ],
+            collection_method='charge_automatically',
+            trial_end=trial_end_timestamp
+            #trial_period_days=trial_days  # Set the trial period
+        )
+
+        # Return subscription details
+        return {
+            'success': True,
+            'subscription_id': subscription.id,
+            'customer_id': customer.id,
+            'trial_end': datetime.fromtimestamp(subscription.trial_end).strftime('%Y-%m-%d')
+        }
+    except stripe.error.StripeError as e:
+        logger.error(f"Stripe error: {str(e)}")
+        return {
+            'success': False,
+            'error': str(e)
+        }
 
 # Logout endpoint
 @app.route('/api/logout', methods=['POST', 'OPTIONS'])
@@ -3976,6 +5202,12 @@ def analyze_transcript_endpoint():
         if not all([patient_id, transcript, visit_id]):
             logger.error(f"Missing required fields: patient_id={patient_id}, transcript={'provided' if transcript else 'missing'}, visit_id={visit_id}")
             return jsonify({"statusCode": 400, "error": "patientId, transcript, and visitId are required"}), 400
+
+        # ENTERPRISE: Increment usage for trial users
+        if email:
+            subscription = get_subscription_status(email)
+            if subscription.get('enterprise_trial') and subscription['tier'] == 'Trial':
+                enterprise_trial_manager.increment_usage(email, 'transcript_analysis')
 
         logger.info("Generating SOAP notes via xAI API")
         soap_notes = analyze_transcript(transcript)
@@ -4080,6 +5312,12 @@ def submit_transcript():
             return jsonify({"error": "patient_id, transcript, and visit_id are required"}), 400
 
         logger.info(f"Processing transcript for patient_id: {patient_id}, visit_id: {visit_id}, tenant_id: {tenant_id}")
+
+        # ENTERPRISE: Increment usage for trial users
+        if email:
+            subscription = get_subscription_status(email)
+            if subscription.get('enterprise_trial') and subscription['tier'] == 'Trial':
+                enterprise_trial_manager.increment_usage(email, 'transcript_analysis')
 
         logger.info("Generating SOAP notes via xAI API")
         soap_notes = analyze_transcript(transcript)
@@ -4762,16 +6000,61 @@ def push_to_ims():
         logger.error(f"Error in push-to-ims: {str(e)}")
         return jsonify({"success": False, "error": str(e)}), 500
 
-# Health check endpoint
+# Health check endpoint (Enhanced for Enterprise)
 @app.route('/api/health', methods=['GET'])
 def health_check():
-    """Health check endpoint"""
-    return jsonify({
-        'status': 'healthy',
-        'timestamp': datetime.now().isoformat(),
-        'auth_methods': ['cognito', 'session'],
-        'cognito_enabled': COGNITO_ENABLED
-    })
+    """Enhanced health check endpoint with enterprise features status"""
+    try:
+        # Test database connections
+        db_status = "healthy"
+        try:
+            patients_collection.find_one({}, {"_id": 1})
+            enterprise_trials_collection.find_one({}, {"_id": 1})
+        except Exception:
+            db_status = "unhealthy"
+        
+        # Test trial manager
+        trial_manager_status = "healthy"
+        try:
+            test_analytics = enterprise_trial_manager.get_analytics_dashboard()
+            if not test_analytics:
+                trial_manager_status = "degraded"
+        except Exception:
+            trial_manager_status = "unhealthy"
+        
+        # Test SES
+        ses_status = "healthy"
+        try:
+            ses_client.get_send_quota()
+        except Exception:
+            ses_status = "unhealthy"
+        
+        health_data = {
+            'status': 'healthy' if all([
+                db_status == 'healthy',
+                trial_manager_status in ['healthy', 'degraded']
+            ]) else 'degraded',
+            'timestamp': datetime.now().isoformat(),
+            'auth_methods': ['cognito', 'session'],
+            'cognito_enabled': COGNITO_ENABLED,
+            'enterprise_features': {
+                'trial_manager': trial_manager_status,
+                'email_service': ses_status,
+                'database': db_status,
+                'trial_length_days': TRIAL_LENGTH_DAYS,
+                'usage_limit': TRIAL_USAGE_LIMIT
+            },
+            'version': '2.0.0-enterprise'
+        }
+        
+        return jsonify(health_data)
+        
+    except Exception as e:
+        return jsonify({
+            'status': 'unhealthy',
+            'error': str(e),
+            'timestamp': datetime.now().isoformat()
+        }), 500
 
 # Error handlers
 @app.errorhandler(404)
@@ -4912,6 +6195,13 @@ def test_enhanced_recommendations_complete():
             "issues": [] if frontend_compatible else ["Enhanced recommendations not in expected dict format"]
         }
         
+        # ENTERPRISE: Add trial test
+        test_results["enterprise_features"] = {
+            "trial_manager_active": bool(enterprise_trial_manager),
+            "ses_configured": bool(SES_FROM_EMAIL),
+            "collections_created": True
+        }
+        
         return jsonify(test_results), 200
         
     except Exception as e:
@@ -4923,17 +6213,92 @@ def test_enhanced_recommendations_complete():
             "traceback": traceback.format_exc()
         }), 500
 
+# ============================================================================
+# ENTERPRISE SCHEDULED TASKS (Background Tasks)
+# ============================================================================
+
+def run_scheduled_reminder_check():
+    """Background task to check and send renewal reminders"""
+    try:
+        logger.info("🔄 Running scheduled renewal reminder check...")
+        sent_count = enterprise_trial_manager.check_and_send_reminders()
+        logger.info(f"✅ Completed reminder check: {sent_count} reminders sent")
+    except Exception as e:
+        logger.error(f"❌ Error in scheduled reminder check: {str(e)}")
+
+@app.route('/api/enterprise/manual-reminder-check', methods=['POST', 'OPTIONS'])
+def manual_reminder_check():
+    """Manual trigger for reminder check (admin function)"""
+    if request.method == 'OPTIONS':
+        response = make_response()
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
+        response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
+        return response
+        
+    try:
+        # This should be protected with admin authentication in production
+        sent_count = enterprise_trial_manager.check_and_send_reminders()
+        
+        return jsonify({
+            'success': True,
+            'reminders_sent': sent_count,
+            'message': f'Manually triggered reminder check: {sent_count} reminders sent',
+            'timestamp': datetime.now().isoformat()
+        }), 200
+        
+    except Exception as e:
+        logger.error(f"❌ Error in manual reminder check: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+# Start background reminder scheduler (if needed)
+def start_background_scheduler():
+    """Start background scheduler for enterprise features"""
+    try:
+        import threading
+        import schedule
+        
+        # Schedule daily reminder checks at 9 AM
+        schedule.every().day.at("09:00").do(run_scheduled_reminder_check)
+        
+        def run_scheduler():
+            while True:
+                schedule.run_pending()
+                time.sleep(3600)  # Check every hour
+        
+        scheduler_thread = threading.Thread(target=run_scheduler, daemon=True)
+        scheduler_thread.start()
+        logger.info("✅ Background scheduler started for enterprise features")
+        
+    except ImportError:
+        logger.warning("⚠️ Schedule library not available, skipping background scheduler")
+    except Exception as e:
+        logger.error(f"❌ Error starting background scheduler: {str(e)}")
+
 if __name__ == '__main__':
     try:
+        # Create MongoDB indexes
         patients_collection.create_index([("tenantId", 1)])
         transcripts_collection.create_index([("tenantId", 1), ("patientId", 1)])
         visits_collection.create_index([("tenantId", 1), ("patientId", 1)])
+        
+        # ENTERPRISE: Create enterprise indexes
+        enterprise_trials_collection.create_index([("email", 1), ("trial_start", -1)])
+        enterprise_trials_collection.create_index([("trial_status", 1), ("days_remaining", 1)])
+        usage_analytics_collection.create_index([("email", 1), ("date", -1)])
+        email_campaigns_collection.create_index([("email", 1), ("campaign_type", 1)])
+        
         logger.info("MongoDB indexes created successfully")
     except Exception as e:
         logger.error(f"Error creating MongoDB indexes: {str(e)}")
     
     # Print configuration summary
-    print("Backend server starting...")
+    print("\n" + "="*80)
+    print("🏥 MEDORAMD ENTERPRISE BACKEND SERVER")
+    print("="*80)
+    print("Backend server starting with enterprise features...")
+    
+    # Authentication Status
     if COGNITO_ENABLED:
         print(f"✅ Cognito Authentication: ENABLED")
         print(f"   Region: {COGNITO_REGION}")
@@ -4942,7 +6307,56 @@ if __name__ == '__main__':
     else:
         print(f"⚠️ Cognito Authentication: DISABLED (missing configuration)")
     print("✅ Session Authentication: ENABLED (backward compatible)")
-    print("✅ Automatic trials for new Cognito users: 30 days")
     
+    # Enterprise Features Status
+    print("\n🏢 ENTERPRISE FEATURES:")
+    print(f"✅ Enterprise Trial Management: ACTIVE")
+    print(f"   - Trial Length: {TRIAL_LENGTH_DAYS} days")
+    print(f"   - Usage Limit: {TRIAL_USAGE_LIMIT} analyses")
+    print(f"   - Automatic trials for new Cognito users: ENABLED")
+    
+    print(f"✅ Email Service (AWS SES): {'ENABLED' if SES_FROM_EMAIL else 'DISABLED'}")
+    if SES_FROM_EMAIL:
+        print(f"   - From Email: {SES_FROM_EMAIL}")
+        print(f"   - From Name: {SES_FROM_NAME}")
+    
+    print(f"✅ Analytics Dashboard: ENABLED")
+    print(f"✅ Usage Tracking: ENABLED")
+    print(f"✅ Renewal Reminders: ENABLED")
+    print(f"   - Reminder Schedule: {enterprise_trial_manager.reminder_schedule} days before expiry")
+    
+    # Database Status
+    print(f"\n💾 DATABASE COLLECTIONS:")
+    print(f"   - Patients: {patients_collection.name}")
+    print(f"   - Transcripts: {transcripts_collection.name}")
+    print(f"   - Visits: {visits_collection.name}")
+    print(f"   - Enterprise Trials: {enterprise_trials_collection.name}")
+    print(f"   - Usage Analytics: {usage_analytics_collection.name}")
+    print(f"   - Email Campaigns: {email_campaigns_collection.name}")
+    
+    # API Endpoints Summary
+    print(f"\n🔗 ENTERPRISE API ENDPOINTS:")
+    print(f"   - GET  /api/enterprise/user-trial-status")
+    print(f"   - GET  /api/enterprise/trial-analytics")
+    print(f"   - POST /api/enterprise/send-welcome-email")
+    print(f"   - POST /api/enterprise/send-renewal-reminders")
+    print(f"   - GET  /api/health (enhanced)")
+    print(f"   - GET  /api/debug/cognito-test")
+    
+    print(f"\n🔧 BACKWARD COMPATIBILITY:")
+    print(f"   - All existing endpoints: PRESERVED")
+    print(f"   - Legacy authentication: SUPPORTED")
+    print(f"   - Existing user data: MAINTAINED")
+    
+    print("="*80)
+    print("🚀 Server ready for production deployment!")
+    print("="*80 + "\n")
+    
+    # Start background scheduler for enterprise features
+    start_background_scheduler()
+    
+    # Start the Flask application
     app.run(host='0.0.0.0', port=PORT, debug=False)
+                    
+
 

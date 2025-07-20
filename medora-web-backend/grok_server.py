@@ -1,5 +1,6 @@
 import base64
-from flask import Flask, request, jsonify, make_response, session
+import stripe
+from flask import Flask, request, jsonify, make_response, session, send_from_directory, redirect, url_for
 from flask_cors import CORS
 import logging
 import os
@@ -15,8 +16,6 @@ import time
 import certifi
 import xml.etree.ElementTree as ET
 import re
-from jose.utils import base64url_decode
-import time
 import traceback
 from requests.exceptions import HTTPError
 import jwt
@@ -24,8 +23,9 @@ from jwt.algorithms import RSAAlgorithm
 from concurrent.futures import ThreadPoolExecutor, as_completed, TimeoutError as FuturesTimeoutError
 from typing import List, Dict, Tuple, Optional
 from functools import wraps
-import hashlib
-from datetime import datetime, timedelta
+from stripe_subscription import create_subscription_with_trial, get_stripe_subscriptions, get_stripe_transactions
+
+# Add this right after your imports, before the Flask app initialization
 import time
 import asyncio
 from functools import wraps
@@ -41,23 +41,7 @@ from email import encoders
 import threading
 from collections import defaultdict
 
-# Simple token blacklist (in production, use Redis or database)
-token_blacklist = set()
-
-def hash_token(token):
-    """Create a hash of the token for blacklisting"""
-    return hashlib.sha256(token.encode()).hexdigest()
-
-def is_token_blacklisted(token):
-    """Check if a token is blacklisted"""
-    token_hash = hash_token(token)
-    return token_hash in token_blacklist
-
-def blacklist_token(token):
-    """Add token to blacklist"""
-    token_hash = hash_token(token)
-    token_blacklist.add(token_hash)
-    logger.info(f"Token blacklisted: {token_hash[:16]}...")
+# Add these helper functions to your Flask app if they don't exist
 
 def safe_string_extract(data, key, default="N/A", max_length=None):
     """
@@ -366,13 +350,6 @@ load_dotenv()
 # Initialize Flask app
 app = Flask(__name__)
 
-app.permanent_session_lifetime = timedelta(hours=24)  # 24 hour sessions
-
-@app.before_request
-def extend_session():
-    """Extend session lifetime"""
-    session.permanent = True
-
 # Add this single function - minimal impact approach
 @app.after_request
 def add_cache_headers(response):
@@ -384,21 +361,9 @@ def add_cache_headers(response):
     return response
 
 CORS(app, resources={
-    r"/api/*": {
-        "origins": ["http://127.0.0.1:8080", "http://localhost:8080", "https://test.medoramd.ai"],
-        "methods": ["GET", "POST", "OPTIONS"],
-        "allow_headers": ["Content-Type", "Authorization"]
-    },
-    r"/submit-transcript": {
-        "origins": ["https://test.medoramd.ai"],
-        "methods": ["POST", "OPTIONS"],
-        "allow_headers": ["Content-Type", "Authorization"]
-    },
-    r"/get-insights": {
-        "origins": ["https://test.medoramd.ai"],
-        "methods": ["GET", "OPTIONS"],
-        "allow_headers": ["Content-Type", "Authorization"]
-    }
+    r"/api/*": {"origins": ["http://127.0.0.1:8080", "http://localhost:8080", "https://test.medoramd.ai"], "methods": ["GET", "POST", "OPTIONS"]},
+    r"/submit-transcript": {"origins": ["https://test.medoramd.ai"], "methods": ["POST", "OPTIONS"]},
+    r"/get-insights": {"origins": ["https://test.medoramd.ai"], "methods": ["GET", "OPTIONS"]}
 })
 
 # Configure logging
@@ -458,7 +423,7 @@ app.secret_key = os.getenv('SECRET_KEY', 'your-fallback-secret-key-change-this')
 COGNITO_REGION = os.getenv('COGNITO_REGION')
 COGNITO_USER_POOL_ID = os.getenv('COGNITO_USER_POOL_ID')
 COGNITO_CLIENT_ID = os.getenv('COGNITO_CLIENT_ID')
-
+stripe.api_key = os.getenv('STRIPE_SECRET_KEY')
 # Validate Cognito environment variables
 if not all([COGNITO_REGION, COGNITO_USER_POOL_ID, COGNITO_CLIENT_ID]):
     logger.warning("Cognito environment variables not fully configured. Cognito authentication will be disabled.")
@@ -1369,14 +1334,9 @@ def get_cognito_public_keys():
     return cognito_keys
 
 def verify_cognito_token(token):
-    """Verify and decode Cognito JWT token with blacklist check"""
+    """Verify and decode Cognito JWT token with enhanced debugging"""
     if not COGNITO_ENABLED:
         logger.warning("🔍 DEBUG: Cognito not enabled, skipping token verification")
-        return None
-    
-    # CHECK BLACKLIST FIRST - THIS IS THE KEY FIX
-    if is_token_blacklisted(token):
-        logger.warning("🔍 DEBUG: Token is blacklisted - user logged out")
         return None
         
     try:
@@ -1454,70 +1414,43 @@ def verify_cognito_token(token):
         logger.error(f"🔍 DEBUG: Token verification error: {str(e)}")
         logger.error(f"🔍 DEBUG: Full error traceback: {traceback.format_exc()}")
         return None
-        
+
+
 def get_user_from_token():
-    """Enhanced user extraction from JWT token"""
+    """Extract user information from Cognito token with enhanced debugging"""
     auth_header = request.headers.get('Authorization')
+    logger.info(f"🔍 DEBUG: Authorization header present: {bool(auth_header)}")
     
     if not auth_header:
-        logger.debug("🔍 No Authorization header")
+        logger.info(f"🔍 DEBUG: No Authorization header found")
         return None
         
     if not auth_header.startswith('Bearer '):
-        logger.debug(f"🔍 Invalid auth header: {auth_header[:30]}...")
+        logger.info(f"🔍 DEBUG: Authorization header doesn't start with 'Bearer ': {auth_header[:20]}...")
         return None
         
     token = auth_header.split(' ')[1]
-    logger.debug(f"🔍 Token received, length: {len(token)}")
+    logger.info(f"🔍 DEBUG: Extracted token (first 20 chars): {token[:20]}...")
+    logger.info(f"🔍 DEBUG: Token length: {len(token)}")
     
-    # Try Cognito token verification first
-    try:
-        # Quick check if it looks like a Cognito token
-        claims = jose_jwt.get_unverified_claims(token)
-        
-        # Check if it's a Cognito token
-        if 'cognito' in claims.get('iss', '') or claims.get('token_use') in ['access', 'id']:
-            logger.info("🔍 Detected Cognito token")
-            
-            decoded_token = verify_cognito_token(token)
-            if decoded_token:
-                user_info = {
-                    'email': decoded_token.get('email'),
-                    'username': decoded_token.get('cognito:username'),
-                    'sub': decoded_token.get('sub'),
-                    'first_name': decoded_token.get('given_name', 'Doctor'),
-                    'last_name': decoded_token.get('family_name', 'User'),
-                    'specialty': decoded_token.get('custom:specialty', 'general'),
-                    'auth_type': 'cognito_jwt'
-                }
-                logger.info(f"✅ Cognito user verified: {user_info['email']}")
-                return user_info
-        
-        # Try simple JWT verification (for fallback tokens)
-        try:
-            decoded = jwt.decode(
-                token,
-                app.secret_key,
-                algorithms=['HS256'],
-                options={"verify_aud": False, "verify_iss": False}
-            )
-            
-            user_info = {
-                'email': decoded.get('email'),
-                'first_name': decoded.get('first_name', 'Doctor'),
-                'last_name': decoded.get('last_name', 'User'),
-                'specialty': decoded.get('specialty', 'general'),
-                'auth_type': 'simple_jwt'
-            }
-            logger.info(f"✅ Simple JWT user verified: {user_info['email']}")
-            return user_info
-            
-        except Exception as jwt_error:
-            logger.debug(f"Simple JWT verification failed: {str(jwt_error)}")
-            
-    except Exception as e:
-        logger.error(f"❌ Token verification error: {str(e)}")
+    decoded_token = verify_cognito_token(token)
+    logger.info(f"🔍 DEBUG: Token verification result: {bool(decoded_token)}")
     
+    if decoded_token:
+        user_info = {
+            'email': decoded_token.get('email'),
+            'username': decoded_token.get('cognito:username'),
+            'sub': decoded_token.get('sub'),
+            'first_name': decoded_token.get('given_name'),
+            'last_name': decoded_token.get('family_name'),
+            'specialty': decoded_token.get('custom:specialty', 'general'),
+            'auth_type': 'cognito'
+        }
+        logger.info(f"✅ DEBUG: Successfully extracted user info: {user_info}")
+        return user_info
+    else:
+        logger.warning(f"❌ DEBUG: Token verification failed")
+        
     return None
 
 def get_subscription_status(email):
@@ -1838,6 +1771,15 @@ def debug_cognito_test():
             "error": str(e),
             "traceback": traceback.format_exc()
         }), 500
+
+@app.route('/api//python-test', methods=['GET', 'POST'])
+def python_test():
+    """Debug endpoint to test pushed code is deployed to website"""
+    return jsonify({
+        "success": True,
+        "error": 'Python test endpoint is working',
+        "timestamp": datetime.now().isoformat()
+    }), 500
 
 def require_auth(f):
     """Decorator to require either session auth (old method) or Cognito JWT (new method)"""
@@ -2341,32 +2283,311 @@ def create_intelligent_allergen_defaults(soap_notes):
     
     return defaults
 
+
+def remove_generic_subjective_language_aggressive(soap_notes):
+    """
+    AGGRESSIVE FIX: Remove all variations of the generic subjective language
+    """
+    try:
+        if "patient_history" in soap_notes and isinstance(soap_notes["patient_history"], dict):
+            hpi = soap_notes["patient_history"].get("history_of_present_illness", "")
+            
+            if isinstance(hpi, str):
+                original_hpi = hpi
+                logger.info(f"🔍 BEFORE CLEANING: HPI length = {len(hpi)} chars")
+                
+                # List of ALL variations of the problematic text
+                problematic_phrases = [
+                    "The symptoms have persisted, affecting the patient's daily activities and quality of life. The patient reports the onset and progression of symptoms, including any triggering factors, duration, and associated complaints.",
+                    "The symptoms have persisted, affecting the patient's daily activities and quality of life. The patient reports the onset and progression of symptoms, including any triggering factors, duration, and associated complaints",
+                    "The symptoms have persisted, affecting the patient's daily activities and quality of life",
+                    "The patient reports the onset and progression of symptoms, including any triggering factors, duration, and associated complaints",
+                    "The patient reports the onset and progression of symptoms, including any triggering factors, duration, and associated complaints.",
+                    "affecting the patient's daily activities and quality of life",
+                    "including any triggering factors, duration, and associated complaints"
+                ]
+                
+                # Remove each problematic phrase
+                for phrase in problematic_phrases:
+                    if phrase in hpi:
+                        hpi = hpi.replace(phrase, "")
+                        logger.info(f"✅ REMOVED: '{phrase[:50]}...'")
+                
+                # Clean up any resulting formatting issues
+                hpi = re.sub(r'\.\s*\.+', '.', hpi)       # Remove multiple periods
+                hpi = re.sub(r'^\.\s*', '', hpi)         # Remove leading periods
+                hpi = re.sub(r'\s*\.\s*$', '.', hpi)     # Fix ending periods
+                hpi = re.sub(r'\s+', ' ', hpi)           # Clean up extra spaces
+                hpi = hpi.strip()
+                
+                # If we removed too much content, keep what's left or create minimal content
+                if not hpi or len(hpi) < 20:
+                    hpi = "Patient presents for evaluation and management of allergic reactions and dietary sensitivities"
+                    logger.info("⚠️ HPI was too short after cleaning, used fallback content")
+                elif hpi.endswith(',') or hpi.endswith(' and'):
+                    # Fix incomplete sentences
+                    hpi = re.sub(r',\s*$', '.', hpi)
+                    hpi = re.sub(r'\s+and\s*$', '.', hpi)
+                
+                # Update the HPI
+                soap_notes["patient_history"]["history_of_present_illness"] = hpi
+                
+                logger.info(f"🔍 AFTER CLEANING: HPI length = {len(hpi)} chars")
+                
+                # Log the change if it occurred
+                if original_hpi != hpi:
+                    logger.info(f"✅ SUBJECTIVE CLEANED: Removed generic language")
+        
+        return soap_notes
+        
+    except Exception as e:
+        logger.error(f"Error in aggressive subjective cleaning: {str(e)}")
+        return soap_notes
+
+
+
+def ultimate_debug_hpi_flow(soap_notes, step_name):
+    """
+    Ultimate debugging to track HPI through every step
+    """
+    try:
+        hpi = soap_notes.get("patient_history", {}).get("history_of_present_illness", "")
+        
+        # Check for the problematic text
+        has_problem = ("daily activities and quality of life" in hpi or
+                      "onset and progression of symptoms" in hpi or
+                      "triggering factors, duration, and associated complaints" in hpi)
+        
+        status = "🚨 PROBLEM FOUND" if has_problem else "✅ CLEAN"
+        
+        logger.info(f"🔍 {step_name} - {status}")
+        logger.info(f"🔍 HPI LENGTH: {len(hpi)}")
+        logger.info(f"🔍 HPI CONTENT: {hpi}")
+        
+        if has_problem:
+            # Show exactly where the problem text is
+            if "daily activities and quality of life" in hpi:
+                logger.info(f"🚨 FOUND: 'daily activities and quality of life'")
+            if "onset and progression of symptoms" in hpi:
+                logger.info(f"🚨 FOUND: 'onset and progression of symptoms'")
+            if "triggering factors, duration, and associated complaints" in hpi:
+                logger.info(f"🚨 FOUND: 'triggering factors, duration, and associated complaints'")
+        
+        logger.info(f"🔍 {step_name} - END")
+        logger.info("="*60)
+        
+    except Exception as e:
+        logger.error(f"Debug error at {step_name}: {str(e)}")
+
+
+
+def remove_any_generic_content(soap_notes):
+    """
+    AGGRESSIVE REMOVAL: Catch any variation of generic template language
+    """
+    try:
+        if ("patient_history" in soap_notes and
+            isinstance(soap_notes["patient_history"], dict) and
+            "history_of_present_illness" in soap_notes["patient_history"]):
+            
+            hpi = soap_notes["patient_history"]["history_of_present_illness"]
+            
+            if isinstance(hpi, str):
+                original_hpi = hpi
+                logger.info(f"🔍 BEFORE AGGRESSIVE REMOVAL: {hpi}")
+                
+                # AGGRESSIVE PATTERN MATCHING - catch any variation
+                generic_patterns = [
+                    # Exact matches first
+                    r"The symptoms have persisted, affecting the patient's daily activities and quality of life\.?\s*The patient reports the onset and progression of symptoms, including any triggering factors, duration, and associated complaints\.?",
+                    r"The symptoms have persisted, affecting the patient's daily activities and quality of life\.?",
+                    r"The patient reports the onset and progression of symptoms, including any triggering factors, duration, and associated complaints\.?",
+                    
+                    # Partial matches - catch sentence fragments
+                    r"[^.]*affecting the patient's daily activities and quality of life[^.]*\.",
+                    r"[^.]*onset and progression of symptoms[^.]*\.",
+                    r"[^.]*triggering factors, duration, and associated complaints[^.]*\.",
+                    
+                    # Key phrase combinations that often appear together
+                    r"symptoms have persisted[^.]*daily activities[^.]*quality of life",
+                    r"patient reports[^.]*onset and progression[^.]*symptoms",
+                    r"triggering factors[^.]*duration[^.]*associated complaints",
+                    
+                    # Standalone problematic phrases
+                    r"daily activities and quality of life",
+                    r"onset and progression of symptoms",
+                    r"triggering factors, duration, and associated complaints",
+                    r"affecting the patient's daily activities",
+                    r"including any triggering factors"
+                ]
+                
+                # Apply all patterns
+                removed_something = False
+                for pattern in generic_patterns:
+                    if re.search(pattern, hpi, re.IGNORECASE):
+                        hpi_before = hpi
+                        hpi = re.sub(pattern, "", hpi, flags=re.IGNORECASE)
+                        if hpi != hpi_before:
+                            removed_something = True
+                            logger.info(f"🗑️ REMOVED PATTERN: {pattern}")
+                
+                # Additional cleanup for common generic sentence starters
+                generic_starters = [
+                    r"The symptoms have persisted[^.]*\.",
+                    r"The patient reports the[^.]*\.",
+                    r"Patient reports[^.]*onset[^.]*\."
+                ]
+                
+                for starter in generic_starters:
+                    if re.search(starter, hpi, re.IGNORECASE):
+                        # Only remove if it contains generic keywords
+                        match = re.search(starter, hpi, re.IGNORECASE)
+                        if match and any(keyword in match.group().lower() for keyword in [
+                            "daily activities", "quality of life", "onset and progression",
+                            "triggering factors", "duration", "associated complaints"
+                        ]):
+                            hpi = re.sub(starter, "", hpi, flags=re.IGNORECASE)
+                            removed_something = True
+                            logger.info(f"🗑️ REMOVED GENERIC STARTER: {starter}")
+                
+                # Clean up formatting issues
+                hpi = re.sub(r'\s+', ' ', hpi)  # Multiple spaces
+                hpi = re.sub(r'\.\.+', '.', hpi)  # Multiple periods
+                hpi = re.sub(r'\.\s*,', '.', hpi)  # Period comma
+                hpi = re.sub(r',\s*\.', '.', hpi)  # Comma period
+                hpi = re.sub(r'^\.\s*', '', hpi)  # Leading period
+                hpi = re.sub(r'\s*\.\s*$', '.', hpi)  # Clean ending
+                hpi = hpi.strip()
+                
+                # If HPI becomes too short or empty after aggressive removal, use fallback
+                if len(hpi.strip()) < 20:
+                    hpi = "Patient presents for allergy evaluation and management as discussed during visit."
+                    logger.info(f"🔧 USED FALLBACK: HPI too short after removal")
+                
+                # Ensure proper sentence ending
+                if hpi and not hpi.endswith(('.', '!', '?')):
+                    hpi = hpi.rstrip('.,;') + '.'
+                
+                # Update the HPI
+                soap_notes["patient_history"]["history_of_present_illness"] = hpi
+                
+                logger.info(f"🔍 AFTER AGGRESSIVE REMOVAL: {hpi}")
+                
+                if removed_something:
+                    logger.info(f"✅ AGGRESSIVELY CLEANED HPI")
+                    logger.info(f"📊 LENGTH CHANGE: {len(original_hpi)} -> {len(hpi)} characters")
+                else:
+                    logger.info(f"✅ NO GENERIC CONTENT FOUND")
+        
+        return soap_notes
+        
+    except Exception as e:
+        logger.error(f"Error in aggressive generic removal: {str(e)}")
+        return soap_notes
+
+
+def validate_final_hpi_is_clean(soap_notes):
+    """
+    FINAL VALIDATION: Ensure absolutely no generic content remains
+    """
+    try:
+        hpi = soap_notes.get("patient_history", {}).get("history_of_present_illness", "")
+        
+        # Check for any remaining generic indicators
+        generic_indicators = [
+            "daily activities and quality of life",
+            "onset and progression of symptoms",
+            "triggering factors, duration, and associated complaints",
+            "symptoms have persisted",
+            "affecting the patient's daily activities",
+            "including any triggering factors"
+        ]
+        
+        found_generic = []
+        for indicator in generic_indicators:
+            if indicator.lower() in hpi.lower():
+                found_generic.append(indicator)
+        
+        if found_generic:
+            logger.error(f"🚨 FINAL VALIDATION FAILED: Still contains generic content")
+            logger.error(f"🚨 Found indicators: {found_generic}")
+            logger.error(f"🚨 Full HPI: {hpi}")
+            
+            # Emergency replacement with completely safe content
+            soap_notes["patient_history"]["history_of_present_illness"] = "Patient presents for allergy evaluation and management as discussed during visit."
+            logger.info(f"🚆 EMERGENCY REPLACEMENT: Used completely safe HPI")
+            
+        else:
+            logger.info(f"✅ FINAL VALIDATION PASSED: HPI is completely clean")
+            
+    except Exception as e:
+        logger.error(f"Error in final HPI validation: {str(e)}")
+    
+    return soap_notes
+
+
+def log_ai_soap_generation(soap_text, step_name):
+    """
+    Enhanced logging to catch when AI generates generic content
+    """
+    try:
+        logger.info(f"🔍 AI SOAP ANALYSIS - {step_name}")
+        logger.info(f"📝 Full response length: {len(soap_text)}")
+        
+        # Check for problematic patterns in raw AI response
+        forbidden_checks = {
+            "daily_activities": "daily activities" in soap_text.lower(),
+            "quality_of_life": "quality of life" in soap_text.lower(),
+            "onset_progression": "onset and progression" in soap_text.lower(),
+            "triggering_factors": "triggering factors" in soap_text.lower(),
+            "associated_complaints": "associated complaints" in soap_text.lower()
+        }
+        
+        for check, found in forbidden_checks.items():
+            status = "🚨 FOUND" if found else "✅ CLEAN"
+            logger.info(f"🔍 {check}: {status}")
+        
+        # If any forbidden content found, log the relevant section
+        if any(forbidden_checks.values()):
+            logger.warning(f"🚨 AI GENERATED FORBIDDEN CONTENT!")
+            # Try to extract HPI section from raw response for analysis
+            if "history_of_present_illness" in soap_text.lower():
+                hpi_start = soap_text.lower().find("history_of_present_illness")
+                hpi_section = soap_text[hpi_start:hpi_start+500] if hpi_start != -1 else "Not found"
+                logger.warning(f"🚨 HPI section from AI: {hpi_section}")
+        
+        logger.info("="*60)
+        
+    except Exception as e:
+        logger.error(f"Error in AI SOAP analysis: {str(e)}")
+
+
 def analyze_transcript_freed_style(text, target_language="EN"):
     """
-    ENHANCED: Generate Freed-style plans AND detailed professional Assessment with forced bullet formatting
+    ENHANCED: Generate allergy-focused SOAP notes with professional Assessment
+    FULL DEBUG: Track the problematic text through every step
+    WITH AGGRESSIVE GENERIC CONTENT REMOVAL
     """
-    # First, extract conditions from the transcript
+    
+    # STEP 1: Extract allergy/immunology conditions
     conditions_prompt = f"""
-    You are a medical AI analyzing a doctor-patient conversation. Your task is to identify the PRIMARY MEDICAL CONDITIONS/DIAGNOSES discussed in this transcript.
+    You are an allergist/immunologist AI analyzing a patient conversation. Extract the PRIMARY ALLERGY/IMMUNOLOGY CONDITIONS discussed:
 
     TRANSCRIPT: {text}
 
     INSTRUCTIONS:
-    1. Identify ONLY the actual medical conditions/diagnoses that were explicitly discussed by the doctor
-    2. Use proper medical terminology for conditions (e.g., "Urticaria", "Contact Dermatitis", "Suspected Shellfish Allergy")
-    3. Do NOT list general topics - only actual medical conditions
-    4. Return as a simple JSON list of medical conditions
+    1. Identify only allergy, asthma, and immunology conditions discussed
+    2. Use proper medical terminology (e.g., "Allergic Rhinitis", "Urticaria", "Food Allergy")
+    3. Return as JSON list
 
     OUTPUT FORMAT:
     {{
         "conditions": [
             "Urticaria",
-            "Contact Dermatitis", 
-            "Suspected Shellfish Allergy"
+            "Allergic Rhinitis", 
+            "Food Allergy"
         ]
     }}
-
-    Only include actual medical conditions that the doctor diagnosed or evaluated.
     """
 
     headers = {
@@ -2377,7 +2598,7 @@ def analyze_transcript_freed_style(text, target_language="EN"):
     conditions_payload = {
         "model": "grok-2-1212",
         "messages": [
-            {"role": "system", "content": "You are a medical AI that identifies only actual medical conditions/diagnoses from transcripts. Use proper medical terminology. Return only valid JSON."},
+            {"role": "system", "content": "You are an allergist AI extracting allergy/immunology conditions. Return JSON only."},
             {"role": "user", "content": conditions_prompt}
         ],
         "max_tokens": 500,
@@ -2403,63 +2624,48 @@ def analyze_transcript_freed_style(text, target_language="EN"):
                 pass
         
         if not conditions:
-            conditions = ["Current medical concerns"]
+            conditions = ["Allergic condition"]
             
-        logger.info(f"Extracted conditions: {conditions}")
+        logger.info(f"Extracted allergy conditions: {conditions}")
         
     except Exception as e:
         logger.error(f"Error extracting conditions: {str(e)}")
-        conditions = ["Current medical concerns"]
+        conditions = ["Allergic condition"]
 
-    # ENHANCED: Generate assessment data with EXPLICIT formatting requirements
+    # STEP 2: Generate allergy-focused assessment
     assessment_prompt = f"""
-You are a board-certified allergist/immunologist creating assessment bullet points.
+You are an allergist/immunologist creating assessment bullet points for allergy conditions.
 
 TRANSCRIPT: {text}
 
-IDENTIFIED CONDITIONS: {', '.join(conditions)}
+IDENTIFIED ALLERGY CONDITIONS: {', '.join(conditions)}
 
-CRITICAL FORMATTING REQUIREMENTS - FOLLOW EXACTLY:
-You MUST use this EXACT format with proper spacing:
+Create professional allergy assessment format:
 
-1. [Condition Name]:
+1. [Allergy Condition Name]:
 
-- [Complete clinical sentence about this condition]
-- [Another complete clinical sentence]
-- [Another complete clinical sentence]
+- [Clinical point about this allergy condition from transcript]
+- [Another clinical point about this condition]
+- [Third clinical point if relevant]
 
-2. [Next Condition Name]:
+2. [Next Allergy Condition]:
 
-- [Complete clinical sentence about this condition]
-- [Another complete clinical sentence]
-
-PERFECT EXAMPLE:
-1. Urticaria:
-
-- Patient presents with 3-month history of widespread urticaria affecting bilateral extremities
-- Daily recurrence of symptoms despite previous antihistamine therapy
-- Previous treatment with Zyrtec provided temporary relief but symptoms recurred after discontinuation
-
-2. Autoimmune Condition:
-
-- Patient has history of autoimmune condition previously treated with immunosuppressive therapy
-- Current symptoms may be related to underlying autoimmune process
+- [Clinical point about this condition]
+- [Another clinical point]
 
 REQUIREMENTS:
-- Each condition gets a numbered header ending with colon
-- Blank line after each header
-- Each bullet point is a complete medical sentence
-- Only include information explicitly mentioned in the transcript
-- Use professional medical language
-- Include specific details when mentioned (dates, medications, symptoms)
+- Focus on allergy, asthma, and immunology aspects
+- Use numbered headers with colons
+- Include specific details from transcript (medications, timelines, triggers)
+- Professional allergist language
 
-Generate assessment now using EXACT formatting:
+Generate allergy assessment now:
 """
 
     assessment_payload = {
         "model": "grok-2-1212",
         "messages": [
-            {"role": "system", "content": "You are a medical professional creating formatted assessment bullet points. Follow the exact formatting requirements with numbered headers, blank lines, and bullet points."},
+            {"role": "system", "content": "You are an allergist creating professional assessment bullet points for allergy conditions."},
             {"role": "user", "content": assessment_prompt}
         ],
         "max_tokens": 1500,
@@ -2474,173 +2680,263 @@ Generate assessment now using EXACT formatting:
 
         if "choices" in result and len(result["choices"]) > 0:
             raw_assessment = result["choices"][0]["message"]["content"]
-            
-            # FORCE PROPER BULLET FORMATTING
             enhanced_assessment = force_bullet_formatting(raw_assessment, conditions)
-            logger.info(f"Generated and formatted assessment: {enhanced_assessment[:200]}...")
+            logger.info(f"Generated allergy assessment: {enhanced_assessment[:200]}...")
 
-        # Fallback if assessment generation fails
         if not enhanced_assessment or len(enhanced_assessment.strip()) < 50:
             enhanced_assessment = create_fallback_assessment_formatted(conditions, text)
 
     except Exception as e:
-        logger.error(f"Error generating enhanced assessment: {str(e)}")
+        logger.error(f"Error generating allergy assessment: {str(e)}")
         enhanced_assessment = create_fallback_assessment_formatted(conditions, text)
 
-    # Professional Freed-style plan generation (keeping existing format)
-    freed_prompt = f"""
-    You are an expert allergist creating a treatment plan in Dr. Freed's professional style.
+    # STEP 3: Generate allergy treatment plan
+    plan_prompt = f"""
+    You are an expert allergist creating a treatment plan for allergy conditions.
 
     TRANSCRIPT: {text}
 
-    IDENTIFIED CONDITIONS: {', '.join(conditions)}
+    IDENTIFIED ALLERGY CONDITIONS: {', '.join(conditions)}
 
-    INSTRUCTIONS - Create professional Assessment & Plan format:
-    1. Start with "Assessment & Plan" header
-    2. Use "In regards to [Specific Condition]:" headers  
-    3. Write patient history context in paragraph format
-    4. Use simple dashes (-) for plan items, NOT asterisks
-    5. Include EXACT dosages, frequencies, and durations when mentioned
-    6. Add escalation protocols for medications if discussed
-    7. ONLY include what was explicitly mentioned in the conversation
-    8. Use professional medical documentation format
-
-    CLEAN FORMAT EXAMPLE:
+    Create professional allergy treatment plan format:
 
     Assessment & Plan
 
-    In regards to Chronic Urticaria:
-    Patient experienced 3-month history of widespread urticaria affecting legs, eyes, and arms with daily recurrence. Previous treatments with Zyrtec and prednisone provided temporary relief. Discussed potential triggers including stress and recent vitamin D supplementation. Noted previous emergency room evaluation with normal results.
+    In regards to [Specific Allergy Condition]:
+    [Context about this allergy condition from transcript]
 
     Plan:
-    - Start Claritin (loratadine) 10 mg by mouth daily for at least 1-3 months
-    - May increase to twice daily if symptoms persist
-    - Discontinue all vitamin supplements, including vitamin D
-    - Perform environmental allergen testing tomorrow at 1 PM
-    - Follow-up in one month to assess response to treatment
+    - [Specific allergy treatment from transcript]
+    - [Another allergy intervention from transcript]
+    - [Follow-up plan from transcript]
 
-    CRITICAL: Base everything on the actual conversation. Do not add standard medical advice that wasn't discussed.
+    Focus on allergy management, medications, testing, and follow-up.
+    Use ONLY what was discussed in the conversation.
 
-    Generate the professional Assessment & Plan now:
+    Generate the allergy treatment plan now:
     """
 
-    main_payload = {
+    plan_payload = {
         "model": "grok-2-1212",
         "messages": [
-            {"role": "system", "content": "You are Dr. Freed creating enhanced treatment plans. Use professional format with specific dosing and clear action items. Only document what was discussed in the conversation. Use simple dashes for plan items."},
-            {"role": "user", "content": freed_prompt}
+            {"role": "system", "content": "You are an allergist creating treatment plans. Use professional allergy management format with specific interventions."},
+            {"role": "user", "content": plan_prompt}
         ],
         "max_tokens": 2500,
         "temperature": 0.1
     }
 
+    freed_plan = ""
     try:
-        response = requests.post(XAI_API_URL, headers=headers, json=main_payload, timeout=45)
+        response = requests.post(XAI_API_URL, headers=headers, json=plan_payload, timeout=45)
         response.raise_for_status()
         result = response.json()
 
-        freed_plan = ""
         if "choices" in result and len(result["choices"]) > 0:
             freed_plan = result["choices"][0]["message"]["content"]
-            logger.info(f"Generated enhanced Freed-style plan: {freed_plan}")
+            logger.info(f"Generated allergy treatment plan")
 
-        # Fallback if plan generation fails
         if not freed_plan or len(freed_plan.strip()) < 50:
-            freed_plan = f"Assessment & Plan\n\nIn regards to {conditions[0]}:\nClinical evaluation and treatment plan discussed during visit.\n\nPlan:\n- Continue current management approach as outlined\n- Follow-up as scheduled"
+            freed_plan = f"Assessment & Plan\n\nIn regards to {conditions[0]}:\nAllergy evaluation and management discussed.\n\nPlan:\n- Continue current allergy management\n- Follow-up as scheduled"
 
-        # Generate other SOAP sections (requesting STRINGS for frontend compatibility)
-        standard_soap_prompt = f"""
-        Analyze the following medical transcript and provide detailed SOAP notes in JSON format:
+    except Exception as e:
+        logger.error(f"Error generating allergy plan: {str(e)}")
+        freed_plan = f"Assessment & Plan\n\nIn regards to {conditions[0]}:\nAllergy evaluation and management discussed.\n\nPlan:\n- Continue current allergy management\n- Follow-up as scheduled"
 
-        TRANSCRIPT: {text}
+    # STEP 4: Generate other SOAP sections (TARGETED FIX FOR HPI ONLY)
+    standard_soap_prompt = f"""
+    You are an allergist/immunologist creating SOAP notes from a patient conversation about allergies, asthma, or immunology.
 
-        IMPORTANT: Return SIMPLE STRING VALUES for all fields for frontend compatibility.
+    TRANSCRIPT: {text}
 
-        Provide comprehensive analysis for:
-        - patient_history (chief_complaint, history_of_present_illness, past_medical_history, allergies, social_history, review_of_systems) - ALL as simple strings
-        - physical_examination - as simple string
-        - diagnostic_workup - as simple string
-        - patient_education - as simple string
-        - follow_up_instructions - as simple string
-        - summary - as simple string
+    🎯 CRITICAL FOR HISTORY OF PRESENT ILLNESS ONLY:
+    Write the actual allergy/asthma story of this specific patient using facts from the conversation.
 
-        Output in JSON format with these exact field names and STRING values only.
-        """
+    EXAMPLES OF GOOD ALLERGY-FOCUSED HPI:
+    ✅ "Patient experienced urticaria one month ago following consumption of pasta and chicken with sauce at the beach. Hives lasted approximately 2 weeks and resolved without specific treatment. Blood tests revealed allergies to egg whites and milk, though patient continues milk consumption without reactions."
+    
+    ✅ "Patient reports seasonal allergic rhinitis symptoms including nasal congestion, sneezing, and itchy eyes occurring primarily during spring months. Currently managed with daily antihistamine and nasal corticosteroid spray."
+    
+    ✅ "Patient has history of asthma diagnosed in childhood, currently using albuterol rescue inhaler 2-3 times weekly and daily maintenance inhaler. Reports good symptom control with current regimen."
 
-        soap_payload = {
-            "model": "grok-2-1212",
-            "messages": [
-                {"role": "system", "content": "You are a medical scribe AI. Generate comprehensive SOAP notes in JSON format with STRING values only for frontend compatibility."},
-                {"role": "user", "content": standard_soap_prompt}
-            ],
-            "max_tokens": 2500,
-            "temperature": 0.2
-        }
+    🚨 ABSOLUTELY FORBIDDEN IN HPI - DO NOT WRITE THESE PHRASES:
+    ❌ "The symptoms have persisted, affecting the patient's daily activities and quality of life"
+    ❌ "The patient reports the onset and progression of symptoms, including any triggering factors, duration, and associated complaints"
+    ❌ "daily activities and quality of life"
+    ❌ "onset and progression of symptoms"
+    ❌ "triggering factors, duration, and associated complaints"
+    ❌ Any generic template language about "daily activities" or "quality of life"
 
+    📋 FOR ALL OTHER SECTIONS: Create professional allergy/immunology focused content as usual.
+
+    Return JSON format:
+    {{
+        "patient_history": {{
+            "chief_complaint": "allergy-focused chief complaint",
+            "history_of_present_illness": "SPECIFIC allergy story from transcript - no generic language",
+            "past_medical_history": "relevant allergy/asthma history",
+            "allergies": "documented allergies and reactions",
+            "social_history": "environmental exposures, occupational factors",
+            "review_of_systems": "allergy-related symptom review"
+        }},
+        "physical_examination": "allergy-focused physical exam",
+        "diagnostic_workup": "allergy testing and evaluation plan", 
+        "patient_education": "allergy management education",
+        "follow_up_instructions": "allergy follow-up plan",
+        "summary": "allergy visit summary"
+    }}
+    """
+
+    soap_payload = {
+        "model": "grok-2-1212",
+        "messages": [
+            {"role": "system", "content": "You are an expert allergist creating SOAP notes. For HPI: write the actual patient's allergy story using facts from conversation. NEVER use generic template language about 'daily activities and quality of life' or 'symptom progression'. Write what actually happened to this allergy patient."},
+            {"role": "user", "content": standard_soap_prompt}
+        ],
+        "max_tokens": 2500,
+        "temperature": 0.1
+    }
+
+    soap_data = {}
+    try:
         soap_response = requests.post(XAI_API_URL, headers=headers, json=soap_payload, timeout=45)
         soap_response.raise_for_status()
         soap_result = soap_response.json()
 
-        # Parse SOAP response
-        soap_data = {}
         if "choices" in soap_result and len(soap_result["choices"]) > 0:
             soap_text = soap_result["choices"][0]["message"]["content"]
+            
+            # ENHANCED DEBUG: Log the raw AI response for analysis
+            log_ai_soap_generation(soap_text, "STEP 4 - AI SOAP GENERATION")
+            
             try:
                 start_idx = soap_text.find('{')
                 end_idx = soap_text.rfind('}') + 1
                 if start_idx != -1 and end_idx != -1:
                     json_str = soap_text[start_idx:end_idx].strip()
                     soap_data = json.loads(json_str)
+                    
+                    # DEBUG: Check what AI generated
+                    ultimate_debug_hpi_flow({"patient_history": soap_data.get("patient_history", {})}, "STEP 4A - AFTER AI GENERATION")
+                    
             except json.JSONDecodeError as e:
                 logger.error(f"Error parsing SOAP JSON: {str(e)}")
 
-        # Combine everything
-        final_result = {
-            "patient_history": soap_data.get("patient_history", {
-                "chief_complaint": "Patient presents for medical evaluation",
-                "history_of_present_illness": "Clinical history as discussed",
-                "past_medical_history": "Medical history as relevant",
-                "allergies": "Allergy history as discussed",
-                "social_history": "Social factors as mentioned",
-                "review_of_systems": "Systems review as conducted"
-            }),
-            "physical_examination": soap_data.get("physical_examination", "Physical examination findings as documented"),
-            "differential_diagnosis": enhanced_assessment,  # NEW: Properly formatted assessment
-            "diagnostic_workup": soap_data.get("diagnostic_workup", "Diagnostic evaluation as planned"),
-            "plan_of_care": freed_plan,  # Enhanced Freed-style plan
-            "patient_education": soap_data.get("patient_education", "Patient education provided"),
-            "follow_up_instructions": soap_data.get("follow_up_instructions", "Follow-up as scheduled"),
-            "summary": soap_data.get("summary", "Medical evaluation completed"),
-            "enhanced_recommendations": force_create_structured_recommendations(text)
-        }
-
-        # Ensure frontend compatibility
-        final_result = ensure_strings_for_frontend(final_result)
-
-        return final_result
-
     except Exception as e:
-        logger.error(f"Error generating enhanced Freed-style plan: {str(e)}")
+        logger.error(f"Error generating SOAP sections: {str(e)}")
+
+    # STEP 5: Combine everything
+    final_result = {
+        "patient_history": soap_data.get("patient_history", {
+            "chief_complaint": "Patient presents for allergy evaluation",
+            "history_of_present_illness": "Patient presents for allergy assessment as discussed",
+            "past_medical_history": "Allergy and asthma history reviewed",
+            "allergies": "Allergy history documented",
+            "social_history": "Environmental exposures assessed",
+            "review_of_systems": "Allergy-related symptoms reviewed"
+        }),
+        "physical_examination": soap_data.get("physical_examination", "Allergy-focused physical examination completed"),
+        "differential_diagnosis": enhanced_assessment,
+        "diagnostic_workup": soap_data.get("diagnostic_workup", "Allergy testing evaluation planned"),
+        "plan_of_care": freed_plan,
+        "patient_education": soap_data.get("patient_education", "Allergy management education provided"),
+        "follow_up_instructions": soap_data.get("follow_up_instructions", "Allergy follow-up scheduled"),
+        "summary": soap_data.get("summary", "Allergy evaluation completed"),
+        "enhanced_recommendations": force_create_structured_recommendations(text)
+    }
+
+    # DEBUG: Check after combining
+    ultimate_debug_hpi_flow(final_result, "STEP 5A - AFTER COMBINING")
+
+    # AGGRESSIVE removal of any generic content
+    final_result = remove_any_generic_content(final_result)
+
+    # DEBUG: Check after removal
+    ultimate_debug_hpi_flow(final_result, "STEP 5B - AFTER AGGRESSIVE REMOVAL")
+
+    # Ensure frontend compatibility
+    final_result = ensure_strings_for_frontend(final_result)
+
+    # DEBUG: Check after frontend compatibility
+    ultimate_debug_hpi_flow(final_result, "STEP 5C - AFTER FRONTEND COMPATIBILITY")
+
+    # FINAL VALIDATION: Absolutely ensure no generic content
+    final_result = validate_final_hpi_is_clean(final_result)
+
+    # DEBUG: Final check before return
+    ultimate_debug_hpi_flow(final_result, "STEP 5D - FINAL RESULT")
+
+    return final_result
+
+
+
+def debug_hpi_content(soap_notes):
+    """Debug function to see exactly what's in the HPI"""
+    try:
+        if ("patient_history" in soap_notes and
+            isinstance(soap_notes["patient_history"], dict) and
+            "history_of_present_illness" in soap_notes["patient_history"]):
+            
+            hpi = soap_notes["patient_history"]["history_of_present_illness"]
+            logger.info(f"🔍 DEBUG HPI CONTENT: '{hpi}'")
+            logger.info(f"🔍 DEBUG HPI LENGTH: {len(hpi)}")
+            
+            # Check for problematic keywords
+            problem_keywords = ["daily activities", "quality of life", "onset and progression", "triggering factors"]
+            for keyword in problem_keywords:
+                if keyword in hpi.lower():
+                    logger.info(f"🚨 FOUND PROBLEM KEYWORD: '{keyword}' in HPI")
+    except Exception as e:
+        logger.error(f"Debug HPI error: {str(e)}")
+    
+def targeted_hpi_cleanup(soap_notes):
+    """
+    TARGETED: Only clean the history_of_present_illness, leave all other sections untouched
+    """
+    try:
+        if ("patient_history" in soap_notes and
+            isinstance(soap_notes["patient_history"], dict) and
+            "history_of_present_illness" in soap_notes["patient_history"]):
+            
+            hpi = soap_notes["patient_history"]["history_of_present_illness"]
+            
+            if isinstance(hpi, str):
+                original_hpi = hpi
+                
+                # The exact problematic phrases you mentioned
+                forbidden_phrases = [
+                    "The symptoms have persisted, affecting the patient's daily activities and quality of life. The patient reports the onset and progression of symptoms, including any triggering factors, duration, and associated complaints.",
+                    "The symptoms have persisted, affecting the patient's daily activities and quality of life",
+                    "The patient reports the onset and progression of symptoms, including any triggering factors, duration, and associated complaints"
+                ]
+                
+                # Remove only these specific phrases
+                for phrase in forbidden_phrases:
+                    if phrase in hpi:
+                        hpi = hpi.replace(phrase, "")
+                        logger.info(f"🎯 REMOVED: Generic phrase from HPI")
+                
+                # Basic cleanup
+                hpi = re.sub(r'\s+', ' ', hpi).strip()
+                hpi = re.sub(r'\.+', '.', hpi)
+                
+                # If HPI becomes empty or too short, create allergy-specific replacement
+                if not hpi or len(hpi.strip()) < 20:
+                    hpi = "Patient presents for allergy evaluation as discussed during visit."
+                    logger.info("🎯 REPLACED: Empty HPI with allergy-specific content")
+                
+                # Update only the HPI
+                soap_notes["patient_history"]["history_of_present_illness"] = hpi
+                
+                if original_hpi != hpi:
+                    logger.info(f"🎯 HPI FIXED: Generic language removed")
+                    logger.info(f"🎯 NEW HPI: {hpi}")
         
-        # Simple fallback with proper formatting
-        return {
-            "patient_history": {
-                "chief_complaint": "Medical consultation",
-                "history_of_present_illness": "Clinical history obtained",
-                "past_medical_history": "Medical history reviewed",
-                "allergies": "Allergy status assessed",
-                "social_history": "Social history obtained",
-                "review_of_systems": "Systems review completed"
-            },
-            "physical_examination": "Physical examination completed",
-            "differential_diagnosis": enhanced_assessment if enhanced_assessment else create_fallback_assessment_formatted(conditions, text),
-            "diagnostic_workup": "Diagnostic plan established",
-            "plan_of_care": f"Assessment & Plan\n\nIn regards to {conditions[0]}:\nMedical evaluation and treatment plan established.\n\nPlan:\n- Follow current management approach\n- Schedule appropriate follow-up",
-            "patient_education": "Patient education provided",
-            "follow_up_instructions": "Follow-up care arranged",
-            "summary": "Medical consultation completed",
-            "enhanced_recommendations": force_create_structured_recommendations(text)
-        }
+        return soap_notes
+        
+    except Exception as e:
+        logger.error(f"Error in targeted HPI cleanup: {str(e)}")
+        return soap_notes
 def create_fallback_assessment(conditions, source_text):
     """
     Create properly formatted fallback assessment
@@ -2662,6 +2958,55 @@ def create_fallback_assessment(conditions, source_text):
         logger.error(f"Error creating fallback assessment: {str(e)}")
         return "1. Current Medical Concerns:\n\n- Clinical assessment completed\n\n- Patient evaluation documented\n\n- Treatment plan established"
         
+def targeted_hpi_cleanup(soap_notes):
+    """
+    TARGETED: Only clean the history_of_present_illness, leave all other sections untouched
+    """
+    try:
+        if ("patient_history" in soap_notes and
+            isinstance(soap_notes["patient_history"], dict) and
+            "history_of_present_illness" in soap_notes["patient_history"]):
+            
+            hpi = soap_notes["patient_history"]["history_of_present_illness"]
+            
+            if isinstance(hpi, str):
+                original_hpi = hpi
+                
+                # The exact problematic phrases you mentioned
+                forbidden_phrases = [
+                    "The symptoms have persisted, affecting the patient's daily activities and quality of life. The patient reports the onset and progression of symptoms, including any triggering factors, duration, and associated complaints.",
+                    "The symptoms have persisted, affecting the patient's daily activities and quality of life",
+                    "The patient reports the onset and progression of symptoms, including any triggering factors, duration, and associated complaints"
+                ]
+                
+                # Remove only these specific phrases
+                for phrase in forbidden_phrases:
+                    if phrase in hpi:
+                        hpi = hpi.replace(phrase, "")
+                        logger.info(f"🎯 REMOVED: Generic phrase from HPI")
+                
+                # Basic cleanup
+                hpi = re.sub(r'\s+', ' ', hpi).strip()
+                hpi = re.sub(r'\.+', '.', hpi)
+                
+                # If HPI becomes empty or too short, create allergy-specific replacement
+                if not hpi or len(hpi.strip()) < 20:
+                    hpi = "Patient presents for allergy evaluation as discussed during visit."
+                    logger.info("🎯 REPLACED: Empty HPI with allergy-specific content")
+                
+                # Update only the HPI
+                soap_notes["patient_history"]["history_of_present_illness"] = hpi
+                
+                if original_hpi != hpi:
+                    logger.info(f"🎯 HPI FIXED: Generic language removed")
+                    logger.info(f"🎯 NEW HPI: {hpi}")
+        
+        return soap_notes
+        
+    except Exception as e:
+        logger.error(f"Error in targeted HPI cleanup: {str(e)}")
+        return soap_notes
+
 def validate_only_discussed_content(plan_text, original_transcript):
     """
     ENHANCED: Validate that the plan contains ONLY what was discussed
@@ -4666,6 +5011,7 @@ def debug_patients():
         return jsonify({"error": str(e)}), 500
 
 @app.route('/api/get-patients', methods=['GET'])
+@require_auth
 def get_patients():
     try:
         email = request.args.get('email')
@@ -4768,6 +5114,7 @@ def send_activation_email_endpoint():
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/fetchPatients', methods=['GET'])
+@require_auth
 def fetch_patients():
     try:
         return get_patients()
@@ -4776,6 +5123,7 @@ def fetch_patients():
         return jsonify({"success": False, "error": str(e)}), 500
 
 @app.route('/api/get-patient-history', methods=['GET'])
+@require_auth
 def get_patient_history():
     try:
         email = request.args.get('email')
@@ -4904,6 +5252,7 @@ def test_ses():
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/delete-patient', methods=['POST', 'OPTIONS'])
+@require_auth
 def delete_patient():
     if request.method == 'OPTIONS':
         response = make_response()
@@ -5098,130 +5447,6 @@ def analyze_transcript_protected():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-@app.route('/api/cognito-login', methods=['POST', 'OPTIONS'])
-def cognito_login():
-    """Handle Cognito login with your actual configuration"""
-    if request.method == 'OPTIONS':
-        response = make_response()
-        response.headers.add("Access-Control-Allow-Origin", "*")
-        response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
-        response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
-        return response
-        
-    try:
-        data = request.get_json()
-        email = data.get('email')
-        password = data.get('password')
-        
-        logger.info(f"🔐 Cognito login attempt for: {email}")
-        
-        # Initialize Cognito client
-        cognito_client = boto3.client('cognito-idp', region_name=COGNITO_REGION)
-        
-        # Authenticate with Cognito
-        try:
-            response = cognito_client.admin_initiate_auth(
-                UserPoolId=COGNITO_USER_POOL_ID,
-                ClientId=COGNITO_CLIENT_ID,
-                AuthFlow='ADMIN_NO_SRP_AUTH',
-                AuthParameters={
-                    'USERNAME': email,
-                    'PASSWORD': password
-                }
-            )
-            
-            # Extract tokens
-            auth_result = response['AuthenticationResult']
-            access_token = auth_result['AccessToken']
-            id_token = auth_result['IdToken']
-            refresh_token = auth_result['RefreshToken']
-            
-            logger.info(f"✅ Cognito authentication successful for: {email}")
-            
-            # Decode ID token to get user info
-            user_claims = jose_jwt.get_unverified_claims(id_token)
-            
-            user_data = {
-                'email': user_claims.get('email', email),
-                'first_name': user_claims.get('given_name', 'Doctor'),
-                'last_name': user_claims.get('family_name', 'User'),
-                'specialty': user_claims.get('custom:specialty', 'general'),
-                'username': user_claims.get('cognito:username'),
-                'sub': user_claims.get('sub')
-            }
-            
-            # Get subscription status for this user
-            subscription = get_subscription_status(email)
-            
-            # Store session for backward compatibility
-            session['user_email'] = email
-            
-            return jsonify({
-                'success': True,
-                'access_token': access_token,
-                'id_token': id_token,
-                'refresh_token': refresh_token,
-                'user': user_data,
-                'subscription': subscription,
-                'auth_type': 'cognito'
-            }), 200
-            
-        except cognito_client.exceptions.NotAuthorizedException:
-            logger.warning(f"❌ Invalid credentials for: {email}")
-            
-            # Fall back to legacy authentication
-            logger.info(f"🔄 Falling back to legacy auth for: {email}")
-            if email in SUBSCRIPTIONS and password == "18June2011!":
-                subscription = get_subscription_status(email)
-                session['user_email'] = email
-                
-                # Create a simple JWT for consistency
-                user_data = {
-                    'email': email,
-                    'first_name': 'Doctor',
-                    'last_name': 'User',
-                    'specialty': 'general'
-                }
-                
-                # Create simple token
-                simple_token = jwt.encode({
-                    'email': email,
-                    'first_name': 'Doctor',
-                    'last_name': 'User',
-                    'specialty': 'general',
-                    'exp': datetime.utcnow() + timedelta(hours=24),
-                    'iat': datetime.utcnow(),
-                    'iss': 'medora-backend'
-                }, app.secret_key, algorithm='HS256')
-                
-                return jsonify({
-                    'success': True,
-                    'access_token': simple_token,
-                    'id_token': simple_token,
-                    'user': user_data,
-                    'subscription': subscription,
-                    'auth_type': 'legacy_fallback'
-                }), 200
-            else:
-                return jsonify({
-                    'success': False,
-                    'error': 'Invalid email or password'
-                }), 401
-                
-        except Exception as cognito_error:
-            logger.error(f"❌ Cognito authentication error: {str(cognito_error)}")
-            return jsonify({
-                'success': False,
-                'error': f'Authentication failed: {str(cognito_error)}'
-            }), 401
-                
-    except Exception as e:
-        logger.error(f"❌ Login endpoint error: {str(e)}")
-        return jsonify({
-            'success': False,
-            'error': f'Server error: {str(e)}'
-        }), 500
-
 @app.route('/api/login', methods=['POST', 'OPTIONS'])
 def login():
     """Handle traditional login (for backward compatibility)"""
@@ -5252,34 +5477,122 @@ def login():
         logger.error(f'Error processing /api/login request: {str(e)}')
         return jsonify({"success": False, "error": str(e)}), 500
 
-@app.route('/api/register', methods=['POST', 'OPTIONS'])
-def register():
+@app.route('/api/registercard', methods=['POST', 'OPTIONS'])
+def registercard():
     if request.method == 'OPTIONS':
         response = make_response()
-        response.headers.add("Access-Control-Allow-Origin", "http://127.0.0.1:8080")
-        response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+        response.headers.add("Access-Control-Allow-Origin", "https://test.medoramd.ai")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
         response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
         return response
     try:
         data = request.get_json()
+        logger.info(f"Received data: {data}")  # Log the received data
         email = data.get('email')
-        password = data.get('password')
-        card_number = data.get('card_number')
+        stripe_token = data.get('stripeToken')
+        logger.info(f"Email: {email}, Stripe Token: {stripe_token}")  # Log extracted values
+        if not email or not stripe_token:
+            return jsonify({"success": False, "message": "Email and Stripe token are required"}), 400
 
-        if not email or not password or not card_number or len(card_number) < 4:
-            return jsonify({"success": False, "message": "Email, password, and valid card number are required"}), 400
+        subscription_result = create_subscription_with_trial(email, stripe_token)
 
-        if email in SUBSCRIPTIONS:
-            return jsonify({"success": False, "message": "User already registered"}), 400
+        if subscription_result['success']:
+            return jsonify({
+                'success': True,
+                'message': 'Registration successful! Trial started.',
+                'subscription': subscription_result
+            }), 200
+        else:
+            return jsonify({
+                'success': False,
+                'message': 'Failed to create subscription.',
+                'error': subscription_result['error']
+            }), 400
+    except Exception as e:
+        logger.error(f'Error processing /api/register request: {str(e)}')
+        return jsonify({"success": False, "error": str(e)}), 500
 
-        trial_start = datetime.now().strftime("%Y-%m-%d")
-        SUBSCRIPTIONS[email] = {
-            "tier": "Trial",
-            "trial_start": trial_start,
-            "card_last4": card_number[-4:]
-        }
-        status = get_subscription_status(email)
-        return jsonify({"success": True, "subscription": status["tier"], "trial_end": status["trial_end"], "card_last4": status["card_last4"]}), 200
+@app.route('/admin')
+def admin_dashboard():
+    user = session.get('user')
+    if not user or not user.get('is_admin'):
+        return redirect(url_for('adminlogin'))  # Or return 403 Forbidden
+    return send_from_directory('medora-frontend/public', 'medora-admin.html')
+
+@app.route('/api/me')
+def api_me():
+    user = session.get('user')
+    if not user:
+        return jsonify({'is_admin': False, 'authenticated': False}), 401
+    # Example user object: {'email': ..., 'is_admin': True, ...}
+    return jsonify({
+        'email': user.get('email'),
+        'is_admin': user.get('is_admin', False),
+        'authenticated': True
+    })
+
+@app.route('/api/admin/cognito-users', methods=['GET'])
+def list_cognito_users():
+    # Optional: Add authentication and admin check here!
+    try:
+        client = boto3.client(
+            'cognito-idp',
+            region_name=os.getenv('COGNITO_REGION', 'ap-south-1')
+        )
+        user_pool_id = os.getenv('COGNITO_USER_POOL_ID')
+        if not user_pool_id:
+            return jsonify({'success': False, 'error': 'COGNITO_USER_POOL_ID not set'}), 500
+
+        users = []
+        paginator = client.get_paginator('list_users')
+        for page in paginator.paginate(UserPoolId=user_pool_id):
+            users.extend(page['Users'])
+
+        # Optionally, filter/format user data
+        user_list = []
+        for user in users:
+            user_list.append({
+                'username': user['Username'],
+                'status': user['UserStatus'],
+                'attributes': {attr['Name']: attr['Value'] for attr in user['Attributes']}
+            })
+
+        return jsonify({'success': True, 'users': user_list})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/admin/stripe-subscriptions', methods=['GET'])
+def list_stripe_subscriptions():
+    if request.method == 'OPTIONS':
+        response = make_response()
+        response.headers.add("Access-Control-Allow-Origin", "https://test.medoramd.ai")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
+        response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
+        return response
+    try:
+        result = get_stripe_subscriptions()
+        if result['success']:
+            return jsonify(result)
+        else:
+            return jsonify(result), 500
+    except Exception as e:
+        logger.error(f'Error processing /api/register request: {str(e)}')
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route('/api/admin/stripe-transactions', methods=['GET'])
+def list_stripe_transactions():
+    if request.method == 'OPTIONS':
+        response = make_response()
+        response.headers.add("Access-Control-Allow-Origin", "https://test.medoramd.ai")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
+        response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
+        return response
+    try:
+        result = get_stripe_transactions()
+        if result['success']:
+            return jsonify(result)
+        else:
+            return jsonify(result), 500
     except Exception as e:
         logger.error(f'Error processing /api/register request: {str(e)}')
         return jsonify({"success": False, "error": str(e)}), 500
@@ -5287,7 +5600,7 @@ def register():
 # Logout endpoint
 @app.route('/api/logout', methods=['POST', 'OPTIONS'])
 def logout():
-    """Enhanced logout with token blacklisting"""
+    """Handle logout (mainly for session-based auth)"""
     if request.method == 'OPTIONS':
         response = make_response()
         response.headers.add("Access-Control-Allow-Origin", "https://test.medoramd.ai")
@@ -5295,174 +5608,9 @@ def logout():
         response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
         return response
         
-    try:
-        logout_info = {
-            'session_cleared': False,
-            'token_blacklisted': False,
-            'auth_type': 'unknown'
-        }
-        
-        # Clear session-based auth
-        if 'user_email' in session:
-            user_email = session['user_email']
-            session.clear()
-            logout_info['session_cleared'] = True
-            logout_info['auth_type'] = 'session'
-            logger.info(f"🔓 Session-based logout completed for {user_email}")
-        
-        # Handle JWT token blacklisting - THIS IS THE KEY FIX
-        auth_header = request.headers.get('Authorization')
-        if auth_header and auth_header.startswith('Bearer '):
-            token = auth_header.split(' ')[1]
-            
-            # Always blacklist the token, even if it's invalid
-            blacklist_token(token)
-            logout_info['token_blacklisted'] = True
-            logout_info['auth_type'] = 'cognito_jwt'
-            logger.info(f"🔓 JWT token blacklisted")
-        
-        # Ensure session is completely cleared
-        session.clear()
-        
-        response_data = {
-            'success': True,
-            'message': 'Logout successful - token blacklisted',
-            'logout_info': logout_info,
-            'instructions': {
-                'frontend_action_required': 'Clear localStorage and sessionStorage immediately',
-                'items_to_clear': [
-                    'authToken', 'accessToken', 'idToken', 'refreshToken',
-                    'userEmail', 'userInfo', 'user', 'subscription'
-                ],
-                'redirect_to': '/login',
-                'force_reload': True
-            }
-        }
-        
-        logger.info(f"✅ Enhanced logout completed: {logout_info}")
-        return jsonify(response_data), 200
-        
-    except Exception as e:
-        logger.error(f"❌ Error during logout: {str(e)}")
-        return jsonify({
-            'success': False,
-            'error': str(e),
-            'instructions': {
-                'frontend_action_required': 'Clear storage anyway',
-                'items_to_clear': ['authToken', 'userEmail', 'userInfo'],
-                'redirect_to': '/login',
-                'force_reload': True
-            }
-        }), 200
+    session.pop('user_email', None)
+    return jsonify({'success': True})
 
-# Add debug endpoint to check blacklist
-@app.route('/api/debug/blacklist-status', methods=['GET', 'OPTIONS'])
-def debug_blacklist_status():
-    """Debug endpoint to check token blacklist status"""
-    if request.method == 'OPTIONS':
-        response = make_response()
-        response.headers.add("Access-Control-Allow-Origin", "*")
-        response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
-        response.headers.add("Access-Control-Allow-Methods", "GET, OPTIONS")
-        return response
-        
-    try:
-        auth_header = request.headers.get('Authorization')
-        token_status = {
-            'token_provided': bool(auth_header and auth_header.startswith('Bearer ')),
-            'blacklist_size': len(token_blacklist),
-            'token_blacklisted': False
-        }
-        
-        if auth_header and auth_header.startswith('Bearer '):
-            token = auth_header.split(' ')[1]
-            token_status['token_blacklisted'] = is_token_blacklisted(token)
-            token_status['token_hash'] = hash_token(token)[:16] + "..."
-        
-        return jsonify({
-            'success': True,
-            'blacklist_status': token_status
-        }), 200
-        
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
-
-# ALSO ADD: Enhanced auth checking that's more strict
-def get_user_from_token():
-    """Extract user information from Cognito token with enhanced debugging"""
-    auth_header = request.headers.get('Authorization')
-    logger.debug(f"🔍 DEBUG: Authorization header present: {bool(auth_header)}")
-    
-    if not auth_header:
-        logger.debug(f"🔍 DEBUG: No Authorization header found")
-        return None
-        
-    if not auth_header.startswith('Bearer '):
-        logger.debug(f"🔍 DEBUG: Authorization header doesn't start with 'Bearer ': {auth_header[:20]}...")
-        return None
-        
-    token = auth_header.split(' ')[1]
-    logger.debug(f"🔍 DEBUG: Extracted token (first 20 chars): {token[:20]}...")
-    logger.debug(f"🔍 DEBUG: Token length: {len(token)}")
-    
-    # ADD THIS CHECK: Make sure token isn't empty or just whitespace
-    if not token or not token.strip():
-        logger.debug(f"🔍 DEBUG: Empty token provided")
-        return None
-    
-    decoded_token = verify_cognito_token(token)
-    logger.debug(f"🔍 DEBUG: Token verification result: {bool(decoded_token)}")
-    
-    if decoded_token:
-        user_info = {
-            'email': decoded_token.get('email'),
-            'username': decoded_token.get('cognito:username'),
-            'sub': decoded_token.get('sub'),
-            'first_name': decoded_token.get('given_name'),
-            'last_name': decoded_token.get('family_name'),
-            'specialty': decoded_token.get('custom:specialty', 'general'),
-            'auth_type': 'cognito'
-        }
-        logger.debug(f"✅ DEBUG: Successfully extracted user info: {user_info.get('email')}")
-        return user_info
-    else:
-        logger.warning(f"❌ DEBUG: Token verification failed")
-        
-    return None
-
-# SIMPLE FRONTEND LOGOUT (add this to your frontend)
-"""
-// Simple frontend logout function
-const handleLogout = async () => {
-  try {
-    // Call backend
-    const response = await fetch('/api/logout', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': localStorage.getItem('authToken') ? 
-          `Bearer ${localStorage.getItem('authToken')}` : undefined
-      }
-    });
-    
-    const result = await response.json();
-    console.log('Logout response:', result);
-    
-  } catch (error) {
-    console.error('Logout error:', error);
-  } finally {
-    // ALWAYS clear client storage regardless of backend response
-    localStorage.clear();
-    sessionStorage.clear();
-    
-    // Force full page reload to clear any remaining state
-    window.location.href = '/login';
-  }
-};
-"""
 # Continue with the rest of your existing endpoints...
 @app.route('/api/analyze-transcript', methods=['POST', 'OPTIONS'])
 def analyze_transcript_endpoint():
